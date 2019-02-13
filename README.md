@@ -11,6 +11,7 @@
 
 * [Fix all diagnostics in a solution](docs/HowToFixAllDiagnostics.md)
 * [Generate API documentation](docs/HowToGenerateDocumentation.md)
+* https://github.com/oscarg933/Roslynator.git.patch.md
 
 ### Donation
 
