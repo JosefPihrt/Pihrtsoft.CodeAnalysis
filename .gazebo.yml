@@ -1,0 +1,72 @@
+
+
+Toggle navigation
+Play
+Seek
+
+00:00
+-25:56
+Mute
+Volume
+Settings
+Cloud SQL with Amy Krishnamohan
+We’re learning all about Cloud SQL this week with our guest, Amy Krishnamohan. Amy’s main job is to teach customers about the products she represents. Today, she explains to Mark and Gabi that Cloud SQL manages services for open source databases, and she spends a little time elaborating on the other database management services Google has to offer.
+
+Cloud SQL is a relational data storage solution. Relational data storage is very structured, almost like a table or spreadsheet, making it easier to analyze the data. Cloud SQL is capable of scaling out and up, meaning it can scale for traffic patterns and for storage. In comparison, NoSQL databases are very unstructured. If you’re not sure what kind of data is coming in, you can sort the data first and analyze it later. Each approach has its pros and cons and each is suitable for different types of projects.
+
+Recently, Cloud SQL released a feature making it easy to move from on-prem to the cloud. In the future, they will continue to streamline the process of moving between the two spaces.
+
+Amy Krishnamohan
+Amy is Product Marketing Manager at Google Cloud responsible for Databases. She has diverse experience across product marketing, marketing strategy and product management from leading enterprise software companies such as MariaDB, Teradata, SAP, Accenture, Cisco and Intuit. Amy received her Masters in Software Management from Carnegie Mellon University.
+
+Cool things of the week
+Process Workflows with the new Google Docs API blog
+Jib 1.0.0 is GA—building Java Docker images has never been easier blog
+GCP Podcast Episode 151: Java & Jib with Patrick Flynn and Mike Eltsufin podcast
+A guided tour in Google Earth that explores Black history blog
+Author: Gabe Weiss - Publishing series: Cloud IoT step-by-step
+Cloud IoT step-by-step: Connecting Raspberry PI + Python site
+Cloud IoT step-by-step: Cloud to device communication site
+Cloud IoT step-by-step: Quality of life tip - The command line site
+Interview
+Cloud SQL site
+Cloud SQL Features site
+MySQL site
+PostgreSQLsite
+Cloud MemoryStore site
+Cloud Bigtable site
+Cloud Firestore site
+Cloud Spanner site
+GCP Podcast Episode 62: Cloud Spanner with Deepti Srivastava podcast
+Mongo site
+Getting to know Google Cloud SQL video
+Question of the week
+What is a virtual column in a database?
+
+Generated columns blog and docs
+Where can you find us next?
+Amy will be at the Postgres Conference in New York on March 19.
+
+Gabi will be at PHP UK in London and Cloud NEXT in April.
+
+Mark will be at GDC in March, Cloud NEXT, and ECG in April.
+
+Diamond Partner Q&A: Google’s Mark Mandel Has The Tools To Help You Make Great Games article
+Hosts
+Mark Mandel and Gabriela Ferrara
+
+Continue the conversation
+Leave us a comment on Google+ or Reddit
+
+Download MP3file_download
+Topics: Cloud SQL, SQL and Database
+   
+UP NEXT
+Voicea with Mohamed El-Geish
+Questions
+Every week we take questions submitted to us by our audience, and answer them live on the podcast. If you have a question you would like to hear answered, please send us an email with the question, and we’ll endeavour to answer it on the show.
+
+Cool Things of the Week
+Every week, we go through a “Cool Thing” - it could be a great project running on Google Cloud Platform, a fantastic tip or trick on Google Cloud Platform, an Open Source project or really just about anything we think is new and innovative.
+
+License | Privacy
