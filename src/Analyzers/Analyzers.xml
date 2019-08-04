@@ -5611,4 +5611,20 @@ public abstract class EqualityComparer : IEqualityComparer<C>, IEqualityComparer
       </Sample>
     </Samples>
   </Analyzer>
+  <Analyzer Identifier="UseStringEmptyInsteadOfEmptyStringLiteral">
+    <Id>RCS1242</Id>
+    <Title>Use string.Empty instead of "".</Title>
+    <MessageFormat>Use string.Empty instead of ""</MessageFormat>
+    <Category>General</Category>
+    <DefaultSeverity>Info</DefaultSeverity>
+    <IsEnabledByDefault>false</IsEnabledByDefault>
+    <SupportsFadeOut>true</SupportsFadeOut>
+    <SupportsFadeOutAnalyzer>false</SupportsFadeOutAnalyzer>
+    <Samples>
+      <Sample>
+        <Before><![CDATA[string s = ""; // [|Id|]]]></Before>
+        <After><![CDATA[string s = string.Empty;]]></After>
+      </Sample>
+    </Samples>
+  </Analyzer>
 </Analyzers>

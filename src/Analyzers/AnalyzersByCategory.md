@@ -45,6 +45,7 @@
 | General | [Use carriage return + linefeed as newline](../../docs/analyzers/RCS1087.md) | RCS1087 | None |
 | General | [Use linefeed as newline](../../docs/analyzers/RCS1086.md) | RCS1086 | None |
 | General | [Use space(s) instead of tab](../../docs/analyzers/RCS1088.md) | RCS1088 | None |
+| General | [Use string.Empty instead of ""](../../docs/analyzers/RCS1242.md) | RCS1242 | None |
 | Maintainability | [Add exception to documentation comment](../../docs/analyzers/RCS1140.md) | RCS1140 | Hidden |
 | Maintainability | [Add 'param' element to documentation comment](../../docs/analyzers/RCS1141.md) | RCS1141 | Hidden |
 | Maintainability | [Add summary element to documentation comment](../../docs/analyzers/RCS1139.md) | RCS1139 | Warning |

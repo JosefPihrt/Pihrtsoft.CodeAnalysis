@@ -30,7 +30,6 @@
     <Rule Id="RCS1028" Action="None" /> <!-- Add new line after switch label. -->
     <Rule Id="RCS1029" Action="Info" /> <!-- Format binary operator on next line. -->
     <Rule Id="RCS1030" Action="None" /> <!-- Add empty line after embedded statement. -->
-    <Rule Id="RCS1031" Action="Info" /> <!-- Remove redundant braces. -->
     <Rule Id="RCS1032" Action="Info" /> <!-- Remove redundant parentheses. -->
     <Rule Id="RCS1033" Action="Info" /> <!-- Remove redundant boolean literal. -->
     <Rule Id="RCS1034" Action="Hidden" /> <!-- Remove redundant 'sealed' modifier. -->
@@ -235,5 +234,6 @@
     <Rule Id="RCS1233" Action="Info" /> <!-- Use short-circuiting operator. -->
     <Rule Id="RCS1234" Action="Info" /> <!-- Duplicate enum value. -->
     <Rule Id="RCS1235" Action="Info" /> <!-- Optimize method call. -->
+    <Rule Id="RCS1242" Action="None" /> <!-- Use string.Empty instead of "". -->
   </Rules>
 </RuleSet>

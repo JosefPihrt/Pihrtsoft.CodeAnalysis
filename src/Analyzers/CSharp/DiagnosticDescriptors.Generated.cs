@@ -2643,5 +2643,17 @@ namespace Roslynator.CSharp
             helpLinkUri:        $"{HelpLinkUriRoot}{DiagnosticIdentifiers.ImplementNonGenericCounterpart}", 
             customTags:         Array.Empty<string>());
 
+        /// <summary>RCS1242</summary>
+        public static readonly DiagnosticDescriptor UseStringEmptyInsteadOfEmptyStringLiteral = new DiagnosticDescriptor(
+            id:                 DiagnosticIdentifiers.UseStringEmptyInsteadOfEmptyStringLiteral, 
+            title:              "Use string.Empty instead of \"\".", 
+            messageFormat:      "Use string.Empty instead of \"\"", 
+            category:           DiagnosticCategories.General, 
+            defaultSeverity:    DiagnosticSeverity.Info, 
+            isEnabledByDefault: false, 
+            description:        null, 
+            helpLinkUri:        $"{HelpLinkUriRoot}{DiagnosticIdentifiers.UseStringEmptyInsteadOfEmptyStringLiteral}", 
+            customTags:         WellKnownDiagnosticTags.Unnecessary);
+
     }
 }

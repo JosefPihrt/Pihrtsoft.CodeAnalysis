@@ -14,7 +14,7 @@ namespace Roslynator.VisualStudio
             get;
         }
 
-        = "RCS1241";
+        = "RCS1242";
         protected override void Fill(ICollection<BaseModel> analyzers)
         {
             analyzers.Clear();
@@ -233,6 +233,7 @@ namespace Roslynator.VisualStudio
             analyzers.Add(new BaseModel("RCS1239", "Use 'for' statement instead of 'while' statement.", !IsEnabled("RCS1239")));
             analyzers.Add(new BaseModel("RCS1240", "Operator is unnecessary.", !IsEnabled("RCS1240")));
             analyzers.Add(new BaseModel("RCS1241", "Implement non-generic counterpart.", !IsEnabled("RCS1241")));
+            analyzers.Add(new BaseModel("RCS1242", "Use string.Empty instead of \"\".", !IsEnabled("RCS1242")));
         }
     }
 }

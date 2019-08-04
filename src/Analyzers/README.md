@@ -212,6 +212,7 @@
 | RCS1233 | [Use short-circuiting operator](../../docs/analyzers/RCS1233.md) | Usage | Info |
 | RCS1234 | [Duplicate enum value](../../docs/analyzers/RCS1234.md) | Readability | Info |
 | RCS1235 | [Optimize method call](../../docs/analyzers/RCS1235.md) | Performance | Info |
+| RCS1242 | [Use string.Empty instead of ""](../../docs/analyzers/RCS1242.md) | General | None |
 
 
 *\(Generated with [DotMarkdown](http://github.com/JosefPihrt/DotMarkdown)\)*
