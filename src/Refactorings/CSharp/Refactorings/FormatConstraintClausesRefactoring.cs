@@ -21,7 +21,7 @@ namespace Roslynator.CSharp.Refactorings
 
             SyntaxList<TypeParameterConstraintClauseSyntax> constraintClauses = genericInfo.ConstraintClauses;
 
-            if (constraintClauses.IsSingleLine())
+            if (constraintClauses.IsSingleLine(cancellationToken: context.CancellationToken))
             {
                 if (constraintClauses.Count > 1)
                 {

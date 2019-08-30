@@ -187,7 +187,7 @@ namespace Roslynator.CSharp.Refactorings
 
                 if (index == 0
                     && statementsInfo.Parent is BlockSyntax block
-                    && block.OpenBraceToken.GetFullSpanEndLine() == statement.GetFullSpanStartLine())
+                    && block.OpenBraceToken.GetFullSpanEndLine(cancellationToken) == statement.GetFullSpanStartLine(cancellationToken))
                 {
                     statement = statement.PrependToLeadingTrivia(CSharpFactory.NewLine());
                 }

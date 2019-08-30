@@ -52,7 +52,7 @@ namespace Roslynator.CSharp.Analysis
             if (statement.ContainsDirectives)
                 return;
 
-            if (statement.IsSingleLine() && FormattingSupportsEmbeddedStatement(ifStatement))
+            if (statement.IsSingleLine(cancellationToken: context.CancellationToken) && FormattingSupportsEmbeddedStatement(ifStatement))
                 return;
 
             ReportDiagnostic(context, ifStatement, statement);
@@ -70,7 +70,7 @@ namespace Roslynator.CSharp.Analysis
             if (statement.ContainsDirectives)
                 return;
 
-            if (statement.IsSingleLine() && FormattingSupportsEmbeddedStatement(forEachStatement))
+            if (statement.IsSingleLine(cancellationToken: context.CancellationToken) && FormattingSupportsEmbeddedStatement(forEachStatement))
                 return;
 
             ReportDiagnostic(context, forEachStatement, statement);
@@ -88,7 +88,7 @@ namespace Roslynator.CSharp.Analysis
             if (statement.ContainsDirectives)
                 return;
 
-            if (statement.IsSingleLine() && FormattingSupportsEmbeddedStatement(forStatement))
+            if (statement.IsSingleLine(cancellationToken: context.CancellationToken) && FormattingSupportsEmbeddedStatement(forStatement))
                 return;
 
             ReportDiagnostic(context, forStatement, statement);
@@ -106,7 +106,7 @@ namespace Roslynator.CSharp.Analysis
             if (statement.ContainsDirectives)
                 return;
 
-            if (statement.IsSingleLine() && FormattingSupportsEmbeddedStatement(usingStatement))
+            if (statement.IsSingleLine(cancellationToken: context.CancellationToken) && FormattingSupportsEmbeddedStatement(usingStatement))
                 return;
 
             ReportDiagnostic(context, usingStatement, statement);
@@ -124,7 +124,7 @@ namespace Roslynator.CSharp.Analysis
             if (statement.ContainsDirectives)
                 return;
 
-            if (statement.IsSingleLine() && FormattingSupportsEmbeddedStatement(whileStatement))
+            if (statement.IsSingleLine(cancellationToken: context.CancellationToken) && FormattingSupportsEmbeddedStatement(whileStatement))
                 return;
 
             ReportDiagnostic(context, whileStatement, statement);
@@ -142,7 +142,7 @@ namespace Roslynator.CSharp.Analysis
             if (statement.ContainsDirectives)
                 return;
 
-            if (statement.IsSingleLine() && FormattingSupportsEmbeddedStatement(doStatement))
+            if (statement.IsSingleLine(cancellationToken: context.CancellationToken) && FormattingSupportsEmbeddedStatement(doStatement))
                 return;
 
             ReportDiagnostic(context, doStatement, statement);
@@ -160,7 +160,7 @@ namespace Roslynator.CSharp.Analysis
             if (statement.ContainsDirectives)
                 return;
 
-            if (statement.IsSingleLine() && FormattingSupportsEmbeddedStatement(lockStatement))
+            if (statement.IsSingleLine(cancellationToken: context.CancellationToken) && FormattingSupportsEmbeddedStatement(lockStatement))
                 return;
 
             ReportDiagnostic(context, lockStatement, statement);
@@ -178,7 +178,7 @@ namespace Roslynator.CSharp.Analysis
             if (statement.ContainsDirectives)
                 return;
 
-            if (statement.IsSingleLine() && FormattingSupportsEmbeddedStatement(fixedStatement))
+            if (statement.IsSingleLine(cancellationToken: context.CancellationToken) && FormattingSupportsEmbeddedStatement(fixedStatement))
                 return;
 
             ReportDiagnostic(context, fixedStatement, statement);

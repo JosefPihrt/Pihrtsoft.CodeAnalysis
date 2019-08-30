@@ -68,7 +68,7 @@ namespace Roslynator.CSharp.Analysis
             if (expression2 == null)
                 return;
 
-            ITypeSymbol typeSymbol = context.SemanticModel.GetTypeSymbol(expression);
+            ITypeSymbol typeSymbol = context.SemanticModel.GetTypeSymbol(expression, context.CancellationToken);
 
             if (typeSymbol == null)
                 return;

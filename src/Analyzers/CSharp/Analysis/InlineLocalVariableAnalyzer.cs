@@ -134,7 +134,7 @@ namespace Roslynator.CSharp.Analysis
                         if (value.WalkDownParentheses().IsKind(SyntaxKind.AwaitExpression))
                             return;
 
-                        if (!value.IsSingleLine())
+                        if (!value.IsSingleLine(cancellationToken: context.CancellationToken))
                             return;
 
                         if (value.IsKind(SyntaxKind.ArrayInitializerExpression))
@@ -169,7 +169,7 @@ namespace Roslynator.CSharp.Analysis
                         if (value.WalkDownParentheses().IsKind(SyntaxKind.AwaitExpression))
                             return;
 
-                        if (!value.IsSingleLine())
+                        if (!value.IsSingleLine(cancellationToken: context.CancellationToken))
                             return;
 
                         var switchStatement = (SwitchStatementSyntax)nextStatement;

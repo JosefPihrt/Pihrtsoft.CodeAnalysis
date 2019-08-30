@@ -48,19 +48,19 @@ namespace Roslynator.CSharp.Analysis
             if (statements.Count <= 1)
                 return;
 
-            int previousEndLine = statements[0].GetSpanEndLine();
+            int previousEndLine = statements[0].GetSpanEndLine(context.CancellationToken);
 
             for (int i = 1; i < statements.Count; i++)
             {
                 StatementSyntax statement = statements[i];
 
                 if (!statement.IsKind(SyntaxKind.Block, SyntaxKind.EmptyStatement)
-                    && statement.GetSpanStartLine() == previousEndLine)
+                    && statement.GetSpanStartLine(context.CancellationToken) == previousEndLine)
                 {
                     DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.AddNewLineBeforeStatement, statement);
                 }
 
-                previousEndLine = statement.GetSpanEndLine();
+                previousEndLine = statement.GetSpanEndLine(context.CancellationToken);
             }
         }
     }

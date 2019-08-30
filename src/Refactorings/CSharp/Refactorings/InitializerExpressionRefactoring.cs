@@ -33,7 +33,7 @@ namespace Roslynator.CSharp.Refactorings
                         SyntaxKind.ObjectCreationExpression,
                         SyntaxKind.CollectionInitializerExpression))
                 {
-                    if (initializer.IsSingleLine(includeExteriorTrivia: false))
+                    if (initializer.IsSingleLine(includeExteriorTrivia: false, cancellationToken: context.CancellationToken))
                     {
                         context.RegisterRefactoring(
                             "Format initializer on multiple lines",
@@ -43,7 +43,7 @@ namespace Roslynator.CSharp.Refactorings
                                 cancellationToken),
                             RefactoringIdentifiers.FormatInitializer);
                     }
-                    else if (expressions.All(expression => expression.IsSingleLine())
+                    else if (expressions.All(expression => expression.IsSingleLine(cancellationToken: context.CancellationToken))
                         && initializer.DescendantTrivia(initializer.Span).All(f => f.IsWhitespaceOrEndOfLineTrivia()))
                     {
                         context.RegisterRefactoring(

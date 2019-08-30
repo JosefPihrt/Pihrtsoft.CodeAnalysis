@@ -67,7 +67,7 @@ namespace Roslynator.CSharp.Analysis
             if (closeBrace.IsMissing)
                 return;
 
-            if (declaration.SyntaxTree.GetLineCount(TextSpan.FromBounds(openBrace.SpanStart, closeBrace.Span.End)) != 1)
+            if (declaration.SyntaxTree.GetLineCount(TextSpan.FromBounds(openBrace.SpanStart, closeBrace.Span.End), context.CancellationToken) != 1)
                 return;
 
             if (!openBrace.TrailingTrivia.IsEmptyOrWhitespace())

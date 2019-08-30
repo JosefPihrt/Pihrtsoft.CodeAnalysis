@@ -438,7 +438,7 @@ namespace Roslynator.CSharp.Analysis
             if (brace.IsMissing)
                 return;
 
-            if ((node.GetSpanStartLine() - brace.GetSpanEndLine()) <= 1)
+            if ((node.GetSpanStartLine(context.CancellationToken) - brace.GetSpanEndLine(context.CancellationToken)) <= 1)
                 return;
 
             TextSpan? span = GetEmptyLineSpan(node.GetLeadingTrivia(), isEnd: false);
@@ -459,9 +459,9 @@ namespace Roslynator.CSharp.Analysis
             if (brace.IsMissing)
                 return;
 
-            int braceLine = brace.GetSpanStartLine();
+            int braceLine = brace.GetSpanStartLine(context.CancellationToken);
 
-            if (braceLine - node.GetSpanEndLine() <= 1)
+            if (braceLine - node.GetSpanEndLine(context.CancellationToken) <= 1)
                 return;
 
             TextSpan? span = GetEmptyLineSpan(brace.LeadingTrivia, isEnd: true);
@@ -490,7 +490,7 @@ namespace Roslynator.CSharp.Analysis
 
             SyntaxTree tree = context.Node.SyntaxTree;
 
-            if (tree.GetLineCount(TextSpan.FromBounds(openBrace.SpanStart, closeBrace.Span.End)) <= 2)
+            if (tree.GetLineCount(TextSpan.FromBounds(openBrace.SpanStart, closeBrace.Span.End), context.CancellationToken) <= 2)
                 return;
 
             TextSpan? span = GetEmptyLineSpan(closeBrace.LeadingTrivia, isEnd: true);

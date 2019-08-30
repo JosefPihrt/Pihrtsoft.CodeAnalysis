@@ -95,7 +95,7 @@ namespace Roslynator.CSharp.Analysis
             SyntaxToken elseKeyword = elseClause.ElseKeyword;
 
             if (statement?.IsKind(SyntaxKind.Block, SyntaxKind.IfStatement) == false
-                && elseClause.SyntaxTree.IsMultiLineSpan(TextSpan.FromBounds(elseKeyword.SpanStart, statement.SpanStart)))
+                && elseClause.SyntaxTree.IsMultiLineSpan(TextSpan.FromBounds(elseKeyword.SpanStart, statement.SpanStart), context.CancellationToken))
             {
                 IfStatementSyntax topmostIf = elseClause.GetTopmostIf();
 
@@ -116,7 +116,7 @@ namespace Roslynator.CSharp.Analysis
             if (statement?.IsKind(SyntaxKind.Block, SyntaxKind.EmptyStatement) != false)
                 return;
 
-            if (!containingStatement.SyntaxTree.IsMultiLineSpan(TextSpan.FromBounds(token.SpanStart, statement.SpanStart)))
+            if (!containingStatement.SyntaxTree.IsMultiLineSpan(TextSpan.FromBounds(token.SpanStart, statement.SpanStart), context.CancellationToken))
                 return;
 
             SyntaxNode parent = containingStatement.Parent;
@@ -133,7 +133,7 @@ namespace Roslynator.CSharp.Analysis
 
             if (containingStatement
                 .SyntaxTree
-                .GetLineCount(TextSpan.FromBounds(statement.Span.End, statements[index + 1].SpanStart)) > 2)
+                .GetLineCount(TextSpan.FromBounds(statement.Span.End, statements[index + 1].SpanStart), context.CancellationToken) > 2)
             {
                 return;
             }

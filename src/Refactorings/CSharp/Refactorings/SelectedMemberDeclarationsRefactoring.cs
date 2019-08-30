@@ -68,7 +68,7 @@ namespace Roslynator.CSharp.Refactorings
                             ChangeAccessibilityRefactoring.GetTitle(accessibility),
                             async cancellationToken =>
                             {
-                                SemanticModel semanticModel = await context.Document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
+                                SemanticModel semanticModel = await context.GetSemanticModelAsync().ConfigureAwait(false);
                                 return await ChangeAccessibilityRefactoring.RefactorAsync(context.Document.Solution(), selectedMembers, accessibility, semanticModel, cancellationToken).ConfigureAwait(false);
                             },
                             _accessiblityIdentifierMap[accessibility]);

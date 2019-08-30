@@ -223,15 +223,15 @@ namespace Roslynator.CSharp.Analysis
             if (index != -1
                 && index < statements.Count - 1)
             {
-                int startLine = openBrace.GetSpanStartLine();
+                int startLine = openBrace.GetSpanStartLine(context.CancellationToken);
 
-                int endLine = closeBrace.GetSpanEndLine();
+                int endLine = closeBrace.GetSpanEndLine(context.CancellationToken);
 
                 if (startLine < endLine)
                 {
                     StatementSyntax nextStatement = statements[index + 1];
 
-                    if (nextStatement.GetSpanStartLine() - endLine == 1)
+                    if (nextStatement.GetSpanStartLine(context.CancellationToken) - endLine == 1)
                     {
                         SyntaxTrivia trivia = closeBrace
                             .TrailingTrivia

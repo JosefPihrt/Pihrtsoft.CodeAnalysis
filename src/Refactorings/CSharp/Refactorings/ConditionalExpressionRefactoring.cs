@@ -19,7 +19,7 @@ namespace Roslynator.CSharp.Refactorings
             {
                 if (context.IsRefactoringEnabled(RefactoringIdentifiers.FormatConditionalExpression))
                 {
-                    if (conditionalExpression.IsSingleLine())
+                    if (conditionalExpression.IsSingleLine(cancellationToken: context.CancellationToken))
                     {
                         context.RegisterRefactoring(
                             "Format ?: on separate lines",

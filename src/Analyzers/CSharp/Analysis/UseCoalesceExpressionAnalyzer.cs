@@ -71,7 +71,7 @@ namespace Roslynator.CSharp.Analysis
             if (!CSharpFactory.AreEquivalent(assignmentInfo.Left, nullCheck.Expression))
                 return;
 
-            if (!assignmentInfo.Right.IsSingleLine())
+            if (!assignmentInfo.Right.IsSingleLine(cancellationToken: context.CancellationToken))
                 return;
 
             int index = statements.IndexOf(ifStatement);

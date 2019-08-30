@@ -62,7 +62,7 @@ namespace Roslynator.CSharp.Analysis
             SyntaxList<StatementSyntax> statements = block.Statements;
 
             if (statements.Count == 1
-                && block.IsSingleLine())
+                && block.IsSingleLine(cancellationToken: context.CancellationToken))
             {
                 StatementSyntax statement = statements[0];
 

@@ -173,7 +173,7 @@ namespace Roslynator.CSharp.Analysis
                 ? UseExpressionBodiedMemberAnalysis.GetReturnExpression(body)
                 : UseExpressionBodiedMemberAnalysis.GetExpression(body);
 
-            if (expression?.IsSingleLine() != true)
+            if (expression?.IsSingleLine(cancellationToken: context.CancellationToken) != true)
                 return;
 
             if (isGetter
@@ -197,7 +197,7 @@ namespace Roslynator.CSharp.Analysis
         private static void AnalyzeExpression(SyntaxNodeAnalysisContext context, BlockSyntax block, ExpressionSyntax expression)
         {
             if (block.DescendantTrivia().All(f => f.IsWhitespaceOrEndOfLineTrivia())
-                && expression.IsSingleLine())
+                && expression.IsSingleLine(cancellationToken: context.CancellationToken))
             {
                 ReportDiagnostic(context, block, expression);
             }

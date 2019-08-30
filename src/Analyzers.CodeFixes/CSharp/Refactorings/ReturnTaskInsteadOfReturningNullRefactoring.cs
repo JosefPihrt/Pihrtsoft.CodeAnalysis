@@ -24,7 +24,7 @@ namespace Roslynator.CSharp.Refactorings
 
             int position = conditionalAccess.SpanStart;
 
-            string localName = NameGenerator.Default.EnsureUniqueLocalName(DefaultNames.Variable, semanticModel, position);
+            string localName = NameGenerator.Default.EnsureUniqueLocalName(DefaultNames.Variable, semanticModel, position, cancellationToken: cancellationToken);
 
             ITypeSymbol typeSymbol = semanticModel.GetTypeSymbol(expression, cancellationToken);
 

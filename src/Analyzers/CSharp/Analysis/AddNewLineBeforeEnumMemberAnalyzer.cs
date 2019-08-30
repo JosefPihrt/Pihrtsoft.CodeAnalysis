@@ -37,11 +37,11 @@ namespace Roslynator.CSharp.Analysis
             if (members.Count <= 1)
                 return;
 
-            int previousIndex = members[0].GetSpanStartLine();
+            int previousIndex = members[0].GetSpanStartLine(context.CancellationToken);
 
             for (int i = 1; i < members.Count; i++)
             {
-                if (members[i].GetSpanStartLine() == previousIndex)
+                if (members[i].GetSpanStartLine(context.CancellationToken) == previousIndex)
                 {
                     TextSpan span = TextSpan.FromBounds(
                         members[0].SpanStart,
@@ -54,7 +54,7 @@ namespace Roslynator.CSharp.Analysis
                     return;
                 }
 
-                previousIndex = members[i].GetSpanEndLine();
+                previousIndex = members[i].GetSpanEndLine(context.CancellationToken);
             }
         }
     }

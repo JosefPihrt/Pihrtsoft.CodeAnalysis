@@ -40,7 +40,7 @@ namespace Roslynator.CSharp.Refactorings
                 if (context.IsRefactoringEnabled(RefactoringIdentifiers.FormatParameterList)
                     && (context.Span.IsEmptyAndContainedInSpanOrBetweenSpans(parameterList)))
                 {
-                    if (parameterList.IsSingleLine())
+                    if (parameterList.IsSingleLine(cancellationToken: context.CancellationToken))
                     {
                         if (parameters.Count > 1)
                         {

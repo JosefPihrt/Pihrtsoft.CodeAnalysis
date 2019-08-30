@@ -518,7 +518,7 @@ namespace Roslynator.CSharp.CodeFixes
                             if (fieldSymbol.DeclaredAccessibility != Accessibility.Private)
                                 return;
 
-                            if (!(fieldSymbol.GetSyntax().Parent.Parent is FieldDeclarationSyntax fieldDeclaration))
+                            if (!(fieldSymbol.GetSyntax(context.CancellationToken).Parent.Parent is FieldDeclarationSyntax fieldDeclaration))
                                 return;
 
                             TypeDeclarationSyntax containingTypeDeclaration = fieldDeclaration.FirstAncestor<TypeDeclarationSyntax>();

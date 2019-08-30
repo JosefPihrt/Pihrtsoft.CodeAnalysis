@@ -44,7 +44,7 @@ namespace Roslynator.CSharp.Analysis
 
             StatementSyntax statement = statements[0];
 
-            if (!switchSection.SyntaxTree.IsSingleLineSpan(TextSpan.FromBounds(labels.Last().Span.End, statement.SpanStart)))
+            if (!switchSection.SyntaxTree.IsSingleLineSpan(TextSpan.FromBounds(labels.Last().Span.End, statement.SpanStart), context.CancellationToken))
                 return;
 
             DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.AddNewLineAfterSwitchLabel, statement);

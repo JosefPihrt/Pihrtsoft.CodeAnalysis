@@ -46,10 +46,10 @@ namespace Roslynator.CSharp.Analysis
             if (initializer.SpanContainsDirectives())
                 return;
 
-            if (!expression.IsSingleLine())
+            if (!expression.IsSingleLine(cancellationToken: context.CancellationToken))
                 return;
 
-            if (initializer.IsSingleLine())
+            if (initializer.IsSingleLine(cancellationToken: context.CancellationToken))
                 return;
 
             if (!TriviaWalker.ContainsOnlyWhitespaceOrEndOfLineTrivia(initializer, TextSpan.FromBounds(initializer.FullSpan.Start, initializer.Span.End)))

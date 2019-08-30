@@ -46,7 +46,7 @@ namespace Roslynator.CSharp.Analysis
             SyntaxToken openBrace = block.OpenBraceToken;
             SyntaxToken closeBrace = block.CloseBraceToken;
 
-            if (block.SyntaxTree.GetLineCount(TextSpan.FromBounds(openBrace.SpanStart, closeBrace.Span.End)) != 1)
+            if (block.SyntaxTree.GetLineCount(TextSpan.FromBounds(openBrace.SpanStart, closeBrace.Span.End), context.CancellationToken) != 1)
                 return;
 
             if (!openBrace.TrailingTrivia.IsEmptyOrWhitespace())

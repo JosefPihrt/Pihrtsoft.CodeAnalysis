@@ -281,7 +281,7 @@ namespace Roslynator.CSharp
 
                 foreach (DirectiveTriviaSyntax directive in directives)
                 {
-                    int startLine = directive.GetSpanStartLine();
+                    int startLine = directive.GetSpanStartLine(cancellationToken);
 
                     yield return new TextChange(lines[startLine].SpanIncludingLineBreak, "");
                 }
@@ -375,8 +375,8 @@ namespace Roslynator.CSharp
 
             SourceText sourceText = await document.GetTextAsync(cancellationToken).ConfigureAwait(false);
 
-            int startLine = region.Directive.GetSpanStartLine();
-            int endLine = region.EndDirective.GetSpanEndLine();
+            int startLine = region.Directive.GetSpanStartLine(cancellationToken);
+            int endLine = region.EndDirective.GetSpanEndLine(cancellationToken);
 
             TextLineCollection lines = sourceText.Lines;
 

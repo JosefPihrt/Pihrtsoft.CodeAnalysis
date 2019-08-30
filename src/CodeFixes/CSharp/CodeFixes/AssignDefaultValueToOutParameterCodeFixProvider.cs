@@ -72,7 +72,7 @@ namespace Roslynator.CSharp.CodeFixes
                 return;
             }
 
-            SemanticModel semanticModel = await context.Document.GetSemanticModelAsync().ConfigureAwait(false);
+            SemanticModel semanticModel = await context.GetSemanticModelAsync().ConfigureAwait(false);
 
             DataFlowAnalysis dataFlowAnalysis = AnalyzeDataFlow(bodyOrExpressionBody, semanticModel);
 
@@ -80,7 +80,7 @@ namespace Roslynator.CSharp.CodeFixes
             if (!dataFlowAnalysis.Succeeded)
                 return;
 
-            var methodSymbol = (IMethodSymbol)semanticModel.GetDeclaredSymbol(node);
+            var methodSymbol = (IMethodSymbol)semanticModel.GetDeclaredSymbol(node, context.CancellationToken);
 
             ImmutableArray<IParameterSymbol> parameters = methodSymbol.Parameters;
 

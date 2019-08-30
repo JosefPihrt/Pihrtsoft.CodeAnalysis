@@ -19,7 +19,7 @@ namespace Roslynator.CSharp.Refactorings
             if (!IsFormattableKind(binaryExpression.Kind()))
                 return;
 
-            if (binaryExpression.IsSingleLine())
+            if (binaryExpression.IsSingleLine(cancellationToken: context.CancellationToken))
             {
                 context.RegisterRefactoring(
                     "Format binary expression on multiple lines",

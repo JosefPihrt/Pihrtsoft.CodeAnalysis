@@ -64,7 +64,7 @@ namespace Roslynator.CSharp.Analysis
                     XmlElementEndTagSyntax endTag = summaryElement.EndTag;
 
                     if (endTag?.IsMissing == false
-                        && startTag.GetSpanEndLine() < endTag.GetSpanStartLine())
+                        && startTag.GetSpanEndLine(context.CancellationToken) < endTag.GetSpanStartLine(context.CancellationToken))
                     {
                         Match match = _regex.Match(
                             summaryElement.ToString(),

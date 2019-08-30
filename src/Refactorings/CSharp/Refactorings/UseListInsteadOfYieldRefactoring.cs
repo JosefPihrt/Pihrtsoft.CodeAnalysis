@@ -59,7 +59,7 @@ namespace Roslynator.CSharp.Refactorings
 
             int position = statements[0].SpanStart;
 
-            string name = NameGenerator.Default.EnsureUniqueLocalName("items", semanticModel, position);
+            string name = NameGenerator.Default.EnsureUniqueLocalName("items", semanticModel, position, cancellationToken: cancellationToken);
 
             IdentifierNameSyntax identifierName = IdentifierName(name);
 

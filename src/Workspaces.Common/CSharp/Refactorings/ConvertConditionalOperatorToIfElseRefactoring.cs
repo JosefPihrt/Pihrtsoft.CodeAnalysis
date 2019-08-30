@@ -174,7 +174,7 @@ namespace Roslynator.CSharp.Refactorings
             {
                 newLocalDeclaration = newLocalDeclaration.ReplaceNode(
                     type,
-                    semanticModel.GetTypeSymbol(conditionalExpression)
+                    semanticModel.GetTypeSymbol(conditionalExpression, cancellationToken)
                         .ToMinimalTypeSyntax(semanticModel, type.SpanStart)
                         .WithTriviaFrom(type));
             }

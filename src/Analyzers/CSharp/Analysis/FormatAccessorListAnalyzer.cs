@@ -37,7 +37,7 @@ namespace Roslynator.CSharp.Analysis
 
             if (accessors.Any(f => f.BodyOrExpressionBody() != null))
             {
-                if (accessorList.IsSingleLine(includeExteriorTrivia: false))
+                if (accessorList.IsSingleLine(includeExteriorTrivia: false, cancellationToken: context.CancellationToken))
                 {
                     ReportDiagnostic(context, accessorList);
                 }
@@ -59,7 +59,7 @@ namespace Roslynator.CSharp.Analysis
                     case SyntaxKind.PropertyDeclaration:
                         {
                             if (accessors.All(f => !f.AttributeLists.Any())
-                                && !accessorList.IsSingleLine(includeExteriorTrivia: false))
+                                && !accessorList.IsSingleLine(includeExteriorTrivia: false, cancellationToken: context.CancellationToken))
                             {
                                 var propertyDeclaration = (PropertyDeclarationSyntax)parent;
                                 SyntaxToken identifier = propertyDeclaration.Identifier;
@@ -87,7 +87,7 @@ namespace Roslynator.CSharp.Analysis
                     case SyntaxKind.IndexerDeclaration:
                         {
                             if (accessors.All(f => !f.AttributeLists.Any())
-                                && !accessorList.IsSingleLine(includeExteriorTrivia: false))
+                                && !accessorList.IsSingleLine(includeExteriorTrivia: false, cancellationToken: context.CancellationToken))
                             {
                                 var indexerDeclaration = (IndexerDeclarationSyntax)parent;
 

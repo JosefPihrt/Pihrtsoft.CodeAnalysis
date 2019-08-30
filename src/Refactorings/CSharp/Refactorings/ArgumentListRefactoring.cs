@@ -29,7 +29,7 @@ namespace Roslynator.CSharp.Refactorings
             if (context.IsRefactoringEnabled(RefactoringIdentifiers.FormatArgumentList)
                 && (context.Span.IsEmptyAndContainedInSpanOrBetweenSpans(argumentList)))
             {
-                if (argumentList.IsSingleLine())
+                if (argumentList.IsSingleLine(cancellationToken: context.CancellationToken))
                 {
                     if (arguments.Count > 1)
                     {

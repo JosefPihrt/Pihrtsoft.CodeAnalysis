@@ -98,7 +98,7 @@ namespace Roslynator.CSharp.Analysis
         {
             if (!token.IsMissing
                 && statement?.IsKind(SyntaxKind.Block, SyntaxKind.EmptyStatement) == false
-                && statement.SyntaxTree.IsSingleLineSpan(TextSpan.FromBounds(token.SpanStart, statement.SpanStart)))
+                && statement.SyntaxTree.IsSingleLineSpan(TextSpan.FromBounds(token.SpanStart, statement.SpanStart), context.CancellationToken))
             {
                 DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.AddNewLineBeforeEmbeddedStatement, statement);
             }
@@ -111,7 +111,7 @@ namespace Roslynator.CSharp.Analysis
             StatementSyntax statement = elseClause.Statement;
 
             if (statement?.IsKind(SyntaxKind.Block, SyntaxKind.IfStatement) == false
-                && elseClause.SyntaxTree.IsSingleLineSpan(TextSpan.FromBounds(elseClause.ElseKeyword.SpanStart, statement.SpanStart)))
+                && elseClause.SyntaxTree.IsSingleLineSpan(TextSpan.FromBounds(elseClause.ElseKeyword.SpanStart, statement.SpanStart), context.CancellationToken))
             {
                 DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.AddNewLineBeforeEmbeddedStatement, statement);
             }

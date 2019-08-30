@@ -71,8 +71,8 @@ namespace Roslynator.CSharp.Refactorings
                 : null;
 
             ISymbol memberSymbol = (memberDeclaration is EventFieldDeclarationSyntax eventFieldDeclaration)
-                ? semanticModel.GetDeclaredSymbol(eventFieldDeclaration.Declaration.Variables[0])
-                : semanticModel.GetDeclaredSymbol(memberDeclaration);
+                ? semanticModel.GetDeclaredSymbol(eventFieldDeclaration.Declaration.Variables[0], context.CancellationToken)
+                : semanticModel.GetDeclaredSymbol(memberDeclaration, context.CancellationToken);
 
             if (memberSymbol == null)
                 return;

@@ -18,9 +18,9 @@ namespace Roslynator.CSharp.Refactorings
                     && !body.OpenBraceToken.IsMissing
                     && !body.CloseBraceToken.IsMissing)
                 {
-                    if (body.IsSingleLine())
+                    if (body.IsSingleLine(cancellationToken: context.CancellationToken))
                     {
-                        if (accessor.Parent?.IsMultiLine() == true)
+                        if (accessor.Parent?.IsMultiLine(cancellationToken: context.CancellationToken) == true)
                         {
                             context.RegisterRefactoring(
                                 "Format braces on separate lines",
@@ -28,7 +28,7 @@ namespace Roslynator.CSharp.Refactorings
                                 RefactoringIdentifiers.FormatAccessorBraces);
                         }
                     }
-                    else if (body.Statements.SingleOrDefault(shouldThrow: false)?.IsSingleLine() == true
+                    else if (body.Statements.SingleOrDefault(shouldThrow: false)?.IsSingleLine(cancellationToken: context.CancellationToken) == true
                         && accessor.DescendantTrivia(accessor.Span).All(f => f.IsWhitespaceOrEndOfLineTrivia()))
                     {
                         context.RegisterRefactoring(

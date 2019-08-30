@@ -199,7 +199,7 @@ namespace Roslynator.CSharp
             ParameterListSyntax parameterList,
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            ParameterListSyntax newNode = ToMultiLine(parameterList);
+            ParameterListSyntax newNode = ToMultiLine(parameterList, cancellationToken);
 
             return document.ReplaceNodeAsync(parameterList, newNode, cancellationToken);
         }
@@ -274,7 +274,7 @@ namespace Roslynator.CSharp
             ArgumentListSyntax argumentList,
             CancellationToken cancellationToken = default(CancellationToken))
         {
-            ArgumentListSyntax newNode = ToMultiLine(argumentList);
+            ArgumentListSyntax newNode = ToMultiLine(argumentList, cancellationToken);
 
             return document.ReplaceNodeAsync(argumentList, newNode, cancellationToken);
         }

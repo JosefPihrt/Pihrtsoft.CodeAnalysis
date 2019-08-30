@@ -39,7 +39,7 @@ namespace Roslynator.CSharp.Analysis
 
             ExpressionSyntax expression = arrowExpressionClause.Expression;
 
-            if (expression?.IsMultiLine() == true)
+            if (expression?.IsMultiLine(cancellationToken: context.CancellationToken) == true)
                 DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.AvoidMultilineExpressionBody, expression);
         }
     }

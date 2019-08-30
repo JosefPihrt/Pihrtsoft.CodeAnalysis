@@ -33,7 +33,7 @@ namespace Roslynator.CSharp.Refactorings
             if (!IsFormattable(expression, semanticModel, context.CancellationToken))
                 return;
 
-            if (expression.IsSingleLine(includeExteriorTrivia: false))
+            if (expression.IsSingleLine(includeExteriorTrivia: false, cancellationToken: context.CancellationToken))
             {
                 context.RegisterRefactoring(
                     "Format expression chain on multiple lines",

@@ -54,9 +54,9 @@ namespace Roslynator.CSharp.Analysis
             if (whileKeyword.IsMissing)
                 return;
 
-            int closeBraceLine = closeBrace.GetSpanEndLine();
+            int closeBraceLine = closeBrace.GetSpanEndLine(context.CancellationToken);
 
-            if (closeBraceLine != whileKeyword.GetSpanStartLine())
+            if (closeBraceLine != whileKeyword.GetSpanStartLine(context.CancellationToken))
                 return;
 
             int line = lastStatement.GetSpanEndLine(context.CancellationToken);

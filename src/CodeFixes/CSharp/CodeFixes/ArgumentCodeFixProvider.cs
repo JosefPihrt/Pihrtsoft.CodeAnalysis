@@ -183,7 +183,7 @@ namespace Roslynator.CSharp.CodeFixes
                                 {
                                     SemanticModel semanticModel = await context.GetSemanticModelAsync().ConfigureAwait(false);
 
-                                    ITypeSymbol typeSymbol = semanticModel.GetTypeSymbol(expression);
+                                    ITypeSymbol typeSymbol = semanticModel.GetTypeSymbol(expression, context.CancellationToken);
 
                                     if (typeSymbol?.IsErrorType() == false)
                                     {
@@ -226,7 +226,7 @@ namespace Roslynator.CSharp.CodeFixes
                             if (fieldSymbol.DeclaredAccessibility != Accessibility.Private)
                                 return;
 
-                            if (!(fieldSymbol.GetSyntax().Parent.Parent is FieldDeclarationSyntax fieldDeclaration))
+                            if (!(fieldSymbol.GetSyntax(context.CancellationToken).Parent.Parent is FieldDeclarationSyntax fieldDeclaration))
                                 return;
 
                             TypeDeclarationSyntax containingTypeDeclaration = fieldDeclaration.FirstAncestor<TypeDeclarationSyntax>();
