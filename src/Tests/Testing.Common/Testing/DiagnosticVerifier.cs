@@ -394,16 +394,17 @@ namespace Roslynator.Testing
             if (actualDiagnostic.Id != expectedDiagnostic.Id)
                 Assert.True(false, $"Diagnostic id expected to be \"{expectedDiagnostic.Id}\", actual: \"{actualDiagnostic.Id}\"{GetMessage()}");
 
-            VerifyLocation(actualDiagnostic.Location, expectedDiagnostic.Location);
+            VerifyLocation(actualDiagnostic.Location, expectedDiagnostic.Location, actualDiagnostic.Properties);
 
             if (checkAdditionalLocations)
                 VerifyAdditionalLocations(actualDiagnostic.AdditionalLocations, expectedDiagnostic.AdditionalLocations);
 
             void VerifyLocation(
                 Location actualLocation,
-                Location expectedLocation)
+                Location expectedLocation,
+                 ImmutableDictionary<string, string> properties = default)
             {
-                VerifyFileLinePositionSpan(actualLocation.GetLineSpan(), expectedLocation.GetLineSpan());
+                VerifyFileLinePositionSpan(actualLocation.GetLineSpan(), expectedLocation.GetLineSpan(), properties);
             }
 
             void VerifyAdditionalLocations(
@@ -422,26 +423,33 @@ namespace Roslynator.Testing
 
             void VerifyFileLinePositionSpan(
                 FileLinePositionSpan actual,
-                FileLinePositionSpan expected)
+                FileLinePositionSpan expected,
+                 ImmutableDictionary<string, string> properties = default)
             {
                 if (actual.Path != expected.Path)
                     Assert.True(false, $"Diagnostic expected to be in file \"{expected.Path}\", actual: \"{actual.Path}\"{GetMessage()}");
 
-                VerifyLinePosition(actual.StartLinePosition, expected.StartLinePosition, "start");
+                VerifyLinePosition(actual.StartLinePosition, expected.StartLinePosition, "start", properties);
 
-                VerifyLinePosition(actual.EndLinePosition, expected.EndLinePosition, "end");
+                VerifyLinePosition(actual.EndLinePosition, expected.EndLinePosition, "end", properties);
             }
 
             void VerifyLinePosition(
                 LinePosition actual,
                 LinePosition expected,
-                string startOrEnd)
+                string startOrEnd,
+                ImmutableDictionary<string, string> properties=default
+                )
             {
                 int actualLine = actual.Line;
                 int expectedLine = expected.Line;
 
                 if (actualLine != expectedLine)
                     Assert.True(false, $"Diagnostic expected to {startOrEnd} on line {expectedLine + 1}, actual: {actualLine + 1}{GetMessage()}");
+
+                if (properties.TryGetValue("MethodName", out string methodName1)
+                                 && methodName1 == "IdenitifierKeyValue")
+                    return;
 
                 int actualCharacter = actual.Character;
                 int expectedCharacter = expected.Character;

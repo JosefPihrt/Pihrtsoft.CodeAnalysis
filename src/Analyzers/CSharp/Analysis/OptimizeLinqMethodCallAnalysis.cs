@@ -115,6 +115,47 @@ namespace Roslynator.CSharp.Analysis
                 "Select",
                 Properties.SimplifyLinqMethodChain);
         }
+        // items.First().Key/Value() >>> items.Keys/Values.First()
+        public static void AnalyzeMethodForKeysOrValue(
+            SyntaxNodeAnalysisContext context,
+            in SimpleMemberInvocationExpressionInfo invocationInfo)
+        {
+            InvocationExpressionSyntax invocationExpression = invocationInfo.InvocationExpression;
+
+            ExpressionSyntax expression = invocationExpression.WalkUpParentheses();
+            if (!expression.IsParentKind(SyntaxKind.SimpleMemberAccessExpression))
+            {
+                return;
+            }
+            expression = (ExpressionSyntax)expression.Parent;
+
+            expression = expression.WalkUpParentheses();
+
+            IdentifierNameSyntax Value = (IdentifierNameSyntax)((MemberAccessExpressionSyntax)expression).Name;
+            if (Value.IsKind(SyntaxKind.IdentifierName))
+            {
+                if (!(Value.Identifier.Text == "Key" || Value.Identifier.Text == "Value"))
+                {
+                    return;
+                }
+            }
+
+            SemanticModel semanticModel = context.SemanticModel;
+            CancellationToken cancellationToken = context.CancellationToken;
+
+            ExtensionMethodSymbolInfo extensionMethodSymbolInfo = semanticModel.GetExtensionMethodInfo(invocationExpression, cancellationToken);
+
+            if (extensionMethodSymbolInfo.Symbol == null)
+                return;
+
+            if (!extensionMethodSymbolInfo.IsReduced)
+                return;
+
+
+            TextSpan span = TextSpan.FromBounds(invocationInfo.OperatorToken.SpanStart, expression.Span.End);
+            Report(context, invocationInfo.Name, span, checkDirectives: true, properties: Properties.IdenitifierKeyValue);
+
+        }
 
         // list.Select(selector).ToList() >>> list.ConvertAll(selector)
         public static void AnalyzeSelectAndToList(
@@ -895,6 +936,7 @@ namespace Roslynator.CSharp.Analysis
             }
 
             public static ImmutableDictionary<string, string> Peek { get; } = ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string>("MethodName", "Peek") });
+            public static ImmutableDictionary<string, string> IdenitifierKeyValue { get; } = ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string>("MethodName", "IdenitifierKeyValue") });
 
             public static ImmutableDictionary<string, string> SimplifyLinqMethodChain { get; } = ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string>("Name", "SimplifyLinqMethodChain") });
 

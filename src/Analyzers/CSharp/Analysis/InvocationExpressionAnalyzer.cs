@@ -243,12 +243,27 @@ namespace Roslynator.CSharp.Analysis
                                         DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UseElementAccess, Location.Create(invocation.SyntaxTree, TextSpan.FromBounds(invocationInfo.Name.SpanStart, invocationInfo.ArgumentList.Span.End)));
                                     }
 
+                                    if (!context.IsAnalyzerSuppressed(DiagnosticDescriptors.OptimizeLinqMethodCall))
+                                        OptimizeLinqMethodCallAnalysis.AnalyzeMethodForKeysOrValue(context, invocationInfo);
+
                                     break;
                                 }
+                            case "ElementAtOrDefault":
+                            case "Last":
+                            case "First":
+                            case "LastOrDefault":
+                            case "Single":
+                            case "SingleOrDefault":
+                                if (!context.IsAnalyzerSuppressed(DiagnosticDescriptors.OptimizeLinqMethodCall))
+                                    OptimizeLinqMethodCallAnalysis.AnalyzeMethodForKeysOrValue(context, invocationInfo);
+                                break;
                             case "FirstOrDefault":
                                 {
                                     if (!context.IsAnalyzerSuppressed(DiagnosticDescriptors.OptimizeLinqMethodCall))
+                                    {
                                         OptimizeLinqMethodCallAnalysis.AnalyzeFirstOrDefault(context, invocationInfo);
+                                        OptimizeLinqMethodCallAnalysis.AnalyzeMethodForKeysOrValue(context, invocationInfo);
+                                    }
 
                                     break;
                                 }

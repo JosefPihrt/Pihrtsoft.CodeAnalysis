@@ -50,14 +50,39 @@ namespace Roslynator.CSharp.CodeFixes
                     SyntaxKind.EqualsExpression,
                     SyntaxKind.NotEqualsExpression,
                     SyntaxKind.IsPatternExpression,
-                    SyntaxKind.ConditionalExpression)))
+                    SyntaxKind.ConditionalExpression,
+                    SyntaxKind.SimpleMemberAccessExpression
+                    )))
             {
+                
                 return;
             }
 
             Diagnostic diagnostic = context.Diagnostics[0];
             Document document = context.Document;
             CancellationToken cancellationToken = context.CancellationToken;
+
+
+
+            if (node.IsKind(SyntaxKind.SimpleMemberAccessExpression) && !(diagnostic.Properties.TryGetValue("MethodName", out string methodName1)
+                                && methodName1 == "IdenitifierKeyValue"))
+            {
+                if (!TryFindFirstAncestorOrSelf(
+                root,
+                context.Span,
+                out node,
+                predicate: f => f.IsKind(
+                    SyntaxKind.InvocationExpression,
+                    SyntaxKind.EqualsExpression,
+                    SyntaxKind.NotEqualsExpression,
+                    SyntaxKind.IsPatternExpression,
+                    SyntaxKind.ConditionalExpression)))
+                {
+
+                    return;
+                }
+
+            }
 
             SyntaxKind kind = node.Kind();
 
@@ -283,6 +308,21 @@ namespace Roslynator.CSharp.CodeFixes
 
                 context.RegisterCodeFix(codeAction, diagnostic);
             }
+            else if (kind == SyntaxKind.SimpleMemberAccessExpression)
+            {
+                var invocation = (MemberAccessExpressionSyntax)node;
+
+                if (diagnostic.Properties.TryGetValue("MethodName", out methodName1)
+                                && methodName1 == "IdenitifierKeyValue")
+                {
+                    CodeAction codeAction = CodeAction.Create(
+                    "Call 'Method' after the identifier Keys/Values",
+                  ct => CallMethodAndIndentifierInReverseOrderAsync(document, invocation, ct),
+                    GetEquivalenceKey(diagnostic, "CallMethodAfterIdentifiers"));
+
+                    context.RegisterCodeFix(codeAction, diagnostic);
+                }
+            }
         }
 
         private static Task<Document> CallOfTypeInsteadOfWhereAndCastAsync(
@@ -450,7 +490,6 @@ namespace Roslynator.CSharp.CodeFixes
                 return document.ReplaceNodeAsync(invocationInfo.Name, newName, cancellationToken);
             }
         }
-
         public static Task<Document> UseCountOrLengthPropertyInsteadOfCountMethodAsync(
             Document document,
             InvocationExpressionSyntax invocation,
@@ -595,6 +634,33 @@ namespace Roslynator.CSharp.CodeFixes
             var textChange2 = new TextChange(span2, invocationInfo.InvocationExpression.ToString(span1));
 
             return document.WithTextChangesAsync(new TextChange[] { textChange1, textChange2 }, cancellationToken);
+        }
+
+        private static Task<Document> CallMethodAndIndentifierInReverseOrderAsync(
+           Document document,
+           in MemberAccessExpressionSyntax invocationInfo,
+           CancellationToken cancellationToken)
+        {
+           
+            IdentifierNameSyntax Value = (IdentifierNameSyntax)(invocationInfo).Name;
+
+            string newText = "." + Value.Identifier.Text + "s";
+            SimpleMemberInvocationExpressionInfo expression = SimpleMemberInvocationExpressionInfo(invocationInfo.Expression);
+            TextSpan span1 = TextSpan.FromBounds(expression.Expression.FullSpan.End, expression.ArgumentList.Span.End);
+
+            TextSpan span2 = new TextSpan(span1.Start, newText.Length);
+
+            TextSpan span3 = TextSpan.FromBounds(span1.Start + newText.Length, span1.End);
+
+
+            var textChange1 = new TextChange(span2, newText);
+
+            var textChange2 = new TextChange(span3, invocationInfo.ToString(span1));
+            var OriginalSpan = TextSpan.FromBounds(span1.Start, invocationInfo.Span.End);
+            var OriginalText = new TextChange(OriginalSpan, (textChange1.NewText + textChange2.NewText));
+
+            return document.WithTextChangesAsync(new TextChange[] { OriginalText }, cancellationToken);
+
         }
 
         private static Task<Document> CallConvertAllInsteadOfSelectAsync(

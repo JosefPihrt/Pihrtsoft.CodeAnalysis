@@ -17,6 +17,236 @@ namespace Roslynator.CSharp.Analysis.Tests
 
         public override CodeFixProvider FixProvider { get; } = new OptimizeLinqMethodCallCodeFixProvider();
 
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.OptimizeLinqMethodCall)]
+        public async Task Test_CallFirstAfterKeys_Dictionary()
+        {
+            await VerifyDiagnosticAndFixAsync(@"
+using System.Collections.Generic;
+using System.Linq;
+
+class C
+{
+    void M()
+    {
+        var items = new Dictionary<int, string>();
+
+        var x = items.[|First(_ => true).Key|];
+    }
+}
+",
+@"
+using System.Collections.Generic;
+using System.Linq;
+
+class C
+{
+    void M()
+    {
+        var items = new Dictionary<int, string>();
+
+        var x = items.Keys.First(_ => true);
+    }
+}
+");
+        }
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.OptimizeLinqMethodCall)]
+        public async Task Test_CallFirstAfterValues_Dictionary()
+        {
+            await VerifyDiagnosticAndFixAsync(@"
+using System.Collections.Generic;
+using System.Linq;
+
+class C
+{
+    void M()
+    {
+        var items = new Dictionary<int, string>();
+
+        var x = items.[|First(_ => true).Value|];
+    }
+}
+",
+@"
+using System.Collections.Generic;
+using System.Linq;
+
+class C
+{
+    void M()
+    {
+        var items = new Dictionary<int, string>();
+
+        var x = items.Values.First(_ => true);
+    }
+}
+");
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.OptimizeLinqMethodCall)]
+        public async Task Test_CallLastAfterValues_Dictionary()
+        {
+            await VerifyDiagnosticAndFixAsync(@"
+using System.Collections.Generic;
+using System.Linq;
+
+class C
+{
+    void M()
+    {
+        var items = new Dictionary<int, string>();
+
+        var x = items.[|Last(_ => true).Value|];
+    }
+}
+",
+@"
+using System.Collections.Generic;
+using System.Linq;
+
+class C
+{
+    void M()
+    {
+        var items = new Dictionary<int, string>();
+
+        var x = items.Values.Last(_ => true);
+    }
+}
+");
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.OptimizeLinqMethodCall)]
+        public async Task Test_CallSingleAfterValues_Dictionary()
+        {
+            await VerifyDiagnosticAndFixAsync(@"
+using System.Collections.Generic;
+using System.Linq;
+
+class C
+{
+    void M()
+    {
+        var items = new Dictionary<int, string>();
+
+        var x = items.[|Single(_ => true).Value|];
+    }
+}
+",
+@"
+using System.Collections.Generic;
+using System.Linq;
+
+class C
+{
+    void M()
+    {
+        var items = new Dictionary<int, string>();
+
+        var x = items.Values.Single(_ => true);
+    }
+}
+");
+        }
+      
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.OptimizeLinqMethodCall)]
+        public async Task Test_CallSingleOrDefaultAfterValues_Dictionary()
+        {
+            await VerifyDiagnosticAndFixAsync(@"
+using System.Collections.Generic;
+using System.Linq;
+
+class C
+{
+    void M()
+    {
+        var items = new Dictionary<int, string>();
+
+        var x = items.[|SingleOrDefault(_ => true).Value|];
+    }
+}
+",
+@"
+using System.Collections.Generic;
+using System.Linq;
+
+class C
+{
+    void M()
+    {
+        var items = new Dictionary<int, string>();
+
+        var x = items.Values.SingleOrDefault(_ => true);
+    }
+}
+");
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.OptimizeLinqMethodCall)]
+        public async Task Test_CallElementAtAfterValues_Dictionary()
+        {
+            await VerifyDiagnosticAndFixAsync(@"
+using System.Collections.Generic;
+using System.Linq;
+
+class C
+{
+    void M()
+    {
+        var items = new Dictionary<int, string>();
+
+        var x = items.[|ElementAt(1).Value|];
+    }
+}
+",
+@"
+using System.Collections.Generic;
+using System.Linq;
+
+class C
+{
+    void M()
+    {
+        var items = new Dictionary<int, string>();
+
+        var x = items.Values.ElementAt(1);
+    }
+}
+");
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.OptimizeLinqMethodCall)]
+        public async Task Test_CallElementAtOrDefaultAfterValues_Dictionary()
+        {
+            await VerifyDiagnosticAndFixAsync(@"
+using System.Collections.Generic;
+using System.Linq;
+
+class C
+{
+    void M()
+    {
+        var items = new Dictionary<int, string>();
+
+        var x = items.[|ElementAtOrDefault(1).Value|];
+    }
+}
+",
+@"
+using System.Collections.Generic;
+using System.Linq;
+
+class C
+{
+    void M()
+    {
+        var items = new Dictionary<int, string>();
+
+        var x = items.Values.ElementAtOrDefault(1);
+    }
+}
+");
+        }
+
         [Theory, Trait(Traits.Analyzer, DiagnosticIdentifiers.OptimizeLinqMethodCall)]
         [InlineData("Where(_ => true).Any()", "Any(_ => true)")]
         [InlineData("Where(_ => true).Count()", "Count(_ => true)")]

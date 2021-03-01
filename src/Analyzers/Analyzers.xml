@@ -1756,6 +1756,9 @@ catch (Exception ex) // [|Id|]
         <After><![CDATA[bool any = items.Any(predicate);]]></After>
       </Sample>
       <Sample>
+        <Before><![CDATA[int any = items.First(selector).Key;]]></Before>
+        <After><![CDATA[int any = items.Keys.First(selector);]]></After>
+      </Sample>
         <Before><![CDATA[int max = items.Select(selector).Max();]]></Before>
         <After><![CDATA[int max = items.Max(selector);]]></After>
       </Sample>
