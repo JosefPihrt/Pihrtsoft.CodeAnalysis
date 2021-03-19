@@ -2503,6 +2503,18 @@ namespace Roslynator.CSharp
                 helpLinkUri:        DiagnosticIdentifiers.ConvertBlockBodyToExpressionBodyOrViceVersa, 
                 customTags:         Array.Empty<string>());
 
+            /// <summary>RCS1016i</summary>
+            public static readonly DiagnosticDescriptor ConvertExpressionBodyToBlockBody = DiagnosticDescriptorFactory.Default.Create(
+                id:                 DiagnosticIdentifiers.ConvertBlockBodyToExpressionBodyOrViceVersa, 
+                title:              "Convert block body to expression-body (or vice versa).", 
+                messageFormat:      "Convert expression-body to block body.", 
+                category:           DiagnosticCategories.Usage, 
+                defaultSeverity:    DiagnosticSeverity.Hidden, 
+                isEnabledByDefault: false, 
+                description:        null, 
+                helpLinkUri:        DiagnosticIdentifiers.ConvertBlockBodyToExpressionBodyOrViceVersa, 
+                customTags:         Array.Empty<string>());
+
             /// <summary>RCS1018i</summary>
             public static readonly DiagnosticDescriptor RemoveAccessibilityModifiers = DiagnosticDescriptorFactory.Default.Create(
                 id:                 DiagnosticIdentifiers.AddAccessibilityModifiersOrViceVersa, 

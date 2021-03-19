@@ -266,7 +266,17 @@ namespace Roslynator.CSharp.Refactorings
                 declaration,
                 expression,
                 semicolon,
-                (e, s) => ExpressionStatement(e, s),
+                (e, s) =>
+                {
+                    if (e is ThrowExpressionSyntax throwExpression)
+                    {
+                        return ThrowStatement(Token(SyntaxKind.ThrowKeyword), throwExpression.Expression, s);
+                    }
+                    else
+                    {
+                        return ExpressionStatement(e, s);
+                    }
+                },
                 increaseCount: increaseCount);
         }
 

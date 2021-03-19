@@ -21,18 +21,29 @@ namespace Roslynator.CSharp.Analysis
         {
             base.Initialize(context);
 
-            context.RegisterCompilationStartAction(startContext =>
-            {
-                if (startContext.IsAnalyzerSuppressed(AnalyzerOptions.UseStringEmptyInsteadOfEmptyStringLiteral))
+            context.RegisterSyntaxNodeAction(
+                c =>
                 {
-                    startContext.RegisterSyntaxNodeAction(f => AnalyzeSimpleMemberAccessExpression(f), SyntaxKind.SimpleMemberAccessExpression);
-                }
-                else
+                    if (!AnalyzerOptions.UseStringEmptyInsteadOfEmptyStringLiteral.IsEnabled(c))
+                        AnalyzeSimpleMemberAccessExpression(c);
+                },
+                SyntaxKind.SimpleMemberAccessExpression);
+
+            context.RegisterSyntaxNodeAction(
+                c =>
                 {
-                    startContext.RegisterSyntaxNodeAction(f => AnalyzeStringLiteralExpression(f), SyntaxKind.StringLiteralExpression);
-                    startContext.RegisterSyntaxNodeAction(f => AnalyzeInterpolatedStringExpression(f), SyntaxKind.InterpolatedStringExpression);
-                }
-            });
+                    if (AnalyzerOptions.UseStringEmptyInsteadOfEmptyStringLiteral.IsEnabled(c))
+                        AnalyzeStringLiteralExpression(c);
+                },
+                SyntaxKind.StringLiteralExpression);
+
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (AnalyzerOptions.UseStringEmptyInsteadOfEmptyStringLiteral.IsEnabled(c))
+                        AnalyzeInterpolatedStringExpression(c);
+                },
+                SyntaxKind.InterpolatedStringExpression);
         }
 
         private static void AnalyzeSimpleMemberAccessExpression(SyntaxNodeAnalysisContext context)

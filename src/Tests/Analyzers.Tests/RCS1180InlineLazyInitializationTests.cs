@@ -2,21 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
 using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1180InlineLazyInitializationTests : AbstractCSharpFixVerifier
+    public class RCS1180InlineLazyInitializationTests : AbstractCSharpDiagnosticVerifier<UseCoalesceExpressionAnalyzer, StatementCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.InlineLazyInitialization;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new UseCoalesceExpressionAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new StatementCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.InlineLazyInitialization)]
         public async Task Test_If()
@@ -174,7 +168,7 @@ class C
         (x ?? (x = new List<string>())).Add("""");
     }
 }
-", options: CSharpCodeVerificationOptions.Default_CSharp7_3);
+", options: WellKnownCSharpTestOptions.Default_CSharp7_3);
         }
     }
 }

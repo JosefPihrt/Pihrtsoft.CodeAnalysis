@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1050AddArgumentListToObjectCreationOrViceVersaTests : AbstractCSharpFixVerifier
+    public class RCS1050AddArgumentListToObjectCreationOrViceVersaTests : AbstractCSharpDiagnosticVerifier<AddArgumentListToObjectCreationOrViceVersaAnalyzer, AddArgumentListToObjectCreationOrViceVersaCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddArgumentListToObjectCreationOrViceVersa;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new AddArgumentListToObjectCreationOrViceVersaAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new AddArgumentListToObjectCreationOrViceVersaCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddArgumentListToObjectCreationOrViceVersa)]
         public async Task Test_AddArgumentList()
@@ -54,7 +49,7 @@ public class C
 {
     List<string> items = new List<string> { ""a"", ""b"", ""c"" };
 }
-", options: Options.WithEnabled(AnalyzerOptions.RemoveArgumentListFromObjectCreation));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.RemoveArgumentListFromObjectCreation));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddArgumentListToObjectCreationOrViceVersa)]
@@ -93,7 +88,7 @@ public class C
 {
     List<string> items = new List<string>();
 }
-", options: Options.WithEnabled(AnalyzerOptions.RemoveArgumentListFromObjectCreation));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.RemoveArgumentListFromObjectCreation));
         }
     }
 }

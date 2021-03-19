@@ -193,7 +193,7 @@ namespace Roslynator
 
         public static void WriteUsedAnalyzers(
             ImmutableArray<DiagnosticAnalyzer> analyzers,
-            Project project,
+            Func<DiagnosticDescriptor, bool> predicate,
             CodeAnalysisOptions options,
             ConsoleColor color,
             Verbosity verbosity)
@@ -204,21 +204,24 @@ namespace Roslynator
             if (!ShouldWrite(verbosity))
                 return;
 
-            foreach (IGrouping<DiagnosticDescriptor, (DiagnosticDescriptor descriptor, string severity)> grouping in analyzers
+            IEnumerable<DiagnosticDescriptor> descriptors = analyzers
                 .SelectMany(f => f.SupportedDiagnostics)
                 .Distinct(DiagnosticDescriptorComparer.Id)
-                .Select(f => (descriptor: f, reportDiagnostic: options.GetEffectiveSeverity(f, project.CompilationOptions)))
-                .Where(f => f.reportDiagnostic != ReportDiagnostic.Suppress)
-                .Select(f => (f.descriptor, severity: f.reportDiagnostic.ToDiagnosticSeverity().ToString()))
-                .OrderBy(f => f.descriptor.Id)
-                .GroupBy(f => f.descriptor, DiagnosticDescriptorComparer.IdPrefix))
+                .Where(f => options.IsSupportedDiagnosticId(f.Id));
+
+            if (predicate != null)
+                descriptors = descriptors.Where(predicate);
+
+            foreach (IGrouping<DiagnosticDescriptor, DiagnosticDescriptor> grouping in descriptors
+                .OrderBy(f => f.Id)
+                .GroupBy(f => f, DiagnosticDescriptorComparer.IdPrefix))
             {
                 int count = grouping.Count();
                 string prefix = DiagnosticIdPrefix.GetPrefix(grouping.Key.Id);
 
                 Write($"  {count} supported {((count == 1) ? "diagnostic" : "diagnostics")} with prefix '{prefix}'", color, verbosity);
 
-                using (IEnumerator<(DiagnosticDescriptor descriptor, string severity)> en = grouping.GetEnumerator())
+                using (IEnumerator<DiagnosticDescriptor> en = grouping.GetEnumerator())
                 {
                     if (en.MoveNext())
                     {
@@ -226,9 +229,7 @@ namespace Roslynator
 
                         while (true)
                         {
-                            Write(en.Current.descriptor.Id, color, verbosity);
-                            Write(" ", color, verbosity);
-                            Write(en.Current.severity, color, verbosity);
+                            Write(en.Current.Id, color, verbosity);
 
                             if (en.MoveNext())
                             {
@@ -248,7 +249,11 @@ namespace Roslynator
             }
         }
 
-        public static void WriteUsedFixers(ImmutableArray<CodeFixProvider> fixers, ConsoleColor color, Verbosity verbosity)
+        public static void WriteUsedFixers(
+            ImmutableArray<CodeFixProvider> fixers,
+            CodeAnalysisOptions options,
+            ConsoleColor color,
+            Verbosity verbosity)
         {
             if (!ShouldWrite(verbosity))
                 return;
@@ -256,6 +261,7 @@ namespace Roslynator
             foreach (IGrouping<string, string> grouping in fixers
                 .SelectMany(f => f.FixableDiagnosticIds)
                 .Distinct()
+                .Where(f => options.IsSupportedDiagnosticId(f))
                 .OrderBy(f => f)
                 .GroupBy(f => f, DiagnosticIdComparer.Prefix))
             {

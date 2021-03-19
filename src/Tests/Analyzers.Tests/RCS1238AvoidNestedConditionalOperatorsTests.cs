@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1238AvoidNestedConditionalOperatorsTests : AbstractCSharpFixVerifier
+    public class RCS1238AvoidNestedConditionalOperatorsTests : AbstractCSharpDiagnosticVerifier<ConditionalExpressionAnalyzer, ConditionalExpressionCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AvoidNestedConditionalOperators;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new ConditionalExpressionAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new ConditionalExpressionCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AvoidNestedConditionalOperators)]
         public async Task Test_LocalDeclaration()

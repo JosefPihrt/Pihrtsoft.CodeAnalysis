@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1243DuplicateWordInCommentTests : AbstractCSharpFixVerifier
+    public class RCS1243DuplicateWordInCommentTests : AbstractCSharpDiagnosticVerifier<DuplicateWordInCommentAnalyzer, DuplicateWordInCommentCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.DuplicateWordInComment;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new DuplicateWordInCommentAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new DuplicateWordInCommentCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.DuplicateWordInComment)]
         public async Task Test()

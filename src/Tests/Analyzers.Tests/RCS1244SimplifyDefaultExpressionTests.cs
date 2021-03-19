@@ -2,21 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
 using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1244SimplifyDefaultExpressionTests : AbstractCSharpFixVerifier
+    public class RCS1244SimplifyDefaultExpressionTests : AbstractCSharpDiagnosticVerifier<DefaultExpressionAnalyzer, DefaultExpressionCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.SimplifyDefaultExpression;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new DefaultExpressionAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new DefaultExpressionCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyDefaultExpression)]
         public async Task Test_ParameterDefaultValue()
@@ -71,6 +65,94 @@ class C
     string M()
     {
         return default;
+    }
+}
+");
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyDefaultExpression)]
+        public async Task Test_ReturnStatement2()
+        {
+            await VerifyDiagnosticAndFixAsync(@"
+using System.Collections.Generic;
+using System.Linq;
+
+class C
+{
+    void M()
+    {
+        IEnumerable<int> ints = Enumerable.Empty<int>();
+
+        var array = ints.Select<int, int>(i =>
+        {
+            return default[|(int)|];
+        }).ToArray();
+    }
+}
+", @"
+using System.Collections.Generic;
+using System.Linq;
+
+class C
+{
+    void M()
+    {
+        IEnumerable<int> ints = Enumerable.Empty<int>();
+
+        var array = ints.Select<int, int>(i =>
+        {
+            return default;
+        }).ToArray();
+    }
+}
+");
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyDefaultExpression)]
+        public async Task Test_ReturnStatement3()
+        {
+            await VerifyDiagnosticAndFixAsync(@"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+class C
+{
+    void M()
+    {
+        IEnumerable<int> ints = Enumerable.Empty<int>();
+
+        var array = Select<int, int>(ints, i =>
+        {
+            return default[|(int)|];
+        }).ToArray();
+    }
+
+    public static IEnumerable<TResult> Select<TSource, TResult>(IEnumerable<TSource> source, Func<TSource, TResult> selector)
+    {
+        return null;
+    }
+}
+", @"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+class C
+{
+    void M()
+    {
+        IEnumerable<int> ints = Enumerable.Empty<int>();
+
+        var array = Select<int, int>(ints, i =>
+        {
+            return default;
+        }).ToArray();
+    }
+
+    public static IEnumerable<TResult> Select<TSource, TResult>(IEnumerable<TSource> source, Func<TSource, TResult> selector)
+    {
+        return null;
     }
 }
 ");
@@ -305,7 +387,7 @@ class C
     {
     }
 }
-", options: CSharpCodeVerificationOptions.Default_CSharp7);
+", options: WellKnownCSharpTestOptions.Default_CSharp7);
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyDefaultExpression)]
@@ -319,6 +401,56 @@ class C
             int? x = null;
 
             if (x == default(int)) { }
+    }
+}
+");
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyDefaultExpression)]
+        public async Task TestNoDiagnostic_TypeInferredFromReturnStatement()
+        {
+            await VerifyNoDiagnosticAsync(@"
+using System.Collections.Generic;
+using System.Linq;
+
+class C
+{
+    void M()
+    {
+        IEnumerable<int> ints = Enumerable.Empty<int>();
+
+        var array = ints.Select(i =>
+        {
+            return default(int);
+        }).ToArray();
+    }
+}
+");
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyDefaultExpression)]
+        public async Task TestNoDiagnostic_TypeInferredFromReturnStatement2()
+        {
+            await VerifyNoDiagnosticAsync(@"
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+class C
+{
+    void M()
+    {
+        IEnumerable<int> ints = Enumerable.Empty<int>();
+
+        var array = Select(ints, i =>
+        {
+            return default(int);
+        }).ToArray();
+    }
+
+    public static IEnumerable<TResult> Select<TSource, TResult>(IEnumerable<TSource> source, Func<TSource, TResult> selector)
+    {
+        return null;
     }
 }
 ");

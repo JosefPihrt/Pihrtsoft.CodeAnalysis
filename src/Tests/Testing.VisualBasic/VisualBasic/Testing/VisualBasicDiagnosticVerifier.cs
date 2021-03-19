@@ -1,46 +1,21 @@
 ﻿// Copyright (c) Josef Pihrt. All rights reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System.Threading;
+using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.Testing;
 
 namespace Roslynator.VisualBasic.Testing
 {
-    public abstract class VisualBasicDiagnosticVerifier : DiagnosticVerifier
+    public abstract class VisualBasicDiagnosticVerifier<TAnalyzer, TFixProvider> : DiagnosticVerifier<TAnalyzer, TFixProvider>
+        where TAnalyzer : DiagnosticAnalyzer, new()
+        where TFixProvider : CodeFixProvider, new()
     {
-        private VisualBasicCodeVerificationOptions _options;
-
-        protected VisualBasicDiagnosticVerifier(IAssert assert) : base(VisualBasicWorkspaceFactory.Instance, assert)
+        internal VisualBasicDiagnosticVerifier(IAssert assert) : base(assert)
         {
         }
 
-        new public VisualBasicCodeVerificationOptions Options
-        {
-            get
-            {
-                if (_options == null)
-                    Interlocked.CompareExchange(ref _options, CreateAndUpdateOptions(), null);
+        new public virtual VisualBasicTestOptions Options => VisualBasicTestOptions.Default;
 
-                return _options;
-            }
-        }
-
-        protected override CodeVerificationOptions CommonOptions => Options;
-
-        private VisualBasicCodeVerificationOptions CreateAndUpdateOptions()
-        {
-            VisualBasicCodeVerificationOptions options = CreateOptions();
-
-            return UpdateOptions(options);
-        }
-
-        protected virtual VisualBasicCodeVerificationOptions CreateOptions()
-        {
-            return VisualBasicCodeVerificationOptions.Default;
-        }
-
-        protected virtual VisualBasicCodeVerificationOptions UpdateOptions(VisualBasicCodeVerificationOptions options)
-        {
-            return options;
-        }
+        protected override TestOptions CommonOptions => Options;
     }
 }

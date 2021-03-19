@@ -49,7 +49,7 @@ namespace Roslynator.CSharp.Analysis
             ImmutableArray<ISymbol> members = default;
 
             if (hasFlagsAttribute
-                && !context.IsAnalyzerSuppressed(DiagnosticDescriptors.DeclareEnumMemberWithZeroValue))
+                && DiagnosticDescriptors.DeclareEnumMemberWithZeroValue.IsEffective(context))
             {
                 members = typeSymbol.GetMembers();
 
@@ -64,7 +64,7 @@ namespace Roslynator.CSharp.Analysis
             EnumSymbolInfo enumInfo = default;
 
             if (hasFlagsAttribute
-                && !context.IsAnalyzerSuppressed(DiagnosticDescriptors.CompositeEnumValueContainsUndefinedFlag))
+                && DiagnosticDescriptors.CompositeEnumValueContainsUndefinedFlag.IsEffective(context))
             {
                 enumInfo = EnumSymbolInfo.Create(typeSymbol);
 
@@ -85,7 +85,7 @@ namespace Roslynator.CSharp.Analysis
             }
 
             if (hasFlagsAttribute
-                && !context.IsAnalyzerSuppressed(DiagnosticDescriptors.DeclareEnumValueAsCombinationOfNames))
+                && DiagnosticDescriptors.DeclareEnumValueAsCombinationOfNames.IsEffective(context))
             {
                 if (members.IsDefault)
                     members = typeSymbol.GetMembers();
@@ -130,7 +130,7 @@ namespace Roslynator.CSharp.Analysis
             }
 
             if (hasFlagsAttribute
-                && !context.IsAnalyzerSuppressed(DiagnosticDescriptors.UseBitShiftOperator))
+                && DiagnosticDescriptors.UseBitShiftOperator.IsEffective(context))
             {
                 if (members.IsDefault)
                     members = typeSymbol.GetMembers();
@@ -165,7 +165,7 @@ namespace Roslynator.CSharp.Analysis
                 }
             }
 
-            if (!context.IsAnalyzerSuppressed(DiagnosticDescriptors.DuplicateEnumValue))
+            if (DiagnosticDescriptors.DuplicateEnumValue.IsEffective(context))
             {
                 if (enumInfo.IsDefault)
                     enumInfo = EnumSymbolInfo.Create(typeSymbol);

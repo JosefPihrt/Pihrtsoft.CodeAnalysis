@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1113UseStringIsNullOrEmptyMethodTests : AbstractCSharpFixVerifier
+    public class RCS1113UseStringIsNullOrEmptyMethodTests : AbstractCSharpDiagnosticVerifier<UseStringIsNullOrEmptyMethodAnalyzer, BinaryExpressionCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseStringIsNullOrEmptyMethod;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new UseStringIsNullOrEmptyMethodAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new BinaryExpressionCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseStringIsNullOrEmptyMethod)]
         public async Task Test_LogicalOr()

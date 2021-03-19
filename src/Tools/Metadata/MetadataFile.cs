@@ -46,7 +46,6 @@ namespace Roslynator.Metadata
                 string minLanguageVersion = element.Element("MinLanguageVersion")?.Value;
                 string summary = element.Element("Summary")?.Value.NormalizeNewLine();
                 string remarks = element.Element("Remarks")?.Value.NormalizeNewLine();
-                string configuration = element.Element("Configuration")?.Value.NormalizeNewLine();
                 IEnumerable<SampleMetadata> samples = LoadSamples(element)?.Select(f => f.WithBefore(f.Before.Replace("[|Id|]", id)));
                 IEnumerable<LinkMetadata> links = LoadLinks(element);
                 IEnumerable<AnalyzerOptionMetadata> options = LoadOptions(element, id);
@@ -65,7 +64,6 @@ namespace Roslynator.Metadata
                     minLanguageVersion: minLanguageVersion,
                     summary: summary,
                     remarks: remarks,
-                    configuration: configuration,
                     samples: samples,
                     links: links,
                     options: options,
@@ -148,7 +146,9 @@ namespace Roslynator.Metadata
             string title = element.Element("Title").Value;
 
             string identifier = element.Attribute("Identifier").Value;
-            string id = element.Element("Id").Value;
+            string id = element.Element("Id")?.Value;
+            string optionKey = element.Element("OptionKey").Value;
+            string optionValue = element.Element("OptionValue")?.Value;
             var kind = (AnalyzerOptionKind)Enum.Parse(typeof(AnalyzerOptionKind), element.Element("Kind").Value);
             bool isEnabledByDefault = element.ElementValueAsBooleanOrDefault("IsEnabledByDefault");
             bool supportsFadeOut = element.ElementValueAsBooleanOrDefault("SupportsFadeOut");
@@ -160,6 +160,9 @@ namespace Roslynator.Metadata
             return new AnalyzerOptionMetadata(
                 identifier: identifier,
                 id: id,
+                parentId: parentId,
+                optionKey: optionKey,
+                optionValue: optionValue,
                 kind: kind,
                 title: title,
                 isEnabledByDefault: isEnabledByDefault,

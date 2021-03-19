@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1161EnumShouldDeclareExplicitValuesTests : AbstractCSharpFixVerifier
+    public class RCS1161EnumShouldDeclareExplicitValuesTests : AbstractCSharpDiagnosticVerifier<EnumShouldDeclareExplicitValuesAnalyzer, EnumDeclarationCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.EnumShouldDeclareExplicitValues;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new EnumShouldDeclareExplicitValuesAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new EnumDeclarationCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.EnumShouldDeclareExplicitValues)]
         public async Task Test_AllValues()
@@ -110,7 +105,7 @@ enum Foo
     C = 2,
     D = 4,
 }
-");
+", equivalenceKey: EquivalenceKey.Create(Descriptor.Id));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.EnumShouldDeclareExplicitValues)]
@@ -170,7 +165,7 @@ enum Foo
     E = 16,
     F = 32
 }
-");
+", equivalenceKey: EquivalenceKey.Create(Descriptor.Id));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.EnumShouldDeclareExplicitValues)]
@@ -206,17 +201,17 @@ enum Foo : sbyte
     G = 32,
     H = 64
 }
-");
+", equivalenceKey: EquivalenceKey.Create(Descriptor.Id));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.EnumShouldDeclareExplicitValues)]
         public async Task Test_Flags_SByte_MaxValue()
         {
-            await VerifyNoFixAsync(@"
+            await VerifyDiagnosticAndNoFixAsync(@"
 using System;
 
 [Flags]
-enum Foo : sbyte
+enum [|Foo|] : sbyte
 {
     A = 0,
     B = 1,

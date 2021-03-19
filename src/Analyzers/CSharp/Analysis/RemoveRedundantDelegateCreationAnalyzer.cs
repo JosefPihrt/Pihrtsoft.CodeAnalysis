@@ -28,14 +28,21 @@ namespace Roslynator.CSharp.Analysis
         {
             base.Initialize(context);
 
-            context.RegisterCompilationStartAction(startContext =>
-            {
-                if (startContext.IsAnalyzerSuppressed(DiagnosticDescriptors.RemoveRedundantDelegateCreation))
-                    return;
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (DiagnosticDescriptors.RemoveRedundantDelegateCreation.IsEffective(c))
+                        AnalyzeAssignmentExpression(c);
+                },
+                SyntaxKind.AddAssignmentExpression);
 
-                startContext.RegisterSyntaxNodeAction(f => AnalyzeAssignmentExpression(f), SyntaxKind.AddAssignmentExpression);
-                startContext.RegisterSyntaxNodeAction(f => AnalyzeAssignmentExpression(f), SyntaxKind.SubtractAssignmentExpression);
-            });
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (DiagnosticDescriptors.RemoveRedundantDelegateCreation.IsEffective(c))
+                        AnalyzeAssignmentExpression(c);
+                },
+                SyntaxKind.SubtractAssignmentExpression);
         }
 
         private static void AnalyzeAssignmentExpression(SyntaxNodeAnalysisContext context)

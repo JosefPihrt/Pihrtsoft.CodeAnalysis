@@ -30,6 +30,7 @@ namespace Roslynator
         public static readonly MetadataName System_EventArgs = MetadataName.Parse("System.EventArgs");
         public static readonly MetadataName System_EventHandler = MetadataName.Parse("System.EventHandler");
         public static readonly MetadataName System_FlagsAttribute = MetadataName.Parse("System.FlagsAttribute");
+        public static readonly MetadataName System_FormattableString = MetadataName.Parse("System.FormattableString");
         public static readonly MetadataName System_Func_T2 = MetadataName.Parse("System.Func`2");
         public static readonly MetadataName System_Func_T3 = MetadataName.Parse("System.Func`3");
         public static readonly MetadataName System_IEquatable_T = MetadataName.Parse("System.IEquatable`1");

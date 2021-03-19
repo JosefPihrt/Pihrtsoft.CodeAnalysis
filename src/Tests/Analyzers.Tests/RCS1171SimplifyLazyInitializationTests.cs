@@ -2,21 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
 using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1171SimplifyLazyInitializationTests : AbstractCSharpFixVerifier
+    public class RCS1171SimplifyLazyInitializationTests : AbstractCSharpDiagnosticVerifier<SimplifyLazyInitializationAnalyzer, BlockCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.SimplifyLazyInitialization;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new SimplifyLazyInitializationAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new BlockCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyLazyInitialization)]
         public async Task Test_IfWithBraces()
@@ -50,7 +44,7 @@ class C
 
     object I() => new object();
 }
-", options: CSharpCodeVerificationOptions.Default_CSharp7_3);
+", options: WellKnownCSharpTestOptions.Default_CSharp7_3);
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyLazyInitialization)]
@@ -118,7 +112,7 @@ class C
 
     object I() => new object();
 }
-", options: CSharpCodeVerificationOptions.Default_CSharp7_3);
+", options: WellKnownCSharpTestOptions.Default_CSharp7_3);
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyLazyInitialization)]
@@ -153,7 +147,7 @@ class C
 
     object I() => new object();
 }
-", options: CSharpCodeVerificationOptions.Default_CSharp7_3);
+", options: WellKnownCSharpTestOptions.Default_CSharp7_3);
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyLazyInitialization)]
@@ -188,7 +182,7 @@ class C
 
     object I() => new object();
 }
-", options: CSharpCodeVerificationOptions.Default_CSharp7_3);
+", options: WellKnownCSharpTestOptions.Default_CSharp7_3);
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyLazyInitialization)]
@@ -260,7 +254,7 @@ class C
 
     object I() => new object();
 }
-", options: CSharpCodeVerificationOptions.Default_CSharp7_3);
+", options: WellKnownCSharpTestOptions.Default_CSharp7_3);
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyLazyInitialization)]
@@ -336,7 +330,7 @@ class C
 
     object I() => new object();
 }
-", options: CSharpCodeVerificationOptions.Default_CSharp7_3);
+", options: WellKnownCSharpTestOptions.Default_CSharp7_3);
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyLazyInitialization)]
@@ -377,7 +371,7 @@ class C
 
     object I() => new object();
 }
-", options: CSharpCodeVerificationOptions.Default_CSharp7_3);
+", options: WellKnownCSharpTestOptions.Default_CSharp7_3);
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyLazyInitialization)]
@@ -412,7 +406,7 @@ class C
 
     int I() => 0;
 }
-", options: CSharpCodeVerificationOptions.Default_CSharp7_3);
+", options: WellKnownCSharpTestOptions.Default_CSharp7_3);
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyLazyInitialization)]
@@ -447,7 +441,7 @@ class C
 
     int I() => 0;
 }
-", options: CSharpCodeVerificationOptions.Default_CSharp7_3);
+", options: WellKnownCSharpTestOptions.Default_CSharp7_3);
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyLazyInitialization)]
@@ -517,7 +511,7 @@ class C
 
     int I() => 0;
 }
-", options: CSharpCodeVerificationOptions.Default_CSharp7_3);
+", options: WellKnownCSharpTestOptions.Default_CSharp7_3);
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyLazyInitialization)]
@@ -589,7 +583,7 @@ class C
 
     int I() => 0;
 }
-", options: CSharpCodeVerificationOptions.Default_CSharp7_3);
+", options: WellKnownCSharpTestOptions.Default_CSharp7_3);
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyLazyInitialization)]
@@ -661,7 +655,7 @@ class C
 
     int I() => 0;
 }
-", options: CSharpCodeVerificationOptions.Default_CSharp7_3);
+", options: WellKnownCSharpTestOptions.Default_CSharp7_3);
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyLazyInitialization)]
@@ -700,7 +694,7 @@ class C
 
     int I() => 0;
 }
-", options: CSharpCodeVerificationOptions.Default_CSharp7_3);
+", options: WellKnownCSharpTestOptions.Default_CSharp7_3);
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyLazyInitialization)]

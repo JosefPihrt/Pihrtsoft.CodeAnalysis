@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Josef Pihrt. All rights reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Refactorings.Tests
@@ -310,7 +311,7 @@ namespace A.B
         }
     }
 }
-", additionalSources: new[] { @"
+", additionalFiles: new[] { @"
 namespace A.B
 {
     class C2

@@ -27,21 +27,77 @@ namespace Roslynator.CSharp.Analysis
         {
             base.Initialize(context);
 
-            context.RegisterCompilationStartAction(startContext =>
-            {
-                if (startContext.IsAnalyzerSuppressed(DiagnosticDescriptors.RemoveBraces))
-                    return;
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (DiagnosticDescriptors.RemoveBraces.IsEffective(c))
+                        AnalyzeIfStatement(c);
+                },
+                SyntaxKind.IfStatement);
 
-                startContext.RegisterSyntaxNodeAction(f => AnalyzeIfStatement(f), SyntaxKind.IfStatement);
-                startContext.RegisterSyntaxNodeAction(f => AnalyzeCommonForEachStatement(f), SyntaxKind.ForEachStatement);
-                startContext.RegisterSyntaxNodeAction(f => AnalyzeCommonForEachStatement(f), SyntaxKind.ForEachVariableStatement);
-                startContext.RegisterSyntaxNodeAction(f => AnalyzeForStatement(f), SyntaxKind.ForStatement);
-                startContext.RegisterSyntaxNodeAction(f => AnalyzeUsingStatement(f), SyntaxKind.UsingStatement);
-                startContext.RegisterSyntaxNodeAction(f => AnalyzeWhileStatement(f), SyntaxKind.WhileStatement);
-                startContext.RegisterSyntaxNodeAction(f => AnalyzeDoStatement(f), SyntaxKind.DoStatement);
-                startContext.RegisterSyntaxNodeAction(f => AnalyzeLockStatement(f), SyntaxKind.LockStatement);
-                startContext.RegisterSyntaxNodeAction(f => AnalyzeFixedStatement(f), SyntaxKind.FixedStatement);
-            });
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (DiagnosticDescriptors.RemoveBraces.IsEffective(c))
+                        AnalyzeCommonForEachStatement(c);
+                },
+                SyntaxKind.ForEachStatement);
+
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (DiagnosticDescriptors.RemoveBraces.IsEffective(c))
+                        AnalyzeCommonForEachStatement(c);
+                },
+                SyntaxKind.ForEachVariableStatement);
+
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (DiagnosticDescriptors.RemoveBraces.IsEffective(c))
+                        AnalyzeForStatement(c);
+                },
+                SyntaxKind.ForStatement);
+
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (DiagnosticDescriptors.RemoveBraces.IsEffective(c))
+                        AnalyzeUsingStatement(c);
+                },
+                SyntaxKind.UsingStatement);
+
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (DiagnosticDescriptors.RemoveBraces.IsEffective(c))
+                        AnalyzeWhileStatement(c);
+                },
+                SyntaxKind.WhileStatement);
+
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (DiagnosticDescriptors.RemoveBraces.IsEffective(c))
+                        AnalyzeDoStatement(c);
+                },
+                SyntaxKind.DoStatement);
+
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (DiagnosticDescriptors.RemoveBraces.IsEffective(c))
+                        AnalyzeLockStatement(c);
+                },
+                SyntaxKind.LockStatement);
+
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (DiagnosticDescriptors.RemoveBraces.IsEffective(c))
+                        AnalyzeFixedStatement(c);
+                },
+                SyntaxKind.FixedStatement);
         }
 
         private static void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)

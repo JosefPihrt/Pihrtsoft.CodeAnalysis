@@ -2,21 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
 using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1181ConvertCommentToDocumentationCommentTests : AbstractCSharpFixVerifier
+    public class RCS1181ConvertCommentToDocumentationCommentTests : AbstractCSharpDiagnosticVerifier<ConvertCommentToDocumentationCommentAnalyzer, MemberDeclarationCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.ConvertCommentToDocumentationComment;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new ConvertCommentToDocumentationCommentAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new MemberDeclarationCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.ConvertCommentToDocumentationComment)]
         public async Task Test_LeadingComment()
@@ -237,8 +231,6 @@ class C
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.ConvertCommentToDocumentationComment)]
         public async Task TestNoDiagnostic_DocumentationComment_DocumentationModeIsEqualToNone()
         {
-            var options = (CSharpCodeVerificationOptions)Options;
-
             await VerifyNoDiagnosticAsync(@"
 class C
 {
@@ -249,14 +241,12 @@ class C
     {
     }
 }
-", options: options.WithParseOptions(options.ParseOptions.WithDocumentationMode(DocumentationMode.None)));
+", options: Options.WithParseOptions(Options.ParseOptions.WithDocumentationMode(DocumentationMode.None)));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.ConvertCommentToDocumentationComment)]
         public async Task TestNoDiagnostic_DocumentationCommentAndTrailingComment_DocumentationModeIsEqualToNone()
         {
-            var options = (CSharpCodeVerificationOptions)Options;
-
             await VerifyNoDiagnosticAsync(@"
 class C
 {
@@ -267,7 +257,7 @@ class C
     {
     }
 }
-", options: options.WithParseOptions(options.ParseOptions.WithDocumentationMode(DocumentationMode.None)));
+", options: Options.WithParseOptions(Options.ParseOptions.WithDocumentationMode(DocumentationMode.None)));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.ConvertCommentToDocumentationComment)]

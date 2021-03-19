@@ -30,23 +30,33 @@ namespace Roslynator.CSharp.Analysis
         {
             base.Initialize(context);
 
-            context.RegisterCompilationStartAction(startContext =>
-            {
-                if (!startContext.IsAnalyzerSuppressed(DiagnosticDescriptors.UnnecessaryOperator))
+            context.RegisterSyntaxNodeAction(
+                c =>
                 {
-                    startContext.RegisterSyntaxNodeAction(f => AnalyzeLessThanExpression(f), SyntaxKind.LessThanExpression);
-                    startContext.RegisterSyntaxNodeAction(f => AnalyzeGreaterThanExpression(f), SyntaxKind.GreaterThanExpression);
-                }
+                    if (DiagnosticDescriptors.UnnecessaryOperator.IsEffective(c))
+                        AnalyzeLessThanExpression(c);
+                },
+                SyntaxKind.LessThanExpression);
 
-                startContext.RegisterSyntaxNodeAction(f => AnalyzeLessThanOrEqualExpression(f), SyntaxKind.LessThanOrEqualExpression);
-                startContext.RegisterSyntaxNodeAction(f => AnalyzeGreaterThanOrEqualExpression(f), SyntaxKind.GreaterThanOrEqualExpression);
-                startContext.RegisterSyntaxNodeAction(f => AnalyzeLogicalOrExpression(f), SyntaxKind.LogicalOrExpression);
-
-                if (!startContext.IsAnalyzerSuppressed(DiagnosticDescriptors.ExpressionIsAlwaysEqualToTrueOrFalse))
+            context.RegisterSyntaxNodeAction(
+                c =>
                 {
-                    startContext.RegisterSyntaxNodeAction(f => AnalyzeSimpleMemberAccessExpression(f), SyntaxKind.SimpleMemberAccessExpression);
-                }
-            });
+                    if (DiagnosticDescriptors.UnnecessaryOperator.IsEffective(c))
+                        AnalyzeGreaterThanExpression(c);
+                },
+                SyntaxKind.GreaterThanExpression);
+
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (DiagnosticDescriptors.ExpressionIsAlwaysEqualToTrueOrFalse.IsEffective(c))
+                        AnalyzeSimpleMemberAccessExpression(c);
+                },
+                SyntaxKind.SimpleMemberAccessExpression);
+
+            context.RegisterSyntaxNodeAction(c => AnalyzeLessThanOrEqualExpression(c), SyntaxKind.LessThanOrEqualExpression);
+            context.RegisterSyntaxNodeAction(c => AnalyzeGreaterThanOrEqualExpression(c), SyntaxKind.GreaterThanOrEqualExpression);
+            context.RegisterSyntaxNodeAction(c => AnalyzeLogicalOrExpression(c), SyntaxKind.LogicalOrExpression);
         }
 
         // x == double.NaN >>> double.IsNaN(x)
@@ -102,12 +112,12 @@ namespace Roslynator.CSharp.Analysis
             if (!info.Success)
                 return;
 
-            if (!context.IsAnalyzerSuppressed(DiagnosticDescriptors.ExpressionIsAlwaysEqualToTrueOrFalse)
+            if (DiagnosticDescriptors.ExpressionIsAlwaysEqualToTrueOrFalse.IsEffective(context)
                 && IsAlwaysEqualToTrueOrFalse(greaterThanOrEqualExpression, info.Left, info.Right, context.SemanticModel, context.CancellationToken))
             {
                 ReportExpressionAlwaysEqualToTrueOrFalse(context, "true");
             }
-            else if (!context.IsAnalyzerSuppressed(DiagnosticDescriptors.UnnecessaryOperator)
+            else if (DiagnosticDescriptors.UnnecessaryOperator.IsEffective(context)
                 && IsUnnecessaryRelationalOperator(info.Right, info.Left, context.SemanticModel, context.CancellationToken))
             {
                 ReportUnnecessaryRelationalOperator(context, info.OperatorToken);
@@ -141,12 +151,12 @@ namespace Roslynator.CSharp.Analysis
             if (!info.Success)
                 return;
 
-            if (!context.IsAnalyzerSuppressed(DiagnosticDescriptors.ExpressionIsAlwaysEqualToTrueOrFalse)
+            if (DiagnosticDescriptors.ExpressionIsAlwaysEqualToTrueOrFalse.IsEffective(context)
                 && IsAlwaysEqualToTrueOrFalse(lessThanOrEqualExpression, info.Right, info.Left, context.SemanticModel, context.CancellationToken))
             {
                 ReportExpressionAlwaysEqualToTrueOrFalse(context, "true");
             }
-            else if (!context.IsAnalyzerSuppressed(DiagnosticDescriptors.UnnecessaryOperator)
+            else if (DiagnosticDescriptors.UnnecessaryOperator.IsEffective(context)
                 && IsUnnecessaryRelationalOperator(info.Left, info.Right, context.SemanticModel, context.CancellationToken))
             {
                 ReportUnnecessaryRelationalOperator(context, info.OperatorToken);

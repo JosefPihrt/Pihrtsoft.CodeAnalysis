@@ -555,6 +555,8 @@ namespace Roslynator.Testing.CSharp
                     case SyntaxKind.FunctionPointerParameterList:
                     case SyntaxKind.FunctionPointerUnmanagedCallingConvention:
                     case SyntaxKind.FunctionPointerUnmanagedCallingConventionList:
+                    case SyntaxKind.ManagedKeyword:
+                    case SyntaxKind.UnmanagedKeyword:
                         {
                             break;
                         }

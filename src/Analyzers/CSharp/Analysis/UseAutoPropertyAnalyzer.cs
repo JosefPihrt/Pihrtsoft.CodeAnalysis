@@ -31,13 +31,13 @@ namespace Roslynator.CSharp.Analysis
         {
             base.Initialize(context);
 
-            context.RegisterCompilationStartAction(startContext =>
-            {
-                if (startContext.IsAnalyzerSuppressed(DiagnosticDescriptors.UseAutoProperty))
-                    return;
-
-                startContext.RegisterSyntaxNodeAction(f => AnalyzePropertyDeclaration(f), SyntaxKind.PropertyDeclaration);
-            });
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (DiagnosticDescriptors.UseAutoProperty.IsEffective(c))
+                        AnalyzePropertyDeclaration(c);
+                },
+                SyntaxKind.PropertyDeclaration);
         }
 
         private static void AnalyzePropertyDeclaration(SyntaxNodeAnalysisContext context)

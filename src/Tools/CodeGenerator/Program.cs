@@ -134,12 +134,12 @@ namespace Roslynator.CodeGeneration
             {
                 WriteCompilationUnit(
                     Path.Combine(dirPath, $"{descriptorsClassName}.Generated.cs"),
-                    DiagnosticDescriptorsGenerator.Generate(analyzers, obsolete: false, comparer: comparer, @namespace: @namespace, className: descriptorsClassName, identifiersClassName: identifiersClassName),
+                    DiagnosticDescriptorsGenerators.Default.Generate(analyzers, obsolete: false, comparer: comparer, @namespace: @namespace, className: descriptorsClassName, identifiersClassName: identifiersClassName),
                     normalizeWhitespace: false);
 
                 WriteCompilationUnit(
                     Path.Combine(dirPath, $"{descriptorsClassName}.Deprecated.Generated.cs"),
-                    DiagnosticDescriptorsGenerator.Generate(analyzers, obsolete: true, comparer: comparer, @namespace: @namespace, className: descriptorsClassName, identifiersClassName: identifiersClassName),
+                    DiagnosticDescriptorsGenerators.Default.Generate(analyzers, obsolete: true, comparer: comparer, @namespace: @namespace, className: descriptorsClassName, identifiersClassName: identifiersClassName),
                     normalizeWhitespace: false);
 
                 WriteCompilationUnit(
@@ -155,19 +155,25 @@ namespace Roslynator.CodeGeneration
                 if (optionAnalyzers.Any())
                 {
                     WriteCompilationUnit(
-                        Path.Combine(dirPath, "AnalyzerOptions.Generated.cs"),
-                        DiagnosticDescriptorsGenerator.Generate(optionAnalyzers, obsolete: false, comparer: comparer, @namespace: @namespace, className: "AnalyzerOptions", identifiersClassName: "AnalyzerOptionIdentifiers"),
+                        Path.Combine(dirPath, "AnalyzerOptionDiagnosticDescriptors.Generated.cs"),
+                        DiagnosticDescriptorsGenerators.Default.Generate(optionAnalyzers, obsolete: false, comparer: comparer, @namespace: @namespace, className: "AnalyzerOptionDiagnosticDescriptors", identifiersClassName: "AnalyzerOptionDiagnosticIdentifiers"),
                         normalizeWhitespace: false,
                         fileMustExist: false);
 
                     WriteCompilationUnit(
-                        Path.Combine(dirPath, "AnalyzerOptionIdentifiers.Generated.cs"),
-                        DiagnosticIdentifiersGenerator.Generate(optionAnalyzers, obsolete: false, comparer: comparer, @namespace: @namespace, className: "AnalyzerOptionIdentifiers"),
+                        Path.Combine(dirPath, "AnalyzerOptionDiagnosticIdentifiers.Generated.cs"),
+                        DiagnosticIdentifiersGenerator.Generate(optionAnalyzers, obsolete: false, comparer: comparer, @namespace: @namespace, className: "AnalyzerOptionDiagnosticIdentifiers"),
+                        fileMustExist: false);
+
+                    WriteCompilationUnit(
+                        Path.Combine(dirPath, "AnalyzerOptions.Generated.cs"),
+                        AnalyzerOptionDescriptorsGenerator.Generate(analyzers, obsolete: false, comparer: comparer, @namespace: @namespace, className: "AnalyzerOptions"),
                         fileMustExist: false);
                 }
 
                 IEnumerable<string> analyzerOptionIdentifiers = analyzers
                     .SelectMany(f => f.OptionAnalyzers)
+                    .Where(f => f.Id != null)
                     .Select(f => f.Identifier);
 
                 WriteCompilationUnit(

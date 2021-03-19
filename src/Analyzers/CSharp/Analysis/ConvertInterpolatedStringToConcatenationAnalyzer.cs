@@ -26,13 +26,13 @@ namespace Roslynator.CSharp.Analysis
         {
             base.Initialize(context);
 
-            context.RegisterCompilationStartAction(startContext =>
-            {
-                if (startContext.IsAnalyzerSuppressed(DiagnosticDescriptors.ConvertInterpolatedStringToConcatenation))
-                    return;
-
-                startContext.RegisterSyntaxNodeAction(f => AnalyzeInterpolatedStringExpression(f), SyntaxKind.InterpolatedStringExpression);
-            });
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (DiagnosticDescriptors.ConvertInterpolatedStringToConcatenation.IsEffective(c))
+                        AnalyzeInterpolatedStringExpression(c);
+                },
+                SyntaxKind.InterpolatedStringExpression);
         }
 
         private static void AnalyzeInterpolatedStringExpression(SyntaxNodeAnalysisContext context)

@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Josef Pihrt. All rights reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Globalization;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -13,12 +11,8 @@ using Roslynator.Formatting.CSharp;
 namespace Roslynator.Formatting
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class LineIsTooLongAnalyzer : BaseDiagnosticAnalyzer
+    public class LineIsTooLongAnalyzer : BaseDiagnosticAnalyzer
     {
-        private static volatile ImmutableDictionary<string, string> _properties;
-
-        public static string PropertyKey { get; } = "MaxLineLength";
-
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get { return ImmutableArray.Create(DiagnosticDescriptors.LineIsTooLong); }
@@ -38,13 +32,7 @@ namespace Roslynator.Formatting
             if (!tree.TryGetText(out SourceText sourceText))
                 return;
 
-            int maxLength = AnalyzerSettings.Current.MaxLineLength;
-
-            if (context.Options.AnalyzerConfigOptionsProvider.GetOptions(tree).TryGetValue("roslynator.max_line_length", out string maxLengthText)
-                && int.TryParse(maxLengthText, NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite, CultureInfo.CurrentCulture, out int maxLength2))
-            {
-                maxLength = maxLength2;
-            }
+            int maxLength = CSharp.AnalyzerOptions.MaxLineLength.GetInt32Value(context.Tree, context.Options, AnalyzerSettings.Current.MaxLineLength);
 
             if (maxLength <= 0)
                 return;
@@ -150,25 +138,10 @@ namespace Roslynator.Formatting
                     }
                 }
 
-                ImmutableDictionary<string, string> properties = _properties;
-
-                if (properties == null
-                    || int.Parse(properties[PropertyKey]) != maxLength)
-                {
-                    properties = ImmutableDictionary.CreateRange(
-                        new[]
-                        {
-                            new KeyValuePair<string, string>(PropertyKey, maxLength.ToString())
-                        });
-
-                    _properties = properties;
-                }
-
                 DiagnosticHelpers.ReportDiagnostic(
                     context,
                     DiagnosticDescriptors.LineIsTooLong,
                     Location.Create(tree, line.Span),
-                    properties,
                     line.Span.Length);
             }
         }

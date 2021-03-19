@@ -263,6 +263,7 @@ foreach (var item in items) // [|Id|]
       <Option Identifier="UseImplicitlyTypedArrayWhenTypeIsObvious">
         <Title>Use implicitly typed array (when type is obvious).</Title>
         <Id>a</Id>
+        <OptionKey>use_implicit_type_when_obvious</OptionKey>
         <Kind>Change</Kind>
         <SupportsFadeOut>true</SupportsFadeOut>
         <Samples>
@@ -275,6 +276,7 @@ foreach (var item in items) // [|Id|]
       <Option Identifier="UseImplicitlyTypedArray">
         <Title>Use implicitly typed array.</Title>
         <Id>i</Id>
+        <OptionKey>invert</OptionKey>
         <Kind>Invert</Kind>
         <Samples>
           <Sample>
@@ -334,6 +336,7 @@ foreach (var item in items) // [|Id|]
       <Option Identifier="ConvertExpressionBodyToBlockBodyWhenExpressionIsMultiLine">
         <Title>Convert expression-body to block body when expression is multi-line.</Title>
         <Id>a</Id>
+        <OptionKey>use_block_body_when_expression_is_multiline</OptionKey>
         <Kind>Change</Kind>
         <Samples>
           <Sample>
@@ -358,6 +361,7 @@ foreach (var item in items) // [|Id|]
       <Option Identifier="ConvertExpressionBodyToBlockBodyWhenDeclarationIsMultiLine">
         <Title>Convert expression-body to block body when declaration is multi-line.</Title>
         <Id>b</Id>
+        <OptionKey>use_block_body_when_declaration_is_multiline</OptionKey>
         <Kind>Change</Kind>
         <Samples>
           <Sample>
@@ -372,6 +376,22 @@ foreach (var item in items) // [|Id|]
 {
     return new string[] { a, b, c };
 }]]></After>
+          </Sample>
+        </Samples>
+      </Option>
+      <Option Identifier="ConvertExpressionBodyToBlockBody">
+        <Title>Convert expression-body to block body.</Title>
+        <Id>i</Id>
+        <OptionKey>invert</OptionKey>
+        <Kind>Invert</Kind>
+        <Samples>
+          <Sample>
+            <Before><![CDATA[public string Foo() => null; // [|Id|]]]></Before>
+            <After><![CDATA[public string Foo()
+{
+    return null;
+}
+]]></After>
           </Sample>
         </Samples>
       </Option>
@@ -432,6 +452,7 @@ foreach (var item in items) // [|Id|]
       <Option Identifier="RemoveAccessibilityModifiers">
         <Title>Remove accessibility modifiers.</Title>
         <Id>i</Id>
+        <OptionKey>invert</OptionKey>
         <Kind>Invert</Kind>
         <SupportsFadeOut>true</SupportsFadeOut>
         <Samples>
@@ -818,6 +839,7 @@ if (f)
       <Option Identifier="RemoveEmptyLineBetweenClosingBraceAndSwitchSection">
         <Id>a</Id>
         <Title>Remove empty line between closing brace and switch section.</Title>
+        <OptionKey>remove_empty_line_between_closing_brace_and_switch_section</OptionKey>
         <Kind>Enable</Kind>
         <Samples>
           <Sample>
@@ -1012,6 +1034,7 @@ catch (Exception ex)
       <Option Identifier="DoNotRenamePrivateStaticReadOnlyFieldToCamelCaseWithUnderscore">
         <Title>Do not rename private static read-only field to camel case with underscore.</Title>
         <Id>a</Id>
+        <OptionKey>suppress_private_static_readonly_field</OptionKey>
         <Kind>Disable</Kind>
         <Samples>
           <Sample>
@@ -1128,6 +1151,7 @@ if (!f)
       <Option Identifier="RemoveArgumentListFromObjectCreation">
         <Title>Remove argument list from object creation expression.</Title>
         <Id>i</Id>
+        <OptionKey>invert</OptionKey>
         <Kind>Invert</Kind>
         <Samples>
           <Sample>
@@ -1155,6 +1179,7 @@ if (!f)
         <Id>a</Id>
         <Title>Remove parentheses from condition of conditional expression (when condition is a single token).</Title>
         <MessageFormat>Remove parentheses from condition of conditional expression.</MessageFormat>
+        <OptionKey>do_not_parenthesize_single_token</OptionKey>
         <Kind>Change</Kind>
         <Samples>
           <Sample>
@@ -1847,6 +1872,7 @@ object x = items.Peek();]]></After>
       <Option Identifier="UseStringEmptyInsteadOfEmptyStringLiteral">
         <Title>Use string.Empty instead of "".</Title>
         <Id>i</Id>
+        <OptionKey>invert</OptionKey>
         <Kind>Invert</Kind>
         <Samples>
           <Sample>
@@ -2036,6 +2062,7 @@ public string Foo // [|Id|]
       <Option Identifier="RemoveCallToConfigureAwait">
         <Title>Remove call to 'ConfigureAwait'.</Title>
         <Id>i</Id>
+        <OptionKey>invert</OptionKey>
         <Kind>Invert</Kind>
         <SupportsFadeOut>true</SupportsFadeOut>
         <Samples>
@@ -2139,6 +2166,7 @@ namespace Foo
       <Option Identifier="ConvertBitwiseOperationToHasFlagCall">
         <Title>Convert bitwise operation to 'HasFlag' call.</Title>
         <Id>i</Id>
+        <OptionKey>invert</OptionKey>
         <Kind>Invert</Kind>
         <Samples>
           <Sample>
@@ -2344,6 +2372,7 @@ else
       <Option Identifier="SimplifyConditionalExpressionWhenItIncludesNegationOfCondition">
         <Title>Simplify conditional expression (when it includes negation of condition).</Title>
         <Id>a</Id>
+        <OptionKey>enable_negation_of_condition</OptionKey>
         <Kind>Enable</Kind>
         <Samples>
           <Sample>
@@ -4249,6 +4278,7 @@ int i = (x != null) ? x.Value.GetHashCode() : 0; // [|Id|]]]></Before>
       <Option Identifier="ConvertMethodGroupToAnonymousFunction">
         <Title>Convert method group to anonymous function.</Title>
         <Id>i</Id>
+        <OptionKey>invert</OptionKey>
         <Kind>Invert</Kind>
         <Samples>
           <Sample>
@@ -4428,10 +4458,14 @@ x = "";]]></Before>
     <DefaultSeverity>Info</DefaultSeverity>
     <IsEnabledByDefault>true</IsEnabledByDefault>
     <SupportsFadeOut>true</SupportsFadeOut>
-    <Configuration>Use following EditorConfig option to suppress diagnostic from [Unity script methods](https://docs.unity3d.com/ScriptReference/MonoBehaviour.html):
-```editorconfig
-roslynator.RCS1213.suppress_unity_script_methods = true
-```</Configuration>
+    <Options>
+      <Option Identifier="SuppressUnityScriptMethods">
+        <Title>Suppress Unity script methods.</Title>
+        <OptionKey>suppress_unity_script_methods</OptionKey>
+        <Kind>Disable</Kind>
+        <Summary>Suppress diagnostic from [Unity script methods](https://docs.unity3d.com/ScriptReference/MonoBehaviour.html).</Summary>
+      </Option>
+    </Options>
   </Analyzer>
   <Analyzer Identifier="UnnecessaryInterpolatedString">
     <Id>RCS1214</Id>
@@ -5475,6 +5509,7 @@ public class C
       <Option Identifier="DoNotUseElementAccessWhenExpressionIsInvocation">
         <Title>Do not use element access when expression is invocation.</Title>
         <Id>a</Id>
+        <OptionKey>suppress_when_expression_is_invocation</OptionKey>
         <Kind>Disable</Kind>
         <Samples>
           <Sample>
@@ -5551,6 +5586,7 @@ void M()
       <Option Identifier="UseIsNullPatternInsteadOfInequalityOperator">
         <Id>a</Id>
         <Title>Use 'is null' pattern instead of '!=' operator.</Title>
+        <OptionKey>enable_inequality_operator</OptionKey>
         <Kind>Enable</Kind>
         <Samples>
           <Sample>
@@ -5562,6 +5598,7 @@ void M()
       <Option Identifier="UseComparisonInsteadOfIsNullPattern">
         <Id>i</Id>
         <Title>Use comparison instead of 'is null' pattern.</Title>
+        <OptionKey>invert</OptionKey>
         <Kind>Invert</Kind>
         <Samples>
           <Sample>

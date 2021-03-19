@@ -26,13 +26,13 @@ namespace Roslynator.CSharp.Analysis
         {
             base.Initialize(context);
 
-            context.RegisterCompilationStartAction(startContext =>
-            {
-                if (startContext.IsAnalyzerSuppressed(DiagnosticDescriptors.RemoveBracesFromIfElse))
-                    return;
-
-                startContext.RegisterSyntaxNodeAction(f => AnalyzeIfStatement(f), SyntaxKind.IfStatement);
-            });
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (DiagnosticDescriptors.RemoveBracesFromIfElse.IsEffective(c))
+                        AnalyzeIfStatement(c);
+                },
+                SyntaxKind.IfStatement);
         }
 
         private static void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)

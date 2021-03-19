@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1051ParenthesizeConditionOfConditionalExpressionTests : AbstractCSharpFixVerifier
+    public class RCS1051ParenthesizeConditionOfConditionalExpressionTests : AbstractCSharpDiagnosticVerifier<ParenthesizeConditionOfConditionalExpressionAnalyzer, ExpressionCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.ParenthesizeConditionOfConditionalExpression;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new ParenthesizeConditionOfConditionalExpressionAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new ExpressionCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.ParenthesizeConditionOfConditionalExpression)]
         public async Task Test()
@@ -86,7 +81,7 @@ class C
         string s = b ? ""true"" : ""false"";
     }
 }
-", options: Options.WithEnabled(AnalyzerOptions.RemoveParenthesesFromConditionOfConditionalExpressionWhenExpressionIsSingleToken));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.RemoveParenthesesFromConditionOfConditionalExpressionWhenExpressionIsSingleToken));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.ParenthesizeConditionOfConditionalExpression)]
@@ -101,7 +96,7 @@ public class C
         string s = b ? ""true"" : ""false"";
     }
 }
-", options: Options.WithEnabled(AnalyzerOptions.RemoveParenthesesFromConditionOfConditionalExpressionWhenExpressionIsSingleToken));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.RemoveParenthesesFromConditionOfConditionalExpressionWhenExpressionIsSingleToken));
         }
     }
 }

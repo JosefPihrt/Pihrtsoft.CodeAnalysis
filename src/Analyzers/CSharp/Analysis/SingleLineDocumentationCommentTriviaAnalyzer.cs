@@ -34,13 +34,13 @@ namespace Roslynator.CSharp.Analysis
         {
             base.Initialize(context);
 
-            context.RegisterCompilationStartAction(startContext =>
-            {
-                if (!startContext.AreAnalyzersSuppressed(_supportedDiagnosticsWithoutFadeOut))
+            context.RegisterSyntaxNodeAction(
+                c =>
                 {
-                    startContext.RegisterSyntaxNodeAction(f => AnalyzeSingleLineDocumentationCommentTrivia(f), SyntaxKind.SingleLineDocumentationCommentTrivia);
-                }
-            });
+                    if (IsAnyEffective(c, _supportedDiagnosticsWithoutFadeOut))
+                        AnalyzeSingleLineDocumentationCommentTrivia(c);
+                },
+                SyntaxKind.SingleLineDocumentationCommentTrivia);
         }
 
         private static void AnalyzeSingleLineDocumentationCommentTrivia(SyntaxNodeAnalysisContext context)
@@ -96,7 +96,7 @@ namespace Roslynator.CSharp.Analysis
 
                                 containsSummaryElement = true;
 
-                                if (useCorrectDocumentationTagEnabled ??= !context.IsAnalyzerSuppressed(DiagnosticDescriptors.FixDocumentationCommentTag))
+                                if (useCorrectDocumentationTagEnabled ??= DiagnosticDescriptors.FixDocumentationCommentTag.IsEffective(context))
                                     FixDocumentationCommentTagAnalysis.Analyze(context, info);
 
                                 break;
@@ -109,7 +109,7 @@ namespace Roslynator.CSharp.Analysis
                                 if (info.IsContentEmptyOrWhitespace)
                                     ReportUnusedElement(context, info.Element, i, content);
 
-                                if (useCorrectDocumentationTagEnabled ??= !context.IsAnalyzerSuppressed(DiagnosticDescriptors.FixDocumentationCommentTag))
+                                if (useCorrectDocumentationTagEnabled ??= DiagnosticDescriptors.FixDocumentationCommentTag.IsEffective(context))
                                     FixDocumentationCommentTagAnalysis.Analyze(context, info);
 
                                 break;
@@ -120,7 +120,7 @@ namespace Roslynator.CSharp.Analysis
                         case XmlTag.Permission:
                         case XmlTag.TypeParam:
                             {
-                                if (useCorrectDocumentationTagEnabled ??= !context.IsAnalyzerSuppressed(DiagnosticDescriptors.FixDocumentationCommentTag))
+                                if (useCorrectDocumentationTagEnabled ??= DiagnosticDescriptors.FixDocumentationCommentTag.IsEffective(context))
                                     FixDocumentationCommentTagAnalysis.Analyze(context, info);
 
                                 break;
@@ -167,10 +167,10 @@ namespace Roslynator.CSharp.Analysis
 
             SyntaxNode parent = documentationComment.ParentTrivia.Token.Parent;
 
-            bool unusedElement = !context.IsAnalyzerSuppressed(DiagnosticDescriptors.UnusedElementInDocumentationComment);
-            bool orderParams = !context.IsAnalyzerSuppressed(DiagnosticDescriptors.OrderElementsInDocumentationComment);
-            bool addParam = !context.IsAnalyzerSuppressed(DiagnosticDescriptors.AddParamElementToDocumentationComment);
-            bool addTypeParam = !context.IsAnalyzerSuppressed(DiagnosticDescriptors.AddTypeParamElementToDocumentationComment);
+            bool unusedElement = DiagnosticDescriptors.UnusedElementInDocumentationComment.IsEffective(context);
+            bool orderParams = DiagnosticDescriptors.OrderElementsInDocumentationComment.IsEffective(context);
+            bool addParam = DiagnosticDescriptors.AddParamElementToDocumentationComment.IsEffective(context);
+            bool addTypeParam = DiagnosticDescriptors.AddTypeParamElementToDocumentationComment.IsEffective(context);
 
             if (addParam
                 || orderParams
@@ -337,7 +337,7 @@ namespace Roslynator.CSharp.Analysis
             int index,
             SyntaxList<XmlNodeSyntax> xmlNodes)
         {
-            if (context.IsAnalyzerSuppressed(DiagnosticDescriptors.UnusedElementInDocumentationComment))
+            if (!DiagnosticDescriptors.UnusedElementInDocumentationComment.IsEffective(context))
                 return;
 
             ReportDiagnostic(context, DiagnosticDescriptors.UnusedElementInDocumentationComment, xmlNode);

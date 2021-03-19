@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1045RenamePrivateFieldToCamelCaseWithUnderscoreTests : AbstractCSharpFixVerifier
+    public class RCS1045RenamePrivateFieldToCamelCaseWithUnderscoreTests : AbstractCSharpDiagnosticVerifier<RenamePrivateFieldAnalyzer, RenamePrivateFieldToCamelCaseWithUnderscoreCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.RenamePrivateFieldToCamelCaseWithUnderscore;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new RenamePrivateFieldAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new RenamePrivateFieldToCamelCaseWithUnderscoreCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RenamePrivateFieldToCamelCaseWithUnderscore)]
         public async Task Test_Lowercase()
@@ -109,7 +104,7 @@ class C
 {
     private static readonly string f;
 }
-", options: Options.WithEnabled(AnalyzerOptions.DoNotRenamePrivateStaticReadOnlyFieldToCamelCaseWithUnderscore));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.DoNotRenamePrivateStaticReadOnlyFieldToCamelCaseWithUnderscore));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RenamePrivateFieldToCamelCaseWithUnderscore)]

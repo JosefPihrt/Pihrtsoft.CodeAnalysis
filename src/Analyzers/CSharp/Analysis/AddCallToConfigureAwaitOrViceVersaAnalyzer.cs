@@ -22,20 +22,19 @@ namespace Roslynator.CSharp.Analysis
         {
             base.Initialize(context);
 
-            context.RegisterCompilationStartAction(startContext =>
-            {
-                if (startContext.IsAnalyzerSuppressed(AnalyzerOptions.RemoveCallToConfigureAwait))
+            context.RegisterSyntaxNodeAction(
+                c =>
                 {
-                    if (startContext.Compilation.GetTypeByMetadataName("System.Runtime.CompilerServices.ConfiguredTaskAwaitable`1") == null)
-                        return;
-
-                    startContext.RegisterSyntaxNodeAction(f => AddCallToConfigureAwait(f), SyntaxKind.AwaitExpression);
-                }
-                else
-                {
-                    startContext.RegisterSyntaxNodeAction(f => RemoveCallToConfigureAwait(f), SyntaxKind.AwaitExpression);
-                }
-            });
+                    if (AnalyzerOptions.RemoveCallToConfigureAwait.IsEnabled(c))
+                    {
+                        RemoveCallToConfigureAwait(c);
+                    }
+                    else if (c.Compilation.GetTypeByMetadataName("System.Runtime.CompilerServices.ConfiguredTaskAwaitable`1") != null)
+                    {
+                        AddCallToConfigureAwait(c);
+                    }
+                },
+                SyntaxKind.AwaitExpression);
         }
 
         private static void AddCallToConfigureAwait(SyntaxNodeAnalysisContext context)

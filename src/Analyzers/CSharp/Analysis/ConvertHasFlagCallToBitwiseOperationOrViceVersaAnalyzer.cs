@@ -23,17 +23,21 @@ namespace Roslynator.CSharp.Analysis
         {
             base.Initialize(context);
 
-            context.RegisterCompilationStartAction(startContext =>
-            {
-                if (!startContext.IsAnalyzerSuppressed(AnalyzerOptions.ConvertBitwiseOperationToHasFlagCall))
+            context.RegisterSyntaxNodeAction(
+                c =>
                 {
-                    startContext.RegisterSyntaxNodeAction(f => AnalyzeBitwiseAndExpression(f), SyntaxKind.BitwiseAndExpression);
-                }
-                else
+                    if (AnalyzerOptions.ConvertBitwiseOperationToHasFlagCall.IsEnabled(c))
+                        AnalyzeBitwiseAndExpression(c);
+                },
+                SyntaxKind.BitwiseAndExpression);
+
+            context.RegisterSyntaxNodeAction(
+                c =>
                 {
-                    context.RegisterSyntaxNodeAction(f => AnalyzeInvocationExpression(f), SyntaxKind.InvocationExpression);
-                }
-            });
+                    if (!AnalyzerOptions.ConvertBitwiseOperationToHasFlagCall.IsEnabled(c))
+                        AnalyzeInvocationExpression(c);
+                },
+                SyntaxKind.InvocationExpression);
         }
 
         private static void AnalyzeBitwiseAndExpression(SyntaxNodeAnalysisContext context)

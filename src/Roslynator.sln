@@ -134,6 +134,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestCodeGenerator", "Tools\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testing.CSharp.Xunit", "Tests\Testing.CSharp.Xunit\Testing.CSharp.Xunit.csproj", "{CA7B4345-0758-4AFA-ADCC-2563640614BD}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Common", "Tests\Tests.Common\Tests.Common.csproj", "{D671D7C6-A4DD-41DC-A309-7892E008FD0A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -292,6 +294,10 @@ Global
 		{CA7B4345-0758-4AFA-ADCC-2563640614BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CA7B4345-0758-4AFA-ADCC-2563640614BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CA7B4345-0758-4AFA-ADCC-2563640614BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D671D7C6-A4DD-41DC-A309-7892E008FD0A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D671D7C6-A4DD-41DC-A309-7892E008FD0A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D671D7C6-A4DD-41DC-A309-7892E008FD0A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D671D7C6-A4DD-41DC-A309-7892E008FD0A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -322,6 +328,7 @@ Global
 		{F429AFB0-DB73-4DBB-A41E-348417C2A10B} = {A1DB0C05-3710-4B69-955F-2F46E330591B}
 		{41F5F74A-7D16-4B6B-81E6-D222A4485FC4} = {CC69BDBB-35E9-43A9-9397-4B2832270BB8}
 		{CA7B4345-0758-4AFA-ADCC-2563640614BD} = {A1DB0C05-3710-4B69-955F-2F46E330591B}
+		{D671D7C6-A4DD-41DC-A309-7892E008FD0A} = {A1DB0C05-3710-4B69-955F-2F46E330591B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D1943010-8F47-4798-9A3D-97BC24CF1AC4}

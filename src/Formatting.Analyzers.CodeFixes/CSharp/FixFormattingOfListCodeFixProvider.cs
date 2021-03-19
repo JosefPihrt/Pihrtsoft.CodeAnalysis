@@ -16,7 +16,7 @@ namespace Roslynator.Formatting.CodeFixes.CSharp
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(FixFormattingOfListCodeFixProvider))]
     [Shared]
-    internal class FixFormattingOfListCodeFixProvider : BaseCodeFixProvider
+    public class FixFormattingOfListCodeFixProvider : BaseCodeFixProvider
     {
         private const string Title = "Fix formatting";
 

@@ -311,7 +311,7 @@ namespace Roslynator.CSharp.Analysis.UnusedParameter
         private static void FindUnusedNodes(in ParameterInfo parameterInfo, UnusedParameterWalker walker)
         {
             if (parameterInfo.Parameter != null
-                && !StringUtility.IsOneOrManyUnderscores(parameterInfo.Parameter.Identifier.ValueText))
+                && !IsDiscardName(parameterInfo.Parameter.Identifier.ValueText))
             {
                 walker.AddParameter(parameterInfo.Parameter);
             }
@@ -319,7 +319,7 @@ namespace Roslynator.CSharp.Analysis.UnusedParameter
             {
                 foreach (ParameterSyntax parameter in parameterInfo.Parameters)
                 {
-                    if (!StringUtility.IsOneOrManyUnderscores(parameter.Identifier.ValueText))
+                    if (!IsDiscardName(parameter.Identifier.ValueText))
                         walker.AddParameter(parameter);
                 }
             }
@@ -332,6 +332,31 @@ namespace Roslynator.CSharp.Analysis.UnusedParameter
 
             if (walker.Nodes.Count > 0)
                 walker.Visit(parameterInfo.Node);
+        }
+
+        private static bool IsDiscardName(string value)
+        {
+            if (value.Length > 0
+                && value[0] == '_')
+            {
+                if (value.Length == 1)
+                    return true;
+
+                if (value[1] == '_')
+                {
+                    for (int i = 2; i < value.Length; i++)
+                    {
+                        if (value[i] != '_')
+                            return false;
+                    }
+
+                    return true;
+                }
+
+                return uint.TryParse(value.Substring(1), out _);
+            }
+
+            return false;
         }
 
         private static void ReportDiagnostic(SyntaxNodeAnalysisContext context, SyntaxNode node)

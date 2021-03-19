@@ -29,30 +29,38 @@ namespace Roslynator.CSharp.Refactorings
             {
                 SemanticModel semanticModel = await document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
 
-                string newName = NameGenerator.Default.EnsureUniqueName(identifier.ValueText, semanticModel, member.SpanStart);
+                string newName = identifier.ValueText;
 
-                ISymbol symbol = semanticModel.GetDeclaredSymbol(member, cancellationToken);
+                if (!member.IsKind(SyntaxKind.ConstructorDeclaration))
+                {
+                    newName = NameGenerator.Default.EnsureUniqueName(newName, semanticModel, member.SpanStart);
 
-                ImmutableArray<SyntaxNode> references = await SyntaxFinder.FindReferencesAsync(symbol, document.Solution(), documents: ImmutableHashSet.Create(document), cancellationToken: cancellationToken).ConfigureAwait(false);
+                    ISymbol symbol = semanticModel.GetDeclaredSymbol(member, cancellationToken);
 
-                SyntaxToken newIdentifier = SyntaxFactory.Identifier(newName);
+                    ImmutableArray<SyntaxNode> references = await SyntaxFinder.FindReferencesAsync(symbol, document.Solution(), documents: ImmutableHashSet.Create(document), cancellationToken: cancellationToken).ConfigureAwait(false);
 
-                newMember = member.ReplaceNodes(
-                    references.Where(n => member.Contains(n)),
-                    (n, _) =>
-                    {
-                        if (n is IdentifierNameSyntax identifierName)
+                    SyntaxToken newIdentifier = SyntaxFactory.Identifier(newName);
+
+                    newMember = member.ReplaceNodes(
+                        references.Where(n => member.Contains(n)),
+                        (n, _) =>
                         {
-                            return identifierName.WithIdentifier(newIdentifier.WithTriviaFrom(identifierName.Identifier));
-                        }
-                        else
-                        {
-                            Debug.Fail(n.Kind().ToString());
-                            return n;
-                        }
-                    });
+                            if (n is IdentifierNameSyntax identifierName)
+                            {
+                                return identifierName.WithIdentifier(newIdentifier.WithTriviaFrom(identifierName.Identifier));
+                            }
+                            else
+                            {
+                                Debug.Assert(
+                                    n.IsKind(SyntaxKind.ThisConstructorInitializer, SyntaxKind.BaseConstructorInitializer),
+                                    n.Kind().ToString());
 
-                newMember = SetIdentifier(newMember, newIdentifier.WithRenameAnnotation());
+                                return n;
+                            }
+                        });
+
+                    newMember = SetIdentifier(newMember, newIdentifier.WithRenameAnnotation());
+                }
             }
             else
             {

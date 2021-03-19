@@ -27,13 +27,13 @@ namespace Roslynator.CSharp.Analysis
         {
             base.Initialize(context);
 
-            context.RegisterCompilationStartAction(startContext =>
-            {
-                if (startContext.IsAnalyzerSuppressed(DiagnosticDescriptors.SimplifyNestedUsingStatement))
-                    return;
-
-                startContext.RegisterSyntaxNodeAction(f => AnalyzeUsingStatement(f), SyntaxKind.UsingStatement);
-            });
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (DiagnosticDescriptors.SimplifyNestedUsingStatement.IsEffective(c))
+                        AnalyzeUsingStatement(c);
+                },
+                SyntaxKind.UsingStatement);
         }
 
         private static void AnalyzeUsingStatement(SyntaxNodeAnalysisContext context)

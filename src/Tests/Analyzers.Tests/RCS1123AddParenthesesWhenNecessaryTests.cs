@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1123AddParenthesesWhenNecessaryTests : AbstractCSharpFixVerifier
+    public class RCS1123AddParenthesesWhenNecessaryTests : AbstractCSharpDiagnosticVerifier<AddParenthesesWhenNecessaryAnalyzer, AddParenthesesWhenNecessaryCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddParenthesesWhenNecessary;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new AddParenthesesWhenNecessaryAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new AddParenthesesWhenNecessaryCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddParenthesesWhenNecessary)]
         public async Task Test()
@@ -50,40 +45,6 @@ class C
             && c) || d)
         {
         }
-    }
-}
-");
-        }
-
-        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddParenthesesWhenNecessary)]
-        public async Task Test_SuppressNullableWarningExpression()
-        {
-            await VerifyDiagnosticAndFixAsync(@"
-#nullable enable
-
-class C
-{
-    string? M()
-    {
-        var c = new C();
-        
-        string s = [|c.M()?.ToString()|]!.ToString();
-
-        return null;
-    }
-}
-", @"
-#nullable enable
-
-class C
-{
-    string? M()
-    {
-        var c = new C();
-        
-        string s = (c.M()?.ToString())!.ToString();
-
-        return null;
     }
 }
 ");

@@ -74,6 +74,9 @@ namespace Roslynator.CSharp
             if (typeof(TNode) == typeof(RecordDeclarationSyntax))
                 return new RecordAccessibility();
 
+            if (typeof(TNode) == typeof(IncompleteMemberSyntax))
+                return new IncompleteMemberAccessibility();
+
             throw new InvalidOperationException();
         }
 
@@ -918,6 +921,50 @@ namespace Roslynator.CSharp
             }
 
             public override Accessibility GetExplicitAccessibility(RecordDeclarationSyntax declaration)
+            {
+                if (declaration == null)
+                    throw new ArgumentNullException(nameof(declaration));
+
+                return SyntaxAccessibility.GetExplicitAccessibility(declaration.Modifiers);
+            }
+        }
+
+        private class IncompleteMemberAccessibility : SyntaxAccessibility<IncompleteMemberSyntax>
+        {
+            public override Accessibility GetDefaultAccessibility(IncompleteMemberSyntax declaration)
+            {
+                if (declaration == null)
+                    throw new ArgumentNullException(nameof(declaration));
+
+                return (declaration.IsParentKind(SyntaxKind.InterfaceDeclaration))
+                    ? Accessibility.Public
+                    : Accessibility.Private;
+            }
+
+            public override Accessibility GetDefaultExplicitAccessibility(IncompleteMemberSyntax declaration)
+            {
+                if (declaration == null)
+                    throw new ArgumentNullException(nameof(declaration));
+
+                return Accessibility.NotApplicable;
+            }
+
+            public override Accessibility GetAccessibility(IncompleteMemberSyntax declaration)
+            {
+                if (declaration == null)
+                    throw new ArgumentNullException(nameof(declaration));
+
+                if (declaration.IsParentKind(SyntaxKind.InterfaceDeclaration))
+                    return Accessibility.Public;
+
+                Accessibility accessibility = SyntaxAccessibility.GetExplicitAccessibility(declaration.Modifiers);
+
+                return (accessibility != Accessibility.NotApplicable)
+                    ? accessibility
+                    : GetDefaultAccessibility(declaration);
+            }
+
+            public override Accessibility GetExplicitAccessibility(IncompleteMemberSyntax declaration)
             {
                 if (declaration == null)
                     throw new ArgumentNullException(nameof(declaration));

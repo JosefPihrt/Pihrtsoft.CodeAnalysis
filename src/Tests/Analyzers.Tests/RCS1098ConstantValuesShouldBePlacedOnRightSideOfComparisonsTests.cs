@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1098ConstantValuesShouldBePlacedOnRightSideOfComparisonsTests : AbstractCSharpFixVerifier
+    public class RCS1098ConstantValuesShouldBePlacedOnRightSideOfComparisonsTests : AbstractCSharpDiagnosticVerifier<ConstantValuesShouldBePlacedOnRightSideOfComparisonsAnalyzer, BinaryExpressionCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.ConstantValuesShouldBePlacedOnRightSideOfComparisons;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new ConstantValuesShouldBePlacedOnRightSideOfComparisonsAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new BinaryExpressionCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.ConstantValuesShouldBePlacedOnRightSideOfComparisons)]
         public async Task TestDiagnostic_NullLiteral()

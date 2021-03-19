@@ -12,7 +12,7 @@ namespace Roslynator.Formatting.CodeFixes.CSharp
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(EmptyLineBetweenDeclarationsCodeFixProvider))]
     [Shared]
-    internal class EmptyLineBetweenDeclarationsCodeFixProvider : BaseCodeFixProvider
+    public class EmptyLineBetweenDeclarationsCodeFixProvider : BaseCodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {

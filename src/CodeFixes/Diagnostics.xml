@@ -372,6 +372,13 @@
     Message="The 'partial' modifier can only appear immediately before 'class', 'struct', 'interface', or 'void'"
     HelpUrl="http://docs.microsoft.com/en-us/dotnet/csharp/misc/cs0267" />
   <Diagnostic
+    Id="CS0272"
+    Identifier="PropertyOrIndexerCannotBeUsedInThisContextBecauseSetAccessorIsAccessible"
+    Severity="Error"
+    Title="The property or indexer 'name' cannot be used in this context because the set accessor is inaccessible."
+    Message="The property or indexer '{0}' cannot be used in this context because the set accessor is inaccessible"
+    HelpUrl="http://docs.microsoft.com/en-us/dotnet/csharp/misc/cs0272" />
+  <Diagnostic
     Id="CS0275"
     Identifier="AccessibilityModifiersMayNotBeUsedOnAccessorsInInterface"
     Severity="Error"
@@ -1127,6 +1134,13 @@
     Title="'type_1' is not CLS-compliant because base interface 'type_2' is not CLS-compliant."
     Message="'{0}' is not CLS-compliant because base interface '{1}' is not CLS-compliant"
     HelpUrl="http://docs.microsoft.com/en-us/dotnet/csharp/misc/cs3027" />
+  <Diagnostic
+    Id="CS7036"
+    Identifier="ThereIsNoArgumentGivenThatCorrespondsToRequiredFormalParameter"
+    Severity="Error"
+    Title="There is no argument given that corresponds to the required formal parameter 'parameter' of 'member'."
+    Message="There is no argument given that corresponds to the required formal parameter '{0}' of '{1}'"
+    HelpUrl="" />
   <Diagnostic
     Id="CS8050"
     Identifier="OnlyAutoImplementedPropertiesCanHaveInitializers"

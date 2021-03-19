@@ -11,7 +11,7 @@ using static Roslynator.CSharp.SyntaxTriviaAnalysis;
 namespace Roslynator.Formatting.CSharp
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class FixFormattingOfBinaryExpressionChainAnalyzer : BaseDiagnosticAnalyzer
+    public class FixFormattingOfBinaryExpressionChainAnalyzer : BaseDiagnosticAnalyzer
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
@@ -154,7 +154,7 @@ namespace Roslynator.Formatting.CSharp
 
                 if (leadingTrivia.Any()
                     && leadingTrivia.Last() == indentationAnalysis.Indentation
-                    && context.IsAnalyzerOptionEnabled(AnalyzerOptions.AddNewLineAfterBinaryOperatorInsteadOfBeforeIt))
+                    && AnalyzerOptions.AddNewLineAfterBinaryOperatorInsteadOfBeforeIt.IsEnabled(context, checkParent: true) == true)
                 {
                     return indentationAnalysis.IndentationLength;
                 }

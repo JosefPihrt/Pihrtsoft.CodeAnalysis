@@ -12,7 +12,7 @@ namespace Roslynator.Formatting.CSharp
 {
     //TODO: sloučit s AccessorListAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class AddOrRemoveEmptyLineBetweenAccessorsAnalyzer : BaseDiagnosticAnalyzer
+    public class AddOrRemoveEmptyLineBetweenAccessorsAnalyzer : BaseDiagnosticAnalyzer
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
@@ -64,11 +64,11 @@ namespace Roslynator.Formatting.CSharp
             if (accessorList.SyntaxTree.IsSingleLineSpan(accessor1.Span, context.CancellationToken)
                 && accessorList.SyntaxTree.IsSingleLineSpan(accessor2.Span, context.CancellationToken))
             {
-                if (!context.IsAnalyzerSuppressed(DiagnosticDescriptors.AddEmptyLineBetweenSingleLineAccessorsOrViceVersa))
+                if (DiagnosticDescriptors.AddEmptyLineBetweenSingleLineAccessorsOrViceVersa.IsEffective(context))
                 {
                     if (isEmptyLine)
                     {
-                        if (!context.IsAnalyzerSuppressed(AnalyzerOptions.RemoveEmptyLineBetweenSingleLineAccessors))
+                        if (AnalyzerOptions.RemoveEmptyLineBetweenSingleLineAccessors.IsEnabled(context))
                         {
                             DiagnosticHelpers.ReportDiagnostic(
                                 context,
@@ -77,7 +77,7 @@ namespace Roslynator.Formatting.CSharp
                                 properties: DiagnosticProperties.AnalyzerOption_Invert);
                         }
                     }
-                    else if (context.IsAnalyzerSuppressed(AnalyzerOptions.RemoveEmptyLineBetweenSingleLineAccessors))
+                    else if (!AnalyzerOptions.RemoveEmptyLineBetweenSingleLineAccessors.IsEnabled(context))
                     {
                         DiagnosticHelpers.ReportDiagnostic(
                             context,

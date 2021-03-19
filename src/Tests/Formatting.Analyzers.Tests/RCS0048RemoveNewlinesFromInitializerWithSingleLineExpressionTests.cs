@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.Formatting.CodeFixes.CSharp;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.Formatting.CSharp.Tests
 {
-    public class RCS0048RemoveNewlinesFromInitializerWithSingleLineExpressionTests : AbstractCSharpFixVerifier
+    public class RCS0048RemoveNewlinesFromInitializerWithSingleLineExpressionTests : AbstractCSharpDiagnosticVerifier<RemoveNewlinesFromInitializerWithSingleLineExpressionAnalyzer, InitializerCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.RemoveNewlinesFromInitializerWithSingleLineExpression;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new RemoveNewlinesFromInitializerWithSingleLineExpressionAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new InitializerCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemoveNewlinesFromInitializerWithSingleLineExpression)]
         public async Task Test_ObjectInitializer()

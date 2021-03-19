@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.Formatting.CodeFixes.CSharp;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.Formatting.CSharp.Tests
 {
-    public class RCS0049AddEmptyLineAfterTopCommentTests : AbstractCSharpFixVerifier
+    public class RCS0049AddEmptyLineAfterTopCommentTests : AbstractCSharpDiagnosticVerifier<AddEmptyLineAfterTopCommentAnalyzer, SyntaxTriviaCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddEmptyLineAfterTopComment;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new AddEmptyLineAfterTopCommentAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new SyntaxTriviaCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddEmptyLineAfterTopComment)]
         public async Task Test_Class()

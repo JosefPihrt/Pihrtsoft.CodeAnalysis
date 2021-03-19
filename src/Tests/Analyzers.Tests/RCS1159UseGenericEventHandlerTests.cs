@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1159UseGenericEventHandlerTests : AbstractCSharpFixVerifier
+    public class RCS1159UseGenericEventHandlerTests : AbstractCSharpDiagnosticVerifier<UseGenericEventHandlerAnalyzer, TypeCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseGenericEventHandler;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new UseGenericEventHandlerAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new TypeCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseGenericEventHandler)]
         public async Task Test_EventField()

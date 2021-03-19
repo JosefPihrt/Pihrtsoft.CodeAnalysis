@@ -312,24 +312,30 @@ namespace Roslynator.CSharp.Documentation
                 sb.AppendLine("/// </summary>");
             }
 
-            foreach (TypeParameterSyntax typeParameter in typeParameters)
+            if (!settings.IsTagIgnored(WellKnownXmlTags.TypeParam))
             {
-                sb.Append(settings.Indentation);
-                sb.Append("/// <typeparam name=\"");
-                sb.Append(typeParameter.Identifier.ValueText);
-                sb.AppendLine("\"></typeparam>");
+                foreach (TypeParameterSyntax typeParameter in typeParameters)
+                {
+                    sb.Append(settings.Indentation);
+                    sb.Append("/// <typeparam name=\"");
+                    sb.Append(typeParameter.Identifier.ValueText);
+                    sb.AppendLine("\"></typeparam>");
+                }
             }
 
-            foreach (ParameterSyntax parameter in parameters)
+            if (!settings.IsTagIgnored(WellKnownXmlTags.Param))
             {
-                sb.Append(settings.Indentation);
-                sb.Append("/// <param name=\"");
-                sb.Append(parameter.Identifier.ValueText);
-                sb.AppendLine("\"></param>");
+                foreach (ParameterSyntax parameter in parameters)
+                {
+                    sb.Append(settings.Indentation);
+                    sb.Append("/// <param name=\"");
+                    sb.Append(parameter.Identifier.ValueText);
+                    sb.AppendLine("\"></param>");
+                }
             }
 
             if (canGenerateReturns
-                && settings.Returns)
+                && !settings.IsTagIgnored(WellKnownXmlTags.Returns))
             {
                 sb.Append(settings.Indentation);
                 sb.AppendLine("/// <returns></returns>");

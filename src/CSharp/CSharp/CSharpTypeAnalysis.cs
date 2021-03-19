@@ -495,6 +495,8 @@ namespace Roslynator.CSharp
                 case SyntaxKind.SimpleLambdaExpression:
                 case SyntaxKind.ParenthesizedLambdaExpression:
                 case SyntaxKind.CollectionInitializerExpression:
+                case SyntaxKind.EqualsValueClause:
+                case SyntaxKind.SimpleMemberAccessExpression:
                     {
                         Debug.Assert(!tupleExpression.Arguments.Any(f => f.Expression.IsKind(SyntaxKind.DeclarationExpression)), tupleExpression.ToString());
                         return false;

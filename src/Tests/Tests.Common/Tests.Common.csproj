@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <AssemblyName>Roslynator.Tests.Common</AssemblyName>
+    <RootNamespace>Roslynator.Testing.CSharp</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <Company></Company>
+    <Description></Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Refactorings\Refactorings.csproj" />
+    <ProjectReference Include="..\Testing.CSharp.Xunit\Testing.CSharp.Xunit.csproj" />
+  </ItemGroup>
+</Project>

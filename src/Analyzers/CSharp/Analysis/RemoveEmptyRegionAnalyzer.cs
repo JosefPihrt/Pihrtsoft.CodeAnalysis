@@ -27,13 +27,13 @@ namespace Roslynator.CSharp.Analysis
         {
             base.Initialize(context);
 
-            context.RegisterCompilationStartAction(startContext =>
-            {
-                if (startContext.IsAnalyzerSuppressed(DiagnosticDescriptors.RemoveEmptyRegion))
-                    return;
-
-                startContext.RegisterSyntaxNodeAction(f => AnalyzeRegionDirective(f), SyntaxKind.RegionDirectiveTrivia);
-            });
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (DiagnosticDescriptors.RemoveEmptyRegion.IsEffective(c))
+                        AnalyzeRegionDirective(c);
+                },
+                SyntaxKind.RegionDirectiveTrivia);
         }
 
         private static void AnalyzeRegionDirective(SyntaxNodeAnalysisContext context)

@@ -169,7 +169,7 @@ namespace Roslynator.CSharp.Analysis
 
             if (explicitAccessibility == Accessibility.NotApplicable)
             {
-                if (!context.IsAnalyzerSuppressed(AnalyzerOptions.RemoveAccessibilityModifiers))
+                if (AnalyzerOptions.RemoveAccessibilityModifiers.IsEnabled(context))
                     return;
 
                 Accessibility accessibility = GetAccessibility(context, declaration, modifiers);
@@ -188,7 +188,7 @@ namespace Roslynator.CSharp.Analysis
                     location,
                     Properties[accessibility]);
             }
-            else if (!context.IsAnalyzerSuppressed(AnalyzerOptions.RemoveAccessibilityModifiers)
+            else if (AnalyzerOptions.RemoveAccessibilityModifiers.IsEnabled(context)
                 && !declaration.IsKind(SyntaxKind.OperatorDeclaration, SyntaxKind.ConversionOperatorDeclaration))
             {
                 Accessibility accessibility = SyntaxAccessibility.GetDefaultAccessibility(declaration);

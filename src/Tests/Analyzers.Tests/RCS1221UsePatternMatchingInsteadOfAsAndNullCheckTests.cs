@@ -2,8 +2,6 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.Analysis.UsePatternMatching;
 using Roslynator.CSharp.CodeFixes;
 using Roslynator.Testing.CSharp;
@@ -11,13 +9,9 @@ using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1221UsePatternMatchingInsteadOfAsAndNullCheckTests : AbstractCSharpFixVerifier
+    public class RCS1221UsePatternMatchingInsteadOfAsAndNullCheckTests : AbstractCSharpDiagnosticVerifier<UsePatternMatchingInsteadOfAsAndNullCheckAnalyzer, UsePatternMatchingInsteadOfAsAndNullCheckCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UsePatternMatchingInsteadOfAsAndNullCheck;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new UsePatternMatchingInsteadOfAsAndNullCheckAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new UsePatternMatchingInsteadOfAsAndNullCheckCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UsePatternMatchingInsteadOfAsAndNullCheck)]
         public async Task Test_EqualsToNull()
@@ -335,7 +329,7 @@ class C
         }
     }
 }
-", options: CSharpCodeVerificationOptions.Default_CSharp6);
+", options: WellKnownCSharpTestOptions.Default_CSharp6);
         }
     }
 }

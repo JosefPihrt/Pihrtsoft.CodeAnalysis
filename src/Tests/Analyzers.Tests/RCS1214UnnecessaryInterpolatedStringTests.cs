@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1214UnnecessaryInterpolatedStringTests : AbstractCSharpFixVerifier
+    public class RCS1214UnnecessaryInterpolatedStringTests : AbstractCSharpDiagnosticVerifier<UnnecessaryInterpolatedStringAnalyzer, InterpolatedStringCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UnnecessaryInterpolatedString;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new UnnecessaryInterpolatedStringAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new InterpolatedStringCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UnnecessaryInterpolatedString)]
         public async Task Test_StringLiteral()
@@ -154,7 +149,7 @@ class C
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UnnecessaryInterpolatedString)]
-        public async Task TestNoDiagnosti()
+        public async Task TestNoDiagnostic()
         {
             await VerifyNoDiagnosticAsync(@"
 class C
@@ -164,6 +159,50 @@ class C
         const string x = null;
         string s = $""{x}"";
     }
+}
+");
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UnnecessaryInterpolatedString)]
+        public async Task TestNoDiagnostic_FormattableString()
+        {
+            await VerifyNoDiagnosticAsync(@"
+using System;
+
+class C
+{
+    string Call(FormattableString s) => Call($"""");
+}
+");
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UnnecessaryInterpolatedString)]
+        public async Task TestNoDiagnostic_FormattableString2()
+        {
+            await VerifyNoDiagnosticAsync(@"
+using System;
+
+class C
+{
+    string Call(FormattableString s) => Call($""x"");
+}
+");
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UnnecessaryInterpolatedString)]
+        public async Task TestNoDiagnostic_FormattableString3()
+        {
+            await VerifyNoDiagnosticAsync(@"
+using System;
+
+class C
+{
+    string Call(FormattableString s)
+    {
+        string x = null;
+        return Call($""{""x""}"");
+    }
+
 }
 ");
         }

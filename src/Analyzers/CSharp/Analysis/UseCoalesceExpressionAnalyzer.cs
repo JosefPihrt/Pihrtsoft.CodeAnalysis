@@ -74,7 +74,7 @@ namespace Roslynator.CSharp.Analysis
             int index = statements.IndexOf(ifStatement);
 
             if (index > 0
-                && !context.IsAnalyzerSuppressed(DiagnosticDescriptors.UseCoalesceExpression))
+                && DiagnosticDescriptors.UseCoalesceExpression.IsEffective(context))
             {
                 StatementSyntax previousStatement = statements[index - 1];
 
@@ -87,7 +87,7 @@ namespace Roslynator.CSharp.Analysis
                 }
             }
 
-            if (context.IsAnalyzerSuppressed(DiagnosticDescriptors.InlineLazyInitialization))
+            if (!DiagnosticDescriptors.InlineLazyInitialization.IsEffective(context))
                 return;
 
             if (index == statements.Count - 1)

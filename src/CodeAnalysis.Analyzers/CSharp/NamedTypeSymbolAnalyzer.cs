@@ -10,7 +10,7 @@ using System.Collections.Generic;
 namespace Roslynator.CodeAnalysis.CSharp
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class NamedTypeSymbolAnalyzer : BaseDiagnosticAnalyzer
+    public class NamedTypeSymbolAnalyzer : BaseDiagnosticAnalyzer
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
@@ -86,7 +86,7 @@ namespace Roslynator.CodeAnalysis.CSharp
             if (attribute == null)
                 return;
 
-            if (!context.IsAnalyzerSuppressed(DiagnosticDescriptors.UnknownLanguageName))
+            if (DiagnosticDescriptors.UnknownLanguageName.IsEffective(context))
                 AnalyzeLanguageName(context, attribute);
         }
 
@@ -97,10 +97,10 @@ namespace Roslynator.CodeAnalysis.CSharp
             if (attribute == null)
                 return;
 
-            if (!context.IsAnalyzerSuppressed(DiagnosticDescriptors.UnknownLanguageName))
+            if (DiagnosticDescriptors.UnknownLanguageName.IsEffective(context))
                 AnalyzeLanguageName(context, attribute);
 
-            if (!context.IsAnalyzerSuppressed(DiagnosticDescriptors.SpecifyExportCodeFixProviderAttributeName)
+            if (DiagnosticDescriptors.SpecifyExportCodeFixProviderAttributeName.IsEffective(context)
                 && !ContainsNamedArgument(attribute, "Name"))
             {
                 ReportDiagnostic(context, attribute, DiagnosticDescriptors.SpecifyExportCodeFixProviderAttributeName);
@@ -114,10 +114,10 @@ namespace Roslynator.CodeAnalysis.CSharp
             if (attribute == null)
                 return;
 
-            if (!context.IsAnalyzerSuppressed(DiagnosticDescriptors.UnknownLanguageName))
+            if (DiagnosticDescriptors.UnknownLanguageName.IsEffective(context))
                 AnalyzeLanguageName(context, attribute);
 
-            if (!context.IsAnalyzerSuppressed(DiagnosticDescriptors.SpecifyExportCodeRefactoringProviderAttributeName)
+            if (DiagnosticDescriptors.SpecifyExportCodeRefactoringProviderAttributeName.IsEffective(context)
                 && !ContainsNamedArgument(attribute, "Name"))
             {
                 ReportDiagnostic(context, attribute, DiagnosticDescriptors.SpecifyExportCodeRefactoringProviderAttributeName);

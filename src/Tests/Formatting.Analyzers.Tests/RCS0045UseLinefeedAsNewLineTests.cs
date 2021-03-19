@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.Formatting.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.Formatting.CSharp.Tests
 {
-    public class RCS0045UseLinefeedAsNewLineTests : AbstractCSharpFixVerifier
+    public class RCS0045UseLinefeedAsNewLineTests : AbstractCSharpDiagnosticVerifier<UseLinefeedAsNewLineAnalyzer, NewLineCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseLinefeedAsNewLine;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new UseLinefeedAsNewLineAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new NewLineCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseLinefeedAsNewLine)]
         public async Task Test()

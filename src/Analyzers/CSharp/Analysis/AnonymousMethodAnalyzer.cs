@@ -27,13 +27,13 @@ namespace Roslynator.CSharp.Analysis
         {
             base.Initialize(context);
 
-            context.RegisterCompilationStartAction(startContext =>
-            {
-                if (startContext.IsAnalyzerSuppressed(DiagnosticDescriptors.UseLambdaExpressionInsteadOfAnonymousMethod))
-                    return;
-
-                startContext.RegisterSyntaxNodeAction(f => AnalyzeAnonymousMethod(f), SyntaxKind.AnonymousMethodExpression);
-            });
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (DiagnosticDescriptors.UseLambdaExpressionInsteadOfAnonymousMethod.IsEffective(c))
+                        AnalyzeAnonymousMethod(c);
+                },
+                SyntaxKind.AnonymousMethodExpression);
         }
 
         private static void AnalyzeAnonymousMethod(SyntaxNodeAnalysisContext context)

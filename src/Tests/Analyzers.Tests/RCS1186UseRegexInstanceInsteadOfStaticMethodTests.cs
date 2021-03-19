@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1186UseRegexInstanceInsteadOfStaticMethodTests : AbstractCSharpFixVerifier
+    public class RCS1186UseRegexInstanceInsteadOfStaticMethodTests : AbstractCSharpDiagnosticVerifier<InvocationExpressionAnalyzer, UseRegexInstanceInsteadOfStaticMethodCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseRegexInstanceInsteadOfStaticMethod;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new InvocationExpressionAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new UseRegexInstanceInsteadOfStaticMethodCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseRegexInstanceInsteadOfStaticMethod)]
         public async Task Test_IsMatch1()

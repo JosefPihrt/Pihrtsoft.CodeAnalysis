@@ -1,46 +1,19 @@
 ﻿// Copyright (c) Josef Pihrt. All rights reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System.Threading;
+using Microsoft.CodeAnalysis.CodeFixes;
 using Roslynator.Testing;
 
 namespace Roslynator.VisualBasic.Testing
 {
-    public abstract class VisualBasicCompilerDiagnosticFixVerifier : CompilerDiagnosticFixVerifier
+    public abstract class VisualBasicCompilerDiagnosticFixVerifier<TFixProvider> : CompilerDiagnosticFixVerifier<TFixProvider>
+        where TFixProvider : CodeFixProvider, new()
     {
-        private VisualBasicCodeVerificationOptions _options;
-
-        protected VisualBasicCompilerDiagnosticFixVerifier(IAssert assert) : base(VisualBasicWorkspaceFactory.Instance, assert)
+        internal VisualBasicCompilerDiagnosticFixVerifier(IAssert assert) : base(assert)
         {
         }
 
-        new public VisualBasicCodeVerificationOptions Options
-        {
-            get
-            {
-                if (_options == null)
-                    Interlocked.CompareExchange(ref _options, CreateAndUpdateOptions(), null);
+        new public virtual VisualBasicTestOptions Options => VisualBasicTestOptions.Default;
 
-                return _options;
-            }
-        }
-
-        protected override CodeVerificationOptions CommonOptions => Options;
-
-        private VisualBasicCodeVerificationOptions CreateAndUpdateOptions()
-        {
-            VisualBasicCodeVerificationOptions options = CreateOptions();
-
-            return UpdateOptions(options);
-        }
-
-        protected virtual VisualBasicCodeVerificationOptions CreateOptions()
-        {
-            return VisualBasicCodeVerificationOptions.Default;
-        }
-
-        protected virtual VisualBasicCodeVerificationOptions UpdateOptions(VisualBasicCodeVerificationOptions options)
-        {
-            return options;
-        }
+        protected override TestOptions CommonOptions => Options;
     }
 }

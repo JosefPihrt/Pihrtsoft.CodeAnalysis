@@ -17,7 +17,7 @@ using Roslynator.CSharp.SyntaxWalkers;
 namespace Roslynator.CodeAnalysis.CSharp
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class UsePatternMatchingAnalyzer : BaseDiagnosticAnalyzer
+    public class UsePatternMatchingAnalyzer : BaseDiagnosticAnalyzer
     {
         private static ImmutableHashSet<string> _syntaxKindNames;
         private static ImmutableHashSet<string> _syntaxTypeNames;

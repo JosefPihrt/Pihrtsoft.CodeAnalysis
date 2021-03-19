@@ -24,7 +24,7 @@
     <ProjectReference Include="..\..\Analyzers\Analyzers.csproj" />
     <ProjectReference Include="..\..\Analyzers.CodeFixes\Analyzers.CodeFixes.csproj" />
     <ProjectReference Include="..\Testing.CSharp\Testing.CSharp.csproj" />
-    <ProjectReference Include="..\Testing.CSharp.Xunit\Testing.CSharp.Xunit.csproj" />
+    <ProjectReference Include="..\Tests.Common\Tests.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -32,13 +32,16 @@ namespace Roslynator.CSharp.Analysis
 
             context.RegisterCompilationStartAction(startContext =>
             {
-                if (startContext.IsAnalyzerSuppressed(DiagnosticDescriptors.UseNameOfOperator))
-                    return;
-
                 if (((CSharpCompilation)startContext.Compilation).LanguageVersion < LanguageVersion.CSharp6)
                     return;
 
-                startContext.RegisterSyntaxNodeAction(f => AnalyzeArgument(f), SyntaxKind.Argument);
+                startContext.RegisterSyntaxNodeAction(
+                    c =>
+                    {
+                        if (DiagnosticDescriptors.UseNameOfOperator.IsEffective(c))
+                            AnalyzeArgument(c);
+                    },
+                    SyntaxKind.Argument);
             });
         }
 

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Josef Pihrt. All rights reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Refactorings.Tests
@@ -53,6 +54,30 @@ class C2
     }
 }
 ", equivalenceKey: RefactoringId);
+        }
+
+        [Fact, Trait(Traits.Refactoring, RefactoringIdentifiers.DuplicateMember)]
+        public async Task Test_Constructor()
+        {
+            await VerifyRefactoringAsync(@"
+class C
+{
+    public C()
+    {
+    [||]}
+}
+", @"
+class C
+{
+    public C()
+    {
+    }
+
+    public C()
+    {
+    }
+}
+", equivalenceKey: RefactoringId, options: Options.AddAllowedCompilerDiagnosticId("CS0111"));
         }
 
         [Fact, Trait(Traits.Refactoring, RefactoringIdentifiers.DuplicateMember)]

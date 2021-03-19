@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.Formatting.CodeFixes.CSharp;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.Formatting.CSharp.Tests
 {
-    public class RCS0051AddNewLineBetweenClosingBraceAndWhileKeywordTests : AbstractCSharpFixVerifier
+    public class RCS0051AddNewLineBetweenClosingBraceAndWhileKeywordTests : AbstractCSharpDiagnosticVerifier<AddNewLineBetweenClosingBraceAndWhileKeywordOrViceVersaAnalyzer, SyntaxTokenCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddNewLineBetweenClosingBraceAndWhileKeywordOrViceVersa;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new AddNewLineBetweenClosingBraceAndWhileKeywordOrViceVersaAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new SyntaxTokenCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddNewLineBetweenClosingBraceAndWhileKeywordOrViceVersa)]
         public async Task Test_AddNewLine()
@@ -113,7 +108,7 @@ class C
         } while (x);
     }
 }
-", options: Options.WithEnabled(AnalyzerOptions.RemoveNewLineBetweenClosingBraceAndWhileKeyword));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.RemoveNewLineBetweenClosingBraceAndWhileKeyword));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddNewLineBetweenClosingBraceAndWhileKeywordOrViceVersa)]
@@ -147,7 +142,7 @@ class C
         } while (x);
     }
 }
-", options: Options.WithEnabled(AnalyzerOptions.RemoveNewLineBetweenClosingBraceAndWhileKeyword));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.RemoveNewLineBetweenClosingBraceAndWhileKeyword));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddNewLineBetweenClosingBraceAndWhileKeywordOrViceVersa)]
@@ -204,7 +199,7 @@ class C
         } while (x);
     }
 }
-", options: Options.WithEnabled(AnalyzerOptions.RemoveNewLineBetweenClosingBraceAndWhileKeyword));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.RemoveNewLineBetweenClosingBraceAndWhileKeyword));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddNewLineBetweenClosingBraceAndWhileKeywordOrViceVersa)]
@@ -222,7 +217,7 @@ class C
         while (x);
     }
 }
-", options: Options.WithEnabled(AnalyzerOptions.RemoveNewLineBetweenClosingBraceAndWhileKeyword));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.RemoveNewLineBetweenClosingBraceAndWhileKeyword));
         }
     }
 }

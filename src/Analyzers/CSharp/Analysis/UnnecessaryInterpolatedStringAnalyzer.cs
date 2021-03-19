@@ -27,13 +27,13 @@ namespace Roslynator.CSharp.Analysis
         {
             base.Initialize(context);
 
-            context.RegisterCompilationStartAction(startContext =>
-            {
-                if (startContext.IsAnalyzerSuppressed(DiagnosticDescriptors.UnnecessaryInterpolatedString))
-                    return;
-
-                startContext.RegisterSyntaxNodeAction(f => AnalyzeInterpolatedStringExpression(f), SyntaxKind.InterpolatedStringExpression);
-            });
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (DiagnosticDescriptors.UnnecessaryInterpolatedString.IsEffective(c))
+                        AnalyzeInterpolatedStringExpression(c);
+                },
+                SyntaxKind.InterpolatedStringExpression);
         }
 
         private static void AnalyzeInterpolatedStringExpression(SyntaxNodeAnalysisContext context)
@@ -52,6 +52,9 @@ namespace Roslynator.CSharp.Analysis
 
             if (ConvertInterpolatedStringToStringLiteralAnalysis.IsFixable(contents))
             {
+                if (IsFormattableString(context))
+                    return;
+
                 ReportDiagnostic(
                     context,
                     DiagnosticDescriptors.UnnecessaryInterpolatedString,
@@ -76,6 +79,9 @@ namespace Roslynator.CSharp.Analysis
                 if (!IsNonNullStringExpression(expression))
                     return;
 
+                if (IsFormattableString(context))
+                    return;
+
                 ReportDiagnostic(context, DiagnosticDescriptors.UnnecessaryInterpolatedString, interpolatedString);
 
                 ReportToken(context, DiagnosticDescriptors.UnnecessaryInterpolatedStringFadeOut, interpolatedString.StringStartToken);
@@ -94,6 +100,15 @@ namespace Roslynator.CSharp.Analysis
                 return constantValue.HasValue
                     && constantValue.Value is string value
                     && value != null;
+            }
+
+            static bool IsFormattableString(SyntaxNodeAnalysisContext context)
+            {
+                return context
+                    .SemanticModel
+                    .GetTypeInfo(context.Node, context.CancellationToken)
+                    .ConvertedType?
+                    .HasMetadataName(MetadataNames.System_FormattableString) == true;
             }
         }
 

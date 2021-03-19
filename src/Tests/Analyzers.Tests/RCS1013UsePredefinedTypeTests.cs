@@ -2,21 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
 using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1013UsePredefinedTypeTests : AbstractCSharpFixVerifier
+    public class RCS1013UsePredefinedTypeTests : AbstractCSharpDiagnosticVerifier<UsePredefinedTypeAnalyzer, UsePredefinedTypeCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UsePredefinedType;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new UsePredefinedTypeAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new UsePredefinedTypeCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UsePredefinedType)]
         public async Task Test()
@@ -97,7 +91,7 @@ class C
     {
     }
 }
-", options: CSharpCodeVerificationOptions.Default_NullableReferenceTypes);
+", options: WellKnownCSharpTestOptions.Default_NullableReferenceTypes);
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UsePredefinedType)]

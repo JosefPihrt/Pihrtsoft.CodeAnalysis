@@ -2,22 +2,17 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 #pragma warning disable RCS1090
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1227ValidateArgumentsCorrectlyTests : AbstractCSharpFixVerifier
+    public class RCS1227ValidateArgumentsCorrectlyTests : AbstractCSharpDiagnosticVerifier<ValidateArgumentsCorrectlyAnalyzer, ValidateArgumentsCorrectlyCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.ValidateArgumentsCorrectly;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new ValidateArgumentsCorrectlyAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new ValidateArgumentsCorrectlyCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.ValidateArgumentsCorrectly)]
         public async Task Test()
@@ -230,7 +225,7 @@ class C
         yield return s;
     }
 }
-");
+", options: Options.WithDebugPreprocessorSymbol());
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.ValidateArgumentsCorrectly)]

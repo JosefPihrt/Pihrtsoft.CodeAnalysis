@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1073ConvertIfToReturnStatementTests : AbstractCSharpFixVerifier
+    public class RCS1073ConvertIfToReturnStatementTests : AbstractCSharpDiagnosticVerifier<IfStatementAnalyzer, IfStatementCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.ConvertIfToReturnStatement;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new IfStatementAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new IfStatementCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.ConvertIfToReturnStatement)]
         public async Task Test_IfElse()
@@ -125,7 +120,7 @@ class C
         }
     }
 }
-");
+", options: Options.WithDebugPreprocessorSymbol());
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.ConvertIfToReturnStatement)]
@@ -168,7 +163,7 @@ class C
 #endif
     }
 }
-");
+", options: Options.WithDebugPreprocessorSymbol());
         }
     }
 }

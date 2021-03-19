@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Josef Pihrt. All rights reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
@@ -197,7 +198,6 @@ namespace Roslynator.CodeGeneration.Markdown
                     (!string.IsNullOrEmpty(analyzer.MinLanguageVersion)) ? TableRow("Minimal Language Version", analyzer.MinLanguageVersion) : null),
                 CreateSummary(),
                 GetAnalyzerSamples(analyzer),
-                CreateConfiguration(analyzer.Configuration),
                 CreateOptions(analyzer),
                 CreateRemarks(analyzer.Remarks),
                 CreateAppliesTo(appliesTo),
@@ -247,7 +247,11 @@ namespace Roslynator.CodeGeneration.Markdown
             yield return BulletList(content);
         }
 
-        public static string CreateCompilerDiagnosticMarkdown(CompilerDiagnosticMetadata diagnostic, IEnumerable<CodeFixMetadata> codeFixes, IComparer<string> comparer)
+        public static string CreateCompilerDiagnosticMarkdown(
+            CompilerDiagnosticMetadata diagnostic,
+            IEnumerable<CodeFixMetadata> codeFixes,
+            ImmutableArray<CodeFixOption> options,
+            IComparer<string> comparer)
         {
             MDocument document = Document(
                 Heading1(diagnostic.Id),
@@ -261,11 +265,31 @@ namespace Roslynator.CodeGeneration.Markdown
                 BulletList(codeFixes
                     .Where(f => f.FixableDiagnosticIds.Any(diagnosticId => diagnosticId == diagnostic.Id))
                     .Select(f => f.Title)
-                    .OrderBy(f => f, comparer)));
+                    .OrderBy(f => f, comparer)),
+                GetOptions());
 
             document.AddFootnote();
 
             return document.ToString(MarkdownFormat.Default.WithTableOptions(MarkdownFormat.Default.TableOptions | TableOptions.FormatContent));
+
+            IEnumerable<MElement> GetOptions()
+            {
+                string content = string.Join(
+                    NewLine,
+                    options
+                        .Where(f => f.Key.Contains(diagnostic.Id))
+                        .OrderBy(f => f.Key)
+                        .Select(f => $"{f.Key} = {f.Value}"));
+
+                if (!string.IsNullOrEmpty(content))
+                {
+                    yield return Heading2("Options");
+
+                    yield return FencedCodeBlock(
+                        content,
+                        "editorconfig");
+                }
+            }
         }
 
         public static string CreateAnalyzersReadMe(IEnumerable<AnalyzerMetadata> analyzers, string title, IComparer<string> comparer)
@@ -372,18 +396,9 @@ namespace Roslynator.CodeGeneration.Markdown
             }
         }
 
-        private static IEnumerable<MElement> CreateConfiguration(string configuration)
-        {
-            if (!string.IsNullOrEmpty(configuration))
-            {
-                yield return Heading2("Configuration");
-                yield return Raw(configuration);
-            }
-        }
-
         private static IEnumerable<MElement> CreateOptions(AnalyzerMetadata analyzer)
         {
-            using (IEnumerator<AnalyzerMetadata> en = analyzer.OptionAnalyzers.GetEnumerator())
+            using (IEnumerator<AnalyzerOptionMetadata> en = analyzer.Options.GetEnumerator())
             {
                 if (en.MoveNext())
                 {
@@ -391,9 +406,25 @@ namespace Roslynator.CodeGeneration.Markdown
 
                     do
                     {
-                        string id = en.Current.Id;
+                        yield return Heading3(en.Current.Title.TrimEnd('.'));
 
-                        yield return BulletItem(Link(id, $"{id}.md"), " - ", en.Current.Title);
+                        if (!string.IsNullOrEmpty(en.Current.Summary))
+                        {
+                            yield return new MText(en.Current.Summary);
+                            yield return new MText(NewLine);
+                        }
+
+                        string helpValue = en.Current.OptionKey;
+
+                        if (!helpValue.StartsWith("roslynator.", StringComparison.Ordinal))
+                            helpValue = $"roslynator.{en.Current.ParentId}.{helpValue}";
+
+                        helpValue += " = ";
+                        helpValue += en.Current.OptionValue ?? "true";
+
+                        yield return FencedCodeBlock(
+                            helpValue,
+                            "editorconfig");
 
                     } while (en.MoveNext());
                 }

@@ -1,21 +1,16 @@
 ﻿// Copyright (c) Josef Pihrt. All rights reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
-using Roslynator.CSharp.CodeFixes;
 using System.Threading.Tasks;
+using Microsoft.CodeAnalysis;
+using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1007AddBracesTests : AbstractCSharpFixVerifier
+    public class RCS1007AddBracesTests : AbstractCSharpDiagnosticVerifier<AddBracesAnalyzer, AddBracesCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddBraces;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new AddBracesAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new AddBracesCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddBraces)]
         public async Task Test_If()
@@ -442,7 +437,7 @@ class C
         }
     }
 }
-");
+", options: Options.WithAllowUnsafe(true));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddBraces)]

@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1020SimplifyNullableOfTTests : AbstractCSharpFixVerifier
+    public class RCS1020SimplifyNullableOfTTests : AbstractCSharpDiagnosticVerifier<SimplifyNullableOfTAnalyzer, SimplifyNullableOfTCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.SimplifyNullableOfT;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new SimplifyNullableOfTAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new SimplifyNullableOfTCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyNullableOfT)]
         public async Task Test()

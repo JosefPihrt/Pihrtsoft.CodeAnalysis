@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1163UnusedParameterTests : AbstractCSharpFixVerifier
+    public class RCS1163UnusedParameterTests : AbstractCSharpDiagnosticVerifier<UnusedParameter.UnusedParameterAnalyzer, UnusedParameterCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UnusedParameter;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new UnusedParameter.UnusedParameterAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new UnusedParameterCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UnusedParameter)]
         public async Task Test_Method()
@@ -58,7 +53,7 @@ class C
         var memory = stackalloc byte[length];
     }
 }
-");
+", options: Options.WithAllowUnsafe(true));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UnusedParameter)]
@@ -159,6 +154,21 @@ class C
         {
             _ => """"
         };
+    }
+}
+");
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UnusedParameter)]
+        public async Task TestNoDiagnostic_Discard()
+        {
+            await VerifyNoDiagnosticAsync(@"
+using System;
+
+class C
+{
+    void M(string _, string __, string _1)
+    {
     }
 }
 ");

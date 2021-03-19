@@ -30,13 +30,13 @@ namespace Roslynator.CSharp.Analysis
         {
             base.Initialize(context);
 
-            context.RegisterCompilationStartAction(startContext =>
-            {
-                if (startContext.IsAnalyzerSuppressed(DiagnosticDescriptors.MergeIfWithNestedIf))
-                    return;
-
-                startContext.RegisterSyntaxNodeAction(f => AnalyzeIfStatement(f), SyntaxKind.IfStatement);
-            });
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (DiagnosticDescriptors.MergeIfWithNestedIf.IsEffective(c))
+                        AnalyzeIfStatement(c);
+                },
+                SyntaxKind.IfStatement);
         }
 
         private static void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)

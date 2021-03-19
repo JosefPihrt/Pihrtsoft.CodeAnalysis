@@ -30,14 +30,21 @@ namespace Roslynator.CSharp.Analysis
         {
             base.Initialize(context);
 
-            context.RegisterCompilationStartAction(startContext =>
-            {
-                if (startContext.IsAnalyzerSuppressed(DiagnosticDescriptors.RemoveRedundantAssignmentFadeOut))
-                    return;
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (DiagnosticDescriptors.RemoveRedundantAssignment.IsEffective(c))
+                        AnalyzeLocalDeclarationStatement(c);
+                },
+                SyntaxKind.LocalDeclarationStatement);
 
-                startContext.RegisterSyntaxNodeAction(f => AnalyzeLocalDeclarationStatement(f), SyntaxKind.LocalDeclarationStatement);
-                startContext.RegisterSyntaxNodeAction(f => AnalyzeSimpleAssignment(f), SyntaxKind.SimpleAssignmentExpression);
-            });
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (DiagnosticDescriptors.RemoveRedundantAssignment.IsEffective(c))
+                        AnalyzeSimpleAssignment(c);
+                },
+                SyntaxKind.SimpleAssignmentExpression);
         }
 
         private static void AnalyzeLocalDeclarationStatement(SyntaxNodeAnalysisContext context)

@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.Formatting.CodeFixes.CSharp;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.Formatting.CSharp.Tests
 {
-    public class RCS0039RemoveNewLineBeforeBaseListTests : AbstractCSharpFixVerifier
+    public class RCS0039RemoveNewLineBeforeBaseListTests : AbstractCSharpDiagnosticVerifier<RemoveNewLineBeforeBaseListAnalyzer, SyntaxTriviaCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.RemoveNewLineBeforeBaseList;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new RemoveNewLineBeforeBaseListAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new SyntaxTriviaCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemoveNewLineBeforeBaseList)]
         public async Task Test_Class()

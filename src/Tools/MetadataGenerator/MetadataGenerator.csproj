@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Analyzers\Analyzers.csproj" />
+    <ProjectReference Include="..\..\CodeFixes\CodeFixes.csproj" />
     <ProjectReference Include="..\..\Refactorings\Refactorings.csproj" />
     <ProjectReference Include="..\CodeGeneration\CodeGeneration.csproj" />
     <ProjectReference Include="..\Metadata\Metadata.csproj" />

@@ -69,6 +69,7 @@ namespace Roslynator.CodeGeneration.CSharp
 
                 var settings = new DocumentationCommentGeneratorSettings(
                     summary: new string[] { $"{codeFix.Id} (fixes {string.Join(", ", codeFix.FixableDiagnosticIds.OrderBy(f => f))})" },
+                    ignoredTags: new[] { "returns", "value" },
                     indentation: "        ",
                     singleLineSummary: true);
 

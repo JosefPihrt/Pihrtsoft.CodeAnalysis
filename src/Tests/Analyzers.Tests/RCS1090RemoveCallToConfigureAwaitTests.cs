@@ -2,25 +2,19 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
 using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1090RemoveCallToConfigureAwaitTests : AbstractCSharpFixVerifier
+    public class RCS1090RemoveCallToConfigureAwaitTests : AbstractCSharpDiagnosticVerifier<AddCallToConfigureAwaitOrViceVersaAnalyzer, AwaitExpressionCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddCallToConfigureAwaitOrViceVersa;
 
-        protected override DiagnosticAnalyzer Analyzer { get; } = new AddCallToConfigureAwaitOrViceVersaAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new AwaitExpressionCodeFixProvider();
-
-        protected override CSharpCodeVerificationOptions UpdateOptions(CSharpCodeVerificationOptions options)
+        public override CSharpTestOptions Options
         {
-            return base.UpdateOptions(options).WithEnabled(AnalyzerOptions.RemoveCallToConfigureAwait);
+            get { return base.Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.RemoveCallToConfigureAwait); }
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddCallToConfigureAwaitOrViceVersa)]

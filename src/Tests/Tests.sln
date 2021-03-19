@@ -65,6 +65,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Formatting.Analyzers", "..\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Formatting.Analyzers.CodeFixes", "..\Formatting.Analyzers.CodeFixes\Formatting.Analyzers.CodeFixes.csproj", "{76E374B9-4E31-42AE-99EB-97A76758EE63}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Common", "Tests.Common\Tests.Common.csproj", "{D392CC4D-A4C9-4273-8AD1-17D6BCFE2826}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -180,6 +182,10 @@ Global
 		{76E374B9-4E31-42AE-99EB-97A76758EE63}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{76E374B9-4E31-42AE-99EB-97A76758EE63}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{76E374B9-4E31-42AE-99EB-97A76758EE63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D392CC4D-A4C9-4273-8AD1-17D6BCFE2826}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D392CC4D-A4C9-4273-8AD1-17D6BCFE2826}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D392CC4D-A4C9-4273-8AD1-17D6BCFE2826}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D392CC4D-A4C9-4273-8AD1-17D6BCFE2826}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

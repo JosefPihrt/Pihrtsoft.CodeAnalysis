@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.Formatting.CodeFixes.CSharp;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.Formatting.CSharp.Tests
 {
-    public class RCS0053FixFormattingOfListTests : AbstractCSharpFixVerifier
+    public class RCS0053FixFormattingOfListTests : AbstractCSharpDiagnosticVerifier<FixFormattingOfListAnalyzer, FixFormattingOfListCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.FixFormattingOfList;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new FixFormattingOfListAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new FixFormattingOfListCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.FixFormattingOfList)]
         public async Task Test_Singleline_AlignedToParenthesis()

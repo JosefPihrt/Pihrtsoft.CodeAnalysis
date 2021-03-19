@@ -2,21 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
 using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1015UseNameOfOperatorTests : AbstractCSharpFixVerifier
+    public class RCS1015UseNameOfOperatorTests : AbstractCSharpDiagnosticVerifier<UseNameOfOperatorAnalyzer, UseNameOfOperatorCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseNameOfOperator;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new UseNameOfOperatorAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new UseNameOfOperatorCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseNameOfOperator)]
         public async Task Test()
@@ -72,7 +66,7 @@ class C
         }
     }
 }
-", options: CSharpCodeVerificationOptions.Default_CSharp5);
+", options: WellKnownCSharpTestOptions.Default_CSharp5);
         }
     }
 }
