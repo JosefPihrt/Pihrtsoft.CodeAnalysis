@@ -40,6 +40,7 @@ namespace Roslynator.CommandLine
             AssemblyResolver.Register();
 
             var filter = new SymbolFilterOptions(Visibility.ToVisibilityFilter());
+            var success = false;
 
             WriteLine($"Save source references to '{Options.Output}'.", Verbosity.Minimal);
 
@@ -65,6 +66,7 @@ namespace Roslynator.CommandLine
                     foreach (INamedTypeSymbol type in assembly.GetTypes(symbol => filter.IsMatch(symbol)))
                     {
                         WriteSymbol(writer, type, cancellationToken);
+                        success = true;
 
                         foreach (ISymbol member in type.GetMembers())
                         {
@@ -85,7 +87,7 @@ namespace Roslynator.CommandLine
 
             WriteLine($"Source references successfully saved to '{Options.Output}'.", Verbosity.Minimal);
 
-            return CommandResult.Success;
+            return (success) ? CommandResult.Success : CommandResult.NotSuccess;
         }
 
         private void WriteSymbol(XmlWriter writer, ISymbol symbol, CancellationToken cancellationToken)

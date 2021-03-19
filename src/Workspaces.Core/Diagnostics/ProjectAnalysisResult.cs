@@ -11,6 +11,16 @@ namespace Roslynator.Diagnostics
 {
     internal class ProjectAnalysisResult
     {
+        internal ProjectAnalysisResult(ProjectId projectId)
+            : this(
+                projectId,
+                ImmutableArray<DiagnosticAnalyzer>.Empty,
+                ImmutableArray<Diagnostic>.Empty,
+                ImmutableArray<Diagnostic>.Empty,
+                ImmutableDictionary<DiagnosticAnalyzer, AnalyzerTelemetryInfo>.Empty)
+        {
+        }
+
         internal ProjectAnalysisResult(
             ProjectId projectId,
             ImmutableArray<DiagnosticAnalyzer> analyzers,

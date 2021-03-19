@@ -32,6 +32,8 @@ namespace Roslynator.CommandLine
                 includePreprocessorDirectives: Options.IncludePreprocessorDirectives,
                 ignoreBlockBoundary: Options.IgnoreBlockBoundary);
 
+            int count;
+
             if (projectOrSolution.IsProject)
             {
                 Project project = projectOrSolution.AsProject();
@@ -40,22 +42,27 @@ namespace Roslynator.CommandLine
 
                 if (service != null)
                 {
-                    await CountLinesAsync(project, service, codeMetricsOptions, cancellationToken);
+                    CodeMetricsInfo codeMetrics = await CountLinesAsync(project, service, codeMetricsOptions, cancellationToken);
+
+                    count = codeMetrics.TotalLineCount;
                 }
                 else
                 {
                     WriteLine($"Cannot count lines for '{project.FilePath}', language '{project.Language}' is not supported", ConsoleColor.Yellow, Verbosity.Minimal);
+                    return CommandResult.Fail;
                 }
             }
             else
             {
-                CountLines(projectOrSolution.AsSolution(), codeMetricsOptions, cancellationToken);
+                ImmutableDictionary<ProjectId, CodeMetricsInfo> codeMetrics = CountLines(projectOrSolution.AsSolution(), codeMetricsOptions, cancellationToken);
+
+                count = codeMetrics.Sum(f => f.Value.TotalLineCount);
             }
 
-            return CommandResult.Success;
+            return (count > 0) ? CommandResult.Success : CommandResult.NotSuccess;
         }
 
-        private async Task CountLinesAsync(Project project, ICodeMetricsService service, CodeMetricsOptions options, CancellationToken cancellationToken)
+        private async Task<CodeMetricsInfo> CountLinesAsync(Project project, ICodeMetricsService service, CodeMetricsOptions options, CancellationToken cancellationToken)
         {
             WriteLine($"Count lines for '{project.Name}'", ConsoleColor.Cyan, Verbosity.Minimal);
 
@@ -77,9 +84,11 @@ namespace Roslynator.CommandLine
 
             WriteLine(Verbosity.Minimal);
             WriteLine($"Done counting lines for '{project.FilePath}' in {stopwatch.Elapsed:mm\\:ss\\.ff}", Verbosity.Normal);
+
+            return codeMetrics;
         }
 
-        private void CountLines(Solution solution, CodeMetricsOptions options, CancellationToken cancellationToken)
+        private ImmutableDictionary<ProjectId, CodeMetricsInfo> CountLines(Solution solution, CodeMetricsOptions options, CancellationToken cancellationToken)
         {
             WriteLine($"Count lines for solution '{solution.FilePath}'", ConsoleColor.Cyan, Verbosity.Minimal);
 
@@ -111,6 +120,8 @@ namespace Roslynator.CommandLine
 
             WriteLine(Verbosity.Minimal);
             WriteLine($"Done counting lines for solution '{solution.FilePath}' in {stopwatch.Elapsed:mm\\:ss\\.ff}", Verbosity.Minimal);
+
+            return codeMetrics;
         }
 
         private void WriteMetrics(int totalCodeLineCount, int totalBlockBoundaryLineCount, int totalWhitespaceLineCount, int totalCommentLineCount, int totalPreprocessorDirectiveLineCount, int totalLineCount)

@@ -47,7 +47,7 @@ namespace Roslynator.CodeFixes
 
         private Solution CurrentSolution => Workspace.CurrentSolution;
 
-        public async Task FixSolutionAsync(Func<Project, bool> predicate, CancellationToken cancellationToken = default)
+        public async Task<ImmutableArray<ProjectFixResult>> FixSolutionAsync(Func<Project, bool> predicate, CancellationToken cancellationToken = default)
         {
             ImmutableArray<ProjectId> projects = CurrentSolution
                 .GetProjectDependencyGraph()
@@ -96,6 +96,8 @@ namespace Roslynator.CodeFixes
             WriteLine($"Done fixing solution '{CurrentSolution.FilePath}' in {stopwatch.Elapsed:mm\\:ss\\.ff}", Verbosity.Minimal);
 
             LogHelpers.WriteProjectFixResults(results, Options, FormatProvider);
+
+            return results.ToImmutableArray();
         }
 
         public async Task<ProjectFixResult> FixProjectAsync(Project project, CancellationToken cancellationToken = default)

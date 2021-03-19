@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
@@ -85,6 +86,8 @@ namespace Roslynator.CommandLine
             foreach (string id in codeFixerOptions.IgnoredDiagnosticIds.OrderBy(f => f))
                 WriteLine($"Ignore diagnostic '{id}'", Verbosity.Diagnostic);
 
+            var success = false;
+
             if (projectOrSolution.IsProject)
             {
                 Project project = projectOrSolution.AsProject();
@@ -104,6 +107,8 @@ namespace Roslynator.CommandLine
                 WriteLine($"Done fixing project '{project.FilePath}' in {stopwatch.Elapsed:mm\\:ss\\.ff}", Verbosity.Minimal);
 
                 LogHelpers.WriteProjectFixResults(new ProjectFixResult[] { result }, codeFixerOptions, formatProvider);
+
+                success = result.FixedDiagnostics.Length > 0;
             }
             else
             {
@@ -111,10 +116,12 @@ namespace Roslynator.CommandLine
 
                 codeFixer = GetCodeFixer(solution);
 
-                await codeFixer.FixSolutionAsync(f => projectFilter.IsMatch(f), cancellationToken);
+                ImmutableArray<ProjectFixResult> results = await codeFixer.FixSolutionAsync(f => projectFilter.IsMatch(f), cancellationToken);
+
+                success = results.Any(f => f.FixedDiagnostics.Length > 0);
             }
 
-            return CommandResult.Success;
+            return (success) ? CommandResult.Success : CommandResult.NotSuccess;
 
             CodeFixer GetCodeFixer(Solution solution)
             {

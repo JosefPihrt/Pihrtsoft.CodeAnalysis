@@ -27,7 +27,7 @@ namespace Roslynator.CommandLine
             return Task.FromResult(CommandResult.Success);
         }
 
-        protected override async Task<CommandResult> ExecuteAsync(
+        protected override async Task<CommandResult?> ExecuteAsync(
             string path,
             MSBuildWorkspace workspace,
             IProgress<ProjectLoadProgress> progress = null,
@@ -101,7 +101,7 @@ namespace Roslynator.CommandLine
 
             WriteLine();
 
-            return CommandResult.Success;
+            return (projects.Count > 0) ? CommandResult.Success : CommandResult.NotSuccess;
         }
     }
 }

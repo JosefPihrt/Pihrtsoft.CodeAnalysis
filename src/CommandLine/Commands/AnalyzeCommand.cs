@@ -50,11 +50,15 @@ namespace Roslynator.CommandLine
                 formatProvider: culture,
                 options: codeAnalyzerOptions);
 
+            var success = false;
+
             if (projectOrSolution.IsProject)
             {
                 Project project = projectOrSolution.AsProject();
 
                 ProjectAnalysisResult result = await codeAnalyzer.AnalyzeProjectAsync(project, cancellationToken);
+
+                success = result.Diagnostics.Length > 0;
 
                 if (Options.Output != null
                     && result.Diagnostics.Any())
@@ -70,6 +74,8 @@ namespace Roslynator.CommandLine
 
                 ImmutableArray<ProjectAnalysisResult> results = await codeAnalyzer.AnalyzeSolutionAsync(solution, f => projectFilter.IsMatch(f), cancellationToken);
 
+                success = results.Any(f => f.Diagnostics.Length > 0);
+
                 if (Options.Output != null
                     && results.Any(f => f.Diagnostics.Any()))
                 {
@@ -77,7 +83,7 @@ namespace Roslynator.CommandLine
                 }
             }
 
-            return CommandResult.Success;
+            return (success) ? CommandResult.Success : CommandResult.NotSuccess;
         }
 
         protected override void OperationCanceled(OperationCanceledException ex)

@@ -73,8 +73,7 @@ namespace Roslynator.Diagnostics
 
                     ProjectAnalysisResult result = await AnalyzeProjectCoreAsync(project, cancellationToken).ConfigureAwait(false);
 
-                    if (result != null)
-                        results.Add(result);
+                    results.Add(result);
                 }
                 else
                 {
@@ -127,11 +126,14 @@ namespace Roslynator.Diagnostics
             if (analyzers.Any()
                 || !Options.IgnoreCompilerDiagnostics)
             {
-                result = await AnalyzeProjectCoreAsync(project, analyzers, cancellationToken).ConfigureAwait(false);
+                return await AnalyzeProjectCoreAsync(project, analyzers, cancellationToken).ConfigureAwait(false);
             }
 
-            return result;
+            return new ProjectAnalysisResult(project.Id);
         }
+
+        private async Task<ProjectAnalysisResult> AnalyzeProjectCoreAsync(Project project, ImmutableArray<DiagnosticAnalyzer> analyzers, CancellationToken cancellationToken = default)
+        {
 
         private async Task<ProjectAnalysisResult> AnalyzeProjectCoreAsync(Project project, ImmutableArray<DiagnosticAnalyzer> analyzers, CancellationToken cancellationToken = default)
         {
