@@ -5,11 +5,11 @@ using System;
 namespace Roslynator.Spelling
 {
     [Flags]
-    internal enum SplitMode
+    public enum SplitMode
     {
         None = 0,
         Case = 1,
         Hyphen = 1 << 1,
-        CaseAndHyphen = Case | Hyphen
+        CaseAndHyphen = Case | Hyphen,
     }
 }

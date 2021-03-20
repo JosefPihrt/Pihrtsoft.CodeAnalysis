@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Roslynator.Spelling
 {
-    internal abstract class SpellingFixComparer :
+    public abstract class SpellingFixComparer :
         IComparer<SpellingFix>,
         IEqualityComparer<SpellingFix>,
         IComparer,

@@ -11,7 +11,7 @@ using System.Threading;
 namespace Roslynator.Spelling
 {
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
-    internal class WordList
+    public class WordList
     {
         private WordCharMap _charIndexMap;
         private WordCharMap _reversedCharIndexMap;
@@ -229,6 +229,8 @@ namespace Roslynator.Spelling
                 .Select(f => f.Trim())
                 .Distinct(comparer)
                 .OrderBy(f => f, StringComparer.InvariantCulture);
+
+            Debug.WriteLine($"Saving '{path}'");
 
             File.WriteAllText(path, string.Join(Environment.NewLine, values));
         }

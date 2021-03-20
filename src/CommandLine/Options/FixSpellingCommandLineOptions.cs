@@ -17,5 +17,10 @@ namespace Roslynator.CommandLine
             longName: "include-generated-code",
             HelpText = "Indicates whether generated code should be formatted.")]
         public bool IncludeGeneratedCode { get; set; }
+
+        [Option(
+            longName: "interactive",
+            HelpText = "")]
+        public bool Interactive { get; set; }
     }
 }

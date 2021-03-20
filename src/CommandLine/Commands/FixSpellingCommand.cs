@@ -1,7 +1,5 @@
 ﻿// Copyright (c) Josef Pihrt. All rights reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-#define NON_INTERACTIVE
-
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -29,20 +27,25 @@ namespace Roslynator.CommandLine
         {
             AssemblyResolver.Register();
 
-#if NON_INTERACTIVE
-            var options = new SpellingFixerOptions(
-                splitMode: SplitMode.CaseAndHyphen,
-                includeLocal: true,
-                includeGeneratedCode: Options.IncludeGeneratedCode,
-                interactive: false,
-                dryRun: true);
-#else
-            var options = new SpellingFixerOptions(
-                splitMode: SplitMode.CaseAndHyphen,
-                includeLocal: false,
-                includeGeneratedCode: Options.IncludeGeneratedCode,
-                interactive: true);
-#endif
+            SpellingFixerOptions options;
+            if (Options.Interactive)
+            {
+                options = new SpellingFixerOptions(
+                    splitMode: SplitMode.CaseAndHyphen,
+                    includeLocal: false,
+                    includeGeneratedCode: Options.IncludeGeneratedCode,
+                    interactive: Options.Interactive);
+            }
+            else
+            {
+                options = new SpellingFixerOptions(
+                    splitMode: SplitMode.CaseAndHyphen,
+                    includeLocal: true,
+                    includeGeneratedCode: Options.IncludeGeneratedCode,
+                    interactive: Options.Interactive,
+                    dryRun: true);
+            }
+
             CultureInfo culture = (Options.Culture != null) ? CultureInfo.GetCultureInfo(Options.Culture) : null;
 
             var projectFilter = new ProjectFilter(Options.Projects, Options.IgnoredProjects, Language);

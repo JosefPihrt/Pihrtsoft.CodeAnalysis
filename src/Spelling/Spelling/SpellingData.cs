@@ -1,11 +1,10 @@
 ﻿// Copyright (c) Josef Pihrt. All rights reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Roslynator.Spelling
 {
-    internal class SpellingData
+    public class SpellingData
     {
         public static SpellingData Empty { get; } = new SpellingData(
             WordList.Default,
@@ -50,11 +49,6 @@ namespace Roslynator.Spelling
         public SpellingData AddIgnoredValue(string value)
         {
             return new SpellingData(List, FixList, IgnoreList.AddValue(value));
-        }
-
-        public SpellingData AddIgnoredValues(IEnumerable<SpellingDiagnostic> diagnostics)
-        {
-            return AddIgnoredValues(diagnostics.Select(f => f.Value));
         }
 
         public SpellingData AddIgnoredValues(IEnumerable<string> values)

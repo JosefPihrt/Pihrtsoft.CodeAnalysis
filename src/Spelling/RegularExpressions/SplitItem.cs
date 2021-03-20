@@ -4,7 +4,7 @@ using System.Globalization;
 
 namespace Roslynator.RegularExpressions
 {
-    internal class SplitItem
+    public class SplitItem
     {
         public SplitItem(string value)
         {

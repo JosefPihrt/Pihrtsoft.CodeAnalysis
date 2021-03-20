@@ -153,6 +153,7 @@ ldap
 lf
 lgpl
 lhs
+linq
 lkml
 lmdb
 loc
@@ -169,6 +170,7 @@ midi
 mime
 mips
 mmorpg
+mpf
 mpls
 msde
 msdn

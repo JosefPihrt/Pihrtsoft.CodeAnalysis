@@ -7,7 +7,7 @@ using System.Diagnostics;
 namespace Roslynator.Spelling
 {
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
-    internal readonly struct SpellingFix : IEquatable<SpellingFix>
+    public readonly struct SpellingFix : IEquatable<SpellingFix>
     {
         public SpellingFix(string value, SpellingFixKind kind)
         {

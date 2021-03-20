@@ -595,7 +595,7 @@ namespace Roslynator.Spelling
                 && (diagnostic.Casing == TextCasing.Lower
                     || diagnostic.Casing == TextCasing.FirstUpper))
             {
-                foreach (int splitIndex in SpellingFixProvider.GetSplitIndexes(diagnostic, SpellingData))
+                foreach (int splitIndex in GetSplitIndexes(diagnostic, SpellingData))
                 {
                     //TODO: foofooBar > fooBar
                     //if (value.Length - splitIndex >= splitIndex
@@ -760,6 +760,88 @@ namespace Roslynator.Spelling
             }
 
             SpellingData = SpellingData.AddWord(spellingFix.Value);
+        }
+
+        private static ImmutableArray<int> GetSplitIndexes(
+            SpellingDiagnostic diagnostic,
+            SpellingData spellingData,
+            CancellationToken cancellationToken = default)
+        {
+            string value = diagnostic.Value;
+            int length = value.Length;
+
+            ImmutableArray<int>.Builder splitIndexes = null;
+
+            if (length >= 4)
+            {
+                char ch = value[0];
+
+                // Tvalue > TValue
+                // Ienumerable > IEnumerable
+                if ((ch == 'I' || ch == 'T')
+                    && diagnostic.Casing == TextCasing.FirstUpper
+                    && spellingData.List.Contains(value.Substring(1)))
+                {
+                    (splitIndexes ??= ImmutableArray.CreateBuilder<int>()).Add(1);
+                }
+            }
+
+            if (length < 6)
+                return splitIndexes?.ToImmutableArray() ?? ImmutableArray<int>.Empty;
+
+            value = diagnostic.ValueLower;
+
+            WordCharMap map = spellingData.List.CharIndexMap;
+
+            ImmutableHashSet<string> values = ImmutableHashSet<string>.Empty;
+
+            for (int i = 0; i < length - 3; i++)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                if (!map.TryGetValue(value, i, out ImmutableHashSet<string> values2))
+                    break;
+
+                values = (i == 0) ? values2 : values.Intersect(values2);
+
+                if (values.Count == 0)
+                    break;
+
+                if (i < 2)
+                    continue;
+
+                foreach (string value2 in values)
+                {
+                    if (value2.Length != i + 1)
+                        continue;
+
+                    ImmutableHashSet<string> values3 = ImmutableHashSet<string>.Empty;
+
+                    for (int j = i + 1; j < length; j++)
+                    {
+                        if (!map.TryGetValue(value[j], j - i - 1, out ImmutableHashSet<string> values4))
+                            break;
+
+                        values3 = (j == i + 1) ? values4 : values3.Intersect(values4);
+
+                        if (values3.Count == 0)
+                            break;
+                    }
+
+                    foreach (string value3 in values3)
+                    {
+                        if (value3.Length != length - i - 1)
+                            continue;
+
+                        (splitIndexes ??= ImmutableArray.CreateBuilder<int>()).Add(i + 1);
+                        break;
+                    }
+
+                    break;
+                }
+            }
+
+            return splitIndexes?.ToImmutableArray() ?? ImmutableArray<int>.Empty;
         }
     }
 }

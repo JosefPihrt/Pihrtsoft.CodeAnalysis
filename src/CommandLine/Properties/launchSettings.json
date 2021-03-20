@@ -2,7 +2,7 @@
   "profiles": {
     "CommandLine": {
       "commandName": "Project",
-      "commandLineArgs": "fix-spelling \"E:\\Projects\\Roslynator\\src\\Roslynator.sln\" --msbuild-path \"C:\\Program Files\\Microsoft Visual Studio\\2019\\Community\\MSBuild\\Current\\Bin\" --culture en --verbosity n --file-log \"roslynator.log\" --file-log-verbosity diag"
+      "commandLineArgs": "fix-spelling \"E:\\Projects\\Roslynator\\src\\Roslynator.sln\" --msbuild-path \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\MSBuild\\Current\\Bin\" --culture en --verbosity n --file-log \"roslynator.log\" --file-log-verbosity diag --interactive"
     }
   }
 }

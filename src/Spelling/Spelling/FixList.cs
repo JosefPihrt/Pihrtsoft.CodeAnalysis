@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Roslynator.Spelling
 {
-    internal class FixList
+    public class FixList
     {
         public static FixList Empty { get; }
             = new FixList(ImmutableDictionary.Create<string, ImmutableHashSet<SpellingFix>>(
@@ -145,6 +145,8 @@ namespace Roslynator.Spelling
             string path,
             IEnumerable<KeyValuePair<string, ImmutableHashSet<SpellingFix>>> values)
         {
+            Debug.WriteLine($"Saving '{path}'");
+
             File.WriteAllText(
                 path,
                 string.Join(

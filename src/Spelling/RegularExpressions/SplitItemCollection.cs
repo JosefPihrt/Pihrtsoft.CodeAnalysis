@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace Roslynator.RegularExpressions
 {
-    internal class SplitItemCollection : ReadOnlyCollection<SplitItem>
+    public class SplitItemCollection : ReadOnlyCollection<SplitItem>
     {
         internal SplitItemCollection(IList<SplitItem> list)
             : base(list)

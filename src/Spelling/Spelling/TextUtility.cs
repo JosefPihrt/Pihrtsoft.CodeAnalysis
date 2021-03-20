@@ -4,7 +4,7 @@ using System;
 
 namespace Roslynator.Spelling
 {
-    internal static class TextUtility
+    public static class TextUtility
     {
         public static string ReplaceRange(string s, string value, int index, int length)
         {

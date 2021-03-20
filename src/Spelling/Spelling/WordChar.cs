@@ -6,7 +6,7 @@ using System.Diagnostics;
 namespace Roslynator.Spelling
 {
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
-    internal readonly struct WordChar : IEquatable<WordChar>
+    public readonly struct WordChar : IEquatable<WordChar>
     {
         public WordChar(char value, int index)
         {
@@ -38,7 +38,7 @@ namespace Roslynator.Spelling
                 && Index == other.Index;
         }
 
-        public override int GetHashCode() => Hash.Combine(Value, Hash.Create(Index));
+        public override int GetHashCode() => Hash.Combine(Value, Hash.Combine(Index));
 
         public static bool operator ==(WordChar left, WordChar right) => left.Equals(right);
 
