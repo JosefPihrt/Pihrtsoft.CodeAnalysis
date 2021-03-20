@@ -1,6 +1,6 @@
-africa
-america
-antarctica
-asia
-australia
-europe
+Africa
+America
+Antarctica
+Asia
+Australia
+Europe

@@ -34,7 +34,7 @@ gmt
 gprs
 gps
 gsm
-HbbTV
+hbbtv
 hdr
 iata
 iban

@@ -118,8 +118,6 @@ namespace Roslynator.Diagnostics
                 analyzerReferences: _analyzerReferences,
                 options: Options);
 
-            ProjectAnalysisResult result = null;
-
             if (!analyzers.Any())
                 WriteLine($"  No analyzers found to analyze '{project.Name}'", ConsoleColor.DarkGray, Verbosity.Normal);
 
@@ -131,9 +129,6 @@ namespace Roslynator.Diagnostics
 
             return new ProjectAnalysisResult(project.Id);
         }
-
-        private async Task<ProjectAnalysisResult> AnalyzeProjectCoreAsync(Project project, ImmutableArray<DiagnosticAnalyzer> analyzers, CancellationToken cancellationToken = default)
-        {
 
         private async Task<ProjectAnalysisResult> AnalyzeProjectCoreAsync(Project project, ImmutableArray<DiagnosticAnalyzer> analyzers, CancellationToken cancellationToken = default)
         {

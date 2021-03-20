@@ -94,7 +94,7 @@ namespace Roslynator.CommandLine
 
                 Solution solution = project.Solution;
 
-                codeFixer = GetCodeFixer(solution);
+                CodeFixer codeFixer = GetCodeFixer(solution);
 
                 WriteLine($"Fix '{project.Name}'", ConsoleColor.Cyan, Verbosity.Minimal);
 
@@ -114,7 +114,7 @@ namespace Roslynator.CommandLine
             {
                 Solution solution = projectOrSolution.AsSolution();
 
-                codeFixer = GetCodeFixer(solution);
+                CodeFixer codeFixer = GetCodeFixer(solution);
 
                 ImmutableArray<ProjectFixResult> results = await codeFixer.FixSolutionAsync(f => projectFilter.IsMatch(f), cancellationToken);
 
