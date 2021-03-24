@@ -409,7 +409,7 @@ namespace Roslynator.Spelling
 
                     try
                     {
-                        //TODO: check name conflict
+                        //TODO: detect name conflict
                         newSolution = await Microsoft.CodeAnalysis.Rename.Renamer.RenameSymbolAsync(
                             CurrentSolution,
                             symbol,

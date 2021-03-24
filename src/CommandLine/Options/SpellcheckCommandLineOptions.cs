@@ -4,8 +4,8 @@ using CommandLine;
 
 namespace Roslynator.CommandLine
 {
-    [Verb("fix-spelling", HelpText = "Fixes typos and misspelled words in the specified project or solution.")]
-    public class FixSpellingCommandLineOptions : MSBuildCommandLineOptions
+    [Verb("spellcheck", HelpText = "Searches the specified project or solution for possible misspellings or typos.")]
+    public class SpellcheckCommandLineOptions : MSBuildCommandLineOptions
     {
         [Option(
             longName: "culture",
@@ -22,5 +22,17 @@ namespace Roslynator.CommandLine
             longName: "interactive",
             HelpText = "")]
         public bool Interactive { get; set; }
+
+        [Option(
+            longName: "new-words",
+            HelpText = "",
+            MetaValue = "<PATH>")]
+        public string NewWords { get; set; }
+
+        [Option(
+            longName: "new-fixes",
+            HelpText = "",
+            MetaValue = "<PATH>")]
+        public string NewFixes { get; set; }
     }
 }

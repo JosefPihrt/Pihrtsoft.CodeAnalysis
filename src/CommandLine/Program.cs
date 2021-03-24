@@ -51,7 +51,7 @@ namespace Roslynator.CommandLine
                     AnalyzeCommandLineOptions,
                     ListSymbolsCommandLineOptions,
                     FormatCommandLineOptions,
-                    FixSpellingCommandLineOptions,
+                    SpellcheckCommandLineOptions,
                     PhysicalLinesOfCodeCommandLineOptions,
                     LogicalLinesOfCodeCommandLineOptions,
                     GenerateDocCommandLineOptions,
@@ -102,7 +102,7 @@ namespace Roslynator.CommandLine
                     (AnalyzeCommandLineOptions options) => AnalyzeAsync(options).Result,
                     (ListSymbolsCommandLineOptions options) => ListSymbolsAsync(options).Result,
                     (FormatCommandLineOptions options) => FormatAsync(options).Result,
-                    (FixSpellingCommandLineOptions options) => FixSpellingAsync(options).Result,
+                    (SpellcheckCommandLineOptions options) => SpellcheckAsync(options).Result,
                     (PhysicalLinesOfCodeCommandLineOptions options) => PhysicalLinesOfCodeAsync(options).Result,
                     (LogicalLinesOfCodeCommandLineOptions options) => LogicalLinesOrCodeAsync(options).Result,
                     (GenerateDocCommandLineOptions options) => GenerateDocAsync(options).Result,
@@ -346,12 +346,28 @@ namespace Roslynator.CommandLine
             return GetExitCode(result);
         }
 
-        private static async Task<int> FixSpellingAsync(FixSpellingCommandLineOptions options)
+        private static async Task<int> SpellcheckAsync(SpellcheckCommandLineOptions options)
         {
             if (!options.TryGetProjectFilter(out ProjectFilter projectFilter))
-                return 1;
+                return ExitCodes.Error;
 
-            var command = new FixSpellingCommand(options, projectFilter);
+            string newWordsPath = null;
+
+            if (options.NewWords != null
+                && !TryEnsureFullPath(options.NewWords, out newWordsPath))
+            {
+                return ExitCodes.Error;
+            }
+
+            string newFixesPath = null;
+
+            if (options.NewFixes != null
+                && !TryEnsureFullPath(options.NewFixes, out newFixesPath))
+            {
+                return ExitCodes.Error;
+            }
+
+            var command = new SpellcheckCommand(options, projectFilter, newWordsPath, newFixesPath);
 
             IEnumerable<string> properties = options.Properties;
 #if DEBUG
@@ -360,7 +376,7 @@ namespace Roslynator.CommandLine
 #endif
             CommandResult result = await command.ExecuteAsync(options.Path, options.MSBuildPath, properties);
 
-            return (result == CommandResult.Success) ? 0 : 1;
+            return GetExitCode(result);
         }
 
         private static async Task<int> SlnListAsync(SlnListCommandLineOptions options)
