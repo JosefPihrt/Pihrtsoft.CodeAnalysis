@@ -418,7 +418,11 @@ namespace Roslynator.Spelling
                             cancellationToken)
                             .ConfigureAwait(false);
                     }
-                    catch (InvalidOperationException ex)
+                    catch (InvalidOperationException
+#if DEBUG
+                        ex
+#endif
+                    )
                     {
                         WriteLine($"    Cannot rename '{symbol.Name}'", ConsoleColor.Yellow, Verbosity.Normal);
 #if DEBUG
@@ -578,7 +582,9 @@ namespace Roslynator.Spelling
         private void AddPossibleFixes(
             SpellingDiagnostic diagnostic,
             ref List<SpellingFix> fixes,
+#pragma warning disable RCS1163
             CancellationToken cancellationToken)
+#pragma warning restore RCS1163
         {
             Debug.WriteLine($"find possible fix for '{diagnostic.Value}'");
 

@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Roslynator.Host.Mef;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Roslynator.Spelling
 {
@@ -13,6 +14,7 @@ namespace Roslynator.Spelling
     {
         public const string DiagnosticId = "RCS8000";
 
+        [SuppressMessage("MicrosoftCodeAnalysisReleaseTracking", "RS2008:Enable analyzer release tracking")]
         public static readonly DiagnosticDescriptor DiagnosticDescriptor = new DiagnosticDescriptor(
             id: DiagnosticId,
             title: "Possible misspelling or typo.",
