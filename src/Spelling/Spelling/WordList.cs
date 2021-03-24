@@ -17,29 +17,33 @@ namespace Roslynator.Spelling
         private WordCharMap _reversedCharIndexMap;
         private ImmutableDictionary<string, ImmutableHashSet<string>> _charMap;
 
-        public static StringComparer DefaultComparer { get; } = StringComparer.CurrentCultureIgnoreCase;
+        public static StringComparison DefaultComparison { get; } = StringComparison.InvariantCultureIgnoreCase;
 
-        public static WordList Default { get; } = new WordList(null, DefaultComparer, null);
+        public static StringComparer DefaultComparer { get; } = SpellingUtility.CreateStringComparer(DefaultComparison);
 
-        public static WordList Default_CurrentCulture { get; } = new WordList(
+        public static WordList Default { get; } = new WordList(null, DefaultComparison);
+
+        public static WordList CaseSensitive { get; } = new WordList(
             null,
-            StringComparer.CurrentCulture,
-            null);
+            StringComparison.InvariantCulture);
 
-        public WordList(string path, StringComparer comparer, IEnumerable<string> values)
+        public WordList(IEnumerable<string> values, StringComparison? comparison = null)
         {
-            Path = path;
-            Comparer = comparer ?? DefaultComparer;
-            Values = values?.ToImmutableHashSet(comparer) ?? ImmutableHashSet<string>.Empty;
+            Comparer = SpellingUtility.CreateStringComparer(comparison ?? DefaultComparison);
+            Values = values?.ToImmutableHashSet(Comparer) ?? ImmutableHashSet<string>.Empty;
+            Comparison = comparison ?? DefaultComparison;
         }
-
-        public string Path { get; }
-
-        public StringComparer Comparer { get; }
 
         public ImmutableHashSet<string> Values { get; }
 
+        public StringComparison Comparison { get; }
+
+        public StringComparer Comparer { get; }
+
         public int Count => Values.Count;
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private string DebuggerDisplay => $"Count = {Values.Count}";
 
         public WordCharMap CharIndexMap
         {
@@ -62,18 +66,6 @@ namespace Roslynator.Spelling
                 return _reversedCharIndexMap;
             }
         }
-
-        //TODO: del
-        //public WordCharMap CharMap
-        //{
-        //    get
-        //    {
-        //        if (_charMap == null)
-        //            Interlocked.CompareExchange(ref _charMap, WordCharMap.CreateCharMap(this), null);
-
-        //        return _charMap;
-        //    }
-        //}
 
         public ImmutableDictionary<string, ImmutableHashSet<string>> CharMap
         {
@@ -101,8 +93,33 @@ namespace Roslynator.Spelling
             }
         }
 
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private string DebuggerDisplay => $"Count = {Values.Count}  {Path}";
+        public static WordList Load(IEnumerable<string> paths)
+        {
+            IEnumerable<string> values = GetFiles().SelectMany(path => ReadWords(path));
+
+            return new WordList(values, DefaultComparison);
+
+            IEnumerable<string> GetFiles()
+            {
+                foreach (string path in paths)
+                {
+                    if (File.Exists(path))
+                    {
+                        yield return path;
+                    }
+                    else if (Directory.Exists(path))
+                    {
+                        foreach (string filePath in Directory.EnumerateFiles(
+                            path,
+                            "*.*",
+                            SearchOption.AllDirectories))
+                        {
+                            yield return filePath;
+                        }
+                    }
+                }
+            }
+        }
 
         public static WordList LoadFiles(IEnumerable<string> filePaths)
         {
@@ -114,20 +131,20 @@ namespace Roslynator.Spelling
             return wordList;
         }
 
-        public static WordList LoadFile(string path, StringComparer comparer = null)
+        public static WordList LoadFile(string path, StringComparison? stringComparison = null)
         {
             IEnumerable<string> values = ReadWords(path);
 
-            return new WordList(path, comparer, values);
+            return new WordList(values, stringComparison);
         }
 
-        public static WordList LoadText(string text, StringComparer comparer = null)
+        public static WordList LoadText(string text, StringComparison? comparison = null)
         {
             IEnumerable<string> values = ReadLines();
 
             values = ReadWords(values);
 
-            return new WordList(null, comparer, values);
+            return new WordList(values, comparison);
 
             IEnumerable<string> ReadLines()
             {
@@ -187,14 +204,14 @@ namespace Roslynator.Spelling
 
         public WordList AddValue(string value)
         {
-            return new WordList(Path, Comparer, Values.Add(value));
+            return new WordList(Values.Add(value), Comparison);
         }
 
         public WordList AddValues(IEnumerable<string> values)
         {
             values = Values.Concat(values).Distinct(Comparer);
 
-            return new WordList(Path, Comparer, values);
+            return new WordList(values, Comparison);
         }
 
         public WordList AddValues(WordList wordList, params WordList[] additionalWordLists)
@@ -209,7 +226,7 @@ namespace Roslynator.Spelling
 
         public WordList WithValues(IEnumerable<string> values)
         {
-            return new WordList(Path, Comparer, values);
+            return new WordList(values, Comparison);
         }
 
         public static void Save(
@@ -235,23 +252,16 @@ namespace Roslynator.Spelling
             File.WriteAllText(path, string.Join(Environment.NewLine, values));
         }
 
-        public void Save(string path = null)
+        public void Save(string path)
         {
-            Save(path ?? Path, this);
+            Save(path ?? throw new ArgumentException("", nameof(path)), this);
         }
 
-        public static void Normalize(string filePath)
+        public static void Normalize(string path)
         {
-            WordList list = LoadFile(filePath);
+            WordList list = LoadFile(path);
 
-            list.Save();
+            list.Save(path);
         }
-
-        //public WordList SaveAndLoad()
-        //{
-        //    Save();
-
-        //    return LoadFile(Path, Comparer);
-        //}
     }
 }

@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Josef Pihrt. All rights reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System.Collections.Generic;
 using CommandLine;
 
 namespace Roslynator.CommandLine
@@ -12,6 +13,12 @@ namespace Roslynator.CommandLine
             HelpText = "Defines culture that should be used to display diagnostic message.",
             MetaValue = "<CULTURE_ID>")]
         public string Culture { get; set; }
+
+        [Option(
+            longName: "fixes",
+            HelpText = "",
+            MetaValue = "<PATH>")]
+        public IEnumerable<string> Fixes { get; set; } = null!;
 
         [Option(
             longName: "include-generated-code",
@@ -34,5 +41,11 @@ namespace Roslynator.CommandLine
             HelpText = "",
             MetaValue = "<PATH>")]
         public string NewFixes { get; set; }
+
+        [Option(
+            longName: "words",
+            HelpText = "",
+            MetaValue = "<PATH>")]
+        public IEnumerable<string> Words { get; set; } = null!;
     }
 }

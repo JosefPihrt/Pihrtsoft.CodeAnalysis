@@ -17,6 +17,7 @@ using Roslynator.CSharp;
 using Roslynator.Diagnostics;
 using Roslynator.Documentation;
 using Roslynator.FindSymbols;
+using Roslynator.Spelling;
 using static Roslynator.CommandLine.ParseHelpers;
 using static Roslynator.Logger;
 
@@ -351,23 +352,58 @@ namespace Roslynator.CommandLine
             if (!options.TryGetProjectFilter(out ProjectFilter projectFilter))
                 return ExitCodes.Error;
 
-            string newWordsPath = null;
+            string assemblyPath = typeof(SpellcheckCommandLineOptions).Assembly.Location;
+
+            IEnumerable<string> wordListPaths = Enumerable.Empty<string>();
+            IEnumerable<string> fixListPaths = Enumerable.Empty<string>();
+
+            if (!string.IsNullOrEmpty(assemblyPath))
+            {
+                wordListPaths = Directory.EnumerateFiles(
+                    Path.Combine(Path.GetDirectoryName(assemblyPath), "Spelling", "words"),
+                    "*.txt",
+                    SearchOption.AllDirectories);
+
+                fixListPaths = Directory.EnumerateFiles(
+                    Path.Combine(Path.GetDirectoryName(assemblyPath), "Spelling", "fixes"),
+                    "*.txt",
+                    SearchOption.AllDirectories);
+            }
+
+            if (!TryEnsureFullPath(options.Words, out ImmutableArray<string> wordListPaths2))
+                return ExitCodes.Error;
+
+            if (!TryEnsureFullPath(options.Fixes, out ImmutableArray<string> fixListPaths2))
+                return ExitCodes.Error;
+
+            string newWordListPath = null;
 
             if (options.NewWords != null
-                && !TryEnsureFullPath(options.NewWords, out newWordsPath))
+                && !TryEnsureFullPath(options.NewWords, out newWordListPath))
             {
                 return ExitCodes.Error;
             }
 
-            string newFixesPath = null;
+            string newFixListPath = null;
 
             if (options.NewFixes != null
-                && !TryEnsureFullPath(options.NewFixes, out newFixesPath))
+                && !TryEnsureFullPath(options.NewFixes, out newFixListPath))
             {
                 return ExitCodes.Error;
             }
+#if DEBUG
+            foreach (string filePath in Directory.EnumerateFiles(@"..\..\..\Spelling", "*.txt", SearchOption.AllDirectories))
+            {
+                WordList.Normalize(filePath);
+            }
+#endif
+            WordList wordList = WordList.Load(wordListPaths.Concat(wordListPaths2));
 
-            var command = new SpellcheckCommand(options, projectFilter, newWordsPath, newFixesPath);
+            FixList fixList = FixList.Load(fixListPaths.Concat(fixListPaths2));
+
+            var data = new SpellingData(wordList, fixList, default);
+
+            var command = new SpellcheckCommand(options, projectFilter, data);
 
             IEnumerable<string> properties = options.Properties;
 #if DEBUG

@@ -20,19 +20,27 @@ namespace Roslynator.CommandLine
         public SpellcheckCommand(
             SpellcheckCommandLineOptions options,
             in ProjectFilter projectFilter,
+            SpellingData spellingData,
             string newWordsPath = null,
             string newFixesPath = null) : base(projectFilter)
         {
             Options = options;
+            SpellingData = spellingData;
+
+            OriginalFixList = spellingData.FixList;
             NewWordsPath = newWordsPath;
             NewFixesPath = newFixesPath;
         }
 
         public SpellcheckCommandLineOptions Options { get; }
 
-        public string NewWordsPath { get; }
+        public SpellingData SpellingData { get; }
 
-        public string NewFixesPath { get; }
+        private FixList OriginalFixList { get; }
+
+        private string NewWordsPath { get; }
+
+        private string NewFixesPath { get; }
 
         public override async Task<CommandResult> ExecuteAsync(ProjectOrSolution projectOrSolution, CancellationToken cancellationToken = default)
         {
@@ -100,40 +108,16 @@ namespace Roslynator.CommandLine
                 await spellingFixer.FixSolutionAsync(f => projectFilter.IsMatch(f), cancellationToken);
             }
 #if DEBUG
-            //TODO: pass original fix list
             Console.WriteLine("Saving new values");
-            SaveNewValues(spellingFixer.SpellingData, null, NewWordsPath, NewFixesPath, cancellationToken);
+            SaveNewValues(spellingFixer.SpellingData, OriginalFixList, NewWordsPath, NewFixesPath, cancellationToken);
 #endif
             return CommandResult.Success;
 
             SpellingFixer GetSpellingFixer(Solution solution)
             {
-                SpellingData spellingData = SpellingData.Empty;
-
-                string assemblyPath = typeof(FixCommand).Assembly.Location;
-
-                if (!string.IsNullOrEmpty(assemblyPath))
-                {
-                    IEnumerable<string> wordListPaths = Directory.EnumerateFiles(
-                        Path.Combine(Path.GetDirectoryName(assemblyPath), "_words"),
-                        "*.txt",
-                        SearchOption.AllDirectories);
-
-                    WordList wordList = WordList.LoadFiles(wordListPaths);
-
-                    IEnumerable<string> fixListPaths = Directory.EnumerateFiles(
-                        Path.Combine(Path.GetDirectoryName(assemblyPath), "_fixes"),
-                        "*.txt",
-                        SearchOption.AllDirectories);
-
-                    FixList fixList = FixList.LoadFiles(fixListPaths);
-
-                    spellingData = new SpellingData(wordList, fixList, default);
-                }
-
                 return new SpellingFixer(
                     solution,
-                    spellingData: spellingData,
+                    spellingData: SpellingData,
                     formatProvider: formatProvider,
                     options: options);
             }
@@ -172,7 +156,7 @@ namespace Roslynator.CommandLine
                 {
                     if (dic.TryGetValue(kvp.Key, out List<SpellingFix> list))
                     {
-                        list.RemoveAll(f => kvp.Value.Contains(f, SpellingFixComparer.CurrentCultureIgnoreCase));
+                        list.RemoveAll(f => kvp.Value.Contains(f, SpellingFixComparer.InvariantCultureIgnoreCase));
 
                         if (list.Count == 0)
                             dic.Remove(kvp.Key);
@@ -180,7 +164,8 @@ namespace Roslynator.CommandLine
                 }
             }
 
-            StringComparer comparer = StringComparer.CurrentCulture;
+            const StringComparison comparison = StringComparison.InvariantCulture;
+            StringComparer comparer = SpellingUtility.CreateStringComparer(comparison);
 
             if (wordListNewPath != null)
             {
@@ -189,7 +174,7 @@ namespace Roslynator.CommandLine
                 if (values.Count > 0)
                 {
                     if (File.Exists(wordListNewPath))
-                        values.UnionWith(WordList.LoadFile(wordListNewPath, comparer).Values);
+                        values.UnionWith(WordList.LoadFile(wordListNewPath, comparison).Values);
 
                     IEnumerable<string> newValues = values
                         .Except(data.FixList.Items.Select(f => f.Key), WordList.DefaultComparer)
@@ -244,8 +229,8 @@ namespace Roslynator.CommandLine
                 f => f.Key.ToLowerInvariant(),
                 f => f.Value
                     .Select(f => f.WithValue(f.Value.ToLowerInvariant()))
-                    .Distinct(SpellingFixComparer.CurrentCultureIgnoreCase)
-                    .ToImmutableHashSet(SpellingFixComparer.CurrentCultureIgnoreCase));
+                    .Distinct(SpellingFixComparer.InvariantCultureIgnoreCase)
+                    .ToImmutableHashSet(SpellingFixComparer.InvariantCultureIgnoreCase));
 
             if (fixListNewPath != null
                 && fixes.Count > 0)

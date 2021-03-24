@@ -543,7 +543,7 @@ namespace Roslynator.Spelling
         {
             //TODO: set max number of suggestions
             fixes = fixes
-                .Distinct(SpellingFixComparer.CurrentCulture)
+                .Distinct(SpellingFixComparer.InvariantCulture)
                 .Where(f =>
                 {
                     return f.Kind == SpellingFixKind.Predefined

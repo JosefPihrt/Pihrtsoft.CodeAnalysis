@@ -9,7 +9,7 @@ namespace Roslynator.Spelling
         public static SpellingData Empty { get; } = new SpellingData(
             WordList.Default,
             FixList.Empty,
-            WordList.Default_CurrentCulture);
+            WordList.CaseSensitive);
 
         public SpellingData(
             WordList list,
@@ -18,7 +18,7 @@ namespace Roslynator.Spelling
         {
             List = list;
             FixList = fixList ?? FixList.Empty;
-            IgnoreList = ignoreList ?? WordList.Default_CurrentCulture;
+            IgnoreList = ignoreList ?? WordList.CaseSensitive;
         }
 
         public WordList List { get; }

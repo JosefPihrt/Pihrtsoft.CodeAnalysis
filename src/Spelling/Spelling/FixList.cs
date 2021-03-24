@@ -36,14 +36,14 @@ namespace Roslynator.Spelling
             return Items.TryGetKey(equalKey, out actualKey);
         }
 
-        public FixList Add(string key, SpellingFix spellingFix)
+        public FixList Add(string key, SpellingFix fix)
         {
             if (Items.TryGetValue(key, out ImmutableHashSet<SpellingFix> fixes))
             {
-                if (fixes.Contains(spellingFix))
+                if (fixes.Contains(fix))
                     return this;
 
-                fixes = fixes.Add(spellingFix);
+                fixes = fixes.Add(fix);
 
                 ImmutableDictionary<string, ImmutableHashSet<SpellingFix>> values = Items.SetItem(key, fixes);
 
@@ -51,12 +51,37 @@ namespace Roslynator.Spelling
             }
             else
             {
-                fixes = ImmutableHashSet.Create(SpellingFixComparer.CurrentCultureIgnoreCase, spellingFix);
+                fixes = ImmutableHashSet.Create(SpellingFixComparer.InvariantCultureIgnoreCase, fix);
 
                 ImmutableDictionary<string, ImmutableHashSet<SpellingFix>> dic = Items.Add(key, fixes);
 
                 return new FixList(dic);
             }
+        }
+
+        public static FixList Load(IEnumerable<string> paths)
+        {
+            var dic = new Dictionary<string, HashSet<string>>(WordList.DefaultComparer);
+
+            foreach (string path in paths)
+            {
+                if (File.Exists(path))
+                {
+                    LoadFile(path, ref dic);
+                }
+                else if (Directory.Exists(path))
+                {
+                    foreach (string filePath in Directory.EnumerateFiles(
+                        path,
+                        "*.*",
+                        SearchOption.AllDirectories))
+                    {
+                        LoadFile(filePath, ref dic);
+                    }
+                }
+            }
+
+            return Create(dic);
         }
 
         public static FixList LoadFiles(IEnumerable<string> filePaths)
@@ -85,7 +110,7 @@ namespace Roslynator.Spelling
                 f => f.Value
                     .Distinct(StringComparer.CurrentCulture)
                     .Select(f => new SpellingFix(f, SpellingFixKind.Predefined))
-                    .ToImmutableHashSet(SpellingFixComparer.CurrentCulture),
+                    .ToImmutableHashSet(SpellingFixComparer.InvariantCulture),
                 WordList.DefaultComparer);
 
             return new FixList(fixes2);
@@ -95,6 +120,13 @@ namespace Roslynator.Spelling
         {
             var dic = new Dictionary<string, HashSet<string>>(WordList.DefaultComparer);
 
+            LoadFile(path, ref dic);
+
+            return Create(dic);
+        }
+
+        private static void LoadFile(string path, ref Dictionary<string, HashSet<string>> dic)
+        {
             foreach ((string key, string value) in File.ReadLines(path)
                 .Where(f => !string.IsNullOrWhiteSpace(f))
                 .Select(f =>
@@ -117,21 +149,22 @@ namespace Roslynator.Spelling
                     Debug.Assert(!fixes.Contains(value), $"Fix list already contains {key}={value}");
 
                     fixes.Add(value);
-                    dic[key] = fixes;
                 }
                 else
                 {
                     dic[key] = new HashSet<string>(WordList.DefaultComparer) { value };
                 }
             }
+        }
 
-            ImmutableDictionary<string, ImmutableHashSet<SpellingFix>> items
-                = dic.ToImmutableDictionary(
-                    f => f.Key,
-                    f => f.Value
-                        .Select(f => new SpellingFix(f, SpellingFixKind.Predefined))
-                        .ToImmutableHashSet(SpellingFixComparer.CurrentCultureIgnoreCase),
-                    WordList.DefaultComparer);
+        private static FixList Create(Dictionary<string, HashSet<string>> dic)
+        {
+            ImmutableDictionary<string, ImmutableHashSet<SpellingFix>> items = dic.ToImmutableDictionary(
+                f => f.Key,
+                f => f.Value
+                    .Select(f => new SpellingFix(f, SpellingFixKind.Predefined))
+                    .ToImmutableHashSet(SpellingFixComparer.InvariantCultureIgnoreCase),
+                WordList.DefaultComparer);
 
             return new FixList(items);
         }
@@ -154,7 +187,7 @@ namespace Roslynator.Spelling
                     values
                         .SelectMany(f => f.Value.Select(g => (key: f.Key, fix: g)))
                         .OrderBy(f => f.key)
-                        .ThenBy(f => f.fix, SpellingFixComparer.CurrentCulture)
+                        .ThenBy(f => f.fix, SpellingFixComparer.InvariantCulture)
                         .Select(f => $"{f.key}={f.fix.Value}")));
         }
 

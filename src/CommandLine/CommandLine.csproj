@@ -63,106 +63,106 @@
 
   <ItemGroup>
     <None Include="..\..\images\icon.png" Pack="true" PackagePath="\" Visible="false" />
-    <None Remove="_fixes\.gitignore" />
-    <None Remove="_words\.gitignore" />
+    <None Remove="Spelling\fixes\.gitignore" />
+    <None Remove="Spelling\words\.gitignore" />
     <None Remove="_._" />
-    <None Update="_fixes\fixes.txt">
+    <None Update="Spelling\fixes\fixes.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="_fixes\fixes.txt">
+    <None Update="Spelling\fixes\fixes.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="_words\abbreviations.txt">
+    <None Update="Spelling\words\abbreviations.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="_words\acronyms.txt">
+    <None Update="Spelling\words\acronyms.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="_words\contractions.txt">
+    <None Update="Spelling\words\contractions.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="_words\default.txt">
+    <None Update="Spelling\words\default.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="_words\geography\demonyms.txt">
+    <None Update="Spelling\words\geography\demonyms.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="_words\geography\continents.txt">
+    <None Update="Spelling\words\geography\continents.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="_words\geography\adjectives.txt">
+    <None Update="Spelling\words\geography\adjectives.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="_words\given_names.txt">
+    <None Update="Spelling\words\given_names.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="_words\science.txt">
+    <None Update="Spelling\words\science.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="_words\custom.txt">
+    <None Update="Spelling\words\custom.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="_words\us.txt">
+    <None Update="Spelling\words\us.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="_words\br.txt">
+    <None Update="Spelling\words\br.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="_words\colors.txt">
+    <None Update="Spelling\words\colors.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="_words\it\file_extensions.txt">
+    <None Update="Spelling\words\it\file_extensions.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="_words\it\main.txt">
+    <None Update="Spelling\words\it\main.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="_words\it\names.txt">
+    <None Update="Spelling\words\it\names.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="_words\it\datetime_formats.txt">
+    <None Update="Spelling\words\it\datetime_formats.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="_words\it\acronyms.txt">
+    <None Update="Spelling\words\it\acronyms.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="_words\it\other.txt">
+    <None Update="Spelling\words\it\other.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="_words\it\abbreviations.txt">
+    <None Update="Spelling\words\it\abbreviations.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="_words\geography\cities.txt">
+    <None Update="Spelling\words\geography\cities.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="_words\geography\capitals.txt">
+    <None Update="Spelling\words\geography\capitals.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="_words\geography\us_states.txt">
+    <None Update="Spelling\words\geography\us_states.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="_words\geography\countries.txt">
+    <None Update="Spelling\words\geography\countries.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="_words\it\languages.txt">
+    <None Update="Spelling\words\it\languages.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="_words\plural.txt">
+    <None Update="Spelling\words\plural.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="_words\ignore.txt">
+    <None Update="Spelling\words\ignore.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="_words\it\fonts.txt">
+    <None Update="Spelling\words\it\fonts.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="_words\it\html_tags.txt">
+    <None Update="Spelling\words\it\html_tags.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="_words\names.txt">
+    <None Update="Spelling\words\names.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="_words\math.txt">
+    <None Update="Spelling\words\math.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
