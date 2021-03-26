@@ -9,12 +9,12 @@ Formats documents in the specified project or solution.
 roslynator format <PROJECT|SOLUTION>
 [--culture]
 [--end-of-line]
-[--include-generated-code]
+[-g|--include-generated-code]
 [--ignored-projects]
 [--language]
 [--file-log]
 [--file-log-verbosity]
-[--msbuild-path]
+[-m|--msbuild-path]
 [--projects]
 [-v|--verbosity]
 ```
@@ -35,7 +35,7 @@ Defines culture that should be used to display diagnostic message.
 
 Defines end of line character(s).
 
-**`--include-generated-code`**
+**`-g|--include-generated-code`**
 
 Indicates whether generated code should be formatted.
 
@@ -47,7 +47,7 @@ Defines project names that should not be formatted.
 
 Defines project language.
 
-**`--msbuild-path`** <MSBUILD_PATH>
+**`-m|--msbuild-path`** <MSBUILD_PATH>
 
 Defines a path to MSBuild. This option must be specified if there are multiple locations of MSBuild (usually multiple installations of Visual Studio).
 

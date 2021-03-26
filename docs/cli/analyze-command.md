@@ -17,8 +17,8 @@ roslynator analyze <PROJECT|SOLUTION>
 [--language]
 [--file-log]
 [--file-log-verbosity]
-[--msbuild-path]
-[--output]
+[-m|--msbuild-path]
+[-o|--output]
 [--projects]
 [-p|--properties]
 [--report-not-configurable]
@@ -71,11 +71,11 @@ Defines projects that should not be analyzed.
 
 Defines project language.
 
-**`--msbuild-path`** <MSBUILD_PATH>
+**`-m|--msbuild-path`** <MSBUILD_PATH>
 
 Defines a path to MSBuild. This option must be specified if there are multiple locations of MSBuild. This is usually required when multiple versions of Visual Studio are installed.
 
-**`--output`** <OUTPUT_FILE>
+**`-o|--output`** <OUTPUT_FILE>
 
 Defines path to file that will store reported diagnostics in XML format.
 

@@ -18,6 +18,7 @@ namespace Roslynator.CommandLine
         public bool IgnoreCompilerDiagnostics { get; set; }
 
         [Option(
+            shortName: OptionShortNames.Output,
             longName: "output",
             HelpText = "Defines path to file that will store reported diagnostics in XML format.",
             MetaValue = "<OUTPUT_FILE>")]

@@ -73,7 +73,7 @@ namespace Roslynator.CommandLine
         public string Layout { get; set; }
 
         [Option(
-            shortName: 'o',
+            shortName: OptionShortNames.Output,
             longName: "output",
             HelpText = "Defines path to file(s) that will store a list of symbol definitions.",
             MetaValue = "<OUTPUT_FILE>")]

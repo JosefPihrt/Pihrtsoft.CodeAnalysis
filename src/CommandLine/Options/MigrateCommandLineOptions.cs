@@ -15,7 +15,7 @@ namespace Roslynator.CommandLine
         public IEnumerable<string> Path { get; set; }
 
         [Option(
-            shortName: 'd',
+            shortName: OptionShortNames.DryRun,
             longName: "dry-run",
             HelpText = "Migrate analyzers to a new version but do not save changes to a disk.")]
         public bool DryRun { get; set; }

@@ -21,7 +21,7 @@ roslynator list-symbols <PROJECT|SOLUTION>
 [--indent-chars]
 [--language]
 [--layout]
-[--msbuild-path]
+[-m|--msbuild-path]
 [-o|--output]
 [--projects]
 [-p|--properties]
@@ -86,7 +86,7 @@ Defines project language.
 
 Defines layout of a list of symbol definitions. Allowed values are namespace-list, namespace-hierarchy or type-hierarchy. Default value is namespace-list.
 
-**`--msbuild-path`** <MSBUILD_PATH>
+**`-m|--msbuild-path`** <MSBUILD_PATH>
 
 Defines a path to MSBuild. This option must be specified if there are multiple locations of MSBuild (usually multiple installations of Visual Studio).
 

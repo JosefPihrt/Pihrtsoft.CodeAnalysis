@@ -9,13 +9,13 @@ Counts logical lines of code in the specified project or solution.
 roslynator lloc <PROJECT|SOLUTION>
 [--ignored-projects]
 [--include-comments]
-[--include-generated-code]
+[-g|--include-generated-code]
 [--include-preprocessor-directives]
 [--include-whitespace]
 [--language]
 [--file-log]
 [--file-log-verbosity]
-[--msbuild-path]
+[-m|--msbuild-path]
 [--projects]
 [-p|--properties]
 [-v|--verbosity]
@@ -37,7 +37,7 @@ Defines project names that should not be fixed.
 
 Indicates whether a line that contains only comment should be counted.
 
-**`--include-generated-code`**
+**`-g|--include-generated-code`**
 
 Indicates whether generated code should be counted.
 
@@ -53,7 +53,7 @@ Indicates whether white-space line should be counted.
 
 Defines project language.
 
-**`--msbuild-path`** <MSBUILD_PATH>
+**`-m|--msbuild-path`** <MSBUILD_PATH>
 
 Defines a path to MSBuild. This option must be specified if there are multiple locations of MSBuild (usually multiple installations of Visual Studio).
 
