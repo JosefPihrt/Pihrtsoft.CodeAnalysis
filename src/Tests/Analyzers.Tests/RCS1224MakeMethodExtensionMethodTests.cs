@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1224MakeMethodExtensionMethodTests : AbstractCSharpFixVerifier
+    public class RCS1224MakeMethodExtensionMethodTests : AbstractCSharpDiagnosticVerifier<MakeMethodExtensionMethodAnalyzer, MemberDeclarationCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.MakeMethodExtensionMethod;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new MakeMethodExtensionMethodAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new MemberDeclarationCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.MakeMethodExtensionMethod)]
         public async Task Test_Accessibility_ImplictlyInternal()
@@ -250,7 +245,7 @@ public static class FooExtensions
 {
         public static unsafe void M(int* p) { }
 }
-");
+", options: Options.WithAllowUnsafe(true));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.MakeMethodExtensionMethod)]

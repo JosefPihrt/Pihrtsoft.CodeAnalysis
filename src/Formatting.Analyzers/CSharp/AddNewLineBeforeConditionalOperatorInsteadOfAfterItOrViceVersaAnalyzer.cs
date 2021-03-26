@@ -10,7 +10,7 @@ using Roslynator.CSharp;
 namespace Roslynator.Formatting.CSharp
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class AddNewLineBeforeConditionalOperatorInsteadOfAfterItOrViceVersaAnalyzer : BaseDiagnosticAnalyzer
+    public class AddNewLineBeforeConditionalOperatorInsteadOfAfterItOrViceVersaAnalyzer : BaseDiagnosticAnalyzer
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
@@ -40,7 +40,7 @@ namespace Roslynator.Formatting.CSharp
 
             if (SyntaxTriviaAnalysis.IsTokenFollowedWithNewLineAndNotPrecededWithNewLine(condition, conditionalExpression.QuestionToken, whenTrue))
             {
-                if (context.IsAnalyzerSuppressed(AnalyzerOptions.AddNewLineAfterConditionalOperatorInsteadOfBeforeIt))
+                if (!AnalyzerOptions.AddNewLineAfterConditionalOperatorInsteadOfBeforeIt.IsEnabled(context))
                 {
                     ReportDiagnostic(DiagnosticDescriptors.AddNewLineBeforeConditionalOperatorInsteadOfAfterItOrViceVersa, conditionalExpression.QuestionToken, ImmutableDictionary<string, string>.Empty);
                     return;
@@ -48,7 +48,7 @@ namespace Roslynator.Formatting.CSharp
             }
             else if (SyntaxTriviaAnalysis.IsTokenPrecededWithNewLineAndNotFollowedWithNewLine(condition, conditionalExpression.QuestionToken, whenTrue))
             {
-                if (!context.IsAnalyzerSuppressed(AnalyzerOptions.AddNewLineAfterConditionalOperatorInsteadOfBeforeIt))
+                if (AnalyzerOptions.AddNewLineAfterConditionalOperatorInsteadOfBeforeIt.IsEnabled(context))
                 {
                     ReportDiagnostic(DiagnosticDescriptors.ReportOnly.AddNewLineAfterConditionalOperatorInsteadOfBeforeIt, conditionalExpression.QuestionToken, DiagnosticProperties.AnalyzerOption_Invert);
                     return;
@@ -61,12 +61,12 @@ namespace Roslynator.Formatting.CSharp
             {
                 if (SyntaxTriviaAnalysis.IsTokenFollowedWithNewLineAndNotPrecededWithNewLine(whenTrue, conditionalExpression.ColonToken, whenFalse))
                 {
-                    if (context.IsAnalyzerSuppressed(AnalyzerOptions.AddNewLineAfterConditionalOperatorInsteadOfBeforeIt))
+                    if (!AnalyzerOptions.AddNewLineAfterConditionalOperatorInsteadOfBeforeIt.IsEnabled(context))
                         ReportDiagnostic(DiagnosticDescriptors.AddNewLineBeforeConditionalOperatorInsteadOfAfterItOrViceVersa, conditionalExpression.ColonToken, ImmutableDictionary<string, string>.Empty);
                 }
                 else if (SyntaxTriviaAnalysis.IsTokenPrecededWithNewLineAndNotFollowedWithNewLine(whenTrue, conditionalExpression.ColonToken, whenFalse))
                 {
-                    if (!context.IsAnalyzerSuppressed(AnalyzerOptions.AddNewLineAfterConditionalOperatorInsteadOfBeforeIt))
+                    if (AnalyzerOptions.AddNewLineAfterConditionalOperatorInsteadOfBeforeIt.IsEnabled(context))
                         ReportDiagnostic(DiagnosticDescriptors.ReportOnly.AddNewLineAfterConditionalOperatorInsteadOfBeforeIt, conditionalExpression.ColonToken, DiagnosticProperties.AnalyzerOption_Invert);
                 }
             }

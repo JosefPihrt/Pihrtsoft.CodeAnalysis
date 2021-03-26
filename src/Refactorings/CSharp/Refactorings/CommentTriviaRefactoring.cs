@@ -16,46 +16,18 @@ namespace Roslynator.CSharp.Refactorings
 
             if (context.IsRootCompilationUnit
                 && trivia.FullSpan.Contains(span)
-                && CSharpFacts.IsCommentTrivia(kind))
+                && CSharpFacts.IsCommentTrivia(kind)
+                && context.IsRefactoringEnabled(RefactoringIdentifiers.RemoveComment))
             {
-                if (context.IsRefactoringEnabled(RefactoringIdentifiers.RemoveComment))
-                {
-                    context.RegisterRefactoring(
-                        "Remove comment",
-                        ct =>
-                        {
-                            SyntaxToken newToken = RemoveCommentHelper.GetReplacementToken(trivia).WithFormatterAnnotation();
+                context.RegisterRefactoring(
+                    "Remove comment",
+                    ct =>
+                    {
+                        SyntaxToken newToken = RemoveCommentHelper.GetReplacementToken(trivia).WithFormatterAnnotation();
 
-                            return document.ReplaceTokenAsync(trivia.Token, newToken, ct);
-                        },
-                        RefactoringIdentifiers.RemoveComment);
-                }
-
-                if (context.IsRefactoringEnabled(RefactoringIdentifiers.RemoveAllComments))
-                {
-                    context.RegisterRefactoring(
-                        "Remove all comments",
-                        ct => document.RemoveCommentsAsync(CommentFilter.All, ct),
-                        RefactoringIdentifiers.RemoveAllComments);
-                }
-
-                if (context.IsRefactoringEnabled(RefactoringIdentifiers.RemoveAllCommentsExceptDocumentationComments)
-                    && kind.Is(SyntaxKind.SingleLineCommentTrivia, SyntaxKind.MultiLineCommentTrivia))
-                {
-                    context.RegisterRefactoring(
-                        "Remove all comments (except documentation comments)",
-                        ct => document.RemoveCommentsAsync(CommentFilter.NonDocumentation, ct),
-                        RefactoringIdentifiers.RemoveAllCommentsExceptDocumentationComments);
-                }
-
-                if (context.IsRefactoringEnabled(RefactoringIdentifiers.RemoveAllDocumentationComments)
-                    && SyntaxFacts.IsDocumentationCommentTrivia(kind))
-                {
-                    context.RegisterRefactoring(
-                        "Remove all documentation comments",
-                        ct => document.RemoveCommentsAsync(CommentFilter.Documentation, ct),
-                        RefactoringIdentifiers.RemoveAllDocumentationComments);
-                }
+                        return document.ReplaceTokenAsync(trivia.Token, newToken, ct);
+                    },
+                    RefactoringIdentifiers.RemoveComment);
             }
         }
 

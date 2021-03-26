@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1242DoNotPassNonReadOnlyStructByReadOnlyReferenceTests : AbstractCSharpFixVerifier
+    public class RCS1242DoNotPassNonReadOnlyStructByReadOnlyReferenceTests : AbstractCSharpDiagnosticVerifier<RefReadOnlyParameterAnalyzer, ParameterCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.DoNotPassNonReadOnlyStructByReadOnlyReference;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new RefReadOnlyParameterAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new ParameterCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.DoNotPassNonReadOnlyStructByReadOnlyReference)]
         public async Task Test()

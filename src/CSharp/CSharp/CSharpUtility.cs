@@ -402,6 +402,8 @@ namespace Roslynator.CSharp
                     case SyntaxKind.UnknownAccessorDeclaration:
                     case SyntaxKind.IncompleteMember:
                     case SyntaxKind.ArrowExpressionClause:
+                    case SyntaxKind.ThisConstructorInitializer:
+                    case SyntaxKind.BaseConstructorInitializer:
                         return false;
 #if DEBUG
                     default:

@@ -660,4 +660,9 @@
       <Id>CS0539</Id>
     </FixableDiagnosticIds>
   </CodeFix>
+  <CodeFix Id="RCF0117" Identifier="MoveInitializerExpressionsToConstructor" Title="Move initializer expressions to constructor">
+    <FixableDiagnosticIds>
+      <Id>CS7036</Id>
+    </FixableDiagnosticIds>
+  </CodeFix>
 </CodeFixes>

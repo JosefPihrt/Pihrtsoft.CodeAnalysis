@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1135DeclareEnumMemberWithZeroValueTests : AbstractCSharpFixVerifier
+    public class RCS1135DeclareEnumMemberWithZeroValueTests : AbstractCSharpDiagnosticVerifier<EnumSymbolAnalyzer, DeclareEnumMemberWithZeroValueCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.DeclareEnumMemberWithZeroValue;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new EnumSymbolAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new DeclareEnumMemberWithZeroValueCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.DeclareEnumMemberWithZeroValue)]
         public async Task Test()
@@ -34,7 +29,7 @@ using System;
 [Flags]
 enum Foo
 {
-    None = 0,
+    {|r:None|} = 0,
     A = 1
 }
 ");

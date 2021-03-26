@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
@@ -526,36 +527,66 @@ namespace Roslynator
             return false;
         }
 
-        internal static bool IsAnalyzerSuppressed(this SymbolAnalysisContext context, DiagnosticDescriptor descriptor)
+        internal static bool IsEffective(this DiagnosticDescriptor descriptor, SymbolAnalysisContext context)
         {
-            return context.Compilation.IsAnalyzerSuppressed(descriptor);
+            return IsEffective(
+                descriptor,
+                context.Symbol.Locations[0].SourceTree,
+                context.Compilation.Options,
+                context.CancellationToken);
         }
 
-        internal static bool IsAnalyzerSuppressed(this SyntaxNodeAnalysisContext context, DiagnosticDescriptor descriptor)
+        internal static bool IsEffective(this DiagnosticDescriptor descriptor, SyntaxNodeAnalysisContext context)
         {
-            return context.Compilation.IsAnalyzerSuppressed(descriptor);
+            return IsEffective(
+                descriptor,
+                context.Node.SyntaxTree,
+                context.Compilation.Options,
+                context.CancellationToken);
         }
 
-#pragma warning disable RS1012
-        internal static bool IsAnalyzerSuppressed(this CompilationStartAnalysisContext context, DiagnosticDescriptor descriptor)
+        public static bool IsEffective(
+            this DiagnosticDescriptor descriptor,
+            SyntaxTree syntaxTree,
+            CompilationOptions compilationOptions,
+            CancellationToken cancellationToken = default)
         {
-            return context.Compilation.IsAnalyzerSuppressed(descriptor);
+            var reportDiagnostic = Microsoft.CodeAnalysis.ReportDiagnostic.Default;
+
+            if (compilationOptions
+                .SyntaxTreeOptionsProvider?
+                .TryGetDiagnosticValue(
+                    syntaxTree,
+                    descriptor.Id,
+                    cancellationToken,
+                    out reportDiagnostic) != true)
+            {
+                reportDiagnostic = compilationOptions
+                    .SpecificDiagnosticOptions
+                    .GetValueOrDefault(descriptor.Id);
+            }
+
+            return reportDiagnostic switch
+            {
+                Microsoft.CodeAnalysis.ReportDiagnostic.Default => descriptor.IsEnabledByDefault,
+                Microsoft.CodeAnalysis.ReportDiagnostic.Suppress => false,
+                _ => true,
+            };
         }
 
-        internal static bool AreAnalyzersSuppressed(this CompilationStartAnalysisContext context, ImmutableArray<DiagnosticDescriptor> descriptors)
+        internal static bool IsEffective(this DiagnosticDescriptor descriptor, Compilation compilation)
         {
-            return context.Compilation.AreAnalyzersSuppressed(descriptors);
+            return IsEffective(descriptor, compilation.Options);
         }
 
-        internal static bool AreAnalyzersSuppressed(this CompilationStartAnalysisContext context, DiagnosticDescriptor descriptor1, DiagnosticDescriptor descriptor2)
+        internal static bool IsEffective(this DiagnosticDescriptor descriptor, CompilationOptions compilationOptions)
         {
-            return context.Compilation.AreAnalyzersSuppressed(descriptor1, descriptor2);
+            return (compilationOptions.SpecificDiagnosticOptions.GetValueOrDefault(descriptor.Id)) switch
+            {
+                Microsoft.CodeAnalysis.ReportDiagnostic.Default => descriptor.IsEnabledByDefault,
+                Microsoft.CodeAnalysis.ReportDiagnostic.Suppress => false,
+                _ => true,
+            };
         }
-
-        internal static bool AreAnalyzersSuppressed(this CompilationStartAnalysisContext context, DiagnosticDescriptor descriptor1, DiagnosticDescriptor descriptor2, DiagnosticDescriptor descriptor3)
-        {
-            return context.Compilation.AreAnalyzersSuppressed(descriptor1, descriptor2, descriptor3);
-        }
-#pragma warning restore RS1012
     }
 }

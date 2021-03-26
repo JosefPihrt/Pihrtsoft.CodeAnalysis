@@ -2,19 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
+using Roslynator.CodeAnalysis.CSharp;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
-namespace Roslynator.CodeAnalysis.CSharp.Tests
+namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS9003UnnecessaryConditionalAccessTests : AbstractCSharpFixVerifier
+    public class RCS9003UnnecessaryConditionalAccessTests : AbstractCSharpDiagnosticVerifier<UnnecessaryConditionalAccessAnalyzer, ConditionalAccessExpressionCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UnnecessaryConditionalAccess;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new UnnecessaryConditionalAccessAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new ConditionalAccessExpressionCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UnnecessaryConditionalAccess)]
         public async Task Test()

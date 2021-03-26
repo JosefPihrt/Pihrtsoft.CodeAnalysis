@@ -39,9 +39,9 @@ namespace Roslynator.CSharp.Analysis.MakeMemberReadOnly
             if (typeDeclaration.Modifiers.Contains(SyntaxKind.PartialKeyword))
                 return;
 
-            bool skipField = context.IsAnalyzerSuppressed(DiagnosticDescriptors.MakeFieldReadOnly);
+            bool skipField = !DiagnosticDescriptors.MakeFieldReadOnly.IsEffective(context);
 
-            bool skipProperty = context.IsAnalyzerSuppressed(DiagnosticDescriptors.UseReadOnlyAutoProperty)
+            bool skipProperty = !DiagnosticDescriptors.UseReadOnlyAutoProperty.IsEffective(context)
                 || ((CSharpCompilation)context.Compilation).LanguageVersion < LanguageVersion.CSharp6;
 
             MakeMemberReadOnlyWalker walker = MakeMemberReadOnlyWalker.GetInstance();
@@ -79,7 +79,7 @@ namespace Roslynator.CSharp.Analysis.MakeMemberReadOnly
                                     && !propertySymbol.IsReadOnly
                                     && ValidateType(propertySymbol.Type)
                                     && propertySymbol.ExplicitInterfaceImplementations.IsDefaultOrEmpty
-                                    && !propertySymbol.HasAttribute(MetadataNames.System_Runtime_Serialization_DataMemberAttribute))
+                                    && AnalyzePropertyAttributes(propertySymbol))
                                 {
                                     symbols[propertySymbol.Name] = (propertyDeclaration, propertySymbol);
                                 }
@@ -151,6 +151,22 @@ namespace Roslynator.CSharp.Analysis.MakeMemberReadOnly
             }
 
             MakeMemberReadOnlyWalker.Free(walker);
+
+            static bool AnalyzePropertyAttributes(IPropertySymbol propertySymbol)
+            {
+                foreach (AttributeData attributeData in propertySymbol.GetAttributes())
+                {
+                    INamedTypeSymbol attributeClass = attributeData.AttributeClass;
+
+                    if (string.Equals(attributeClass.Name, "DependencyAttribute", StringComparison.Ordinal))
+                        return false;
+
+                    if (attributeClass.HasMetadataName(MetadataNames.System_Runtime_Serialization_DataMemberAttribute))
+                        return false;
+                }
+
+                return true;
+            }
         }
 
         private static bool ValidateType(ITypeSymbol type)

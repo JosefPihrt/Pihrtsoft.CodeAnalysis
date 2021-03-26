@@ -21,17 +21,27 @@ namespace Roslynator.CSharp.Analysis
         {
             base.Initialize(context);
 
-            context.RegisterCompilationStartAction(startContext =>
-            {
-                bool useImplicit = !startContext.IsAnalyzerSuppressed(AnalyzerOptions.UseImplicitlyTypedArray);
-                bool useImplicitWhenObvious = !startContext.IsAnalyzerSuppressed(AnalyzerOptions.UseImplicitlyTypedArrayWhenTypeIsObvious);
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (AnalyzerOptions.UseImplicitlyTypedArrayWhenTypeIsObvious.IsEnabled(c)
+                        || !AnalyzerOptions.UseImplicitlyTypedArray.IsEnabled(c))
+                    {
+                        AnalyzeImplicitArrayCreationExpression(c);
+                    }
+                },
+                SyntaxKind.ImplicitArrayCreationExpression);
 
-                if (useImplicitWhenObvious || !useImplicit)
-                    startContext.RegisterSyntaxNodeAction(f => AnalyzeImplicitArrayCreationExpression(f), SyntaxKind.ImplicitArrayCreationExpression);
-
-                if (useImplicitWhenObvious || useImplicit)
-                    startContext.RegisterSyntaxNodeAction(f => AnalyzeArrayCreationExpression(f), SyntaxKind.ArrayCreationExpression);
-            });
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (AnalyzerOptions.UseImplicitlyTypedArrayWhenTypeIsObvious.IsEnabled(c)
+                        || AnalyzerOptions.UseImplicitlyTypedArray.IsEnabled(c))
+                    {
+                        AnalyzeArrayCreationExpression(c);
+                    }
+                },
+                SyntaxKind.ArrayCreationExpression);
         }
 
         private static void AnalyzeImplicitArrayCreationExpression(SyntaxNodeAnalysisContext context)
@@ -50,7 +60,7 @@ namespace Roslynator.CSharp.Analysis
             if (expression.CloseBracketToken.ContainsDirectives)
                 return;
 
-            if (!context.IsAnalyzerSuppressed(AnalyzerOptions.UseImplicitlyTypedArrayWhenTypeIsObvious))
+            if (AnalyzerOptions.UseImplicitlyTypedArrayWhenTypeIsObvious.IsEnabled(context))
             {
                 InitializerExpressionSyntax initializer = expression.Initializer;
 
@@ -100,7 +110,7 @@ namespace Roslynator.CSharp.Analysis
             if (!expressions.Any())
                 return;
 
-            if (!context.IsAnalyzerSuppressed(AnalyzerOptions.UseImplicitlyTypedArrayWhenTypeIsObvious))
+            if (AnalyzerOptions.UseImplicitlyTypedArrayWhenTypeIsObvious.IsEnabled(context))
             {
                 foreach (ExpressionSyntax expression in expressions)
                 {

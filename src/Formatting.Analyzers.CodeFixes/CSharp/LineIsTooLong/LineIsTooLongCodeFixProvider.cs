@@ -22,7 +22,7 @@ namespace Roslynator.Formatting.CodeFixes.LineIsTooLong
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(LineIsTooLongCodeFixProvider))]
     [Shared]
-    internal class LineIsTooLongCodeFixProvider : BaseCodeFixProvider
+    public class LineIsTooLongCodeFixProvider : BaseCodeFixProvider
     {
         private const string Title = "Wrap line";
 
@@ -35,7 +35,10 @@ namespace Roslynator.Formatting.CodeFixes.LineIsTooLong
 
             Document document = context.Document;
             Diagnostic diagnostic = context.Diagnostics[0];
-            var maxLength = int.Parse(diagnostic.Properties[LineIsTooLongAnalyzer.PropertyKey]);
+
+            SyntaxTree syntaxTree = await document.GetSyntaxTreeAsync(context.CancellationToken).ConfigureAwait(false);
+
+            int maxLength = AnalyzerOptions.MaxLineLength.GetInt32Value(syntaxTree, document.Project.AnalyzerOptions, AnalyzerSettings.Current.MaxLineLength);
 
             SemanticModel semanticModel = await context.GetSemanticModelAsync().ConfigureAwait(false);
 
@@ -180,7 +183,7 @@ namespace Roslynator.Formatting.CodeFixes.LineIsTooLong
             return AddNewLineBeforeOrAfterAsync(
                 document,
                 arrowExpressionClause.ArrowToken,
-                document.IsAnalyzerOptionEnabled(AnalyzerOptions.AddNewLineAfterExpressionBodyArrowInsteadOfBeforeIt),
+                AnalyzerOptions.AddNewLineAfterExpressionBodyArrowInsteadOfBeforeIt.IsEnabled(document, arrowExpressionClause),
                 cancellationToken);
         }
 
@@ -192,7 +195,7 @@ namespace Roslynator.Formatting.CodeFixes.LineIsTooLong
             return AddNewLineBeforeOrAfterAsync(
                 document,
                 operatorToken,
-                document.IsAnalyzerOptionEnabled(AnalyzerOptions.AddNewLineAfterEqualsSignInsteadOfBeforeIt),
+                AnalyzerOptions.AddNewLineAfterEqualsSignInsteadOfBeforeIt.IsEnabled(document, operatorToken),
                 cancellationToken);
         }
 
@@ -203,7 +206,7 @@ namespace Roslynator.Formatting.CodeFixes.LineIsTooLong
         {
             string indentation = SyntaxTriviaAnalysis.GetIncreasedIndentation(conditionalExpression, cancellationToken);
 
-            if (document.IsAnalyzerOptionEnabled(AnalyzerOptions.AddNewLineAfterEqualsSignInsteadOfBeforeIt))
+            if (AnalyzerOptions.AddNewLineAfterEqualsSignInsteadOfBeforeIt.IsEnabled(document, conditionalExpression))
             {
                 return document.WithTextChangesAsync(
                     new TextChange[]

@@ -27,15 +27,29 @@ namespace Roslynator.CSharp.Analysis
         {
             base.Initialize(context);
 
-            context.RegisterCompilationStartAction(startContext =>
-            {
-                if (startContext.IsAnalyzerSuppressed(DiagnosticDescriptors.UseUnaryOperatorInsteadOfAssignment))
-                    return;
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (DiagnosticDescriptors.UseUnaryOperatorInsteadOfAssignment.IsEffective(c))
+                        AnalyzeSimpleAssignmentExpression(c);
+                },
+                SyntaxKind.SimpleAssignmentExpression);
 
-                startContext.RegisterSyntaxNodeAction(f => AnalyzeSimpleAssignmentExpression(f), SyntaxKind.SimpleAssignmentExpression);
-                startContext.RegisterSyntaxNodeAction(f => AnalyzeAddAssignmentExpression(f), SyntaxKind.AddAssignmentExpression);
-                startContext.RegisterSyntaxNodeAction(f => AnalyzeSubtractAssignmentExpression(f), SyntaxKind.SubtractAssignmentExpression);
-            });
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (DiagnosticDescriptors.UseUnaryOperatorInsteadOfAssignment.IsEffective(c))
+                        AnalyzeAddAssignmentExpression(c);
+                },
+                SyntaxKind.AddAssignmentExpression);
+
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (DiagnosticDescriptors.UseUnaryOperatorInsteadOfAssignment.IsEffective(c))
+                        AnalyzeSubtractAssignmentExpression(c);
+                },
+                SyntaxKind.SubtractAssignmentExpression);
         }
 
         private static void AnalyzeSimpleAssignmentExpression(SyntaxNodeAnalysisContext context)

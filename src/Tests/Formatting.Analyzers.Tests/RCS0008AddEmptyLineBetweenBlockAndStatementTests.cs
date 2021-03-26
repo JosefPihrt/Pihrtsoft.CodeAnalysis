@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.Formatting.CodeFixes.CSharp;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.Formatting.CSharp.Tests
 {
-    public class RCS0008AddEmptyLineBetweenBlockAndStatementTests : AbstractCSharpFixVerifier
+    public class RCS0008AddEmptyLineBetweenBlockAndStatementTests : AbstractCSharpDiagnosticVerifier<AddEmptyLineBetweenBlockAndStatementAnalyzer, SyntaxTokenCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddEmptyLineBetweenBlockAndStatement;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new AddEmptyLineBetweenBlockAndStatementAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new SyntaxTokenCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddEmptyLineBetweenBlockAndStatement)]
         public async Task Test_Block()
@@ -245,7 +240,7 @@ class C
         M();
     }
 }
-");
+", options: Options.WithAllowUnsafe(true));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddEmptyLineBetweenBlockAndStatement)]
@@ -332,7 +327,7 @@ class C
         M();
     }
 }
-");
+", options: Options.WithAllowUnsafe(true));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddEmptyLineBetweenBlockAndStatement)]

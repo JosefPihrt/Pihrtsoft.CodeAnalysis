@@ -22,7 +22,7 @@ namespace Roslynator.Formatting.CSharp
                 if (!token.LeadingTrivia.Any()
                     && SyntaxTriviaAnalysis.IsOptionalWhitespaceThenEndOfLineTrivia(token.TrailingTrivia)
                     && SyntaxTriviaAnalysis.IsEmptyOrSingleWhitespaceTrivia(expression.GetLeadingTrivia())
-                    && context.IsAnalyzerSuppressed(afterDescriptor))
+                    && !afterDescriptor.IsEffective(context))
                 {
                     return FormattingSuggestion.AddNewLineBefore;
                 }
@@ -32,7 +32,7 @@ namespace Roslynator.Formatting.CSharp
                 if (SyntaxTriviaAnalysis.IsEmptyOrSingleWhitespaceTrivia(token.LeadingTrivia)
                     && SyntaxTriviaAnalysis.IsEmptyOrSingleWhitespaceTrivia(token.TrailingTrivia)
                     && !expression.GetLeadingTrivia().Any()
-                    && !context.IsAnalyzerSuppressed(afterDescriptor))
+                    && afterDescriptor.IsEffective(context))
                 {
                     return FormattingSuggestion.AddNewLineAfter;
                 }

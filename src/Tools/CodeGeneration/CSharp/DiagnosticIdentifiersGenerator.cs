@@ -38,7 +38,8 @@ namespace Roslynator.CodeGeneration.CSharp
             string id = analyzer.Id;
             string identifier = analyzer.Identifier;
 
-            yield return CreateMember(id, identifier, analyzer.IsObsolete);
+            if (id != null)
+                yield return CreateMember(id, identifier, analyzer.IsObsolete);
         }
 
         private static FieldDeclarationSyntax CreateMember(string id, string identifier, bool isObsolete)

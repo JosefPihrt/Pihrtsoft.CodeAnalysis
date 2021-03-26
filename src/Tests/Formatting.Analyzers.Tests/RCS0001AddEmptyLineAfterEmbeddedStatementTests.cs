@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.Formatting.CodeFixes.CSharp;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.Formatting.CSharp.Tests
 {
-    public class RCS0001AddEmptyLineAfterEmbeddedStatementTests : AbstractCSharpFixVerifier
+    public class RCS0001AddEmptyLineAfterEmbeddedStatementTests : AbstractCSharpDiagnosticVerifier<AddEmptyLineAfterEmbeddedStatementAnalyzer, StatementCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddEmptyLineAfterEmbeddedStatement;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new AddEmptyLineAfterEmbeddedStatementAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new StatementCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddEmptyLineAfterEmbeddedStatement)]
         public async Task Test_If()
@@ -360,7 +355,7 @@ class C
         }
     }
 }
-");
+", options: Options.WithAllowUnsafe(true));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddEmptyLineAfterEmbeddedStatement)]
@@ -437,7 +432,7 @@ class C
         }
     }
 }
-");
+", options: Options.WithAllowUnsafe(true));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddEmptyLineAfterEmbeddedStatement)]
@@ -508,7 +503,7 @@ class C
         }
     }
 }
-");
+", options: Options.WithAllowUnsafe(true));
         }
     }
 }

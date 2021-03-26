@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1177UseVarInsteadOfExplicitTypeInForEachTests : AbstractCSharpFixVerifier
+    public class RCS1177UseVarInsteadOfExplicitTypeInForEachTests : AbstractCSharpDiagnosticVerifier<UseVarInsteadOfExplicitTypeInForEachAnalyzer, UseVarInsteadOfExplicitTypeCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseVarInsteadOfExplicitTypeInForEach;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new UseVarInsteadOfExplicitTypeInForEachAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new UseVarInsteadOfExplicitTypeCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseVarInsteadOfExplicitTypeInForEach)]
         public async Task Test()

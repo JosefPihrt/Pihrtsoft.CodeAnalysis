@@ -27,17 +27,45 @@ namespace Roslynator.CSharp.Analysis
         {
             base.Initialize(context);
 
-            context.RegisterCompilationStartAction(startContext =>
-            {
-                if (startContext.IsAnalyzerSuppressed(DiagnosticDescriptors.RemoveRedundantAsyncAwait))
-                    return;
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (DiagnosticDescriptors.RemoveRedundantAsyncAwait.IsEffective(c))
+                        AnalyzeMethodDeclaration(c);
+                },
+                SyntaxKind.MethodDeclaration);
 
-                startContext.RegisterSyntaxNodeAction(f => AnalyzeMethodDeclaration(f), SyntaxKind.MethodDeclaration);
-                startContext.RegisterSyntaxNodeAction(f => AnalyzeLocalFunctionStatement(f), SyntaxKind.LocalFunctionStatement);
-                startContext.RegisterSyntaxNodeAction(f => AnalyzeAnonymousMethodExpression(f), SyntaxKind.AnonymousMethodExpression);
-                startContext.RegisterSyntaxNodeAction(f => AnalyzeLambdaExpression(f), SyntaxKind.SimpleLambdaExpression);
-                startContext.RegisterSyntaxNodeAction(f => AnalyzeLambdaExpression(f), SyntaxKind.ParenthesizedLambdaExpression);
-            });
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (DiagnosticDescriptors.RemoveRedundantAsyncAwait.IsEffective(c))
+                        AnalyzeLocalFunctionStatement(c);
+                },
+                SyntaxKind.LocalFunctionStatement);
+
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (DiagnosticDescriptors.RemoveRedundantAsyncAwait.IsEffective(c))
+                        AnalyzeAnonymousMethodExpression(c);
+                },
+                SyntaxKind.AnonymousMethodExpression);
+
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (DiagnosticDescriptors.RemoveRedundantAsyncAwait.IsEffective(c))
+                        AnalyzeLambdaExpression(c);
+                },
+                SyntaxKind.SimpleLambdaExpression);
+
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (DiagnosticDescriptors.RemoveRedundantAsyncAwait.IsEffective(c))
+                        AnalyzeLambdaExpression(c);
+                },
+                SyntaxKind.ParenthesizedLambdaExpression);
         }
 
         private static void AnalyzeMethodDeclaration(SyntaxNodeAnalysisContext context)

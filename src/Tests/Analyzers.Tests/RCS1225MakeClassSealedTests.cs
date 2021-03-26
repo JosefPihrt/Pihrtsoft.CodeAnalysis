@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1225MakeClassSealedTests : AbstractCSharpFixVerifier
+    public class RCS1225MakeClassSealedTests : AbstractCSharpDiagnosticVerifier<MakeClassSealedAnalyzer, ClassDeclarationCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.MakeClassSealed;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new MakeClassSealedAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new ClassDeclarationCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.MakeClassSealed)]
         public async Task Test_ClassWithoutAccessibilityModifier()

@@ -2,26 +2,19 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
 using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1207ConvertMethodGroupToAnonymousFunctionTests : AbstractCSharpFixVerifier
+    public class RCS1207ConvertMethodGroupToAnonymousFunctionTests : AbstractCSharpDiagnosticVerifier<ConvertAnonymousFunctionToMethodGroupOrViceVersaAnalyzer, ConvertAnonymousFunctionToMethodGroupOrViceVersaCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.ConvertAnonymousFunctionToMethodGroupOrViceVersa;
 
-        protected override DiagnosticAnalyzer Analyzer { get; } = new ConvertAnonymousFunctionToMethodGroupOrViceVersaAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new ConvertAnonymousFunctionToMethodGroupOrViceVersaCodeFixProvider();
-
-        protected override CSharpCodeVerificationOptions UpdateOptions(CSharpCodeVerificationOptions options)
+        public override CSharpTestOptions Options
         {
-            return base.UpdateOptions(options)
-                .WithEnabled(AnalyzerOptions.ConvertMethodGroupToAnonymousFunction);
+            get { return base.Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.ConvertMethodGroupToAnonymousFunction); }
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.ConvertAnonymousFunctionToMethodGroupOrViceVersa)]
@@ -603,7 +596,7 @@ class C
         M2(M);
     }
 }
-", options: Options.WithDisabled(AnalyzerOptions.ConvertMethodGroupToAnonymousFunction));
+", options: Options.DisableDiagnostic(AnalyzerOptionDiagnosticDescriptors.ConvertMethodGroupToAnonymousFunction));
         }
     }
 }

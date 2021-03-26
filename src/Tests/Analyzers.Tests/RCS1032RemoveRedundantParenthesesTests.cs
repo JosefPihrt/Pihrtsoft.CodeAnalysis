@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1032RemoveRedundantParenthesesTests : AbstractCSharpFixVerifier
+    public class RCS1032RemoveRedundantParenthesesTests : AbstractCSharpDiagnosticVerifier<RemoveRedundantParenthesesAnalyzer, ParenthesizedExpressionCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.RemoveRedundantParentheses;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new RemoveRedundantParenthesesAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new ParenthesizedExpressionCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemoveRedundantParentheses)]
         public async Task Test_Argument()
@@ -25,7 +20,7 @@ class C
 {
     void M(object x)
     {
-        M([|(|]x));
+        M([|(|]x{|a:)|});
     }
 }
 ", @"
@@ -540,6 +535,29 @@ namespace N
         public string IP { get; }
 
         public string this[int index] => null;
+    }
+}
+");
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemoveRedundantParentheses)]
+        public async Task TestNoDiagnostic_SwitchExpressionInsideAwaitExpression()
+        {
+            await VerifyNoDiagnosticAsync(@"
+using System;
+using System.Threading.Tasks;
+
+class C
+{
+    async Task<string> M()
+    {
+        string action = null;
+
+        return await (action switch
+        {
+            """" => Task.FromResult(default(string)),
+            _ => throw new NotSupportedException(),
+        });
     }
 }
 ");

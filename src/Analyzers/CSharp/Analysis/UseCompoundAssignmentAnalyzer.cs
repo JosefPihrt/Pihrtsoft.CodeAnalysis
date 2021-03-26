@@ -26,15 +26,26 @@ namespace Roslynator.CSharp.Analysis
         {
             base.Initialize(context);
 
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (DiagnosticDescriptors.UseCompoundAssignment.IsEffective(c))
+                        AnalyzeSimpleAssignment(c);
+                },
+                SyntaxKind.SimpleAssignmentExpression);
+
             context.RegisterCompilationStartAction(startContext =>
             {
-                if (startContext.IsAnalyzerSuppressed(DiagnosticDescriptors.UseCompoundAssignment))
-                    return;
-
-                startContext.RegisterSyntaxNodeAction(f => AnalyzeSimpleAssignment(f), SyntaxKind.SimpleAssignmentExpression);
-
                 if (((CSharpCompilation)startContext.Compilation).LanguageVersion >= LanguageVersion.CSharp8)
-                    startContext.RegisterSyntaxNodeAction(f => AnalyzeCoalesceExpression(f), SyntaxKind.CoalesceExpression);
+                {
+                    startContext.RegisterSyntaxNodeAction(
+                        c =>
+                        {
+                            if (DiagnosticDescriptors.UseCompoundAssignment.IsEffective(c))
+                                AnalyzeCoalesceExpression(c);
+                        },
+                        SyntaxKind.CoalesceExpression);
+                }
             });
         }
 

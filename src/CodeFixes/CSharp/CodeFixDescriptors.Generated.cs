@@ -888,5 +888,12 @@ namespace Roslynator.CSharp
             isEnabledByDefault: true, 
             "CS0539");
 
+        /// <summary>RCF0117 (fixes CS7036)</summary>
+        public static readonly CodeFixDescriptor MoveInitializerExpressionsToConstructor = new CodeFixDescriptor(
+            id:                 CodeFixIdentifiers.MoveInitializerExpressionsToConstructor, 
+            title:              "Move initializer expressions to constructor", 
+            isEnabledByDefault: true, 
+            "CS7036");
+
     }
 }

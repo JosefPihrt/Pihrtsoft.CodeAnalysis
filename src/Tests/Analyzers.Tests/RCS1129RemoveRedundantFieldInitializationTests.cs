@@ -2,22 +2,16 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
 using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1129RemoveRedundantFieldInitializationTests : AbstractCSharpFixVerifier
+    public class RCS1129RemoveRedundantFieldInitializationTests : AbstractCSharpDiagnosticVerifier<RemoveRedundantFieldInitializationAnalyzer, VariableDeclaratorCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.RemoveRedundantFieldInitialization;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new RemoveRedundantFieldInitializationAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new VariableDeclaratorCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemoveRedundantFieldInitialization)]
         public async Task Test_MultipleDeclarations()
@@ -295,7 +289,9 @@ class C
 {
     string _f = null!;
 }
-", options: CSharpCodeVerificationOptions.Default.WithParseOptions(CSharpCodeVerificationOptions.Default.ParseOptions.WithLanguageVersion(LanguageVersion.Preview)));
+", options: CSharpTestOptions.Default
+                .AddAllowedCompilerDiagnosticId("CS0414")
+                .WithParseOptions(CSharpTestOptions.Default.ParseOptions.WithLanguageVersion(LanguageVersion.CSharp9)));
         }
     }
 }

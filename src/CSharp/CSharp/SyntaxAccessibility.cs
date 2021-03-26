@@ -68,6 +68,8 @@ namespace Roslynator.CSharp
                 case SyntaxKind.RemoveAccessorDeclaration:
                 case SyntaxKind.UnknownAccessorDeclaration:
                     return SyntaxAccessibility<AccessorDeclarationSyntax>.Instance.GetDefaultAccessibility((AccessorDeclarationSyntax)declaration);
+                case SyntaxKind.IncompleteMember:
+                    return SyntaxAccessibility<IncompleteMemberSyntax>.Instance.GetDefaultAccessibility((IncompleteMemberSyntax)declaration);
             }
 
             Debug.Fail(declaration.Kind().ToString());
@@ -128,6 +130,8 @@ namespace Roslynator.CSharp
                 case SyntaxKind.RemoveAccessorDeclaration:
                 case SyntaxKind.UnknownAccessorDeclaration:
                     return SyntaxAccessibility<AccessorDeclarationSyntax>.Instance.GetDefaultExplicitAccessibility((AccessorDeclarationSyntax)declaration);
+                case SyntaxKind.IncompleteMember:
+                    return SyntaxAccessibility<IncompleteMemberSyntax>.Instance.GetDefaultExplicitAccessibility((IncompleteMemberSyntax)declaration);
             }
 
             Debug.Fail(declaration.Kind().ToString());
@@ -188,6 +192,8 @@ namespace Roslynator.CSharp
                 case SyntaxKind.RemoveAccessorDeclaration:
                 case SyntaxKind.UnknownAccessorDeclaration:
                     return SyntaxAccessibility<AccessorDeclarationSyntax>.Instance.GetAccessibility((AccessorDeclarationSyntax)declaration);
+                case SyntaxKind.IncompleteMember:
+                    return SyntaxAccessibility<IncompleteMemberSyntax>.Instance.GetAccessibility((IncompleteMemberSyntax)declaration);
             }
 
             Debug.Fail(declaration.Kind().ToString());
@@ -248,6 +254,8 @@ namespace Roslynator.CSharp
                 case SyntaxKind.RemoveAccessorDeclaration:
                 case SyntaxKind.UnknownAccessorDeclaration:
                     return SyntaxAccessibility<AccessorDeclarationSyntax>.Instance.GetExplicitAccessibility((AccessorDeclarationSyntax)declaration);
+                case SyntaxKind.IncompleteMember:
+                    return SyntaxAccessibility<IncompleteMemberSyntax>.Instance.GetExplicitAccessibility((IncompleteMemberSyntax)declaration);
             }
 
             Debug.Fail(declaration.Kind().ToString());

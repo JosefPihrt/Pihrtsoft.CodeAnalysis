@@ -26,13 +26,13 @@ namespace Roslynator.CSharp.Analysis
         {
             base.Initialize(context);
 
-            context.RegisterCompilationStartAction(startContext =>
-            {
-                if (startContext.IsAnalyzerSuppressed(DiagnosticDescriptors.RemoveUnnecessaryBraces))
-                    return;
-
-                startContext.RegisterSyntaxNodeAction(f => AnalyzerSwitchSection(f), SyntaxKind.SwitchSection);
-            });
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (DiagnosticDescriptors.RemoveUnnecessaryBraces.IsEffective(c))
+                        AnalyzerSwitchSection(c);
+                },
+                SyntaxKind.SwitchSection);
         }
 
         public static void AnalyzerSwitchSection(SyntaxNodeAnalysisContext context)

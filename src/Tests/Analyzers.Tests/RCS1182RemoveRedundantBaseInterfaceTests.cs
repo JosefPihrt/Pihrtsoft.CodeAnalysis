@@ -2,21 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
-using Roslynator.Testing;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1182RemoveRedundantBaseInterfaceTests : AbstractCSharpFixVerifier
+    public class RCS1182RemoveRedundantBaseInterfaceTests : AbstractCSharpDiagnosticVerifier<RemoveRedundantBaseInterfaceAnalyzer, BaseTypeCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.RemoveRedundantBaseInterface;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new RemoveRedundantBaseInterfaceAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new BaseTypeCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemoveRedundantBaseInterface)]
         public async Task Test_IEnumerableOfT()

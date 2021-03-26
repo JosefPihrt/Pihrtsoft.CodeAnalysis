@@ -40,8 +40,6 @@ namespace Roslynator.CSharp.Analysis
                 SyntaxKind.BitwiseOrExpression,
                 SyntaxKind.LogicalAndExpression,
                 SyntaxKind.LogicalOrExpression);
-
-            context.RegisterSyntaxNodeAction(f => AnalyzeSuppressNullableWarningExpression(f), SyntaxKind.SuppressNullableWarningExpression);
         }
 
         private static void AnalyzeBinaryExpression(SyntaxNodeAnalysisContext context)
@@ -140,19 +138,6 @@ namespace Roslynator.CSharp.Analysis
                     return 5;
                 default:
                     return 0;
-            }
-        }
-
-        private static void AnalyzeSuppressNullableWarningExpression(SyntaxNodeAnalysisContext context)
-        {
-            var suppressNullable = (PostfixUnaryExpressionSyntax)context.Node;
-
-            if (suppressNullable.Operand.IsKind(SyntaxKind.ConditionalAccessExpression))
-            {
-                DiagnosticHelpers.ReportDiagnostic(
-                    context,
-                    DiagnosticDescriptors.AddParenthesesWhenNecessary,
-                    suppressNullable.Operand);
             }
         }
     }

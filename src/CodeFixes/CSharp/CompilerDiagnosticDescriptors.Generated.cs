@@ -644,6 +644,18 @@ namespace Roslynator.CSharp
             helpLinkUri:        "http://docs.microsoft.com/en-us/dotnet/csharp/misc/cs0267", 
             customTags:         WellKnownDiagnosticTags.Compiler);
 
+        /// <summary>CS0272</summary>
+        public static readonly DiagnosticDescriptor PropertyOrIndexerCannotBeUsedInThisContextBecauseSetAccessorIsAccessible = new DiagnosticDescriptor(
+            id:                 CompilerDiagnosticIdentifiers.PropertyOrIndexerCannotBeUsedInThisContextBecauseSetAccessorIsAccessible, 
+            title:              "The property or indexer 'name' cannot be used in this context because the set accessor is inaccessible.", 
+            messageFormat:      "The property or indexer '{0}' cannot be used in this context because the set accessor is inaccessible", 
+            category:           "Compiler", 
+            defaultSeverity:    DiagnosticSeverity.Error, 
+            isEnabledByDefault: true, 
+            description:        null, 
+            helpLinkUri:        "http://docs.microsoft.com/en-us/dotnet/csharp/misc/cs0272", 
+            customTags:         WellKnownDiagnosticTags.Compiler);
+
         /// <summary>CS0275</summary>
         public static readonly DiagnosticDescriptor AccessibilityModifiersMayNotBeUsedOnAccessorsInInterface = new DiagnosticDescriptor(
             id:                 CompilerDiagnosticIdentifiers.AccessibilityModifiersMayNotBeUsedOnAccessorsInInterface, 
@@ -1938,6 +1950,18 @@ namespace Roslynator.CSharp
             isEnabledByDefault: true, 
             description:        null, 
             helpLinkUri:        "http://docs.microsoft.com/en-us/dotnet/csharp/misc/cs3027", 
+            customTags:         WellKnownDiagnosticTags.Compiler);
+
+        /// <summary>CS7036</summary>
+        public static readonly DiagnosticDescriptor ThereIsNoArgumentGivenThatCorrespondsToRequiredFormalParameter = new DiagnosticDescriptor(
+            id:                 CompilerDiagnosticIdentifiers.ThereIsNoArgumentGivenThatCorrespondsToRequiredFormalParameter, 
+            title:              "There is no argument given that corresponds to the required formal parameter 'parameter' of 'member'.", 
+            messageFormat:      "There is no argument given that corresponds to the required formal parameter '{0}' of '{1}'", 
+            category:           "Compiler", 
+            defaultSeverity:    DiagnosticSeverity.Error, 
+            isEnabledByDefault: true, 
+            description:        null, 
+            helpLinkUri:        "", 
             customTags:         WellKnownDiagnosticTags.Compiler);
 
         /// <summary>CS8050</summary>

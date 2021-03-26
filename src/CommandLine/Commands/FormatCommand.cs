@@ -27,13 +27,15 @@ namespace Roslynator.CommandLine
 
         public override async Task<CommandResult> ExecuteAsync(ProjectOrSolution projectOrSolution, CancellationToken cancellationToken = default)
         {
+            ImmutableArray<DocumentId> formattedDocuments;
+
             if (projectOrSolution.IsProject)
             {
                 Project project = projectOrSolution.AsProject();
 
                 var options = new CodeFormatterOptions(includeGeneratedCode: Options.IncludeGeneratedCode);
 
-                await FormatProjectAsync(project, options, cancellationToken);
+                formattedDocuments = await FormatProjectAsync(project, options, cancellationToken);
             }
             else
             {
@@ -41,13 +43,13 @@ namespace Roslynator.CommandLine
 
                 var options = new CodeFormatterOptions(includeGeneratedCode: Options.IncludeGeneratedCode);
 
-                await FormatSolutionAsync(solution, options, cancellationToken);
+                formattedDocuments = await FormatSolutionAsync(solution, options, cancellationToken);
             }
 
-            return CommandResult.Success;
+            return (formattedDocuments.Length > 0) ? CommandResult.Success : CommandResult.NotSuccess;
         }
 
-        private async Task FormatSolutionAsync(Solution solution, CodeFormatterOptions options, CancellationToken cancellationToken)
+        private async Task<ImmutableArray<DocumentId>> FormatSolutionAsync(Solution solution, CodeFormatterOptions options, CancellationToken cancellationToken)
         {
             string solutionDirectory = Path.GetDirectoryName(solution.FilePath);
 
@@ -98,14 +100,18 @@ namespace Roslynator.CommandLine
                 }
             }
 
+            int count = changedDocuments.Sum(f => f.Length);
+
             WriteLine(Verbosity.Minimal);
-            WriteLine($"{changedDocuments.Count} {((changedDocuments.Count == 1) ? "document" : "documents")} formatted", ConsoleColor.Green, Verbosity.Minimal);
+            WriteLine($"{count} {((count == 1) ? "document" : "documents")} formatted", ConsoleColor.Green, Verbosity.Minimal);
 
             WriteLine(Verbosity.Minimal);
             WriteLine($"Done formatting solution '{solution.FilePath}' in {stopwatch.Elapsed:mm\\:ss\\.ff}", Verbosity.Minimal);
+
+            return changedDocuments.SelectMany(f => f).ToImmutableArray();
         }
 
-        private static async Task FormatProjectAsync(Project project, CodeFormatterOptions options, CancellationToken cancellationToken)
+        private static async Task<ImmutableArray<DocumentId>> FormatProjectAsync(Project project, CodeFormatterOptions options, CancellationToken cancellationToken)
         {
             Solution solution = project.Solution;
 
@@ -136,6 +142,8 @@ namespace Roslynator.CommandLine
 
             WriteLine(Verbosity.Minimal);
             WriteLine($"{formattedDocuments.Length} {((formattedDocuments.Length == 1) ? "document" : "documents")} formatted", ConsoleColor.Green, Verbosity.Minimal);
+
+            return formattedDocuments;
         }
 
         protected override void OperationCanceled(OperationCanceledException ex)

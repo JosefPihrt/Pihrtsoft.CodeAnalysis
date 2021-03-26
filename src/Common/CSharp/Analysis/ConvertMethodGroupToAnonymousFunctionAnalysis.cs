@@ -84,6 +84,7 @@ namespace Roslynator.CSharp.Analysis
                 case SyntaxKind.DeclarationExpression:
                 case SyntaxKind.DeclarationPattern:
                 case SyntaxKind.DefaultExpression:
+                case SyntaxKind.DelegateDeclaration:
                 case SyntaxKind.DivideAssignmentExpression:
                 case SyntaxKind.DivideExpression:
                 case SyntaxKind.DoStatement:
@@ -156,6 +157,7 @@ namespace Roslynator.CSharp.Analysis
                 case SyntaxKind.SuppressNullableWarningExpression:
                 case SyntaxKind.SwitchExpression:
                 case SyntaxKind.SwitchStatement:
+                case SyntaxKind.ThrowStatement:
                 case SyntaxKind.TupleElement:
                 case SyntaxKind.TypeArgumentList:
                 case SyntaxKind.TypeConstraint:

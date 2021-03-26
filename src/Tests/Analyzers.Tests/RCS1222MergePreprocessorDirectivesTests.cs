@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1222MergePreprocessorDirectivesTests : AbstractCSharpFixVerifier
+    public class RCS1222MergePreprocessorDirectivesTests : AbstractCSharpDiagnosticVerifier<MergePreprocessorDirectivesAnalyzer, DirectiveTriviaCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.MergePreprocessorDirectives;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new MergePreprocessorDirectivesAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new DirectiveTriviaCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.MergePreprocessorDirectives)]
         public async Task Test_PragmaWarningDisable()

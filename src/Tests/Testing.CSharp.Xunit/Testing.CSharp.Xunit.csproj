@@ -22,5 +22,4 @@
   <ItemGroup>
     <ProjectReference Include="..\Testing.CSharp\Testing.CSharp.csproj" />
   </ItemGroup>
-
 </Project>

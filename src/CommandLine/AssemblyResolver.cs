@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Josef Pihrt. All rights reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using static Roslynator.Logger;
@@ -51,6 +52,8 @@ namespace Roslynator.CommandLine
                         break;
                     }
             }
+
+            Debug.Assert(!assemblyName.Name.StartsWith("Microsoft.") && !assemblyName.Name.StartsWith("System."), assemblyName.Name);
 
             WriteLine($"Unable to resolve assembly '{args.Name}'.", ConsoleColor.DarkGray, Verbosity.Diagnostic);
 

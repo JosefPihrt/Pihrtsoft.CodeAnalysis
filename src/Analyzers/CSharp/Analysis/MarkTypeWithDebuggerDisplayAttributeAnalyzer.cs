@@ -52,6 +52,9 @@ namespace Roslynator.CSharp.Analysis
 
                 if (typeSymbol.IsStatic)
                     return;
+
+                if (typeSymbol.IsAbstract)
+                    return;
             }
             else if (typeKind != TypeKind.Struct)
             {

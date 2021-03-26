@@ -28,6 +28,7 @@ namespace Roslynator.CommandLine
         public string Language { get; set; }
 
         [Option(
+            shortName: OptionShortNames.MSBuildPath,
             longName: ParameterNames.MSBuildPath,
             HelpText = "Defines a path to MSBuild. This option must be specified if there are multiple locations of MSBuild (usually multiple installations of Visual Studio).",
             MetaValue = "<MSBUILD_PATH>")]
@@ -40,7 +41,7 @@ namespace Roslynator.CommandLine
         public IEnumerable<string> Projects { get; set; }
 
         [Option(
-            shortName: 'p',
+            shortName: OptionShortNames.Properties,
             longName: "properties",
             HelpText = "Defines one or more MSBuild properties.",
             MetaValue = "<NAME=VALUE>")]

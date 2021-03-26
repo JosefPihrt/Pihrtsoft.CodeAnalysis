@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1096ConvertHasFlagCallToBitwiseOperationTests : AbstractCSharpFixVerifier
+    public class RCS1096ConvertHasFlagCallToBitwiseOperationTests : AbstractCSharpDiagnosticVerifier<ConvertHasFlagCallToBitwiseOperationOrViceVersaAnalyzer, ConvertHasFlagCallToBitwiseOperationOrViceVersaCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.ConvertHasFlagCallToBitwiseOperationOrViceVersa;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new ConvertHasFlagCallToBitwiseOperationOrViceVersaAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new ConvertHasFlagCallToBitwiseOperationOrViceVersaCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.ConvertHasFlagCallToBitwiseOperationOrViceVersa)]
         public async Task Test_HasFlag()
@@ -433,7 +428,7 @@ class C
         if (options.HasFlag(StringSplitOptions.RemoveEmptyEntries)) { }
     }
 }
-", options: Options.WithEnabled(AnalyzerOptions.ConvertBitwiseOperationToHasFlagCall));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.ConvertBitwiseOperationToHasFlagCall));
         }
     }
 }

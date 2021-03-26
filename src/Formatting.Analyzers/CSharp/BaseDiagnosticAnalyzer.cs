@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.Formatting
 {
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
-    internal abstract class BaseDiagnosticAnalyzer : DiagnosticAnalyzer
+    public abstract class BaseDiagnosticAnalyzer : DiagnosticAnalyzer
     {
         protected BaseDiagnosticAnalyzer()
         {

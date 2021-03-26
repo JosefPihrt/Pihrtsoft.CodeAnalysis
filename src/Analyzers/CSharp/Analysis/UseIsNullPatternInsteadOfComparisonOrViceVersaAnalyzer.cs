@@ -22,20 +22,32 @@ namespace Roslynator.CSharp.Analysis
         {
             base.Initialize(context);
 
-            context.RegisterCompilationStartAction(startContext =>
-            {
-                if (!startContext.IsAnalyzerSuppressed(AnalyzerOptions.UseComparisonInsteadOfIsNullPattern))
+            context.RegisterSyntaxNodeAction(
+                c =>
                 {
-                    startContext.RegisterSyntaxNodeAction(f => AnalyzeIsPatternExpression(f), SyntaxKind.IsPatternExpression);
-                }
-                else
-                {
-                    startContext.RegisterSyntaxNodeAction(f => AnalyzeEqualsExpression(f), SyntaxKind.EqualsExpression);
+                    if (AnalyzerOptions.UseComparisonInsteadOfIsNullPattern.IsEnabled(c))
+                        AnalyzeIsPatternExpression(c);
+                },
+                SyntaxKind.IsPatternExpression);
 
-                    if (!startContext.IsAnalyzerSuppressed(AnalyzerOptions.UseIsNullPatternInsteadOfInequalityOperator))
-                        startContext.RegisterSyntaxNodeAction(f => AnalyzeNotEqualsExpression(f), SyntaxKind.NotEqualsExpression);
-                }
-            });
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (!AnalyzerOptions.UseComparisonInsteadOfIsNullPattern.IsEnabled(c))
+                        AnalyzeEqualsExpression(c);
+                },
+                SyntaxKind.EqualsExpression);
+
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (!AnalyzerOptions.UseComparisonInsteadOfIsNullPattern.IsEnabled(c)
+                        && AnalyzerOptions.UseIsNullPatternInsteadOfInequalityOperator.IsEnabled(c))
+                    {
+                        AnalyzeNotEqualsExpression(c);
+                    }
+                },
+                SyntaxKind.NotEqualsExpression);
         }
 
         private static void AnalyzeEqualsExpression(SyntaxNodeAnalysisContext context)

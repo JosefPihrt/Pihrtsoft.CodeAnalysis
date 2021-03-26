@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1078UseEmptyStringLiteralInsteadOfStringEmptyOrViceVersaTests : AbstractCSharpFixVerifier
+    public class RCS1078UseEmptyStringLiteralInsteadOfStringEmptyOrViceVersaTests : AbstractCSharpDiagnosticVerifier<UseEmptyStringLiteralInsteadOfStringEmptyOrViceVersaAnalyzer, UseEmptyStringLiteralInsteadOfStringEmptyOrViceVersaCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseEmptyStringLiteralInsteadOfStringEmptyOrViceVersa;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new UseEmptyStringLiteralInsteadOfStringEmptyOrViceVersaAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new UseEmptyStringLiteralInsteadOfStringEmptyOrViceVersaCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseEmptyStringLiteralInsteadOfStringEmptyOrViceVersa)]
         public async Task Test_StringEmpty()
@@ -80,7 +75,7 @@ class C
         s = string.Empty;
     }
 }
-", options: Options.WithEnabled(AnalyzerOptions.UseStringEmptyInsteadOfEmptyStringLiteral));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.UseStringEmptyInsteadOfEmptyStringLiteral));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseEmptyStringLiteralInsteadOfStringEmptyOrViceVersa)]
@@ -96,7 +91,7 @@ class C
         s = ""a"";
     }
 }
-", options: Options.WithEnabled(AnalyzerOptions.UseStringEmptyInsteadOfEmptyStringLiteral));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.UseStringEmptyInsteadOfEmptyStringLiteral));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseEmptyStringLiteralInsteadOfStringEmptyOrViceVersa)]
@@ -121,7 +116,7 @@ class C
         }
     }
 }
-", options: Options.WithEnabled(AnalyzerOptions.UseStringEmptyInsteadOfEmptyStringLiteral));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.UseStringEmptyInsteadOfEmptyStringLiteral));
         }
     }
 }

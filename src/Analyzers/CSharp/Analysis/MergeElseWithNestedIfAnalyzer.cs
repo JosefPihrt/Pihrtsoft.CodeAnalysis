@@ -26,13 +26,13 @@ namespace Roslynator.CSharp.Analysis
         {
             base.Initialize(context);
 
-            context.RegisterCompilationStartAction(startContext =>
-            {
-                if (startContext.IsAnalyzerSuppressed(DiagnosticDescriptors.MergeElseWithNestedIf))
-                    return;
-
-                startContext.RegisterSyntaxNodeAction(f => AnalyzeElseClause(f), SyntaxKind.ElseClause);
-            });
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (DiagnosticDescriptors.MergeElseWithNestedIf.IsEffective(c))
+                        AnalyzeElseClause(c);
+                },
+                SyntaxKind.ElseClause);
         }
 
         private static void AnalyzeElseClause(SyntaxNodeAnalysisContext context)

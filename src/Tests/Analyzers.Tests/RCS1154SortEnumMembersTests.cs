@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1154SortEnumMembersTests : AbstractCSharpFixVerifier
+    public class RCS1154SortEnumMembersTests : AbstractCSharpDiagnosticVerifier<SortEnumMembersAnalyzer, EnumDeclarationCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.SortEnumMembers;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new SortEnumMembersAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new EnumDeclarationCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SortEnumMembers)]
         public async Task Test()

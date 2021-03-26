@@ -2,24 +2,21 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.Formatting.CodeFixes.CSharp;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.Formatting.CSharp.Tests
 {
-    public class RCS0046UseSpacesInsteadOfTabTests : AbstractCSharpFixVerifier
+    public class RCS0046UseSpacesInsteadOfTabTests : AbstractCSharpDiagnosticVerifier<UseSpacesInsteadOfTabAnalyzer, ReplaceTabWithSpacesCodeFixProvider>
     {
-        private readonly ReplaceTabWithSpacesCodeFixProvider _fixProvider = new ReplaceTabWithSpacesCodeFixProvider();
-
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseSpacesInsteadOfTab;
 
-        protected override DiagnosticAnalyzer Analyzer { get; } = new UseSpacesInsteadOfTabAnalyzer();
+        private readonly string _fourSpacesEquivalenceKey;
 
-        public override CodeFixProvider FixProvider
+        public RCS0046UseSpacesInsteadOfTabTests()
         {
-            get { return _fixProvider; }
+            _fourSpacesEquivalenceKey = new ReplaceTabWithSpacesCodeFixProvider().FourSpacesEquivalenceKey;
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseSpacesInsteadOfTab)]
@@ -41,7 +38,7 @@ class C
         M();
     }
 }
-", equivalenceKey: _fixProvider.FourSpacesEquivalenceKey);
+", equivalenceKey: _fourSpacesEquivalenceKey);
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseSpacesInsteadOfTab)]

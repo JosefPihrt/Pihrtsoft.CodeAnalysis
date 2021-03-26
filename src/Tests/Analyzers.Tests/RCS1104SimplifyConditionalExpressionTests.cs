@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1104SimplifyConditionalExpressionTests : AbstractCSharpFixVerifier
+    public class RCS1104SimplifyConditionalExpressionTests : AbstractCSharpDiagnosticVerifier<SimplifyConditionalExpressionAnalyzer, ConditionalExpressionCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.SimplifyConditionalExpression;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new SimplifyConditionalExpressionAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new ConditionalExpressionCodeFixProvider();
 
         [Theory, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyConditionalExpression)]
         [InlineData("f ? true : false", "f")]
@@ -109,7 +104,7 @@ class C
         bool z = !x && y;
     }
 }
-", options: Options.WithEnabled(AnalyzerOptions.SimplifyConditionalExpressionWhenItIncludesNegationOfCondition));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.SimplifyConditionalExpressionWhenItIncludesNegationOfCondition));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyConditionalExpression)]
@@ -135,7 +130,7 @@ class C
         bool z = !x || y;
     }
 }
-", options: Options.WithEnabled(AnalyzerOptions.SimplifyConditionalExpressionWhenItIncludesNegationOfCondition));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.SimplifyConditionalExpressionWhenItIncludesNegationOfCondition));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyConditionalExpression)]
@@ -160,7 +155,7 @@ class C
 #endif
     }
 }
-");
+", options: Options.WithDebugPreprocessorSymbol());
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyConditionalExpression)]

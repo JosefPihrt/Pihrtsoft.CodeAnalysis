@@ -10,9 +10,9 @@ namespace Roslynator.CSharp.Refactorings.Tests
     {
         public override string RefactoringId { get; } = RefactoringIdentifiers.DuplicateSwitchSection;
 
-        protected override CSharpCodeVerificationOptions UpdateOptions(CSharpCodeVerificationOptions options)
+        public override CSharpTestOptions Options
         {
-            return options.AddAllowedCompilerDiagnosticId("CS0152");
+            get { return base.Options.AddAllowedCompilerDiagnosticId("CS0152"); }
         }
 
         [Fact, Trait(Traits.Refactoring, RefactoringIdentifiers.DuplicateSwitchSection)]

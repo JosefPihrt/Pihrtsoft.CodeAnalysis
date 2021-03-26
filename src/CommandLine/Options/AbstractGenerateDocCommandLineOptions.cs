@@ -8,7 +8,7 @@ namespace Roslynator.CommandLine
     public abstract class AbstractGenerateDocCommandLineOptions : MSBuildCommandLineOptions
     {
         [Option(
-            shortName: 'h',
+            shortName: OptionShortNames.Heading,
             longName: "heading",
             Required = true,
             HelpText = "Defines a heading of the root documentation file.",
@@ -16,7 +16,7 @@ namespace Roslynator.CommandLine
         public string Heading { get; set; }
 
         [Option(
-            shortName: 'o',
+            shortName: OptionShortNames.Output,
             longName: "output",
             Required = true,
             HelpText = "Defines a path for the output directory.",

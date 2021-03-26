@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1037RemoveTrailingWhitespaceTests : AbstractCSharpFixVerifier
+    public class RCS1037RemoveTrailingWhitespaceTests : AbstractCSharpDiagnosticVerifier<WhitespaceAnalyzer, WhitespaceTriviaCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.RemoveTrailingWhitespace;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new WhitespaceAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new WhitespaceTriviaCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemoveTrailingWhitespace)]
         public async Task Test()

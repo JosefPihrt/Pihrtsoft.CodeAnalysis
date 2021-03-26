@@ -30,14 +30,22 @@ namespace Roslynator.CSharp.Analysis
 
             context.RegisterCompilationStartAction(startContext =>
             {
-                if (startContext.AreAnalyzersSuppressed(DiagnosticDescriptors.AsynchronousMethodNameShouldEndWithAsync, DiagnosticDescriptors.NonAsynchronousMethodNameShouldNotEndWithAsync))
-                    return;
-
                 INamedTypeSymbol asyncAction = startContext.Compilation.GetTypeByMetadataName("Windows.Foundation.IAsyncAction");
 
                 bool shouldCheckWindowsRuntimeTypes = asyncAction != null;
 
-                startContext.RegisterSyntaxNodeAction(nodeContext => AnalyzeMethodDeclaration(nodeContext, shouldCheckWindowsRuntimeTypes), SyntaxKind.MethodDeclaration);
+                startContext.RegisterSyntaxNodeAction(
+                    c =>
+                    {
+                        if (DiagnosticHelpers.IsAnyEffective(
+                            c,
+                            DiagnosticDescriptors.AsynchronousMethodNameShouldEndWithAsync,
+                            DiagnosticDescriptors.NonAsynchronousMethodNameShouldNotEndWithAsync))
+                        {
+                            AnalyzeMethodDeclaration(c, shouldCheckWindowsRuntimeTypes);
+                        }
+                    },
+                    SyntaxKind.MethodDeclaration);
             });
         }
 

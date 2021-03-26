@@ -1,6 +1,5 @@
 ﻿// Copyright (c) Josef Pihrt. All rights reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.CodeAnalysis;
@@ -14,9 +13,9 @@ using static Roslynator.CSharp.CSharpFactory;
 
 namespace Roslynator.CodeGeneration.CSharp
 {
-    public static class DiagnosticDescriptorsGenerator
+    public class DiagnosticDescriptorsGenerator
     {
-        public static CompilationUnitSyntax Generate(
+        public CompilationUnitSyntax Generate(
             IEnumerable<AnalyzerMetadata> analyzers,
             bool obsolete,
             IComparer<string> comparer,
@@ -33,15 +32,6 @@ namespace Roslynator.CodeGeneration.CSharp
                 className,
                 identifiersClassName);
 
-            analyzers = analyzers.Where(f => f.Parent != null);
-
-            if (analyzers.Any())
-            {
-                MemberDeclarationSyntax methodDeclaration = CreateIsEnabledMethod(analyzers);
-
-                classDeclaration = classDeclaration.AddMembers(methodDeclaration);
-            }
-
             CompilationUnitSyntax compilationUnit = CompilationUnit(
                 UsingDirectives("System", "Microsoft.CodeAnalysis"),
                 NamespaceDeclaration(
@@ -53,10 +43,13 @@ namespace Roslynator.CodeGeneration.CSharp
             return (CompilationUnitSyntax)Rewriter.Instance.Visit(compilationUnit);
         }
 
-        private static IEnumerable<MemberDeclarationSyntax> CreateMembers(IEnumerable<AnalyzerMetadata> analyzers, string identifiersClassName, bool useParentProperties = false)
+        private IEnumerable<MemberDeclarationSyntax> CreateMembers(IEnumerable<AnalyzerMetadata> analyzers, string identifiersClassName, bool useParentProperties = false)
         {
             foreach (AnalyzerMetadata analyzer in analyzers)
             {
+                if (analyzer.Id == null)
+                    continue;
+
                 string identifier = analyzer.Identifier;
                 string title = analyzer.Title;
                 string messageFormat = analyzer.MessageFormat;
@@ -89,7 +82,7 @@ namespace Roslynator.CodeGeneration.CSharp
             }
         }
 
-        private static ClassDeclarationSyntax CreateClassDeclaration(
+        protected virtual ClassDeclarationSyntax CreateClassDeclaration(
             IEnumerable<AnalyzerMetadata> analyzers,
             string className,
             string identifiersClassName,
@@ -105,14 +98,16 @@ namespace Roslynator.CodeGeneration.CSharp
                         useParentProperties)));
         }
 
-        private static MemberDeclarationSyntax CreateMember(
+        private MemberDeclarationSyntax CreateMember(
             AnalyzerMetadata analyzer,
             string identifiersClassName,
             bool useParentProperties = false)
         {
             AnalyzerMetadata parent = (useParentProperties) ? analyzer.Parent : null;
 
-            MemberAccessExpressionSyntax idExpression = SimpleMemberAccessExpression(IdentifierName(identifiersClassName), IdentifierName(parent?.Identifier ?? analyzer.Identifier));
+            ExpressionSyntax idExpression = SimpleMemberAccessExpression(IdentifierName(identifiersClassName), IdentifierName(parent?.Identifier ?? analyzer.Identifier));
+
+            idExpression = ModifyIdExpression(idExpression);
 
             FieldDeclarationSyntax fieldDeclaration = FieldDeclaration(
                 (analyzer.IsObsolete) ? Modifiers.Internal_Static_ReadOnly() : Modifiers.Public_Static_ReadOnly(),
@@ -158,6 +153,7 @@ namespace Roslynator.CodeGeneration.CSharp
             {
                 var settings = new DocumentationCommentGeneratorSettings(
                     summary: new string[] { analyzer.Id },
+                    ignoredTags: new[] { "returns", "value" },
                     indentation: "        ",
                     singleLineSummary: true);
 
@@ -165,6 +161,11 @@ namespace Roslynator.CodeGeneration.CSharp
             }
 
             return fieldDeclaration;
+        }
+
+        protected virtual ExpressionSyntax ModifyIdExpression(ExpressionSyntax expression)
+        {
+            return expression;
         }
 
         private class Rewriter : CSharpSyntaxRewriter
@@ -205,41 +206,6 @@ namespace Roslynator.CodeGeneration.CSharp
             {
                 return node;
             }
-        }
-
-        private static MemberDeclarationSyntax CreateIsEnabledMethod(IEnumerable<AnalyzerMetadata> analyzers)
-        {
-            var methodDeclaration = @"
-public static bool IsEnabled(CompilationOptions compilationOptions, DiagnosticDescriptor analyzerOption)
-{
-    switch (analyzerOption.Id)
-    {
-$SwitchSection$    default:
-        {
-            throw new ArgumentException("""", nameof(analyzerOption));
-        }
-    }
-}
-
-
-";
-            const string switchSection = @"        case AnalyzerOptionIdentifiers.$AnalyzerOptionIdentifier$:
-            {
-                return !compilationOptions.IsAnalyzerSuppressed(DiagnosticDescriptors.$DiagnosticDescriptorIdentifier$)
-                    && !compilationOptions.IsAnalyzerSuppressed(AnalyzerOptions.$AnalyzerOptionIdentifier$);
-            }
-";
-
-            string switchSections = string.Concat(analyzers.Select(f =>
-            {
-                return switchSection
-                    .Replace("$AnalyzerOptionIdentifier$", f.Identifier)
-                    .Replace("$DiagnosticDescriptorIdentifier$", f.Parent.Identifier);
-            }));
-
-            methodDeclaration = methodDeclaration.Replace("$SwitchSection$", switchSections);
-
-            return ParseMemberDeclaration(methodDeclaration);
         }
     }
 }

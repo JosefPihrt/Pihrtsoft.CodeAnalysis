@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.Formatting.CodeFixes.CSharp;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.Formatting.CSharp.Tests
 {
-    public class RCS0041RemoveNewLineBetweenIfKeywordAndElseKeywordTests : AbstractCSharpFixVerifier
+    public class RCS0041RemoveNewLineBetweenIfKeywordAndElseKeywordTests : AbstractCSharpDiagnosticVerifier<RemoveNewLineBetweenIfKeywordAndElseKeywordAnalyzer, SyntaxTriviaCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.RemoveNewLineBetweenIfKeywordAndElseKeyword;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new RemoveNewLineBetweenIfKeywordAndElseKeywordAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new SyntaxTriviaCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemoveNewLineBetweenIfKeywordAndElseKeyword)]
         public async Task Test()

@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Josef Pihrt. All rights reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Threading.Tasks;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Refactorings.Tests
@@ -68,7 +69,7 @@ class C
 {
     void M(bool f1, bool f2)
     {
-        bool f = f2 & f1;
+        bool f = f2 {|n:&|} f1;
     }
 }
 ", equivalenceKey: RefactoringId);

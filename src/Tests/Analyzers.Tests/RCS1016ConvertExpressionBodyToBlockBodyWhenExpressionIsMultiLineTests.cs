@@ -2,35 +2,29 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
 using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1016ConvertExpressionBodyToBlockBodyWhenExpressionIsMultiLineTests : AbstractCSharpFixVerifier
+    public class RCS1016ConvertExpressionBodyToBlockBodyWhenExpressionIsMultiLineTests : AbstractCSharpDiagnosticVerifier<ConvertBlockBodyToExpressionBodyOrViceVersaAnalyzer, ConvertBlockBodyToExpressionBodyOrViceVersaCodeFixProvider>
     {
-        private CSharpCodeVerificationOptions _options_ConvertExpressionBodyToBlockBodyWhenExpressionIsMultiLine;
-        private CSharpCodeVerificationOptions _options_ConvertExpressionBodyToBlockBodyWhenDeclarationIsMultiLine;
+        private CSharpTestOptions _options_ConvertExpressionBodyToBlockBodyWhenExpressionIsMultiLine;
+        private CSharpTestOptions _options_ConvertExpressionBodyToBlockBodyWhenDeclarationIsMultiLine;
 
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.ConvertBlockBodyToExpressionBodyOrViceVersa;
 
-        protected override DiagnosticAnalyzer Analyzer { get; } = new ConvertBlockBodyToExpressionBodyOrViceVersaAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new ConvertBlockBodyToExpressionBodyOrViceVersaCodeFixProvider();
-
-        protected override CSharpCodeVerificationOptions UpdateOptions(CSharpCodeVerificationOptions options)
+        public override CSharpTestOptions Options
         {
-            return base.UpdateOptions(options).WithEnabled(AnalyzerOptions.ConvertExpressionBodyToBlockBodyWhenExpressionIsMultiLine);
+            get { return base.Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.ConvertExpressionBodyToBlockBodyWhenExpressionIsMultiLine); }
         }
 
-        private CSharpCodeVerificationOptions Options_ConvertExpressionBodyToBlockBodyWhenExpressionIsMultiLine
-            => _options_ConvertExpressionBodyToBlockBodyWhenExpressionIsMultiLine ??= Options.WithEnabled(AnalyzerOptions.ConvertExpressionBodyToBlockBodyWhenExpressionIsMultiLine);
+        private CSharpTestOptions Options_ConvertExpressionBodyToBlockBodyWhenExpressionIsMultiLine
+            => _options_ConvertExpressionBodyToBlockBodyWhenExpressionIsMultiLine ??= Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.ConvertExpressionBodyToBlockBodyWhenExpressionIsMultiLine);
 
-        private CSharpCodeVerificationOptions Options_ConvertExpressionBodyToBlockBodyWhenDeclarationIsMultiLine
-            => _options_ConvertExpressionBodyToBlockBodyWhenDeclarationIsMultiLine ??= Options.WithEnabled(AnalyzerOptions.ConvertExpressionBodyToBlockBodyWhenDeclarationIsMultiLine);
+        private CSharpTestOptions Options_ConvertExpressionBodyToBlockBodyWhenDeclarationIsMultiLine
+            => _options_ConvertExpressionBodyToBlockBodyWhenDeclarationIsMultiLine ??= Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.ConvertExpressionBodyToBlockBodyWhenDeclarationIsMultiLine);
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.ConvertBlockBodyToExpressionBodyOrViceVersa)]
         public async Task Test_Method_MultilineExpression()

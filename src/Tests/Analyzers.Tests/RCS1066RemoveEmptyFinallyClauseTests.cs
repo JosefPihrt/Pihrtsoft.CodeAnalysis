@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1066RemoveEmptyFinallyClauseTests : AbstractCSharpFixVerifier
+    public class RCS1066RemoveEmptyFinallyClauseTests : AbstractCSharpDiagnosticVerifier<RemoveEmptyFinallyClauseAnalyzer, FinallyClauseCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.RemoveEmptyFinallyClause;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new RemoveEmptyFinallyClauseAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new FinallyClauseCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemoveEmptyFinallyClause)]
         public async Task Test_TryCatchFinally()

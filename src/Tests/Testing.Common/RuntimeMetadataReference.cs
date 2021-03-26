@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Immutable;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 
@@ -12,39 +13,8 @@ namespace Roslynator
     {
         internal static readonly MetadataReference CorLibReference = MetadataReference.CreateFromFile(typeof(object).Assembly.Location);
 
-        private static ImmutableArray<string> _defaultAssemblyNames;
         private static ImmutableDictionary<string, string> _trustedPlatformAssemblyMap;
-
-        internal static ImmutableArray<string> DefaultAssemblyNames
-        {
-            get
-            {
-                if (_defaultAssemblyNames.IsDefault)
-                    ImmutableInterlocked.InterlockedInitialize(ref _defaultAssemblyNames, Create());
-
-                return _defaultAssemblyNames;
-
-                static ImmutableArray<string> Create()
-                {
-                    return ImmutableArray.Create(
-                        "netstandard.dll",
-                        "System.Core.dll",
-                        "System.Linq.dll",
-                        "System.Linq.Expressions.dll",
-                        "System.Runtime.Serialization.Formatters.dll",
-                        "System.Runtime.dll",
-                        "System.Collections.dll",
-                        "System.Collections.Immutable.dll",
-                        "System.Composition.AttributedModel.dll",
-                        "System.ObjectModel.dll",
-                        "System.Text.RegularExpressions.dll",
-                        "System.Threading.Tasks.Extensions.dll",
-                        "Microsoft.CodeAnalysis.dll",
-                        "Microsoft.CodeAnalysis.CSharp.dll",
-                        "Microsoft.CodeAnalysis.Workspaces.dll");
-                }
-            }
-        }
+        private static ImmutableDictionary<string, MetadataReference> _metadataReferences;
 
         internal static ImmutableDictionary<string, string> TrustedPlatformAssemblyMap
         {
@@ -62,6 +32,30 @@ namespace Roslynator
                         .ToString()
                         .Split(';')
                         .ToImmutableDictionary(f => Path.GetFileName(f));
+                }
+            }
+        }
+
+        internal static ImmutableDictionary<string, MetadataReference> DefaultMetadataReferences
+        {
+            get
+            {
+                if (_metadataReferences == null)
+                    Interlocked.CompareExchange(ref _metadataReferences, CreateMetadataReferences(), null);
+
+                return _metadataReferences;
+
+                static ImmutableDictionary<string, MetadataReference> CreateMetadataReferences()
+                {
+                    return TrustedPlatformAssemblyMap
+                        .Where(f =>
+                        {
+                            return f.Key.StartsWith("Microsoft.", StringComparison.Ordinal)
+                                || f.Key.StartsWith("System.", StringComparison.Ordinal)
+                                || string.Equals(f.Key, "netstandard.dll", StringComparison.Ordinal)
+                                || string.Equals(f.Key, "mscorlib.dll", StringComparison.Ordinal);
+                        })
+                        .ToImmutableDictionary(f => f.Key, f => (MetadataReference)MetadataReference.CreateFromFile(f.Value));
                 }
             }
         }

@@ -2,19 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
+using Roslynator.CodeAnalysis.CSharp;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
-namespace Roslynator.CodeAnalysis.CSharp.Tests
+namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS9001UsePatternMatchingTests : AbstractCSharpFixVerifier
+    public class RCS9001UsePatternMatchingTests : AbstractCSharpDiagnosticVerifier<UsePatternMatchingAnalyzer, UsePatternMatchingCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UsePatternMatching;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new UsePatternMatchingAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new UsePatternMatchingCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UsePatternMatching)]
         public async Task Test_SwitchStatement()

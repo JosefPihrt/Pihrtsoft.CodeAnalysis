@@ -7,8 +7,6 @@ using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-#pragma warning disable RCS0047
-
 namespace Roslynator
 {
     internal static class DiagnosticHelpers
@@ -132,10 +130,8 @@ namespace Roslynator
             SyntaxNode node,
             params object[] messageArgs)
         {
-            if (context.IsAnalyzerSuppressed(descriptor))
-                return;
-
-            ReportDiagnostic(context, descriptor, node, messageArgs);
+            if (descriptor.IsEffective(context))
+                ReportDiagnostic(context, descriptor, node, messageArgs);
         }
 
         public static void ReportDiagnosticIfNotSuppressed(
@@ -144,10 +140,8 @@ namespace Roslynator
             Location location,
             params object[] messageArgs)
         {
-            if (context.IsAnalyzerSuppressed(descriptor))
-                return;
-
-            ReportDiagnostic(context, descriptor, location, messageArgs);
+            if (descriptor.IsEffective(context))
+                ReportDiagnostic(context, descriptor, location, messageArgs);
         }
 
         public static void ReportDiagnostic(
@@ -389,6 +383,45 @@ namespace Roslynator
         private static void VerifyDiagnostic(Diagnostic diagnostic)
         {
             Debug.Assert(Regex.IsMatch(diagnostic.Id, @"\ARCS[0-9]{4}(FadeOut)?\z"), $"Invalid diagnostic id '{diagnostic.Id}'.");
+        }
+
+        internal static bool IsAnyEffective(SyntaxNodeAnalysisContext context, ImmutableArray<DiagnosticDescriptor> descriptors)
+        {
+            return IsAnyEffective(context.Compilation, descriptors);
+        }
+
+        internal static bool IsAnyEffective(SyntaxNodeAnalysisContext context, DiagnosticDescriptor descriptor1, DiagnosticDescriptor descriptor2)
+        {
+            return IsAnyEffective(context.Compilation, descriptor1, descriptor2);
+        }
+
+        internal static bool IsAnyEffective(SyntaxNodeAnalysisContext context, DiagnosticDescriptor descriptor1, DiagnosticDescriptor descriptor2, DiagnosticDescriptor descriptor3)
+        {
+            return IsAnyEffective(context.Compilation, descriptor1, descriptor2, descriptor3);
+        }
+
+        internal static bool IsAnyEffective(Compilation compilation, ImmutableArray<DiagnosticDescriptor> descriptors)
+        {
+            foreach (DiagnosticDescriptor descriptor in descriptors)
+            {
+                if (descriptor.IsEffective(compilation))
+                    return true;
+            }
+
+            return false;
+        }
+
+        internal static bool IsAnyEffective(Compilation compilation, DiagnosticDescriptor descriptor1, DiagnosticDescriptor descriptor2)
+        {
+            return descriptor1.IsEffective(compilation)
+                || descriptor2.IsEffective(compilation);
+        }
+
+        internal static bool IsAnyEffective(Compilation compilation, DiagnosticDescriptor descriptor1, DiagnosticDescriptor descriptor2, DiagnosticDescriptor descriptor3)
+        {
+            return descriptor1.IsEffective(compilation)
+                || descriptor2.IsEffective(compilation)
+                || descriptor3.IsEffective(compilation);
         }
     }
 }

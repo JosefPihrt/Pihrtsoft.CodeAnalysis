@@ -27,7 +27,7 @@ roslynator generate-doc <PROJECT|SOLUTION>
 [--inheritance-style]
 [--language]
 [--max-derived-types]
-[--msbuild-path]
+[-m|--msbuild-path]
 [--no-delete]
 [--no-mark-obsolete]
 [--no-precedence-for-system]
@@ -128,7 +128,7 @@ Defines project language.
 
 Defines maximum number derived types that should be displayed. Default value is `5`.
 
-**`--msbuild-path`** <MSBUILD_PATH>
+**`-m|--msbuild-path`** <MSBUILD_PATH>
 
 Defines a path to MSBuild. This option must be specified if there are multiple locations of MSBuild (usually multiple installations of Visual Studio).
 

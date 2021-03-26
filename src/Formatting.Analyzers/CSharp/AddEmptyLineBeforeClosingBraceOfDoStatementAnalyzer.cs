@@ -11,7 +11,7 @@ using Roslynator.CSharp;
 namespace Roslynator.Formatting.CSharp
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class AddEmptyLineBeforeClosingBraceOfDoStatementAnalyzer : BaseDiagnosticAnalyzer
+    public class AddEmptyLineBeforeClosingBraceOfDoStatementAnalyzer : BaseDiagnosticAnalyzer
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {

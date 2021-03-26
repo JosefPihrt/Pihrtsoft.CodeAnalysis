@@ -2,22 +2,16 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
 using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1188RemoveRedundantAutoPropertyInitializationTests : AbstractCSharpFixVerifier
+    public class RCS1188RemoveRedundantAutoPropertyInitializationTests : AbstractCSharpDiagnosticVerifier<RemoveRedundantAutoPropertyInitializationAnalyzer, PropertyDeclarationCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.RemoveRedundantAutoPropertyInitialization;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new RemoveRedundantAutoPropertyInitializationAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new PropertyDeclarationCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemoveRedundantAutoPropertyInitialization)]
         public async Task Test_Bool()
@@ -218,7 +212,7 @@ class C
 {
     string P { get; } = null!;
 }
-", options: CSharpCodeVerificationOptions.Default.WithParseOptions(CSharpCodeVerificationOptions.Default.ParseOptions.WithLanguageVersion(LanguageVersion.Preview)));
+", options: CSharpTestOptions.Default.WithParseOptions(CSharpTestOptions.Default.ParseOptions.WithLanguageVersion(LanguageVersion.Preview)));
         }
     }
 }

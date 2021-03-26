@@ -2,16 +2,14 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.CodeFixes;
-using Roslynator.Testing;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.CodeFixes.Tests
 {
-    public class CSTests : AbstractCSharpCompilerDiagnosticFixVerifier
+    public class CSTests : AbstractCSharpCompilerDiagnosticFixVerifier<AddBodyCodeFixProvider>
     {
         public override string DiagnosticId { get; } = CompilerDiagnosticIdentifiers.OperatorCannotBeAppliedToOperands;
-
-        public override CodeFixProvider FixProvider { get; }
 
         //[Fact, Trait(Traits.CodeFix, CompilerDiagnosticIdentifiers.OperatorCannotBeAppliedToOperands)]
         public async Task Test()

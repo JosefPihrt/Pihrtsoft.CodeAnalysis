@@ -17,7 +17,7 @@ namespace Roslynator.CSharp.Analysis
             ExpressionSyntax right,
             bool fadeOut)
         {
-            if (context.IsAnalyzerSuppressed(DiagnosticDescriptors.SimplifyBooleanComparison))
+            if (!DiagnosticDescriptors.SimplifyBooleanComparison.IsEffective(context))
                 return;
 
             if (binaryExpression.SpanContainsDirectives())

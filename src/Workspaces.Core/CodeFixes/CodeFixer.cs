@@ -14,7 +14,6 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.Formatting;
 using Roslynator.Host.Mef;
-using static Roslynator.CodeFixes.CodeFixerHelpers;
 using static Roslynator.Logger;
 
 namespace Roslynator.CodeFixes
@@ -48,14 +47,8 @@ namespace Roslynator.CodeFixes
 
         private Solution CurrentSolution => Workspace.CurrentSolution;
 
-        public async Task FixSolutionAsync(Func<Project, bool> predicate, CancellationToken cancellationToken = default)
+        public async Task<ImmutableArray<ProjectFixResult>> FixSolutionAsync(Func<Project, bool> predicate, CancellationToken cancellationToken = default)
         {
-            foreach (string id in Options.IgnoredCompilerDiagnosticIds.OrderBy(f => f))
-                WriteLine($"Ignore compiler diagnostic '{id}'", Verbosity.Diagnostic);
-
-            foreach (string id in Options.IgnoredDiagnosticIds.OrderBy(f => f))
-                WriteLine($"Ignore diagnostic '{id}'", Verbosity.Diagnostic);
-
             ImmutableArray<ProjectId> projects = CurrentSolution
                 .GetProjectDependencyGraph()
                 .GetTopologicallySortedProjects(cancellationToken)
@@ -81,15 +74,6 @@ namespace Roslynator.CodeFixes
 
                     results.Add(result);
 
-                    LogHelpers.WriteFixSummary(
-                        result.FixedDiagnostics,
-                        result.UnfixedDiagnostics,
-                        result.UnfixableDiagnostics,
-                        baseDirectoryPath: Path.GetDirectoryName(project.FilePath),
-                        indentation: "  ",
-                        formatProvider: FormatProvider,
-                        verbosity: Verbosity.Detailed);
-
                     if (result.Kind == ProjectFixKind.CompilerError)
                         break;
                 }
@@ -112,6 +96,8 @@ namespace Roslynator.CodeFixes
             WriteLine($"Done fixing solution '{CurrentSolution.FilePath}' in {stopwatch.Elapsed:mm\\:ss\\.ff}", Verbosity.Minimal);
 
             LogHelpers.WriteProjectFixResults(results, Options, FormatProvider);
+
+            return results.ToImmutableArray();
         }
 
         public async Task<ProjectFixResult> FixProjectAsync(Project project, CancellationToken cancellationToken = default)
@@ -135,7 +121,7 @@ namespace Roslynator.CodeFixes
                 analyzers,
                 fixResult.FixedDiagnostics,
                 compilation,
-                f => !fixersById.TryGetValue(f.id, out ImmutableArray<CodeFixProvider> fixers2),
+                f => !fixersById.ContainsKey(f.id),
                 cancellationToken)
                 .ConfigureAwait(false);
 
@@ -143,7 +129,7 @@ namespace Roslynator.CodeFixes
                 analyzers,
                 fixResult.FixedDiagnostics.Concat(unfixableDiagnostics),
                 compilation,
-                f => fixersById.TryGetValue(f.id, out ImmutableArray<CodeFixProvider> fixers2),
+                f => fixersById.ContainsKey(f.id),
                 cancellationToken)
                 .ConfigureAwait(false);
 
@@ -157,7 +143,7 @@ namespace Roslynator.CodeFixes
             if (Options.Format)
                 formattedDocuments = await FormatProjectAsync(CurrentSolution.GetProject(project.Id), cancellationToken).ConfigureAwait(false);
 
-            return new ProjectFixResult(
+            var result = new ProjectFixResult(
                 kind: fixResult.Kind,
                 fixedDiagnostics: fixResult.FixedDiagnostics,
                 unfixedDiagnostics: unfixedDiagnostics,
@@ -166,6 +152,17 @@ namespace Roslynator.CodeFixes
                 fixers: fixResult.Fixers,
                 numberOfFormattedDocuments: formattedDocuments.Length,
                 numberOfAddedFileBanners: numberOfAddedFileBanners);
+
+            LogHelpers.WriteFixSummary(
+                result.FixedDiagnostics,
+                result.UnfixedDiagnostics,
+                result.UnfixableDiagnostics,
+                baseDirectoryPath: Path.GetDirectoryName(project.FilePath),
+                indentation: "  ",
+                formatProvider: FormatProvider,
+                verbosity: Verbosity.Detailed);
+
+            return result;
         }
 
         private async Task<ProjectFixResult> FixProjectAsync(
@@ -180,16 +177,22 @@ namespace Roslynator.CodeFixes
                 return new ProjectFixResult(ProjectFixKind.NoFixers, analyzers: analyzers, fixers: fixers);
             }
 
-            Dictionary<string, ImmutableArray<CodeFixProvider>> fixersById = GetFixersById(fixers, Options);
+            Dictionary<string, ImmutableArray<CodeFixProvider>> fixersById = fixers
+                .SelectMany(f => f.FixableDiagnosticIds.Select(id => (id, fixer: f)))
+                .GroupBy(f => f.id)
+                .ToDictionary(f => f.Key, g => g.Select(f => f.fixer).Distinct().ToImmutableArray());
 
             analyzers = analyzers
                 .Where(analyzer => analyzer.SupportedDiagnostics.Any(descriptor => fixersById.ContainsKey(descriptor.Id)))
                 .ToImmutableArray();
 
-            Dictionary<string, ImmutableArray<DiagnosticAnalyzer>> analyzersById = GetAnalyzersById(analyzers);
+            Dictionary<string, ImmutableArray<DiagnosticAnalyzer>> analyzersById = analyzers
+                .SelectMany(f => f.SupportedDiagnostics.Select(d => (id: d.Id, analyzer: f)))
+                .GroupBy(f => f.id, f => f.analyzer)
+                .ToDictionary(g => g.Key, g => g.Select(analyzer => analyzer).Distinct().ToImmutableArray());
 
-            LogHelpers.WriteUsedAnalyzers(analyzers, project, Options, ConsoleColor.DarkGray, Verbosity.Diagnostic);
-            LogHelpers.WriteUsedFixers(fixers, ConsoleColor.DarkGray, Verbosity.Diagnostic);
+            LogHelpers.WriteUsedAnalyzers(analyzers, f => fixersById.ContainsKey(f.Id), Options, ConsoleColor.DarkGray, Verbosity.Diagnostic);
+            LogHelpers.WriteUsedFixers(fixers, Options, ConsoleColor.DarkGray, Verbosity.Diagnostic);
 
             ImmutableArray<Diagnostic>.Builder fixedDiagnostics = ImmutableArray.CreateBuilder<Diagnostic>();
 

@@ -17,7 +17,7 @@ namespace Roslynator.Formatting.CodeFixes.CSharp
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SyntaxTokenCodeFixProvider))]
     [Shared]
-    internal class SyntaxTokenCodeFixProvider : BaseCodeFixProvider
+    public class SyntaxTokenCodeFixProvider : BaseCodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {

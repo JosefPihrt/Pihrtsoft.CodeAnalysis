@@ -20,6 +20,7 @@ namespace Roslynator.CommandLine
         public string EndOfLine { get; set; }
 
         [Option(
+            shortName: OptionShortNames.IncludeGeneratedCode,
             longName: "include-generated-code",
             HelpText = "Indicates whether generated code should be formatted.")]
         public bool IncludeGeneratedCode { get; set; }

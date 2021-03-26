@@ -2,26 +2,19 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1096ConvertBitwiseOperationToHasFlagCallTests : AbstractCSharpFixVerifier
+    public class RCS1096ConvertBitwiseOperationToHasFlagCallTests : AbstractCSharpDiagnosticVerifier<ConvertHasFlagCallToBitwiseOperationOrViceVersaAnalyzer, ConvertHasFlagCallToBitwiseOperationOrViceVersaCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.ConvertHasFlagCallToBitwiseOperationOrViceVersa;
 
-        protected override DiagnosticAnalyzer Analyzer { get; } = new ConvertHasFlagCallToBitwiseOperationOrViceVersaAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new ConvertHasFlagCallToBitwiseOperationOrViceVersaCodeFixProvider();
-
-        protected override Compilation UpdateCompilation(Compilation compilation)
+        public override CSharpTestOptions Options
         {
-            compilation = base.UpdateCompilation(compilation);
-
-            return compilation.EnsureEnabled(AnalyzerOptions.ConvertBitwiseOperationToHasFlagCall);
+            get { return base.Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.ConvertBitwiseOperationToHasFlagCall); }
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.ConvertHasFlagCallToBitwiseOperationOrViceVersa)]

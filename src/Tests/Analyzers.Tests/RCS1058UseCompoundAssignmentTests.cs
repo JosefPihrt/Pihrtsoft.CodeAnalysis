@@ -2,21 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
 using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1058UseCompoundAssignmentTests : AbstractCSharpFixVerifier
+    public class RCS1058UseCompoundAssignmentTests : AbstractCSharpDiagnosticVerifier<UseCompoundAssignmentAnalyzer, UseCompoundAssignmentCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseCompoundAssignment;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new UseCompoundAssignmentAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new UseCompoundAssignmentCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseCompoundAssignment)]
         public async Task Test_Property()
@@ -144,7 +138,7 @@ class C
         s = s ?? """";
     }
 }
-", options: CSharpCodeVerificationOptions.Default_CSharp6);
+", options: WellKnownCSharpTestOptions.Default_CSharp6);
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseCompoundAssignment)]
@@ -161,7 +155,7 @@ class C
         return x ?? (x2 = M());
     }
 }
-", options: CSharpCodeVerificationOptions.Default_CSharp7_3);
+", options: WellKnownCSharpTestOptions.Default_CSharp7_3);
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseCompoundAssignment)]
@@ -177,7 +171,7 @@ class C
         return x ?? (x = M());
     }
 }
-", options: CSharpCodeVerificationOptions.Default_CSharp7_3);
+", options: WellKnownCSharpTestOptions.Default_CSharp7_3);
         }
     }
 }

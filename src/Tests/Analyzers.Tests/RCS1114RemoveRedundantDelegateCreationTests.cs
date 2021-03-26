@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1114RemoveRedundantDelegateCreationTests : AbstractCSharpFixVerifier
+    public class RCS1114RemoveRedundantDelegateCreationTests : AbstractCSharpDiagnosticVerifier<RemoveRedundantDelegateCreationAnalyzer, AssignmentExpressionCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.RemoveRedundantDelegateCreation;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new RemoveRedundantDelegateCreationAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new AssignmentExpressionCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemoveRedundantDelegateCreation)]
         public async Task Test_EventHandler()

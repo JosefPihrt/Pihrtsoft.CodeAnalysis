@@ -2,19 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
+using Roslynator.CodeAnalysis.CSharp;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
-namespace Roslynator.CodeAnalysis.CSharp.Tests
+namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS9002UsePropertySyntaxNodeSpanStartTests : AbstractCSharpFixVerifier
+    public class RCS9002UsePropertySyntaxNodeSpanStartTests : AbstractCSharpDiagnosticVerifier<SimpleMemberAccessExpressionAnalyzer, SimpleMemberAccessExpressionCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UsePropertySyntaxNodeSpanStart;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new SimpleMemberAccessExpressionAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new SimpleMemberAccessExpressionCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UsePropertySyntaxNodeSpanStart)]
         public async Task Test()

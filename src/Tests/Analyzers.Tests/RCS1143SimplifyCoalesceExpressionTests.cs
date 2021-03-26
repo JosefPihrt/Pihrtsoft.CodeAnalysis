@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1143SimplifyCoalesceExpressionTests : AbstractCSharpFixVerifier
+    public class RCS1143SimplifyCoalesceExpressionTests : AbstractCSharpDiagnosticVerifier<SimplifyCoalesceExpressionAnalyzer, BinaryExpressionCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.SimplifyCoalesceExpression;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new SimplifyCoalesceExpressionAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new BinaryExpressionCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyCoalesceExpression)]
         public async Task Test_DefaultOfNullableType()

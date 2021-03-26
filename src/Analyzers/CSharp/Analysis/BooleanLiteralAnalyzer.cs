@@ -29,19 +29,45 @@ namespace Roslynator.CSharp.Analysis
         {
             base.Initialize(context);
 
-            context.RegisterCompilationStartAction(startContext =>
-            {
-                if (!startContext.AreAnalyzersSuppressed(DiagnosticDescriptors.RemoveRedundantBooleanLiteral, DiagnosticDescriptors.SimplifyBooleanComparison))
+            context.RegisterSyntaxNodeAction(
+                c =>
                 {
-                    startContext.RegisterSyntaxNodeAction(f => AnalyzeEqualsExpression(f), SyntaxKind.EqualsExpression);
-                    startContext.RegisterSyntaxNodeAction(f => AnalyzeNotEqualsExpression(f), SyntaxKind.NotEqualsExpression);
-                    startContext.RegisterSyntaxNodeAction(f => AnalyzeLogicalAndExpression(f), SyntaxKind.LogicalAndExpression);
-                    startContext.RegisterSyntaxNodeAction(f => AnalyzeLogicalOrExpression(f), SyntaxKind.LogicalOrExpression);
-                }
+                    if (DiagnosticHelpers.IsAnyEffective(c, DiagnosticDescriptors.RemoveRedundantBooleanLiteral, DiagnosticDescriptors.SimplifyBooleanComparison))
+                        AnalyzeEqualsExpression(c);
+                },
+                SyntaxKind.EqualsExpression);
 
-                if (!startContext.IsAnalyzerSuppressed(DiagnosticDescriptors.RemoveRedundantBooleanLiteral))
-                    startContext.RegisterSyntaxNodeAction(f => AnalyzeForStatement(f), SyntaxKind.ForStatement);
-            });
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (DiagnosticHelpers.IsAnyEffective(c, DiagnosticDescriptors.RemoveRedundantBooleanLiteral, DiagnosticDescriptors.SimplifyBooleanComparison))
+                        AnalyzeNotEqualsExpression(c);
+                },
+                SyntaxKind.NotEqualsExpression);
+
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (DiagnosticHelpers.IsAnyEffective(c, DiagnosticDescriptors.RemoveRedundantBooleanLiteral, DiagnosticDescriptors.SimplifyBooleanComparison))
+                        AnalyzeLogicalAndExpression(c);
+                },
+                SyntaxKind.LogicalAndExpression);
+
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (DiagnosticHelpers.IsAnyEffective(c, DiagnosticDescriptors.RemoveRedundantBooleanLiteral, DiagnosticDescriptors.SimplifyBooleanComparison))
+                        AnalyzeLogicalOrExpression(c);
+                },
+                SyntaxKind.LogicalOrExpression);
+
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (DiagnosticDescriptors.RemoveRedundantBooleanLiteral.IsEffective(c))
+                        AnalyzeForStatement(c);
+                },
+                SyntaxKind.ForStatement);
         }
 
         private static void AnalyzeForStatement(SyntaxNodeAnalysisContext context)

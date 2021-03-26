@@ -2,8 +2,6 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.Analysis.MakeMemberReadOnly;
 using Roslynator.CSharp.CodeFixes;
 using Roslynator.Testing.CSharp;
@@ -11,13 +9,9 @@ using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1170UseReadOnlyAutoPropertyTests : AbstractCSharpFixVerifier
+    public class RCS1170UseReadOnlyAutoPropertyTests : AbstractCSharpDiagnosticVerifier<MakeMemberReadOnlyAnalyzer, MemberDeclarationCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseReadOnlyAutoProperty;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new MakeMemberReadOnlyAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new MemberDeclarationCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseReadOnlyAutoProperty)]
         public async Task Test_InstanceProperty()
@@ -410,7 +404,7 @@ namespace System.Runtime.Serialization
     internal class DataMemberAttribute : Attribute
     {
     }
-}");
+}", options: Options.AddAllowedCompilerDiagnosticId("CS0436"));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseReadOnlyAutoProperty)]
@@ -458,7 +452,7 @@ class C
 {
     public string P { get; private set; }
 }
-", options: CSharpCodeVerificationOptions.Default_CSharp5);
+", options: WellKnownCSharpTestOptions.Default_CSharp5);
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseReadOnlyAutoProperty)]
@@ -470,6 +464,25 @@ class C
     public string P { get; private init; }
 }
 ", options: Options.AddAllowedCompilerDiagnosticId("CS0518"));
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseReadOnlyAutoProperty)]
+        public async Task TestNoDiagnostic_DependencyAttribute()
+        {
+            await VerifyNoDiagnosticAsync(@"
+using System;
+
+class C
+{
+    [Dependency]
+    private string P { get; set; }
+}
+
+[AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+class DependencyAttribute : Attribute
+{
+}
+");
         }
     }
 }

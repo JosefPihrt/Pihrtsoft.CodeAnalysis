@@ -79,6 +79,8 @@ namespace Roslynator.CSharp.Refactorings
 
             BinaryExpressionSyntax binaryExpression = concatenationInfo.BinaryExpression;
 
+            ExpressionSyntax newExpression = expression;
+
             if (concatenationInfo.Span.HasValue)
             {
                 TextSpan span = concatenationInfo.Span.Value;
@@ -87,18 +89,24 @@ namespace Roslynator.CSharp.Refactorings
 
                 string s = binaryExpression.ToString();
 
-                s = s.Remove(span.Start - start)
-                    + expression
-                    + s.Substring(span.End - start);
+                var newText = "";
 
-                expression = SyntaxFactory.ParseExpression(s);
+                if (span.Start > start)
+                    newText = s.Remove(span.Start - start);
+
+                newText += expression;
+
+                if (span.End < binaryExpression.Span.End)
+                    newText += s.Substring(span.End - start);
+
+                newExpression = SyntaxFactory.ParseExpression(newText);
             }
 
-            expression = expression
+            newExpression = newExpression
                 .WithTriviaFrom(binaryExpression)
                 .WithFormatterAnnotation();
 
-            return document.ReplaceNodeAsync(binaryExpression, expression, cancellationToken);
+            return document.ReplaceNodeAsync(binaryExpression, newExpression, cancellationToken);
         }
     }
 }

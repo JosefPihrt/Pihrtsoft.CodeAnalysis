@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1036RemoveRedundantEmptyLineTests : AbstractCSharpFixVerifier
+    public class RCS1036RemoveRedundantEmptyLineTests : AbstractCSharpDiagnosticVerifier<RemoveRedundantEmptyLineAnalyzer, WhitespaceTriviaCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.RemoveRedundantEmptyLine;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new RemoveRedundantEmptyLineAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new WhitespaceTriviaCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemoveRedundantEmptyLine)]
         public async Task Test_ObjectInitializer()
@@ -273,7 +268,7 @@ class C
         }
     }
 }
-", options: Options.WithEnabled(AnalyzerOptions.RemoveEmptyLineBetweenClosingBraceAndSwitchSection));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.RemoveEmptyLineBetweenClosingBraceAndSwitchSection));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemoveRedundantEmptyLine)]

@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1248UseIsNullPatternInsteadOfComparisonOrViceVersaTests : AbstractCSharpFixVerifier
+    public class RCS1248UseIsNullPatternInsteadOfComparisonOrViceVersaTests : AbstractCSharpDiagnosticVerifier<UseIsNullPatternInsteadOfComparisonOrViceVersaAnalyzer, UseIsNullPatternInsteadOfComparisonOrViceVersaCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseIsNullPatternInsteadOfComparisonOrViceVersa;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new UseIsNullPatternInsteadOfComparisonOrViceVersaAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new UseIsNullPatternInsteadOfComparisonOrViceVersaCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseIsNullPatternInsteadOfComparisonOrViceVersa)]
         public async Task Test_EqualsToNull()
@@ -108,7 +103,7 @@ class C
         }
     }
 }
-", options: Options.WithEnabled(AnalyzerOptions.UseIsNullPatternInsteadOfInequalityOperator));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.UseIsNullPatternInsteadOfInequalityOperator));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseIsNullPatternInsteadOfComparisonOrViceVersa)]
@@ -138,7 +133,7 @@ class C
         }
     }
 }
-", options: Options.WithEnabled(AnalyzerOptions.UseIsNullPatternInsteadOfInequalityOperator));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.UseIsNullPatternInsteadOfInequalityOperator));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseIsNullPatternInsteadOfComparisonOrViceVersa)]
@@ -168,7 +163,7 @@ class C
         }
     }
 }
-", options: Options.WithEnabled(AnalyzerOptions.UseComparisonInsteadOfIsNullPattern));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.UseComparisonInsteadOfIsNullPattern));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseIsNullPatternInsteadOfComparisonOrViceVersa)]
@@ -198,7 +193,7 @@ class C
         }
     }
 }
-", options: Options.WithEnabled(AnalyzerOptions.UseComparisonInsteadOfIsNullPattern));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.UseComparisonInsteadOfIsNullPattern));
         }
     }
 }

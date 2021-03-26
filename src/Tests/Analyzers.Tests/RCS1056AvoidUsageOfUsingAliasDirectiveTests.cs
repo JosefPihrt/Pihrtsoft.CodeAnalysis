@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1056AvoidUsageOfUsingAliasDirectiveTests : AbstractCSharpFixVerifier
+    public class RCS1056AvoidUsageOfUsingAliasDirectiveTests : AbstractCSharpDiagnosticVerifier<AvoidUsageOfUsingAliasDirectiveAnalyzer, UsingDirectiveCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AvoidUsageOfUsingAliasDirective;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new AvoidUsageOfUsingAliasDirectiveAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new UsingDirectiveCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AvoidUsageOfUsingAliasDirective)]
         public async Task Test()

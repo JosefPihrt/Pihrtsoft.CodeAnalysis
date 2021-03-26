@@ -59,6 +59,7 @@ namespace Roslynator.CSharp
         public const string PartialDeclarationsHaveConfictingAccessibilityModifiers = "CS0262";
         public const string CannotImplicitlyConvertTypeExplicitConversionExists = "CS0266";
         public const string PartialModifierCanOnlyAppearImmediatelyBeforeClassStructInterfaceOrVoid = "CS0267";
+        public const string PropertyOrIndexerCannotBeUsedInThisContextBecauseSetAccessorIsAccessible = "CS0272";
         public const string AccessibilityModifiersMayNotBeUsedOnAccessorsInInterface = "CS0275";
         public const string UsingGenericTypeRequiresNumberOfTypeArguments = "CS0305";
         public const string NewConstraintMustBeLastConstraintSpecified = "CS0401";
@@ -167,6 +168,7 @@ namespace Roslynator.CSharp
         public const string ArraysAsAttributeArgumentsIsNotCLSCompliant = "CS3016";
         public const string ConstraintTypeIsNotCLSCompliant = "CS3024";
         public const string TypeIsNotCLSCompliantBecauseBaseInterfaceIsNotCLSCompliant = "CS3027";
+        public const string ThereIsNoArgumentGivenThatCorrespondsToRequiredFormalParameter = "CS7036";
         public const string OnlyAutoImplementedPropertiesCanHaveInitializers = "CS8050";
         public const string ControlCannotFallOutOfSwitchFromFinalCaseLabel = "CS8070";
         public const string LocalFunctionMustAlwaysHaveBody = "CS8112";

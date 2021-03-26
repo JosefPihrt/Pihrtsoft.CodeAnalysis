@@ -13,7 +13,7 @@ using Roslynator.CSharp;
 namespace Roslynator.Formatting.CSharp
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class AccessorListAnalyzer : BaseDiagnosticAnalyzer
+    public class AccessorListAnalyzer : BaseDiagnosticAnalyzer
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
@@ -41,7 +41,7 @@ namespace Roslynator.Formatting.CSharp
 
             if (accessors.Any(f => f.BodyOrExpressionBody() != null))
             {
-                if (!context.IsAnalyzerSuppressed(DiagnosticDescriptors.AddNewLineBeforeAccessorOfFullProperty))
+                if (DiagnosticDescriptors.AddNewLineBeforeAccessorOfFullProperty.IsEffective(context))
                 {
                     SyntaxToken token = accessorList.OpenBraceToken;
 
@@ -60,11 +60,12 @@ namespace Roslynator.Formatting.CSharp
 
                         token = accessor.Body?.CloseBraceToken ?? accessor.SemicolonToken;
 
-                        Debug.Assert(token.Equals(accessor.GetLastToken()));
+                        if (!token.Equals(accessor.GetLastToken()))
+                            break;
                     }
                 }
 
-                if (!context.IsAnalyzerSuppressed(DiagnosticDescriptors.RemoveNewLinesFromAccessorWithSingleLineExpression)
+                if (DiagnosticDescriptors.RemoveNewLinesFromAccessorWithSingleLineExpression.IsEffective(context)
                     && !accessorList.IsSingleLine(includeExteriorTrivia: false))
                 {
                     foreach (AccessorDeclarationSyntax accessor in accessors)
@@ -74,7 +75,7 @@ namespace Roslynator.Formatting.CSharp
                     }
                 }
             }
-            else if (!context.IsAnalyzerSuppressed(DiagnosticDescriptors.RemoveNewLinesFromAccessorListOfAutoProperty))
+            else if (DiagnosticDescriptors.RemoveNewLinesFromAccessorListOfAutoProperty.IsEffective(context))
             {
                 SyntaxNode parent = accessorList.Parent;
 

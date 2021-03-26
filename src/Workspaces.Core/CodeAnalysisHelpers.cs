@@ -102,15 +102,7 @@ namespace Roslynator
                             return false;
                     }
 
-                    foreach (DiagnosticDescriptor supportedDiagnostic in supportedDiagnostics)
-                    {
-                        if (options.GetEffectiveSeverity(supportedDiagnostic, project.CompilationOptions) != ReportDiagnostic.Suppress)
-                        {
-                            return true;
-                        }
-                    }
-
-                    return false;
+                    return true;
                 })
                 .ToImmutableArray();
 

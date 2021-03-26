@@ -66,7 +66,7 @@ namespace Roslynator.CSharp.Analysis
                     }
                 default:
                     {
-                        Debug.Fail(forEachStatement.Variable.Kind().ToString());
+                        Debug.Assert(forEachStatement.ContainsDiagnostics, forEachStatement.Variable.Kind().ToString());
                         break;
                     }
             }

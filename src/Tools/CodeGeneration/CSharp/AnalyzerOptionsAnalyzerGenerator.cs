@@ -54,7 +54,7 @@ namespace Roslynator.CodeGeneration.CSharp
                                     ? SimpleMemberInvocationExpression(
                                         IdentifierName("ImmutableArray"),
                                         IdentifierName("Create"),
-                                        ArgumentList(identifiers.Select(identifier => Argument(SimpleMemberAccessExpression(IdentifierName("AnalyzerOptions"), IdentifierName(identifier)).WithTrailingTrivia(NewLine()))).ToSeparatedSyntaxList()))
+                                        ArgumentList(identifiers.Select(identifier => Argument(SimpleMemberAccessExpression(IdentifierName("AnalyzerOptionDiagnosticDescriptors"), IdentifierName(identifier)).WithTrailingTrivia(NewLine()))).ToSeparatedSyntaxList()))
                                     : ParseExpression("ImmutableArray<DiagnosticDescriptor>.Empty"))))));
 
             yield return MethodDeclaration(

@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1089UseUnaryOperatorInsteadOfAssignmentTests : AbstractCSharpFixVerifier
+    public class RCS1089UseUnaryOperatorInsteadOfAssignmentTests : AbstractCSharpDiagnosticVerifier<UseUnaryOperatorInsteadOfAssignmentAnalyzer, AssignmentExpressionCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseUnaryOperatorInsteadOfAssignment;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new UseUnaryOperatorInsteadOfAssignmentAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new AssignmentExpressionCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseUnaryOperatorInsteadOfAssignment)]
         public async Task Test_PostIncrement()

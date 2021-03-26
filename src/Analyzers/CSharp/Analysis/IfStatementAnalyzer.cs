@@ -36,18 +36,19 @@ namespace Roslynator.CSharp.Analysis
         {
             base.Initialize(context);
 
-            context.RegisterCompilationStartAction(startContext =>
-            {
-                if (startContext.AreAnalyzersSuppressed(
-                    DiagnosticDescriptors.UseCoalesceExpressionInsteadOfIf,
-                    DiagnosticDescriptors.ConvertIfToReturnStatement,
-                    DiagnosticDescriptors.ConvertIfToAssignment))
+            context.RegisterSyntaxNodeAction(
+                c =>
                 {
-                    return;
-                }
-
-                startContext.RegisterSyntaxNodeAction(f => AnalyzeIfStatement(f), SyntaxKind.IfStatement);
-            });
+                    if (DiagnosticHelpers.IsAnyEffective(
+                        c,
+                        DiagnosticDescriptors.UseCoalesceExpressionInsteadOfIf,
+                        DiagnosticDescriptors.ConvertIfToReturnStatement,
+                        DiagnosticDescriptors.ConvertIfToAssignment))
+                    {
+                        AnalyzeIfStatement(c);
+                    }
+                },
+                SyntaxKind.IfStatement);
         }
 
         private static void AnalyzeIfStatement(SyntaxNodeAnalysisContext context)
@@ -75,7 +76,7 @@ namespace Roslynator.CSharp.Analysis
                     case IfAnalysisKind.IfElseToYieldReturnWithCoalesceExpression:
                     case IfAnalysisKind.IfReturnToReturnWithCoalesceExpression:
                         {
-                            if (!context.IsAnalyzerSuppressed(DiagnosticDescriptors.UseCoalesceExpressionInsteadOfIf))
+                            if (DiagnosticDescriptors.UseCoalesceExpressionInsteadOfIf.IsEffective(context))
                                 DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UseCoalesceExpressionInsteadOfIf, ifStatement);
 
                             break;
@@ -84,7 +85,7 @@ namespace Roslynator.CSharp.Analysis
                     case IfAnalysisKind.IfElseToYieldReturnWithExpression:
                     case IfAnalysisKind.IfReturnToReturnWithExpression:
                         {
-                            if (!context.IsAnalyzerSuppressed(DiagnosticDescriptors.ConvertIfToReturnStatement))
+                            if (DiagnosticDescriptors.ConvertIfToReturnStatement.IsEffective(context))
                                 DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.ConvertIfToReturnStatement, ifStatement);
 
                             break;
@@ -92,7 +93,7 @@ namespace Roslynator.CSharp.Analysis
                     case IfAnalysisKind.IfElseToAssignmentWithExpression:
                     case IfAnalysisKind.IfElseToAssignmentWithCondition:
                         {
-                            if (!context.IsAnalyzerSuppressed(DiagnosticDescriptors.ConvertIfToAssignment))
+                            if (DiagnosticDescriptors.ConvertIfToAssignment.IsEffective(context))
                                 DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.ConvertIfToAssignment, ifStatement);
 
                             break;

@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1085UseAutoPropertyTests : AbstractCSharpFixVerifier
+    public class RCS1085UseAutoPropertyTests : AbstractCSharpDiagnosticVerifier<UseAutoPropertyAnalyzer, UseAutoPropertyCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseAutoProperty;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new UseAutoPropertyAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new UseAutoPropertyCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseAutoProperty)]
         public async Task Test_Property()
@@ -452,7 +447,7 @@ partial class C
         _f = null;
     }
 }
-", additionalSources: new[]
+", additionalFiles: new[]
 { @"
 partial class C
 {

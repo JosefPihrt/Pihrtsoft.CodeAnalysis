@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1081SplitVariableDeclarationTests : AbstractCSharpFixVerifier
+    public class RCS1081SplitVariableDeclarationTests : AbstractCSharpDiagnosticVerifier<SplitVariableDeclarationAnalyzer, VariableDeclarationCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.SplitVariableDeclaration;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new SplitVariableDeclarationAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new VariableDeclarationCodeFixProvider();
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SplitVariableDeclaration)]
         public async Task Test_SwitchSection()

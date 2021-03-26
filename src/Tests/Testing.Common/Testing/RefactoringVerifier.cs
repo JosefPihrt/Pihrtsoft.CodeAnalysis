@@ -1,274 +1,118 @@
 ﻿// Copyright (c) Josef Pihrt. All rights reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeRefactorings;
 using Microsoft.CodeAnalysis.Text;
-using Roslynator.Testing.Text;
 
 namespace Roslynator.Testing
 {
     /// <summary>
-    /// Represents verifier for a refactoring that is provided by <see cref="RefactoringProvider"/>
+    /// Represents verifier for a code refactoring.
     /// </summary>
-    [DebuggerDisplay("{DebuggerDisplay,nq}")]
-    public abstract class RefactoringVerifier : CodeVerifier
+    public abstract class RefactoringVerifier<TRefactoringProvider> : CodeVerifier
+        where TRefactoringProvider : CodeRefactoringProvider, new()
     {
-        internal RefactoringVerifier(WorkspaceFactory workspaceFactory, IAssert assert) : base(workspaceFactory, assert)
+        internal RefactoringVerifier(IAssert assert) : base(assert)
         {
         }
 
         /// <summary>
-        /// ID of a refactoring that should be applied.
+        /// Verifies that refactoring will be applied correctly using specified <typeparamref name="TRefactoringProvider"/>.
         /// </summary>
-        public abstract string RefactoringId { get; }
-
-        /// <summary>
-        /// <see cref="CodeRefactoringProvider"/> that provides a refactoring that should be applied.
-        /// </summary>
-        public abstract CodeRefactoringProvider RefactoringProvider { get; }
-
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private string DebuggerDisplay
-        {
-            get
-            {
-                return (!string.IsNullOrEmpty(RefactoringId))
-                    ? $"{RefactoringId} {RefactoringProvider.GetType().Name}"
-                    : $"{RefactoringProvider.GetType().Name}";
-            }
-        }
-
-        /// <summary>
-        /// Verifies that a refactoring can be applied on a specified source code.
-        /// </summary>
-        /// <param name="source">A source code that should be tested. Tokens [| and |] represents start and end of selection respectively.</param>
+        /// <param name="state"></param>
         /// <param name="expected"></param>
-        /// <param name="additionalSources"></param>
-        /// <param name="title">Code action's title.</param>
-        /// <param name="equivalenceKey">Code action's equivalence key.</param>
         /// <param name="options"></param>
         /// <param name="cancellationToken"></param>
         public async Task VerifyRefactoringAsync(
-            string source,
-            string expected,
-            IEnumerable<string> additionalSources = null,
-            string title = null,
-            string equivalenceKey = null,
-            CodeVerificationOptions options = null,
+            RefactoringTestState state,
+            ExpectedTestState expected,
+            TestOptions options = null,
             CancellationToken cancellationToken = default)
         {
-            TextParserResult result = TextParser.GetSpans(source, LinePositionSpanInfoComparer.IndexDescending);
-
-            await VerifyRefactoringAsync(
-                source: result.Text,
-                expected: expected,
-                spans: result.Spans.Select(f => f.Span),
-                additionalSources: additionalSources,
-                title: title,
-                equivalenceKey: equivalenceKey,
-                options: options,
-                cancellationToken: cancellationToken);
-        }
-
-        /// <summary>
-        /// Verifies that a refactoring can be applied on a specified source code.
-        /// </summary>
-        /// <param name="source">Source text that contains placeholder [||] to be replaced with <paramref name="sourceData"/> and <paramref name="expectedData"/>.</param>
-        /// <param name="sourceData"></param>
-        /// <param name="expectedData"></param>
-        /// <param name="title">Code action's title.</param>
-        /// <param name="equivalenceKey">Code action's equivalence key.</param>
-        /// <param name="options"></param>
-        /// <param name="cancellationToken"></param>
-        public async Task VerifyRefactoringAsync(
-            string source,
-            string sourceData,
-            string expectedData,
-            string title = null,
-            string equivalenceKey = null,
-            CodeVerificationOptions options = null,
-            CancellationToken cancellationToken = default)
-        {
-            (TextSpan span, string source2, string expected) = TextParser.ReplaceEmptySpan(source, sourceData, expectedData);
-
-            TextParserResult result = TextParser.GetSpans(source2, LinePositionSpanInfoComparer.IndexDescending);
-
-            if (result.Spans.Any())
-            {
-                await VerifyRefactoringAsync(
-                    source: result.Text,
-                    expected: expected,
-                    spans: result.Spans.Select(f => f.Span),
-                    title: title,
-                    equivalenceKey: equivalenceKey,
-                    options: options,
-                    cancellationToken: cancellationToken);
-            }
-            else
-            {
-                await VerifyRefactoringAsync(
-                    source: source2,
-                    expected: expected,
-                    span: span,
-                    title: title,
-                    equivalenceKey: equivalenceKey,
-                    options: options,
-                    cancellationToken: cancellationToken);
-            }
-        }
-
-        internal async Task VerifyRefactoringAsync(
-            string source,
-            string expected,
-            IEnumerable<TextSpan> spans,
-            IEnumerable<string> additionalSources = null,
-            string title = null,
-            string equivalenceKey = null,
-            CodeVerificationOptions options = null,
-            CancellationToken cancellationToken = default)
-        {
-            using (IEnumerator<TextSpan> en = spans.GetEnumerator())
-            {
-                if (!en.MoveNext())
-                    Assert.True(false, "Span on which a refactoring should be invoked was not found.");
-
-                do
-                {
-                    cancellationToken.ThrowIfCancellationRequested();
-
-                    await VerifyRefactoringAsync(
-                        source: source,
-                        expected: expected,
-                        span: en.Current,
-                        additionalSources: additionalSources,
-                        title: title,
-                        equivalenceKey: equivalenceKey,
-                        options: options,
-                        cancellationToken: cancellationToken);
-
-                } while (en.MoveNext());
-            }
-        }
-
-        internal async Task VerifyRefactoringAsync(
-            string source,
-            string expected,
-            TextSpan span,
-            IEnumerable<string> additionalSources = null,
-            string title = null,
-            string equivalenceKey = null,
-            CodeVerificationOptions options = null,
-            CancellationToken cancellationToken = default)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
+            if (state.Spans.IsEmpty)
+                Assert.True(false, "Span on which a refactoring should be invoked was not found.");
 
             options ??= Options;
 
-            using (Workspace workspace = new AdhocWorkspace())
+            TRefactoringProvider refactoringProvider = Activator.CreateInstance<TRefactoringProvider>();
+
+            foreach (TextSpan span in state.Spans)
             {
-                Document document = WorkspaceFactory.CreateDocument(workspace.CurrentSolution, source, additionalSources, options);
+                cancellationToken.ThrowIfCancellationRequested();
 
-                SemanticModel semanticModel = await document.GetSemanticModelAsync(cancellationToken);
+                using (Workspace workspace = new AdhocWorkspace())
+                {
+                    (Document document, ImmutableArray<ExpectedDocument> expectedDocuments) = CreateDocument(workspace.CurrentSolution, state.Source, state.AdditionalFiles, options);
 
-                ImmutableArray<Diagnostic> compilerDiagnostics = semanticModel.GetDiagnostics(cancellationToken: cancellationToken);
+                    SemanticModel semanticModel = await document.GetSemanticModelAsync(cancellationToken);
 
-                VerifyCompilerDiagnostics(compilerDiagnostics, options);
-                CodeAction action = null;
+                    ImmutableArray<Diagnostic> compilerDiagnostics = semanticModel.GetDiagnostics(cancellationToken: cancellationToken);
 
-                var context = new CodeRefactoringContext(
-                    document,
-                    span,
-                    a =>
-                    {
-                        if (equivalenceKey == null
-                            || string.Equals(a.EquivalenceKey, equivalenceKey, StringComparison.Ordinal))
+                    VerifyCompilerDiagnostics(compilerDiagnostics, options);
+
+                    CodeAction action = null;
+
+                    var context = new CodeRefactoringContext(
+                        document,
+                        span,
+                        a =>
                         {
-                            if (action == null)
+                            if (state.EquivalenceKey == null
+                                || string.Equals(a.EquivalenceKey, state.EquivalenceKey, StringComparison.Ordinal))
+                            {
+                                if (action != null)
+                                    Assert.True(false, "Multiple fixes available.");
+
                                 action = a;
-                        }
-                    },
-                    CancellationToken.None);
+                            }
+                        },
+                        cancellationToken);
 
-                await RefactoringProvider.ComputeRefactoringsAsync(context);
+                    await refactoringProvider.ComputeRefactoringsAsync(context);
 
-                Assert.True(action != null, "No code refactoring has been registered.");
+                    Assert.True(action != null, "No code refactoring has been registered.");
 
-                document = await VerifyAndApplyCodeActionAsync(document, action, title);
+                    document = await VerifyAndApplyCodeActionAsync(document, action, expected.CodeActionTitle);
+                    semanticModel = await document.GetSemanticModelAsync(cancellationToken);
 
-                semanticModel = await document.GetSemanticModelAsync(cancellationToken);
+                    ImmutableArray<Diagnostic> newCompilerDiagnostics = semanticModel.GetDiagnostics(cancellationToken: cancellationToken);
 
-                ImmutableArray<Diagnostic> newCompilerDiagnostics = semanticModel.GetDiagnostics(cancellationToken: cancellationToken);
+                    VerifyCompilerDiagnostics(newCompilerDiagnostics, options);
+                    VerifyNoNewCompilerDiagnostics(compilerDiagnostics, newCompilerDiagnostics, options);
 
-                VerifyCompilerDiagnostics(newCompilerDiagnostics, options);
-
-                VerifyNoNewCompilerDiagnostics(compilerDiagnostics, newCompilerDiagnostics, options);
-
-                string actual = await document.ToFullStringAsync(simplify: true, format: true, cancellationToken);
-
-                Assert.Equal(expected, actual);
+                    await VerifyExpectedDocument(expected, document, cancellationToken);
+                }
             }
         }
 
         /// <summary>
-        /// Verifies that a refactoring cannot be applied on a specified source code.
+        /// Verifies that refactoring will not be applied using specified <typeparamref name="TRefactoringProvider"/>.
         /// </summary>
-        /// <param name="source">A source code that should be tested. Tokens [| and |] represents start and end of selection respectively.</param>
-        /// <param name="equivalenceKey">Code action's equivalence key.</param>
+        /// <param name="state"></param>
         /// <param name="options"></param>
         /// <param name="cancellationToken"></param>
         public async Task VerifyNoRefactoringAsync(
-            string source,
-            string equivalenceKey = null,
-            CodeVerificationOptions options = null,
+            RefactoringTestState state,
+            TestOptions options = null,
             CancellationToken cancellationToken = default)
         {
-            TextParserResult result = TextParser.GetSpans(source, LinePositionSpanInfoComparer.IndexDescending);
+            if (state.Spans.IsEmpty)
+                Assert.True(false, "Span on which a refactoring should be invoked was not found.");
 
-            await VerifyNoRefactoringAsync(
-                source: result.Text,
-                spans: result.Spans.Select(f => f.Span),
-                equivalenceKey: equivalenceKey,
-                options: options,
-                cancellationToken: cancellationToken);
-        }
-
-        internal async Task VerifyNoRefactoringAsync(
-            string source,
-            TextSpan span,
-            string equivalenceKey = null,
-            CodeVerificationOptions options = null,
-            CancellationToken cancellationToken = default)
-        {
-            await VerifyNoRefactoringAsync(
-                source,
-                ImmutableArray.Create(span),
-                equivalenceKey: equivalenceKey,
-                options,
-                cancellationToken);
-        }
-
-        internal async Task VerifyNoRefactoringAsync(
-            string source,
-            IEnumerable<TextSpan> spans,
-            string equivalenceKey = null,
-            CodeVerificationOptions options = null,
-            CancellationToken cancellationToken = default)
-        {
             cancellationToken.ThrowIfCancellationRequested();
 
             options ??= Options;
 
+            TRefactoringProvider refactoringProvider = Activator.CreateInstance<TRefactoringProvider>();
+
             using (Workspace workspace = new AdhocWorkspace())
             {
-                Document document = WorkspaceFactory.CreateDocument(workspace.CurrentSolution, source, options);
+                (Document document, ImmutableArray<ExpectedDocument> expectedDocuments) = CreateDocument(workspace.CurrentSolution, state.Source, state.AdditionalFiles, options);
 
                 SemanticModel semanticModel = await document.GetSemanticModelAsync(cancellationToken);
 
@@ -276,31 +120,24 @@ namespace Roslynator.Testing
 
                 VerifyCompilerDiagnostics(compilerDiagnostics, options);
 
-                using (IEnumerator<TextSpan> en = spans.GetEnumerator())
+                foreach (TextSpan span in state.Spans)
                 {
-                    if (!en.MoveNext())
-                        Assert.True(false, "Span on which a refactoring should be invoked was not found.");
+                    cancellationToken.ThrowIfCancellationRequested();
 
-                    do
-                    {
-                        cancellationToken.ThrowIfCancellationRequested();
-
-                        var context = new CodeRefactoringContext(
-                            document,
-                            en.Current,
-                            a =>
+                    var context = new CodeRefactoringContext(
+                        document,
+                        span,
+                        a =>
+                        {
+                            if (state.EquivalenceKey == null
+                                || string.Equals(a.EquivalenceKey, state.EquivalenceKey, StringComparison.Ordinal))
                             {
-                                if (equivalenceKey == null
-                                    || string.Equals(a.EquivalenceKey, equivalenceKey, StringComparison.Ordinal))
-                                {
-                                    Assert.True(false, "No code refactoring expected.");
-                                }
-                            },
-                            CancellationToken.None);
+                                Assert.True(false, "No code refactoring expected.");
+                            }
+                        },
+                        cancellationToken);
 
-                        await RefactoringProvider.ComputeRefactoringsAsync(context);
-
-                    } while (en.MoveNext());
+                    await refactoringProvider.ComputeRefactoringsAsync(context);
                 }
             }
         }

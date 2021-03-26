@@ -9,17 +9,19 @@ namespace Roslynator.Documentation
     {
         public DocumentationCommentGeneratorSettings(
             IEnumerable<string> summary = null,
+            IEnumerable<string> ignoredTags = null,
             string indentation = null,
-            bool singleLineSummary = false,
-            bool returns = true)
+            bool singleLineSummary = false)
         {
             Summary = (summary != null) ? ImmutableArray.CreateRange(summary) : ImmutableArray<string>.Empty;
+            IgnoredTags = ignoredTags?.ToImmutableArray() ?? ImmutableArray<string>.Empty;
             Indentation = indentation ?? "";
             SingleLineSummary = singleLineSummary;
-            Returns = returns;
         }
 
         public static DocumentationCommentGeneratorSettings Default { get; } = new DocumentationCommentGeneratorSettings();
+
+        public ImmutableArray<string> IgnoredTags { get; }
 
         public ImmutableArray<string> Summary { get; }
 
@@ -27,15 +29,18 @@ namespace Roslynator.Documentation
 
         public bool SingleLineSummary { get; }
 
-        public bool Returns { get; }
+        public bool IsTagIgnored(string tag)
+        {
+            return IgnoredTags.Contains(tag);
+        }
 
         public DocumentationCommentGeneratorSettings WithIndentation(string indentation)
         {
             return new DocumentationCommentGeneratorSettings(
                 summary: Summary,
+                ignoredTags: IgnoredTags,
                 indentation: indentation,
-                singleLineSummary: SingleLineSummary,
-                returns: Returns);
+                singleLineSummary: SingleLineSummary);
         }
     }
 }

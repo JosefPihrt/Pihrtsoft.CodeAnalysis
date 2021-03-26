@@ -31,13 +31,13 @@ namespace Roslynator.CSharp.Analysis
         {
             base.Initialize(context);
 
-            context.RegisterCompilationStartAction(startContext =>
-            {
-                if (startContext.IsAnalyzerSuppressed(DiagnosticDescriptors.InlineLocalVariable))
-                    return;
-
-                startContext.RegisterSyntaxNodeAction(f => AnalyzeLocalDeclarationStatement(f), SyntaxKind.LocalDeclarationStatement);
-            });
+            context.RegisterSyntaxNodeAction(
+                c =>
+                {
+                    if (DiagnosticDescriptors.InlineLocalVariable.IsEffective(c))
+                        AnalyzeLocalDeclarationStatement(c);
+                },
+                SyntaxKind.LocalDeclarationStatement);
         }
 
         private static void AnalyzeLocalDeclarationStatement(SyntaxNodeAnalysisContext context)

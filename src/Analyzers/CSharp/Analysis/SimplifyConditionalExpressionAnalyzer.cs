@@ -60,7 +60,7 @@ namespace Roslynator.CSharp.Analysis
                     ReportDiagnostic();
                 }
                 /// a ? false : b >>> !a && b
-                else if (!context.IsAnalyzerSuppressed(AnalyzerOptions.SimplifyConditionalExpressionWhenItIncludesNegationOfCondition)
+                else if (AnalyzerOptions.SimplifyConditionalExpressionWhenItIncludesNegationOfCondition.IsEnabled(context)
                     && context.SemanticModel.GetTypeInfo(info.WhenFalse, context.CancellationToken).ConvertedType?.SpecialType == SpecialType.System_Boolean)
                 {
                     ReportDiagnostic();
@@ -69,7 +69,7 @@ namespace Roslynator.CSharp.Analysis
             else if (falseKind == SyntaxKind.TrueLiteralExpression)
             {
                 // a ? b : true >>> !a || b
-                if (!context.IsAnalyzerSuppressed(AnalyzerOptions.SimplifyConditionalExpressionWhenItIncludesNegationOfCondition)
+                if (AnalyzerOptions.SimplifyConditionalExpressionWhenItIncludesNegationOfCondition.IsEnabled(context)
                     && context.SemanticModel.GetTypeInfo(info.WhenTrue, context.CancellationToken).ConvertedType?.SpecialType == SpecialType.System_Boolean)
                 {
                     ReportDiagnostic();

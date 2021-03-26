@@ -8,192 +8,50 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeActions;
+using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Text;
-using Roslynator.Testing.Text;
 
 namespace Roslynator.Testing
 {
     /// <summary>
     /// Represents verifier for a diagnostic that is produced by <see cref="DiagnosticAnalyzer"/>.
     /// </summary>
-    [DebuggerDisplay("{DebuggerDisplay,nq}")]
-    public abstract class DiagnosticVerifier : CodeVerifier
+    public abstract class DiagnosticVerifier<TAnalyzer, TFixProvider> : CodeVerifier
+        where TAnalyzer : DiagnosticAnalyzer, new()
+        where TFixProvider : CodeFixProvider, new()
     {
-        private ImmutableArray<DiagnosticAnalyzer> _analyzers;
-        private ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
-
-        internal DiagnosticVerifier(WorkspaceFactory workspaceFactory, IAssert assert) : base(workspaceFactory, assert)
+        internal DiagnosticVerifier(IAssert assert) : base(assert)
         {
         }
 
         /// <summary>
-        /// Gets a <see cref="DiagnosticDescriptor"/> that describes diagnostic that should be verified.
+        /// Verifies that specified source will produce specified diagnostic(s).
         /// </summary>
-        public abstract DiagnosticDescriptor Descriptor { get; }
-
-        /// <summary>
-        /// Gets an analyzer that can produce a diagnostic that should be verified.
-        /// </summary>
-        protected abstract DiagnosticAnalyzer Analyzer { get; }
-
-        /// <summary>
-        /// Gets a collection of additional analyzers that can produce a diagnostic that should be verified.
-        /// Override this property if a diagnostic that should be verified can be produced by more than one analyzer.
-        /// </summary>
-        protected virtual ImmutableArray<DiagnosticAnalyzer> AdditionalAnalyzers { get; } = ImmutableArray<DiagnosticAnalyzer>.Empty;
-
-        /// <summary>
-        /// A collection of analyzers that can produce a diagnostic that should be verified.
-        /// </summary>
-        public ImmutableArray<DiagnosticAnalyzer> Analyzers
-        {
-            get
-            {
-                if (_analyzers.IsDefault)
-                    ImmutableInterlocked.InterlockedInitialize(ref _analyzers, CreateAnalyzers());
-
-                return _analyzers;
-
-                ImmutableArray<DiagnosticAnalyzer> CreateAnalyzers()
-                {
-                    if (AdditionalAnalyzers.IsDefaultOrEmpty)
-                    {
-                        return ImmutableArray.Create(Analyzer);
-                    }
-                    else
-                    {
-                        ImmutableArray<DiagnosticAnalyzer>.Builder builder = ImmutableArray.CreateBuilder<DiagnosticAnalyzer>(AdditionalAnalyzers.Length + 1);
-
-                        builder.Add(Analyzer);
-                        builder.AddRange(AdditionalAnalyzers);
-
-                        return builder.ToImmutable();
-                    }
-                }
-            }
-        }
-
-        internal ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-        {
-            get
-            {
-                if (_supportedDiagnostics.IsDefault)
-                    ImmutableInterlocked.InterlockedInitialize(ref _supportedDiagnostics, Analyzers.SelectMany(f => f.SupportedDiagnostics).ToImmutableArray());
-
-                return _supportedDiagnostics;
-            }
-        }
-
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private string DebuggerDisplay
-        {
-            get { return $"{Descriptor.Id} {string.Join(", ", Analyzers.Select(f => f.GetType().Name))}"; }
-        }
-
-        /// <summary>
-        /// Verifies that specified source will produce diagnostic described with see <see cref="Descriptor"/>
-        /// </summary>
-        /// <param name="source">A source code that should be tested. Tokens [| and |] represents start and end of selection respectively.</param>
+        /// <param name="state"></param>
         /// <param name="options"></param>
         /// <param name="cancellationToken"></param>
         public async Task VerifyDiagnosticAsync(
-            string source,
-            CodeVerificationOptions options = null,
-            CancellationToken cancellationToken = default)
-        {
-            TextParserResult result = TextParser.GetSpans(source);
-
-            await VerifyDiagnosticAsync(
-                result.Text,
-                result.Spans.Select(f => CreateDiagnostic(f.Span, f.LineSpan)),
-                additionalSources: null,
-                options: options,
-                cancellationToken);
-        }
-
-        /// <summary>
-        /// Verifies that specified source will produce diagnostic described with see <see cref="Descriptor"/>
-        /// </summary>
-        /// <param name="source">Source text that contains placeholder [||] to be replaced with <paramref name="sourceData"/>.</param>
-        /// <param name="sourceData"></param>
-        /// <param name="options"></param>
-        /// <param name="cancellationToken"></param>
-        public async Task VerifyDiagnosticAsync(
-            string source,
-            string sourceData,
-            CodeVerificationOptions options = null,
-            CancellationToken cancellationToken = default)
-        {
-            (TextSpan span, string text) = TextParser.ReplaceEmptySpan(source, sourceData);
-
-            TextParserResult result = TextParser.GetSpans(text);
-
-            if (result.Spans.Any())
-            {
-                await VerifyDiagnosticAsync(result.Text, result.Spans.Select(f => f.Span), options, cancellationToken);
-            }
-            else
-            {
-                await VerifyDiagnosticAsync(text, span, options, cancellationToken);
-            }
-        }
-
-        internal async Task VerifyDiagnosticAsync(
-            string source,
-            TextSpan span,
-            CodeVerificationOptions options = null,
-            CancellationToken cancellationToken = default)
-        {
-            await VerifyDiagnosticAsync(
-                source,
-                CreateDiagnostic(source, span),
-                options,
-                cancellationToken);
-        }
-
-        internal async Task VerifyDiagnosticAsync(
-            string source,
-            IEnumerable<TextSpan> spans,
-            CodeVerificationOptions options = null,
-            CancellationToken cancellationToken = default)
-        {
-            await VerifyDiagnosticAsync(
-                source,
-                spans.Select(span => CreateDiagnostic(source, span)),
-                additionalSources: null,
-                options: options,
-                cancellationToken);
-        }
-
-        internal async Task VerifyDiagnosticAsync(
-            string source,
-            Diagnostic expectedDiagnostic,
-            CodeVerificationOptions options = null,
-            CancellationToken cancellationToken = default)
-        {
-            await VerifyDiagnosticAsync(
-                source,
-                new Diagnostic[] { expectedDiagnostic },
-                additionalSources: null,
-                options: options,
-                cancellationToken);
-        }
-
-        internal async Task VerifyDiagnosticAsync(
-            string source,
-            IEnumerable<Diagnostic> expectedDiagnostics,
-            IEnumerable<string> additionalSources = null,
-            CodeVerificationOptions options = null,
+            DiagnosticTestState state,
+            TestOptions options = null,
             CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
             options ??= Options;
 
+            TAnalyzer analyzer = Activator.CreateInstance<TAnalyzer>();
+            ImmutableArray<DiagnosticDescriptor> supportedDiagnostics = analyzer.SupportedDiagnostics;
+
             using (Workspace workspace = new AdhocWorkspace())
             {
-                Document document = WorkspaceFactory.CreateDocument(workspace.CurrentSolution, source, additionalSources, options);
+                (Document document, ImmutableArray<ExpectedDocument> expectedDocuments) = CreateDocument(workspace.CurrentSolution, state.Source, state.AdditionalFiles, options);
+
+                SyntaxTree tree = await document.GetSyntaxTreeAsync();
+
+                ImmutableArray<Diagnostic> expectedDiagnostics = state.GetDiagnostics(tree);
+
+                VerifySupportedDiagnostics(analyzer, expectedDiagnostics);
 
                 Compilation compilation = await document.Project.GetCompilationAsync(cancellationToken);
 
@@ -201,22 +59,24 @@ namespace Roslynator.Testing
 
                 VerifyCompilerDiagnostics(compilerDiagnostics, options);
 
-                compilation = UpdateCompilation(compilation);
+                compilation = UpdateCompilation(compilation, expectedDiagnostics);
 
-                ImmutableArray<Diagnostic> diagnostics = await compilation.GetAnalyzerDiagnosticsAsync(Analyzers, DiagnosticComparer.SpanStart, cancellationToken);
+                ImmutableArray<Diagnostic> diagnostics = await GetAnalyzerDiagnosticsAsync(compilation, analyzer, DiagnosticComparer.SpanStart, cancellationToken);
 
                 if (diagnostics.Length > 0
-                    && SupportedDiagnostics.Length > 1)
+                    && supportedDiagnostics.Length > 1)
                 {
-                    VerifyDiagnostics(FilterDiagnostics(diagnostics), expectedDiagnostics, cancellationToken);
+                    VerifyDiagnostics(state, analyzer, expectedDiagnostics, FilterDiagnostics(diagnostics, expectedDiagnostics), cancellationToken);
                 }
                 else
                 {
-                    VerifyDiagnostics(diagnostics, expectedDiagnostics, cancellationToken);
+                    VerifyDiagnostics(state, analyzer, expectedDiagnostics, diagnostics, cancellationToken);
                 }
             }
 
-            IEnumerable<Diagnostic> FilterDiagnostics(ImmutableArray<Diagnostic> diagnostics)
+            static IEnumerable<Diagnostic> FilterDiagnostics(
+                ImmutableArray<Diagnostic> diagnostics,
+                ImmutableArray<Diagnostic> expectedDiagnostics)
             {
                 foreach (Diagnostic diagnostic in diagnostics)
                 {
@@ -237,62 +97,31 @@ namespace Roslynator.Testing
         }
 
         /// <summary>
-        /// Updates compilation that will be used during verification.
+        /// Verifies that specified source will not produce specified diagnostic.
         /// </summary>
-        /// <param name="compilation"></param>
-        protected virtual Compilation UpdateCompilation(Compilation compilation)
-        {
-            if (!Descriptor.IsEnabledByDefault)
-                compilation = compilation.EnsureEnabled(Descriptor);
-
-            return compilation;
-        }
-
-        /// <summary>
-        /// Verifies that specified source will not produce diagnostic described with see <see cref="Descriptor"/>
-        /// </summary>
-        /// <param name="source">Source text that contains placeholder [||] to be replaced with <paramref name="sourceData"/>.</param>
-        /// <param name="sourceData"></param>
+        /// <param name="state"></param>
         /// <param name="options"></param>
         /// <param name="cancellationToken"></param>
         public async Task VerifyNoDiagnosticAsync(
-            string source,
-            string sourceData,
-            CodeVerificationOptions options = null,
-            CancellationToken cancellationToken = default)
-        {
-            (_, string text) = TextParser.ReplaceEmptySpan(source, sourceData);
-
-            await VerifyNoDiagnosticAsync(
-                source: text,
-                additionalSources: null,
-                options: options,
-                cancellationToken);
-        }
-
-        /// <summary>
-        /// Verifies that specified source will not produce diagnostic described with see <see cref="Descriptor"/>
-        /// </summary>
-        /// <param name="source">A source code that should be tested. Tokens [| and |] represents start and end of selection respectively.</param>
-        /// <param name="additionalSources"></param>
-        /// <param name="options"></param>
-        /// <param name="cancellationToken"></param>
-        public async Task VerifyNoDiagnosticAsync(
-            string source,
-            IEnumerable<string> additionalSources = null,
-            CodeVerificationOptions options = null,
+            DiagnosticTestState state,
+            TestOptions options = null,
             CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
             options ??= Options;
 
-            if (SupportedDiagnostics.IndexOf(Descriptor, DiagnosticDescriptorComparer.Id) == -1)
-                  Assert.True(false, $"Diagnostic \"{Descriptor.Id}\" is not supported by analyzer(s) {string.Join(", ", Analyzers.Select(f => f.GetType().Name))}.");
+            TAnalyzer analyzer = Activator.CreateInstance<TAnalyzer>();
 
             using (Workspace workspace = new AdhocWorkspace())
             {
-                Document document = WorkspaceFactory.CreateDocument(workspace.CurrentSolution, source, additionalSources, options);
+                (Document document, ImmutableArray<ExpectedDocument> expectedDocuments) = CreateDocument(workspace.CurrentSolution, state.Source, state.AdditionalFiles, options);
+
+                SyntaxTree tree = await document.GetSyntaxTreeAsync();
+
+                ImmutableArray<Diagnostic> expectedDiagnostics = state.GetDiagnostics(tree);
+
+                VerifySupportedDiagnostics(analyzer, expectedDiagnostics);
 
                 Compilation compilation = await document.Project.GetCompilationAsync(cancellationToken);
 
@@ -300,30 +129,251 @@ namespace Roslynator.Testing
 
                 VerifyCompilerDiagnostics(compilerDiagnostics, options);
 
-                compilation = UpdateCompilation(compilation);
+                compilation = UpdateCompilation(compilation, analyzer.SupportedDiagnostics);
 
-                ImmutableArray<Diagnostic> analyzerDiagnostics = await compilation.GetAnalyzerDiagnosticsAsync(Analyzers, DiagnosticComparer.SpanStart, cancellationToken);
+                ImmutableArray<Diagnostic> actualDiagnostics = await GetAnalyzerDiagnosticsAsync(compilation, analyzer, DiagnosticComparer.SpanStart, cancellationToken);
 
-                foreach (Diagnostic diagnostic in analyzerDiagnostics)
+                actualDiagnostics = actualDiagnostics
+                    .Where(diagnostic => string.Equals(diagnostic.Id, state.Descriptor.Id))
+                    .ToImmutableArray();
+
+                if (!actualDiagnostics.IsEmpty)
+                    Assert.True(false, $"No diagnostic expected{actualDiagnostics.ToDebugString()}");
+            }
+        }
+
+        /// <summary>
+        /// Verifies that specified source will produce specified diagnostic and that the diagnostic will be fixed.
+        /// </summary>
+        /// <param name="state"></param>
+        /// <param name="expected"></param>
+        /// <param name="options"></param>
+        /// <param name="cancellationToken"></param>
+        public async Task VerifyDiagnosticAndFixAsync(
+            DiagnosticTestState state,
+            ExpectedTestState expected,
+            TestOptions options = null,
+            CancellationToken cancellationToken = default)
+        {
+            await VerifyDiagnosticAsync(state, options, cancellationToken);
+            await VerifyFixAsync(state, expected, options, cancellationToken);
+        }
+
+        /// <summary>
+        /// Verifies that specified source will produce specified diagnostic and that the diagnostic will not be fixed.
+        /// </summary>
+        /// <param name="state"></param>
+        /// <param name="options"></param>
+        /// <param name="cancellationToken"></param>
+        public async Task VerifyDiagnosticAndNoFixAsync(
+            DiagnosticTestState state,
+            TestOptions options = null,
+            CancellationToken cancellationToken = default)
+        {
+            await VerifyDiagnosticAsync(state, options, cancellationToken);
+            await VerifyNoFixAsync(state, options, cancellationToken);
+        }
+
+        private async Task VerifyFixAsync(
+            DiagnosticTestState state,
+            ExpectedTestState expected,
+            TestOptions options = null,
+            CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            options ??= Options;
+
+            TAnalyzer analyzer = Activator.CreateInstance<TAnalyzer>();
+            TFixProvider fixProvider = Activator.CreateInstance<TFixProvider>();
+
+            ImmutableArray<DiagnosticDescriptor> supportedDiagnostics = analyzer.SupportedDiagnostics;
+
+            using (Workspace workspace = new AdhocWorkspace())
+            {
+                (Document document, ImmutableArray<ExpectedDocument> expectedDocuments) = CreateDocument(workspace.CurrentSolution, state.Source, state.AdditionalFiles, options);
+
+                Project project = document.Project;
+
+                document = project.GetDocument(document.Id);
+
+                SyntaxTree tree = await document.GetSyntaxTreeAsync();
+
+                ImmutableArray<Diagnostic> expectedDiagnostics = state.GetDiagnostics(tree);
+
+                foreach (Diagnostic diagnostic in expectedDiagnostics)
+                    VerifyFixableDiagnostics(fixProvider, diagnostic.Id);
+
+                VerifySupportedDiagnostics(analyzer, expectedDiagnostics);
+
+                Compilation compilation = await project.GetCompilationAsync(cancellationToken);
+
+                ImmutableArray<Diagnostic> compilerDiagnostics = compilation.GetDiagnostics(cancellationToken);
+
+                VerifyCompilerDiagnostics(compilerDiagnostics, options);
+
+                compilation = UpdateCompilation(compilation, expectedDiagnostics);
+
+                ImmutableArray<Diagnostic> previousDiagnostics = ImmutableArray<Diagnostic>.Empty;
+
+                ImmutableArray<Diagnostic> previousPreviousDiagnostics = ImmutableArray<Diagnostic>.Empty;
+
+                var fixRegistered = false;
+
+                while (true)
                 {
-                    if (string.Equals(diagnostic.Id, Descriptor.Id, StringComparison.Ordinal))
-                        Assert.True(false, $"No diagnostic expected{analyzerDiagnostics.Where(f => string.Equals(f.Id, Descriptor.Id, StringComparison.Ordinal)).ToDebugString()}");
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    ImmutableArray<Diagnostic> diagnostics = await GetAnalyzerDiagnosticsAsync(compilation, analyzer, DiagnosticComparer.SpanStart, cancellationToken);
+
+                    int length = diagnostics.Length;
+
+                    if (length == 0)
+                        break;
+
+                    if (DiagnosticDeepEqualityComparer.Equals(diagnostics, previousDiagnostics))
+                        Assert.True(false, "Same diagnostics returned before and after the fix was applied." + diagnostics.ToDebugString());
+
+                    if (DiagnosticDeepEqualityComparer.Equals(diagnostics, previousPreviousDiagnostics))
+                        Assert.True(false, "Infinite loop detected: Reported diagnostics have been previously fixed." + diagnostics.ToDebugString());
+
+                    Diagnostic diagnostic = FindDiagnosticToFix(diagnostics, expectedDiagnostics);
+
+                    static Diagnostic FindDiagnosticToFix(
+                        ImmutableArray<Diagnostic> diagnostics,
+                        ImmutableArray<Diagnostic> expectedDiagnostics)
+                    {
+                        foreach (Diagnostic diagnostic in diagnostics)
+                        {
+                            foreach (Diagnostic diagnostic2 in expectedDiagnostics)
+                            {
+                                if (diagnostic.Id == diagnostic2.Id)
+                                    return diagnostic;
+                            }
+                        }
+
+                        return null;
+                    }
+
+                    if (diagnostic == null)
+                        break;
+
+                    CodeAction action = null;
+
+                    var context = new CodeFixContext(
+                        document,
+                        diagnostic,
+                        (a, d) =>
+                        {
+                            if ((state.EquivalenceKey == null
+                                || string.Equals(state.EquivalenceKey, a.EquivalenceKey, StringComparison.Ordinal))
+                                && d.Contains(diagnostic))
+                            {
+                                if (action != null)
+                                    Assert.True(false, "Multiple fixes available.");
+
+                                action = a;
+                            }
+                        },
+                        cancellationToken);
+
+                    await fixProvider.RegisterCodeFixesAsync(context);
+
+                    if (action == null)
+                        break;
+
+                    fixRegistered = true;
+
+                    document = await VerifyAndApplyCodeActionAsync(document, action, expected.CodeActionTitle);
+                    compilation = await document.Project.GetCompilationAsync(cancellationToken);
+
+                    ImmutableArray<Diagnostic> newCompilerDiagnostics = compilation.GetDiagnostics(cancellationToken);
+
+                    VerifyCompilerDiagnostics(newCompilerDiagnostics, options);
+                    VerifyNoNewCompilerDiagnostics(compilerDiagnostics, newCompilerDiagnostics, options);
+
+                    compilation = UpdateCompilation(compilation, expectedDiagnostics);
+
+                    previousPreviousDiagnostics = previousDiagnostics;
+                    previousDiagnostics = diagnostics;
+                }
+
+                Assert.True(fixRegistered, "No code fix has been registered.");
+
+                await VerifyExpectedDocument(expected, document, cancellationToken);
+
+                if (expectedDocuments.Any())
+                    await VerifyAdditionalDocumentsAsync(document.Project, expectedDocuments, cancellationToken);
+            }
+        }
+
+        private async Task VerifyNoFixAsync(
+            DiagnosticTestState state,
+            TestOptions options = null,
+            CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            options ??= Options;
+
+            TAnalyzer analyzer = Activator.CreateInstance<TAnalyzer>();
+            TFixProvider fixProvider = Activator.CreateInstance<TFixProvider>();
+
+            ImmutableArray<DiagnosticDescriptor> supportedDiagnostics = analyzer.SupportedDiagnostics;
+            ImmutableArray<string> fixableDiagnosticIds = fixProvider.FixableDiagnosticIds;
+
+            using (Workspace workspace = new AdhocWorkspace())
+            {
+                (Document document, ImmutableArray<ExpectedDocument> expectedDocuments) = CreateDocument(workspace.CurrentSolution, state.Source, state.AdditionalFiles, options);
+
+                Compilation compilation = await document.Project.GetCompilationAsync(cancellationToken);
+
+                SyntaxTree tree = await document.GetSyntaxTreeAsync();
+
+                ImmutableArray<Diagnostic> expectedDiagnostics = state.GetDiagnostics(tree);
+
+                VerifySupportedDiagnostics(analyzer, expectedDiagnostics);
+
+                ImmutableArray<Diagnostic> compilerDiagnostics = compilation.GetDiagnostics(cancellationToken);
+
+                VerifyCompilerDiagnostics(compilerDiagnostics, options);
+
+                compilation = UpdateCompilation(compilation, analyzer.SupportedDiagnostics);
+
+                ImmutableArray<Diagnostic> diagnostics = await GetAnalyzerDiagnosticsAsync(compilation, analyzer, DiagnosticComparer.SpanStart, cancellationToken);
+
+                foreach (Diagnostic diagnostic in diagnostics)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    if (expectedDiagnostics.IndexOf(diagnostic, DiagnosticComparer.Id) >= 0
+                        && fixableDiagnosticIds.Contains(diagnostic.Id))
+                    {
+                        var context = new CodeFixContext(
+                            document,
+                            diagnostic,
+                            (a, d) =>
+                            {
+                                if ((state.EquivalenceKey == null
+                                    || string.Equals(a.EquivalenceKey, state.EquivalenceKey, StringComparison.Ordinal))
+                                    && d.Contains(diagnostic))
+                                {
+                                    Assert.True(false, "No code fix expected.");
+                                }
+                            },
+                            cancellationToken);
+
+                        await fixProvider.RegisterCodeFixesAsync(context);
+                    }
                 }
             }
         }
 
         private void VerifyDiagnostics(
-            IEnumerable<Diagnostic> actualDiagnostics,
+            DiagnosticTestState state,
+            TAnalyzer analyzer,
             IEnumerable<Diagnostic> expectedDiagnostics,
-            CancellationToken cancellationToken = default)
-        {
-            VerifyDiagnostics(actualDiagnostics, expectedDiagnostics, checkAdditionalLocations: false, cancellationToken: cancellationToken);
-        }
-
-        private void VerifyDiagnostics(
             IEnumerable<Diagnostic> actualDiagnostics,
-            IEnumerable<Diagnostic> expectedDiagnostics,
-            bool checkAdditionalLocations,
             CancellationToken cancellationToken = default)
         {
             int expectedCount = 0;
@@ -343,14 +393,18 @@ namespace Roslynator.Testing
 
                     Diagnostic expectedDiagnostic = expectedEnumerator.Current;
 
-                    if (SupportedDiagnostics.IndexOf(expectedDiagnostic.Descriptor, DiagnosticDescriptorComparer.Id) == -1)
-                        Assert.True(false, $"Diagnostic \"{expectedDiagnostic.Id}\" is not supported by analyzer(s) {string.Join(", ", Analyzers.Select(f => f.GetType().Name))}.");
+                    VerifySupportedDiagnostics(analyzer, expectedDiagnostic);
 
                     if (actualEnumerator.MoveNext())
                     {
                         actualCount++;
 
-                        VerifyDiagnostic(actualEnumerator.Current, expectedDiagnostic, checkAdditionalLocations: checkAdditionalLocations);
+                        VerifyDiagnostic(
+                            expectedDiagnostic,
+                            actualEnumerator.Current,
+                            state.DiagnosticMessage,
+                            state.FormatProvider,
+                            verifyAdditionalLocations: state.AlwaysVerifyAdditionalLocations || !state.AdditionalSpans.IsEmpty);
                     }
                     else
                     {
@@ -387,67 +441,55 @@ namespace Roslynator.Testing
         }
 
         private void VerifyDiagnostic(
-            Diagnostic actualDiagnostic,
             Diagnostic expectedDiagnostic,
-            bool checkAdditionalLocations = false)
+            Diagnostic actualDiagnostic,
+            string message,
+            IFormatProvider formatProvider,
+            bool verifyAdditionalLocations = false)
         {
-            if (actualDiagnostic.Id != expectedDiagnostic.Id)
-                Assert.True(false, $"Diagnostic id expected to be \"{expectedDiagnostic.Id}\", actual: \"{actualDiagnostic.Id}\"{GetMessage()}");
+            if (expectedDiagnostic.Id != actualDiagnostic.Id)
+                Assert.True(false, $"Diagnostic's ID expected to be \"{expectedDiagnostic.Id}\", actual: \"{actualDiagnostic.Id}\"{GetMessage()}");
 
-            VerifyLocation(actualDiagnostic.Location, expectedDiagnostic.Location);
+            VerifyLocation(expectedDiagnostic.Location, actualDiagnostic.Location);
 
-            if (checkAdditionalLocations)
-                VerifyAdditionalLocations(actualDiagnostic.AdditionalLocations, expectedDiagnostic.AdditionalLocations);
+            if (verifyAdditionalLocations)
+                VerifyAdditionalLocations(expectedDiagnostic.AdditionalLocations, actualDiagnostic.AdditionalLocations);
+
+            if (message != null)
+                Assert.Equal(message, actualDiagnostic.GetMessage(formatProvider));
 
             void VerifyLocation(
-                Location actualLocation,
-                Location expectedLocation)
+                Location expectedLocation,
+                Location actualLocation)
             {
-                VerifyFileLinePositionSpan(actualLocation.GetLineSpan(), expectedLocation.GetLineSpan());
+                VerifyFileLinePositionSpan(expectedLocation.GetLineSpan(), actualLocation.GetLineSpan());
             }
 
             void VerifyAdditionalLocations(
-                IReadOnlyList<Location> actual,
-                IReadOnlyList<Location> expected)
+                IReadOnlyList<Location> expected,
+                IReadOnlyList<Location> actual)
             {
-                int actualCount = actual.Count;
                 int expectedCount = expected.Count;
+                int actualCount = actual.Count;
 
-                if (actualCount != expectedCount)
+                if (expectedCount != actualCount)
                     Assert.True(false, $"{expectedCount} additional location(s) expected, actual: {actualCount}{GetMessage()}");
 
                 for (int j = 0; j < actualCount; j++)
-                    VerifyLocation(actual[j], expected[j]);
+                    VerifyLocation(expected[j], actual[j]);
             }
 
             void VerifyFileLinePositionSpan(
-                FileLinePositionSpan actual,
-                FileLinePositionSpan expected)
+                FileLinePositionSpan expected,
+                FileLinePositionSpan actual)
             {
-                if (actual.Path != expected.Path)
+                if (expected.Path != actual.Path)
                     Assert.True(false, $"Diagnostic expected to be in file \"{expected.Path}\", actual: \"{actual.Path}\"{GetMessage()}");
 
-                VerifyLinePosition(actual.StartLinePosition, expected.StartLinePosition, "start");
+                string message = VerifyLinePositionSpan(expected.Span, actual.Span);
 
-                VerifyLinePosition(actual.EndLinePosition, expected.EndLinePosition, "end");
-            }
-
-            void VerifyLinePosition(
-                LinePosition actual,
-                LinePosition expected,
-                string startOrEnd)
-            {
-                int actualLine = actual.Line;
-                int expectedLine = expected.Line;
-
-                if (actualLine != expectedLine)
-                    Assert.True(false, $"Diagnostic expected to {startOrEnd} on line {expectedLine + 1}, actual: {actualLine + 1}{GetMessage()}");
-
-                int actualCharacter = actual.Character;
-                int expectedCharacter = expected.Character;
-
-                if (actualCharacter != expectedCharacter)
-                    Assert.True(false, $"Diagnostic expected to {startOrEnd} at column {expectedCharacter + 1}, actual: {actualCharacter + 1}{GetMessage()}");
+                if (message != null)
+                    Assert.True(false, $"Diagnostic{message}{GetMessage()}");
             }
 
             string GetMessage()
@@ -456,18 +498,72 @@ namespace Roslynator.Testing
             }
         }
 
-        private protected Diagnostic CreateDiagnostic(string source, TextSpan span)
+        private Compilation UpdateCompilation(
+            Compilation compilation,
+            ImmutableArray<Diagnostic> diagnostics)
         {
-            LinePositionSpan lineSpan = span.ToLinePositionSpan(source);
+            Debug.Assert(diagnostics.Any());
 
-            return CreateDiagnostic(span, lineSpan);
+            foreach (Diagnostic diagnostic in diagnostics)
+            {
+                if (!diagnostic.Descriptor.IsEnabledByDefault)
+                    compilation = compilation.EnsureDiagnosticEnabled(diagnostic.Descriptor);
+            }
+
+            return compilation;
         }
 
-        private protected Diagnostic CreateDiagnostic(TextSpan span, LinePositionSpan lineSpan)
+        private Compilation UpdateCompilation(
+            Compilation compilation,
+            ImmutableArray<DiagnosticDescriptor> descriptors)
         {
-            Location location = Location.Create(WorkspaceFactory.DefaultDocumentName, span, lineSpan);
+            return compilation.EnsureDiagnosticEnabled(descriptors.Where(f => !f.IsEnabledByDefault));
+        }
 
-            return Diagnostic.Create(Descriptor, location);
+        private Task<ImmutableArray<Diagnostic>> GetAnalyzerDiagnosticsAsync(
+            Compilation compilation,
+            DiagnosticAnalyzer analyzer,
+            IComparer<Diagnostic> comparer = null,
+            CancellationToken cancellationToken = default)
+        {
+            return GetAnalyzerDiagnosticsAsync(
+                compilation,
+                ImmutableArray.Create(analyzer),
+                comparer,
+                cancellationToken);
+        }
+
+        private async Task<ImmutableArray<Diagnostic>> GetAnalyzerDiagnosticsAsync(
+            Compilation compilation,
+            ImmutableArray<DiagnosticAnalyzer> analyzers,
+            IComparer<Diagnostic> comparer = null,
+            CancellationToken cancellationToken = default)
+        {
+            Exception exception = null;
+            DiagnosticAnalyzer analyzer = null;
+
+            var options = new CompilationWithAnalyzersOptions(
+                options: null,
+                onAnalyzerException: (e, a, _) =>
+                {
+                    exception = e;
+                    analyzer = a;
+                },
+                concurrentAnalysis: true,
+                logAnalyzerExecutionTime: false,
+                reportSuppressedDiagnostics: false,
+                analyzerExceptionFilter: null);
+
+            CompilationWithAnalyzers compilationWithAnalyzers = compilation.WithAnalyzers(analyzers, options);
+
+            ImmutableArray<Diagnostic> diagnostics = await compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync(cancellationToken);
+
+            if (exception != null)
+                Assert.True(false, $"An exception occurred in analyzer '{analyzer.GetType()}'.{Environment.NewLine}{exception}");
+
+            return (comparer != null)
+                ? diagnostics.Sort(comparer)
+                : diagnostics;
         }
     }
 }

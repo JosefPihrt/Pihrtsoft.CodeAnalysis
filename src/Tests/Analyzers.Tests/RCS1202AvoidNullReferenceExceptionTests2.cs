@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1202AvoidNullReferenceExceptionTests2 : AbstractCSharpFixVerifier
+    public class RCS1202AvoidNullReferenceExceptionTests2 : AbstractCSharpDiagnosticVerifier<AvoidNullReferenceExceptionAnalyzer, AvoidNullReferenceExceptionCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AvoidNullReferenceException;
-
-        public override CodeFixProvider FixProvider { get; } = new AvoidNullReferenceExceptionCodeFixProvider();
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new AvoidNullReferenceExceptionAnalyzer();
 
         [Theory, Trait(Traits.Analyzer, DiagnosticIdentifiers.AvoidNullReferenceException)]
         [InlineData("(x as string)[|.|]ToString()", "(x as string)?.ToString()")]
@@ -41,6 +36,24 @@ class C
         public async Task Test_AwaitExpression()
         {
             await VerifyDiagnosticAsync(@"
+using System.Threading.Tasks;
+
+static class C
+{
+    public static async Task M(object x)
+    {
+        await (x as string)[|.|]M2().ConfigureAwait(true);
+    }
+
+    public static async Task M2(this string s) => await Task.CompletedTask;
+}
+");
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AvoidNullReferenceException)]
+        public async Task TestNoFix_AwaitExpression()
+        {
+            await VerifyDiagnosticAndNoFixAsync(@"
 using System.Threading.Tasks;
 
 static class C
@@ -132,24 +145,6 @@ class C : I
     {
         (this as I).M();
     }
-}
-");
-        }
-
-        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AvoidNullReferenceException)]
-        public async Task TestNoFix_AwaitExpression()
-        {
-            await VerifyNoFixAsync(@"
-using System.Threading.Tasks;
-
-static class C
-{
-    public static async Task M(object x)
-    {
-        await (x as string).M2().ConfigureAwait(true);
-    }
-
-    public static async Task M2(this string s) => await Task.CompletedTask;
 }
 ");
         }

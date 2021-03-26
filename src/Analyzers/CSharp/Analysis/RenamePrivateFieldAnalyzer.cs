@@ -33,7 +33,7 @@ namespace Roslynator.CSharp.Analysis
             {
                 if (!fieldSymbol.IsStatic
                     || !fieldSymbol.IsReadOnly
-                    || context.IsAnalyzerSuppressed(AnalyzerOptions.DoNotRenamePrivateStaticReadOnlyFieldToCamelCaseWithUnderscore))
+                    || !AnalyzerOptions.DoNotRenamePrivateStaticReadOnlyFieldToCamelCaseWithUnderscore.IsEnabled(context))
                 {
                     DiagnosticHelpers.ReportDiagnostic(
                         context,

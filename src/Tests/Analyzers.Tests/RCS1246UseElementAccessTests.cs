@@ -2,20 +2,15 @@
 
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Roslynator.CSharp.CodeFixes;
+using Roslynator.Testing.CSharp;
 using Xunit;
 
 namespace Roslynator.CSharp.Analysis.Tests
 {
-    public class RCS1246UseElementAccessTests : AbstractCSharpFixVerifier
+    public class RCS1246UseElementAccessTests : AbstractCSharpDiagnosticVerifier<InvocationExpressionAnalyzer, OptimizeLinqMethodCallCodeFixProvider>
     {
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseElementAccess;
-
-        protected override DiagnosticAnalyzer Analyzer { get; } = new InvocationExpressionAnalyzer();
-
-        public override CodeFixProvider FixProvider { get; } = new OptimizeLinqMethodCallCodeFixProvider();
 
         [Theory, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseElementAccess)]
         [InlineData("((List<object>)x).[|First()|]", "((List<object>)x)[0]")]
@@ -204,7 +199,7 @@ class C
         x = ((string)x).ToString().ElementAt(1);
     }
 }
-", options: Options.WithEnabled(AnalyzerOptions.DoNotUseElementAccessWhenExpressionIsInvocation));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.DoNotUseElementAccessWhenExpressionIsInvocation));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseElementAccess)]

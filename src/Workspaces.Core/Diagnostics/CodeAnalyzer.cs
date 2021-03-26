@@ -32,13 +32,13 @@ namespace Roslynator.Diagnostics
             if (analyzerAssemblies != null)
                 _analyzerAssemblies.AddRange(analyzerAssemblies);
 
-            Options = options ?? CodeAnalyzerOptions.Default;
             FormatProvider = formatProvider;
+            Options = options ?? CodeAnalyzerOptions.Default;
         }
 
-        public CodeAnalyzerOptions Options { get; }
-
         public IFormatProvider FormatProvider { get; }
+
+        public CodeAnalyzerOptions Options { get; }
 
         public async Task<ImmutableArray<ProjectAnalysisResult>> AnalyzeSolutionAsync(
             Solution solution,
@@ -73,8 +73,7 @@ namespace Roslynator.Diagnostics
 
                     ProjectAnalysisResult result = await AnalyzeProjectCoreAsync(project, cancellationToken).ConfigureAwait(false);
 
-                    if (result != null)
-                        results.Add(result);
+                    results.Add(result);
                 }
                 else
                 {
@@ -120,14 +119,20 @@ namespace Roslynator.Diagnostics
                 options: Options);
 
             if (!analyzers.Any())
-            {
                 WriteLine($"  No analyzers found to analyze '{project.Name}'", ConsoleColor.DarkGray, Verbosity.Normal);
 
-                if (Options.IgnoreCompilerDiagnostics)
-                    return default;
+            if (analyzers.Any()
+                || !Options.IgnoreCompilerDiagnostics)
+            {
+                return await AnalyzeProjectCoreAsync(project, analyzers, cancellationToken).ConfigureAwait(false);
             }
 
-            LogHelpers.WriteUsedAnalyzers(analyzers, project, Options, ConsoleColor.DarkGray, Verbosity.Diagnostic);
+            return new ProjectAnalysisResult(project.Id);
+        }
+
+        private async Task<ProjectAnalysisResult> AnalyzeProjectCoreAsync(Project project, ImmutableArray<DiagnosticAnalyzer> analyzers, CancellationToken cancellationToken = default)
+        {
+            LogHelpers.WriteUsedAnalyzers(analyzers, null, Options, ConsoleColor.DarkGray, Verbosity.Diagnostic);
 
             cancellationToken.ThrowIfCancellationRequested();
 
