@@ -131,11 +131,10 @@ namespace Roslynator.Testing
 
                 compilation = UpdateCompilation(compilation, analyzer.SupportedDiagnostics);
 
-                ImmutableArray<Diagnostic> analyzerDiagnostics = await GetAnalyzerDiagnosticsAsync(compilation, analyzer, DiagnosticComparer.SpanStart, cancellationToken);
+                ImmutableArray<Diagnostic> actualDiagnostics = await GetAnalyzerDiagnosticsAsync(compilation, analyzer, DiagnosticComparer.SpanStart, cancellationToken);
 
-                ImmutableArray<Diagnostic> actualDiagnostics = analyzerDiagnostics.Intersect(
-                    expectedDiagnostics,
-                    DiagnosticComparer.Id)
+                actualDiagnostics = actualDiagnostics
+                    .Where(diagnostic => string.Equals(diagnostic.Id, state.Descriptor.Id))
                     .ToImmutableArray();
 
                 if (!actualDiagnostics.IsEmpty)

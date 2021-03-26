@@ -88,7 +88,7 @@ namespace Roslynator.CodeFixes
                 if (options.DiagnosticIdsFixableOneByOne.Contains(descriptor.Id))
                     return await GetFixAsync(diagnostics[0], fixer, project, options, formatProvider, cancellationToken).ConfigureAwait(false);
 
-                WriteLine($"  '{fixer.GetType().FullName}' does not have FixAllProvider", ConsoleColor.Yellow, Verbosity.Diagnostic);
+                WriteLine($"  Diagnostic '{descriptor.Id}' cannot be fixed with '{fixer.GetType().FullName}' because it does not have FixAllProvider and '{descriptor.Id}' is not allowed to be fixed one by one.", ConsoleColor.Yellow, Verbosity.Diagnostic);
                 return default;
             }
 

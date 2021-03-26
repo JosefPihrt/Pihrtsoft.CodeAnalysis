@@ -16,7 +16,7 @@ namespace Roslynator.CommandLine
         public string FileLogVerbosity { get; set; }
 
         [Option(
-            shortName: 'v',
+            shortName: OptionShortNames.Verbosity,
             longName: "verbosity",
             HelpText = "Defines the amount of information to display in the log. Allowed values are q [quiet], m [minimal], n [normal], d [detailed] and diag [diagnostic].",
             MetaValue = "<LEVEL>")]

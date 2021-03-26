@@ -549,6 +549,7 @@ namespace Roslynator
                     case Accessibility.Protected:
                     case Accessibility.ProtectedOrInternal:
                         {
+                            symbol = symbol.ContainingType;
                             break;
                         }
                     case Accessibility.Internal:
@@ -557,24 +558,49 @@ namespace Roslynator
                             if (visibility == Visibility.Public)
                                 visibility = Visibility.Internal;
 
+                            symbol = symbol.ContainingType;
                             break;
                         }
                     case Accessibility.Private:
                         {
                             visibility = Visibility.Private;
+
+                            symbol = symbol.ContainingType;
                             break;
                         }
                     case Accessibility.NotApplicable:
                         {
-                            return Visibility.NotApplicable;
+                            switch (symbol.Kind)
+                            {
+                                case SymbolKind.Local:
+                                    {
+                                        return Visibility.Private;
+                                    }
+                                case SymbolKind.Parameter:
+                                case SymbolKind.TypeParameter:
+                                    {
+                                        symbol = symbol.ContainingSymbol;
+                                        break;
+                                    }
+                                case SymbolKind.Namespace:
+                                case SymbolKind.Alias:
+                                    {
+                                        return Visibility.NotApplicable;
+                                    }
+                                default:
+                                    {
+                                        Debug.Fail(symbol.ToDisplayString(SymbolDisplayFormats.Test));
+                                        return Visibility.NotApplicable;
+                                    }
+                            }
+
+                            break;
                         }
                     default:
                         {
                             throw new InvalidOperationException($"Unknown accessibility '{symbol.DeclaredAccessibility}'.");
                         }
                 }
-
-                symbol = symbol.ContainingType;
 
             } while (symbol != null);
 

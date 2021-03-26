@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -102,6 +103,12 @@ namespace Roslynator.CSharp.Analysis
                         if (!SymbolEqualityComparer.Default.Equals(typeInfo.Type, typeInfo.ConvertedType))
                             return;
 
+                        if (parent.IsKind(SyntaxKind.ReturnStatement)
+                            && IsTypeInferredFromDefaultExpression(context, parent))
+                        {
+                            return;
+                        }
+
                         ReportDiagnostic();
                         return;
                     }
@@ -133,6 +140,90 @@ namespace Roslynator.CSharp.Analysis
             {
                 DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.SimplifyDefaultExpression, Location.Create(defaultExpression.SyntaxTree, defaultExpression.ParenthesesSpan()));
             }
+        }
+
+        private static bool IsTypeInferredFromDefaultExpression(
+            SyntaxNodeAnalysisContext context,
+            SyntaxNode node)
+        {
+            while (node != null)
+            {
+                SyntaxKind kind = node.Kind();
+
+                if (CSharpFacts.IsAnonymousFunctionExpression(kind))
+                {
+                    if (IsTypeInferredFromDefaultExpression2(context, node))
+                        return true;
+                }
+                else
+                {
+                    switch (kind)
+                    {
+                        case SyntaxKind.LocalFunctionStatement:
+                        case SyntaxKind.MethodDeclaration:
+                        case SyntaxKind.OperatorDeclaration:
+                        case SyntaxKind.ConversionOperatorDeclaration:
+                        case SyntaxKind.PropertyDeclaration:
+                        case SyntaxKind.IndexerDeclaration:
+                        case SyntaxKind.GetAccessorDeclaration:
+                            return false;
+                    }
+                }
+
+                node = node.Parent;
+            }
+
+            return false;
+        }
+
+        private static bool IsTypeInferredFromDefaultExpression2(
+            SyntaxNodeAnalysisContext context,
+            SyntaxNode anonymousFunction)
+        {
+            if (context.SemanticModel.GetSymbol(anonymousFunction, context.CancellationToken) is IMethodSymbol methodSymbol
+                && methodSymbol.MethodKind == MethodKind.AnonymousFunction)
+            {
+                SyntaxNode node = ((ExpressionSyntax)anonymousFunction).WalkUpParentheses().Parent;
+
+                if (node is ArgumentSyntax argument
+                    && node.IsParentKind(SyntaxKind.ArgumentList)
+                    && node.Parent.IsParentKind(SyntaxKind.InvocationExpression)
+                    && !IsGenericInvocation((InvocationExpressionSyntax)node.Parent.Parent))
+                {
+                    IParameterSymbol parameterSymbol = context.SemanticModel.DetermineParameter(argument);
+
+                    if (parameterSymbol?.OriginalDefinition.Type is INamedTypeSymbol namedTypeSymbol)
+                    {
+                        ITypeParameterSymbol typeParameterSymbol = namedTypeSymbol.TypeParameters.LastOrDefault();
+
+                        if (typeParameterSymbol != null
+                            && parameterSymbol.ContainingSymbol.OriginalDefinition is IMethodSymbol methodSymbol2)
+                        {
+                            foreach (ITypeParameterSymbol typeParameterSymbol2 in methodSymbol2.TypeParameters)
+                            {
+                                if (string.Equals(typeParameterSymbol.Name, typeParameterSymbol2.Name, StringComparison.Ordinal))
+                                    return true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        private static bool IsGenericInvocation(InvocationExpressionSyntax invocationExpression)
+        {
+            if (invocationExpression.Expression.IsKind(SyntaxKind.GenericName))
+                return true;
+
+            if (invocationExpression.Expression.IsKind(SyntaxKind.SimpleMemberAccessExpression)
+                && ((MemberAccessExpressionSyntax)invocationExpression.Expression).Name.IsKind(SyntaxKind.GenericName))
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

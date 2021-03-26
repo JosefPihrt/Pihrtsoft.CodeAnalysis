@@ -88,7 +88,7 @@ namespace Roslynator.CommandLine
                 });
 
                 if (!verbosityParsed)
-                    return 1;
+                    return ExitCodes.Error;
 
                 return parserResult.MapResult(
 #if DEBUG
@@ -108,7 +108,7 @@ namespace Roslynator.CommandLine
                     (GenerateDocCommandLineOptions options) => GenerateDocAsync(options).Result,
                     (GenerateDocRootCommandLineOptions options) => GenerateDocRootAsync(options).Result,
                     (MigrateCommandLineOptions options) => Migrate(options),
-                    _ => 1);
+                    _ => ExitCodes.Error);
             }
             catch (Exception ex)
             {
@@ -135,25 +135,25 @@ namespace Roslynator.CommandLine
                 Out = null;
             }
 
-            return 1;
+            return ExitCodes.Error;
         }
 
         private static async Task<int> FixAsync(FixCommandLineOptions options)
         {
             if (!options.TryParseDiagnosticSeverity(CodeFixerOptions.Default.SeverityLevel, out DiagnosticSeverity severityLevel))
-                return 1;
+                return ExitCodes.Error;
 
             if (!TryParseKeyValuePairs(options.DiagnosticFixMap, out List<KeyValuePair<string, string>> diagnosticFixMap))
-                return 1;
+                return ExitCodes.Error;
 
             if (!TryParseKeyValuePairs(options.DiagnosticFixerMap, out List<KeyValuePair<string, string>> diagnosticFixerMap))
-                return 1;
+                return ExitCodes.Error;
 
             if (!TryParseOptionValueAsEnum(options.FixScope, ParameterNames.FixScope, out FixAllScope fixAllScope, FixAllScope.Project))
-                return 1;
+                return ExitCodes.Error;
 
             if (!options.TryGetProjectFilter(out ProjectFilter projectFilter))
-                return 1;
+                return ExitCodes.Error;
 
             var command = new FixCommand(
                 options: options,
@@ -165,22 +165,22 @@ namespace Roslynator.CommandLine
 
             CommandResult result = await command.ExecuteAsync(options.Path, options.MSBuildPath, options.Properties);
 
-            return (result == CommandResult.Success) ? 0 : 1;
+            return GetExitCode(result);
         }
 
         private static async Task<int> AnalyzeAsync(AnalyzeCommandLineOptions options)
         {
             if (!options.TryParseDiagnosticSeverity(CodeAnalyzerOptions.Default.SeverityLevel, out DiagnosticSeverity severityLevel))
-                return 1;
+                return ExitCodes.Error;
 
             if (!options.TryGetProjectFilter(out ProjectFilter projectFilter))
-                return 1;
+                return ExitCodes.Error;
 
             var command = new AnalyzeCommand(options, severityLevel, projectFilter);
 
             CommandResult result = await command.ExecuteAsync(options.Path, options.MSBuildPath, options.Properties);
 
-            return (result == CommandResult.Success) ? 0 : 1;
+            return GetExitCode(result);
         }
 
         private static int AnalyzeAssembly(AnalyzeAssemblyCommandLineOptions options)
@@ -190,38 +190,38 @@ namespace Roslynator.CommandLine
             if (options.Language != null
                 && !TryParseLanguage(options.Language, out language))
             {
-                return 1;
+                return ExitCodes.Error;
             }
 
             var command = new AnalyzeAssemblyCommand(language);
 
             CommandResult result = command.Execute(options);
 
-            return (result == CommandResult.Success) ? 0 : 1;
+            return GetExitCode(result);
         }
 
         private static async Task<int> FindSymbolsAsync(FindSymbolsCommandLineOptions options)
         {
             if (!options.TryGetProjectFilter(out ProjectFilter projectFilter))
-                return 1;
+                return ExitCodes.Error;
 
             if (!TryParseOptionValueAsEnumFlags(options.SymbolGroups, ParameterNames.SymbolGroups, out SymbolGroupFilter symbolGroups, SymbolFinderOptions.Default.SymbolGroups))
-                return 1;
+                return ExitCodes.Error;
 
             if (!TryParseOptionValueAsEnumFlags(options.Visibility, ParameterNames.Visibility, out VisibilityFilter visibility, SymbolFinderOptions.Default.Visibility))
-                return 1;
+                return ExitCodes.Error;
 
             if (!TryParseMetadataNames(options.WithAttributes, out ImmutableArray<MetadataName> withAttributes))
-                return 1;
+                return ExitCodes.Error;
 
             if (!TryParseMetadataNames(options.WithoutAttributes, out ImmutableArray<MetadataName> withoutAttributes))
-                return 1;
+                return ExitCodes.Error;
 
             if (!TryParseOptionValueAsEnumFlags(options.WithFlags, ParameterNames.WithFlags, out SymbolFlags withFlags, SymbolFlags.None))
-                return 1;
+                return ExitCodes.Error;
 
             if (!TryParseOptionValueAsEnumFlags(options.WithoutFlags, ParameterNames.WithoutFlags, out SymbolFlags withoutFlags, SymbolFlags.None))
-                return 1;
+                return ExitCodes.Error;
 
             ImmutableArray<SymbolFilterRule>.Builder rules = ImmutableArray.CreateBuilder<SymbolFilterRule>();
 
@@ -251,34 +251,34 @@ namespace Roslynator.CommandLine
 
             CommandResult result = await command.ExecuteAsync(options.Path, options.MSBuildPath, options.Properties);
 
-            return (result == CommandResult.Success) ? 0 : 1;
+            return GetExitCode(result);
         }
 
         private static async Task<int> ListSymbolsAsync(ListSymbolsCommandLineOptions options)
         {
             if (!options.TryGetProjectFilter(out ProjectFilter projectFilter))
-                return 1;
+                return ExitCodes.Error;
 
             if (!TryParseOptionValueAsEnum(options.Depth, ParameterNames.Depth, out DocumentationDepth depth, DocumentationDepth.Member))
-                return 1;
+                return ExitCodes.Error;
 
             if (!TryParseOptionValueAsEnumFlags(options.WrapList, ParameterNames.WrapList, out WrapListOptions wrapListOptions))
-                return 1;
+                return ExitCodes.Error;
 
             if (!TryParseMetadataNames(options.IgnoredAttributes, out ImmutableArray<MetadataName> ignoredAttributes))
-                return 1;
+                return ExitCodes.Error;
 
             if (!TryParseMetadataNames(options.IgnoredSymbols, out ImmutableArray<MetadataName> ignoredSymbols))
-                return 1;
+                return ExitCodes.Error;
 
             if (!TryParseOptionValueAsEnumFlags(options.IgnoredParts, ParameterNames.IgnoredParts, out SymbolDefinitionPartFilter ignoredParts))
-                return 1;
+                return ExitCodes.Error;
 
             if (!TryParseOptionValueAsEnum(options.Layout, ParameterNames.Layout, out SymbolDefinitionListLayout layout, SymbolDefinitionListLayout.NamespaceList))
-                return 1;
+                return ExitCodes.Error;
 
             if (!TryParseOptionValueAsEnumFlags(options.Visibility, ParameterNames.Visibility, out VisibilityFilter visibilityFilter, SymbolFilterOptions.Default.Visibility))
-                return 1;
+                return ExitCodes.Error;
 
             ImmutableArray<SymbolFilterRule> rules = (ignoredSymbols.Any())
                 ? ImmutableArray.Create<SymbolFilterRule>(new IgnoredNameSymbolFilterRule(ignoredSymbols))
@@ -304,7 +304,7 @@ namespace Roslynator.CommandLine
 
             CommandResult result = await command.ExecuteAsync(options.Path, options.MSBuildPath, options.Properties);
 
-            return (result == CommandResult.Success) ? 0 : 1;
+            return GetExitCode(result);
 
             SymbolGroupFilter GetSymbolGroupFilter()
             {
@@ -325,7 +325,7 @@ namespace Roslynator.CommandLine
         private static async Task<int> FormatAsync(FormatCommandLineOptions options)
         {
             if (!options.TryGetProjectFilter(out ProjectFilter projectFilter))
-                return 1;
+                return ExitCodes.Error;
 
             string endOfLine = options.EndOfLine;
 
@@ -334,7 +334,7 @@ namespace Roslynator.CommandLine
                 && endOfLine != "crlf")
             {
                 WriteLine($"Unknown end of line '{endOfLine}'.", Verbosity.Quiet);
-                return 1;
+                return ExitCodes.Error;
             }
 
             var command = new FormatCommand(options, projectFilter);
@@ -343,19 +343,19 @@ namespace Roslynator.CommandLine
 
             CommandResult result = await command.ExecuteAsync(options.Path, options.MSBuildPath, properties);
 
-            return (result == CommandResult.Success) ? 0 : 1;
+            return GetExitCode(result);
         }
 
         private static async Task<int> SlnListAsync(SlnListCommandLineOptions options)
         {
             if (!options.TryGetProjectFilter(out ProjectFilter projectFilter))
-                return 1;
+                return ExitCodes.Error;
 
             var command = new SlnListCommand(options, projectFilter);
 
             CommandResult result = await command.ExecuteAsync(options.Path, options.MSBuildPath, options.Properties);
 
-            return (result == CommandResult.Success) ? 0 : 1;
+            return GetExitCode(result);
         }
 
         private static int ListVisualStudio(ListVisualStudioCommandLineOptions options)
@@ -364,31 +364,31 @@ namespace Roslynator.CommandLine
 
             CommandResult result = command.Execute();
 
-            return (result == CommandResult.Success) ? 0 : 1;
+            return GetExitCode(result);
         }
 
         private static async Task<int> PhysicalLinesOfCodeAsync(PhysicalLinesOfCodeCommandLineOptions options)
         {
             if (!options.TryGetProjectFilter(out ProjectFilter projectFilter))
-                return 1;
+                return ExitCodes.Error;
 
             var command = new PhysicalLinesOfCodeCommand(options, projectFilter);
 
             CommandResult result = await command.ExecuteAsync(options.Path, options.MSBuildPath, options.Properties);
 
-            return (result == CommandResult.Success) ? 0 : 1;
+            return GetExitCode(result);
         }
 
         private static async Task<int> LogicalLinesOrCodeAsync(LogicalLinesOfCodeCommandLineOptions options)
         {
             if (!options.TryGetProjectFilter(out ProjectFilter projectFilter))
-                return 1;
+                return ExitCodes.Error;
 
             var command = new LogicalLinesOfCodeCommand(options, projectFilter);
 
             CommandResult result = await command.ExecuteAsync(options.Path, options.MSBuildPath, options.Properties);
 
-            return (result == CommandResult.Success) ? 0 : 1;
+            return GetExitCode(result);
         }
 
         private static async Task<int> GenerateDocAsync(GenerateDocCommandLineOptions options)
@@ -396,35 +396,35 @@ namespace Roslynator.CommandLine
             if (options.MaxDerivedTypes < 0)
             {
                 WriteLine("Maximum number of derived items must be equal or greater than 0.", Verbosity.Quiet);
-                return 1;
+                return ExitCodes.Error;
             }
 
             if (!TryParseOptionValueAsEnum(options.Depth, ParameterNames.Depth, out DocumentationDepth depth, DocumentationOptions.Default.Depth))
-                return 1;
+                return ExitCodes.Error;
 
             if (!TryParseOptionValueAsEnumFlags(options.IgnoredRootParts, ParameterNames.IgnoredRootParts, out RootDocumentationParts ignoredRootParts, DocumentationOptions.Default.IgnoredRootParts))
-                return 1;
+                return ExitCodes.Error;
 
             if (!TryParseOptionValueAsEnumFlags(options.IgnoredNamespaceParts, ParameterNames.IgnoredNamespaceParts, out NamespaceDocumentationParts ignoredNamespaceParts, DocumentationOptions.Default.IgnoredNamespaceParts))
-                return 1;
+                return ExitCodes.Error;
 
             if (!TryParseOptionValueAsEnumFlags(options.IgnoredTypeParts, ParameterNames.IgnoredTypeParts, out TypeDocumentationParts ignoredTypeParts, DocumentationOptions.Default.IgnoredTypeParts))
-                return 1;
+                return ExitCodes.Error;
 
             if (!TryParseOptionValueAsEnumFlags(options.IgnoredMemberParts, ParameterNames.IgnoredMemberParts, out MemberDocumentationParts ignoredMemberParts, DocumentationOptions.Default.IgnoredMemberParts))
-                return 1;
+                return ExitCodes.Error;
 
             if (!TryParseOptionValueAsEnumFlags(options.IncludeContainingNamespace, ParameterNames.IncludeContainingNamespace, out IncludeContainingNamespaceFilter includeContainingNamespaceFilter, DocumentationOptions.Default.IncludeContainingNamespaceFilter))
-                return 1;
+                return ExitCodes.Error;
 
             if (!TryParseOptionValueAsEnumFlags(options.OmitMemberParts, ParameterNames.OmitMemberParts, out OmitMemberParts omitMemberParts, OmitMemberParts.None))
-                return 1;
+                return ExitCodes.Error;
 
             if (!TryParseOptionValueAsEnum(options.Visibility, ParameterNames.Visibility, out Visibility visibility))
-                return 1;
+                return ExitCodes.Error;
 
             if (!options.TryGetProjectFilter(out ProjectFilter projectFilter))
-                return 1;
+                return ExitCodes.Error;
 
             var command = new GenerateDocCommand(
                 options,
@@ -440,25 +440,25 @@ namespace Roslynator.CommandLine
 
             CommandResult result = await command.ExecuteAsync(options.Path, options.MSBuildPath, options.Properties);
 
-            return (result == CommandResult.Success) ? 0 : 1;
+            return GetExitCode(result);
         }
 
         private static async Task<int> GenerateDocRootAsync(GenerateDocRootCommandLineOptions options)
         {
             if (!TryParseOptionValueAsEnumFlags(options.IncludeContainingNamespace, ParameterNames.IncludeContainingNamespace, out IncludeContainingNamespaceFilter includeContainingNamespaceFilter, DocumentationOptions.Default.IncludeContainingNamespaceFilter))
-                return 1;
+                return ExitCodes.Error;
 
             if (!TryParseOptionValueAsEnum(options.Visibility, ParameterNames.Visibility, out Visibility visibility))
-                return 1;
+                return ExitCodes.Error;
 
             if (!TryParseOptionValueAsEnum(options.Depth, ParameterNames.Depth, out DocumentationDepth depth, DocumentationOptions.Default.Depth))
-                return 1;
+                return ExitCodes.Error;
 
             if (!TryParseOptionValueAsEnumFlags(options.IgnoredParts, ParameterNames.IgnoredRootParts, out RootDocumentationParts ignoredParts, DocumentationOptions.Default.IgnoredRootParts))
-                return 1;
+                return ExitCodes.Error;
 
             if (!options.TryGetProjectFilter(out ProjectFilter projectFilter))
-                return 1;
+                return ExitCodes.Error;
 
             var command = new GenerateDocRootCommand(
                 options,
@@ -470,19 +470,19 @@ namespace Roslynator.CommandLine
 
             CommandResult result = await command.ExecuteAsync(options.Path, options.MSBuildPath, options.Properties);
 
-            return (result == CommandResult.Success) ? 0 : 1;
+            return GetExitCode(result);
         }
 
         private static async Task<int> GenerateSourceReferencesAsync(GenerateSourceReferencesCommandLineOptions options)
         {
             if (!TryParseOptionValueAsEnum(options.Depth, ParameterNames.Depth, out DocumentationDepth depth, DocumentationOptions.Default.Depth))
-                return 1;
+                return ExitCodes.Error;
 
             if (!TryParseOptionValueAsEnum(options.Visibility, ParameterNames.Visibility, out Visibility visibility))
-                return 1;
+                return ExitCodes.Error;
 
             if (!options.TryGetProjectFilter(out ProjectFilter projectFilter))
-                return 1;
+                return ExitCodes.Error;
 
             var command = new GenerateSourceReferencesCommand(
                 options,
@@ -492,7 +492,7 @@ namespace Roslynator.CommandLine
 
             CommandResult result = await command.ExecuteAsync(options.Path, options.MSBuildPath, options.Properties);
 
-            return (result == CommandResult.Success) ? 0 : 1;
+            return GetExitCode(result);
         }
 
         private static int Migrate(MigrateCommandLineOptions options)
@@ -500,14 +500,14 @@ namespace Roslynator.CommandLine
             if (!string.Equals(options.Identifier, "roslynator.analyzers", StringComparison.Ordinal))
             {
                 WriteLine($"Unknown identifier '{options.Identifier}'.", Verbosity.Quiet);
-                return 1;
+                return ExitCodes.Error;
             }
 
             if (!TryParsePaths(options.Path, out ImmutableArray<string> paths))
-                return 1;
+                return ExitCodes.Error;
 
             if (!TryParseVersion(options.Version, out Version version))
-                return 1;
+                return ExitCodes.Error;
 
             version = new Version(
                 version.Major,
@@ -517,7 +517,7 @@ namespace Roslynator.CommandLine
             if (version != Versions.Version_3_0_0)
             {
                 WriteLine($"Unknown target version '{version}'.", Verbosity.Quiet);
-                return 1;
+                return ExitCodes.Error;
             }
 
             var command = new MigrateCommand(
@@ -528,19 +528,19 @@ namespace Roslynator.CommandLine
 
             CommandResult result = command.Execute();
 
-            return (result == CommandResult.Success) ? 0 : 1;
+            return GetExitCode(result);
         }
 
         private static async Task<int> ListReferencesAsync(ListReferencesCommandLineOptions options)
         {
             if (!TryParseOptionValueAsEnum(options.Display, ParameterNames.Display, out MetadataReferenceDisplay display, MetadataReferenceDisplay.Path))
-                return 1;
+                return ExitCodes.Error;
 
             if (!TryParseOptionValueAsEnumFlags(options.Type, ParameterNames.Type, out MetadataReferenceFilter metadataReferenceFilter, MetadataReferenceFilter.Dll | MetadataReferenceFilter.Project))
-                return 1;
+                return ExitCodes.Error;
 
             if (!options.TryGetProjectFilter(out ProjectFilter projectFilter))
-                return 1;
+                return ExitCodes.Error;
 
             var command = new ListReferencesCommand(
                 options,
@@ -550,7 +550,30 @@ namespace Roslynator.CommandLine
 
             CommandResult result = await command.ExecuteAsync(options.Path, options.MSBuildPath, options.Properties);
 
-            return (result == CommandResult.Success) ? 0 : 1;
+            return GetExitCode(result);
+        }
+
+        private static int GetExitCode(CommandResult result)
+        {
+            switch (result)
+            {
+                case CommandResult.Success:
+                    return ExitCodes.Success;
+                case CommandResult.NotSuccess:
+                    return ExitCodes.NotSuccess;
+                case CommandResult.Fail:
+                case CommandResult.Canceled:
+                    return ExitCodes.Error;
+                default:
+                    throw new InvalidOperationException($"Unknown enum value '{result}'.");
+            }
+        }
+
+        private static class ExitCodes
+        {
+            public const int Success = 0;
+            public const int NotSuccess = 1;
+            public const int Error = 2;
         }
     }
 }

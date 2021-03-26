@@ -45,6 +45,17 @@ C:/Program Files/dotnet/sdk/3.1.200
 * [loc](loc-command.md)
 * [lloc](lloc-command.md)
 
+## Exit Code
+
+Value | Comment
+--- | ---
+0 | Success\*
+1 | Not a success\*\*
+2 | Error occured or execution canceled
+
+\* A diagnostic was found (`analyze` command ) or a diagnostic was fixed (`fix` command) etc.
+\*\* No diagnostic was found (`analyze` command) or no diagnostic was fixed (`fix` command) etc.
+
 ## See Also
 
 * [How to Fix All Diagnostics in a Solution](../HowToFixAllDiagnostics.md)

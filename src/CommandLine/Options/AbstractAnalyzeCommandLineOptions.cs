@@ -9,7 +9,7 @@ namespace Roslynator.CommandLine
     public abstract class AbstractAnalyzeCommandLineOptions : MSBuildCommandLineOptions
     {
         [Option(
-            shortName: 'a',
+            shortName: OptionShortNames.AnalyzerAssemblies,
             longName: "analyzer-assemblies",
             HelpText = "Define one or more paths to an analyzer assembly or a directory.",
             MetaValue = "<PATH>")]

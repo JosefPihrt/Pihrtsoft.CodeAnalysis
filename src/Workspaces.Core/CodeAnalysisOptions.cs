@@ -42,14 +42,15 @@ namespace Roslynator
 
         internal bool IsSupportedDiagnostic(Diagnostic diagnostic)
         {
-            if (diagnostic.Severity >= SeverityLevel)
-            {
-                return (SupportedDiagnosticIds.Count > 0)
-                    ? SupportedDiagnosticIds.Contains(diagnostic.Id)
-                    : !IgnoredDiagnosticIds.Contains(diagnostic.Id);
-            }
+            return diagnostic.Severity >= SeverityLevel
+                && IsSupportedDiagnosticId(diagnostic.Id);
+        }
 
-            return false;
+        internal bool IsSupportedDiagnosticId(string diagnosticId)
+        {
+            return (SupportedDiagnosticIds.Count > 0)
+                ? SupportedDiagnosticIds.Contains(diagnosticId)
+                : !IgnoredDiagnosticIds.Contains(diagnosticId);
         }
 
         internal ReportDiagnostic GetEffectiveSeverity(DiagnosticDescriptor descriptor, CompilationOptions compilationOptions)

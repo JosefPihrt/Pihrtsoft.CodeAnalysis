@@ -14,6 +14,7 @@ roslynator fix <PROJECT|SOLUTION>
 [--diagnostic-fix-map]
 [--diagnostics-fixable-one-by-one]
 [--file-banner]
+[--fix-scope]
 [--format]
 [--ignore-analyzer-references]
 [--ignore-compiler-errors]
@@ -24,7 +25,7 @@ roslynator fix <PROJECT|SOLUTION>
 [--file-log]
 [--file-log-verbosity]
 [--max-iterations]
-[--msbuild-path]
+[-m|--msbuild-path]
 [--projects]
 [-p|--properties]
 [--severity-level]
@@ -77,6 +78,10 @@ Defines diagnostics that can be fixed even if there is no (FixAllProvider)[https
 
 Defines text that should be at the top of the source file.
 
+**`--fix-scope`** `{project|document}`
+
+Defines a fix scope. Default value is `project`.
+
 **`--format`**
 
 Indicates whether each document should be formatted.
@@ -109,7 +114,7 @@ Defines project language.
 
 Defines maximum numbers of fixing iterations.
 
-**`--msbuild-path`** <MSBUILD_PATH>
+**`-m|--msbuild-path`** <MSBUILD_PATH>
 
 Defines a path to MSBuild. This option must be specified if there are multiple locations of MSBuild (usually multiple installations of Visual Studio).
 

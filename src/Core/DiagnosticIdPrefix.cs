@@ -78,6 +78,10 @@ namespace Roslynator
                         {
                             return IDE;
                         }
+                        else if (HasPrefix(IL))
+                        {
+                            return IL;
+                        }
 
                         break;
                     }

@@ -18,7 +18,7 @@ roslynator generate-doc-root
 [--include-containing-namespace]
 [--include-system-namespace]
 [--language]
-[--msbuild-path]
+[-m|--msbuild-path]
 [--no-mark-obsolete]
 [--no-precedence-for-system]
 [-p|--properties]
@@ -77,7 +77,7 @@ Indicates whether namespace should be included when a type is directly contained
 
 Defines project language.
 
-**`--msbuild-path`** <MSBUILD_PATH>
+**`-m|--msbuild-path`** <MSBUILD_PATH>
 
 Defines a path to MSBuild. This option must be specified if there are multiple locations of MSBuild (usually multiple installations of Visual Studio).
 

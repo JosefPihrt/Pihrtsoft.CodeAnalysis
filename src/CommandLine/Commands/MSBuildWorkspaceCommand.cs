@@ -68,10 +68,10 @@ namespace Roslynator.CommandLine
                             throw new FileNotFoundException($"Project or solution file not found: {path}");
                     }
 
-                    CommandResult result = await ExecuteAsync(path, workspace, ConsoleProgressReporter.Default, cancellationToken);
+                    CommandResult? result = await ExecuteAsync(path, workspace, ConsoleProgressReporter.Default, cancellationToken);
 
-                    if (result != CommandResult.None)
-                        return result;
+                    if (result != null)
+                        return result.Value;
 
                     ProjectOrSolution projectOrSolution = await OpenProjectOrSolutionAsync(path, workspace, ConsoleProgressReporter.Default, cancellationToken);
 
@@ -126,7 +126,7 @@ namespace Roslynator.CommandLine
                 workspace?.Dispose();
             }
 
-            return CommandResult.Fail;
+            return CommandResult.Canceled;
         }
 
         protected virtual void OperationCanceled(OperationCanceledException ex)
@@ -139,13 +139,13 @@ namespace Roslynator.CommandLine
             WriteLine($"  {e.Diagnostic.Message}", e.Diagnostic.Kind.GetColor(), Verbosity.Detailed);
         }
 
-        protected virtual Task<CommandResult> ExecuteAsync(
+        protected virtual Task<CommandResult?> ExecuteAsync(
             string path,
             MSBuildWorkspace workspace,
             IProgress<ProjectLoadProgress> progress = null,
             CancellationToken cancellationToken = default)
         {
-            return Task.FromResult(default(CommandResult));
+            return Task.FromResult(default(CommandResult?));
         }
 
         private async Task<ProjectOrSolution> OpenProjectOrSolutionAsync(

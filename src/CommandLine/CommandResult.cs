@@ -4,8 +4,8 @@ namespace Roslynator.CommandLine
 {
     internal enum CommandResult
     {
-        None = 0,
-        Success = 1,
+        Success = 0,
+        NotSuccess = 1,
         Fail = 2,
         Canceled = 3,
     }
