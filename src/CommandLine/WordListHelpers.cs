@@ -13,8 +13,8 @@ namespace Roslynator.CommandLine
     {
         private static readonly Regex _splitRegex = new Regex(" +");
 
-        private const string _wordListDirPath = @"..\..\..\_words";
-        private const string _fixListDirPath = @"..\..\..\_fixes";
+        private const string _wordListDirPath = @"..\..\..\Spelling\words";
+        private const string _fixListDirPath = @"..\..\..\Spelling\fixes";
 
         public static void ProcessWordLists()
         {
