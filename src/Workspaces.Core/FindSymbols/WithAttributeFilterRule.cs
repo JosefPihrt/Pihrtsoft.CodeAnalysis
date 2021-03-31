@@ -14,7 +14,7 @@ namespace Roslynator.FindSymbols
             AttributeNames = new MetadataNameSet(attributeNames);
         }
 
-        public override SymbolFilterReason Reason => SymbolFilterReason.WithAttibute;
+        public override SymbolFilterReason Reason => SymbolFilterReason.WithAttribute;
 
         public MetadataNameSet AttributeNames { get; }
 

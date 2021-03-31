@@ -49,7 +49,7 @@ namespace Roslynator.VisualStudio
             refactorings.Add(new BaseModel(RefactoringIdentifiers.ChangeVarToExplicitType, "Change 'var' to explicit type", IsEnabled(RefactoringIdentifiers.ChangeVarToExplicitType)));
             refactorings.Add(new BaseModel(RefactoringIdentifiers.CheckExpressionForNull, "Check expression for null", IsEnabled(RefactoringIdentifiers.CheckExpressionForNull)));
             refactorings.Add(new BaseModel(RefactoringIdentifiers.CheckParameterForNull, "Check parameter for null", IsEnabled(RefactoringIdentifiers.CheckParameterForNull)));
-            refactorings.Add(new BaseModel(RefactoringIdentifiers.CollapseToInitializer, "Collapse to initalizer", IsEnabled(RefactoringIdentifiers.CollapseToInitializer)));
+            refactorings.Add(new BaseModel(RefactoringIdentifiers.CollapseToInitializer, "Collapse to initializer", IsEnabled(RefactoringIdentifiers.CollapseToInitializer)));
             refactorings.Add(new BaseModel(RefactoringIdentifiers.CommentOutMember, "Comment out member", IsEnabled(RefactoringIdentifiers.CommentOutMember)));
             refactorings.Add(new BaseModel(RefactoringIdentifiers.CommentOutStatement, "Comment out statement", IsEnabled(RefactoringIdentifiers.CommentOutStatement)));
             refactorings.Add(new BaseModel(RefactoringIdentifiers.CopyDocumentationCommentFromBaseMember, "Copy documentation comment from base member", IsEnabled(RefactoringIdentifiers.CopyDocumentationCommentFromBaseMember)));

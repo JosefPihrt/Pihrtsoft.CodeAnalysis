@@ -89,7 +89,7 @@ class C
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemoveEmptyElseClause)]
-        public async Task TestNoDiagnostic_IfElseEmbededInIfWithElse()
+        public async Task TestNoDiagnostic_IfElseEmbeddedInIfWithElse()
         {
             await VerifyNoDiagnosticAsync(@"
 class C
@@ -110,7 +110,7 @@ class C
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemoveEmptyElseClause)]
-        public async Task TestNoDiagnostic_IfElseEmbededInIfWithElse2()
+        public async Task TestNoDiagnostic_IfElseEmbeddedInIfWithElse2()
         {
             await VerifyNoDiagnosticAsync(@"
 class C

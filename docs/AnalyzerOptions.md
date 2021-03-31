@@ -31,7 +31,7 @@ Solution to this proposal it to add new "analyzer option" [RCS1051a](analyzers/R
 
 ## How to Configure Analyzer Option in Ruleset
 
-If the parent analyzer is enabled by default it is neccessary to add following line to a ruleset:
+If the parent analyzer is enabled by default it is necessary to add following line to a ruleset:
 
 ```xml
 <Rule Id="RCS1036i" Action="Info" />
@@ -40,7 +40,7 @@ If the parent analyzer is enabled by default it is neccessary to add following l
 Because analyzer option is a yes/no switch it doesn't matter if you set action to Hidden, Info, Warning or Error.
 For readability purposes it is good to specify same action as its parent analyzer which is Info in case of RCS1036.
 
-If the parent analyzer is disabled by default it is neccessary to add following lines to a ruleset:
+If the parent analyzer is disabled by default it is necessary to add following lines to a ruleset:
 
 ```xml
 <Rule Id="RCS1051" Action="Info" />

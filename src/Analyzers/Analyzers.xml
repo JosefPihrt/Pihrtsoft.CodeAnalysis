@@ -1497,7 +1497,7 @@ while (true);]]></Before>
   </Analyzer>
   <Analyzer Identifier="AvoidUsageOfWhileStatementToCreateInfiniteLoop">
     <Id>RCS1065</Id>
-    <Title>Avoid usage of while statement to create an inifinite loop.</Title>
+    <Title>Avoid usage of while statement to create an infinite loop.</Title>
     <MessageFormat>Use for statement to create an infinite loop.</MessageFormat>
     <Category>Style</Category>
     <DefaultSeverity>Info</DefaultSeverity>
@@ -2389,7 +2389,7 @@ else
   </Analyzer>
   <Analyzer Identifier="UnnecessaryInterpolation">
     <Id>RCS1105</Id>
-    <Title>Unncessary interpolation.</Title>
+    <Title>Unnecessary interpolation.</Title>
     <Category>Simplification</Category>
     <DefaultSeverity>Info</DefaultSeverity>
     <IsEnabledByDefault>true</IsEnabledByDefault>
@@ -2758,8 +2758,7 @@ if (s == null)
   </Analyzer>
   <Analyzer Identifier="RemoveRedundantFieldInitialization">
     <Id>RCS1129</Id>
-    <Title>Remove redundant field initalization.</Title>
-    <MessageFormat>Remove redundant field initialization.</MessageFormat>
+    <Title>Remove redundant field initialization.</Title>
     <Category>Redundancy</Category>
     <DefaultSeverity>Hidden</DefaultSeverity>
     <IsEnabledByDefault>true</IsEnabledByDefault>
@@ -3186,7 +3185,7 @@ string s2 = s as string; // [|Id|]]]></Before>
   </Analyzer>
   <Analyzer Identifier="MemberTypeMustMatchOverriddenMemberType" IsObsolete="true">
     <Id>RCS1152</Id>
-    <Title>Member type must match overriden member type.</Title>
+    <Title>Member type must match overridden member type.</Title>
     <Category>ErrorFix</Category>
     <DefaultSeverity>Hidden</DefaultSeverity>
     <IsEnabledByDefault>true</IsEnabledByDefault>
@@ -4096,7 +4095,7 @@ string x = s + i; // [|Id|]]]></Before>
   </Analyzer>
   <Analyzer Identifier="UnnecessaryNullCheck">
     <Id>RCS1199</Id>
-    <Title>Unncessary null check.</Title>
+    <Title>Unnecessary null check.</Title>
     <Category>Redundancy</Category>
     <DefaultSeverity>Info</DefaultSeverity>
     <IsEnabledByDefault>true</IsEnabledByDefault>
@@ -5568,14 +5567,14 @@ void M()
       </Link>
     </Links>
   </Analyzer>
-  <Analyzer Identifier="UseIsNullPatternInsteadOfComparisonOrViceVersa">
+  <Analyzer Identifier="UsePatternMatchingToCheckForNullOrViceVersa">
     <Id>RCS1248</Id>
-    <Title>Use 'is null' pattern instead of comparison (or vice versa).</Title>
-    <MessageFormat>Use 'is null' pattern instead of '{0}' operator.</MessageFormat>
+    <Title>Use pattern matching to check for null (or vice versa).</Title>
+    <MessageFormat>Use pattern matching to check for null.</MessageFormat>
     <Category>Style</Category>
     <DefaultSeverity>Info</DefaultSeverity>
     <IsEnabledByDefault>false</IsEnabledByDefault>
-    <MinLanguageVersion>7.0</MinLanguageVersion>
+    <MinLanguageVersion>7.0 (9.0 for 'is not null' syntax)</MinLanguageVersion>
     <Samples>
       <Sample>
         <Before><![CDATA[x == null]]></Before>
@@ -5583,10 +5582,10 @@ void M()
       </Sample>
     </Samples>
     <Options>
-      <Option Identifier="UseIsNullPatternInsteadOfInequalityOperator">
+      <Option Identifier="UseLogicalNegationAndPatternMatchingToCheckForNull">
         <Id>a</Id>
-        <Title>Use 'is null' pattern instead of '!=' operator.</Title>
-        <OptionKey>enable_inequality_operator</OptionKey>
+        <Title>Use logical negation and pattern matching to check for null.</Title>
+        <OptionKey>use_logical_negation</OptionKey>
         <Kind>Enable</Kind>
         <Samples>
           <Sample>
@@ -5595,9 +5594,9 @@ void M()
           </Sample>
         </Samples>
       </Option>
-      <Option Identifier="UseComparisonInsteadOfIsNullPattern">
+      <Option Identifier="UseComparisonInsteadPatternMatchingToCheckForNull">
         <Id>i</Id>
-        <Title>Use comparison instead of 'is null' pattern.</Title>
+        <Title>Use comparison instead of pattern matching to check for null.</Title>
         <OptionKey>invert</OptionKey>
         <Kind>Invert</Kind>
         <Samples>
@@ -5606,7 +5605,7 @@ void M()
             <After><![CDATA[x == null]]></After>
           </Sample>
           <Sample>
-            <Before><![CDATA[!(x is null)]]></Before>
+            <Before><![CDATA[x is not null]]></Before>
             <After><![CDATA[x != null]]></After>
           </Sample>
         </Samples>

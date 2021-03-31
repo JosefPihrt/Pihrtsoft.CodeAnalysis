@@ -266,7 +266,7 @@ namespace Roslynator.CSharp.CodeFixes
             {
                 CodeAction codeAction = CodeAction.Create(
                     "Call 'FirstOrDefault' instead of ?:",
-                    ct => CallFirstOrDeafultInsteadOfConditionalExpressionAsync(document, (ConditionalExpressionSyntax)node, ct),
+                    ct => CallFirstOrDefaultInsteadOfConditionalExpressionAsync(document, (ConditionalExpressionSyntax)node, ct),
                     GetEquivalenceKey(diagnostic, "CallFirstOrDefaultInsteadOfConditionalExpression"));
 
                 context.RegisterCodeFix(codeAction, diagnostic);
@@ -544,7 +544,7 @@ namespace Roslynator.CSharp.CodeFixes
             return document.ReplaceNodeAsync(binaryExpression, newNode, cancellationToken);
         }
 
-        private static Task<Document> CallFirstOrDeafultInsteadOfConditionalExpressionAsync(
+        private static Task<Document> CallFirstOrDefaultInsteadOfConditionalExpressionAsync(
             Document document,
             ConditionalExpressionSyntax conditionalExpression,
             CancellationToken cancellationToken)

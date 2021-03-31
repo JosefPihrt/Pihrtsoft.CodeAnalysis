@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -119,6 +120,17 @@ namespace Roslynator
 
                 return new LinePosition(start.Line, start.Character + endIndex - startIndex);
             }
+        }
+
+        public static CompilationOptions EnsureDiagnosticEnabled(this CompilationOptions compilationOptions, DiagnosticDescriptor descriptor)
+        {
+            ImmutableDictionary<string, ReportDiagnostic> specificDiagnosticOptions = compilationOptions.SpecificDiagnosticOptions;
+
+            specificDiagnosticOptions = specificDiagnosticOptions.SetItem(
+                descriptor.Id,
+                descriptor.DefaultSeverity.ToReportDiagnostic());
+
+            return compilationOptions.WithSpecificDiagnosticOptions(specificDiagnosticOptions);
         }
     }
 }

@@ -33,8 +33,24 @@ namespace Roslynator.CSharp.Analysis
 
             ExpressionSyntax expression = invocationExpression.WalkUpParentheses();
 
-            if (GetAccessExpression(expression) == null)
+            ExpressionSyntax accessExpression = GetAccessExpression(expression);
+
+            if (accessExpression == null)
                 return;
+
+            if (accessExpression.IsKind(SyntaxKind.SimpleMemberAccessExpression))
+            {
+                IMethodSymbol methodSymbol2 = context.SemanticModel.GetMethodSymbol(accessExpression, context.CancellationToken);
+
+                if (methodSymbol2 == null)
+                    return;
+
+                if (methodSymbol2.IsExtensionMethod
+                    && !methodSymbol2.ContainingType.HasMetadataName(MetadataNames.System_Linq_Enumerable))
+                {
+                    return;
+                }
+            }
 
             IMethodSymbol methodSymbol = context.SemanticModel.GetMethodSymbol(invocationExpression, context.CancellationToken);
 

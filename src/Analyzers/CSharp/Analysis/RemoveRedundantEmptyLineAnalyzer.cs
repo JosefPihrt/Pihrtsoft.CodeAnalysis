@@ -30,8 +30,8 @@ namespace Roslynator.CSharp.Analysis
             context.RegisterSyntaxNodeAction(f => AnalyzeElseClause(f), SyntaxKind.ElseClause);
 
             context.RegisterSyntaxNodeAction(f => AnalyzeIfStatement(f), SyntaxKind.IfStatement);
-            context.RegisterSyntaxNodeAction(f => AnalyzeCommonForEachStement(f), SyntaxKind.ForEachStatement);
-            context.RegisterSyntaxNodeAction(f => AnalyzeCommonForEachStement(f), SyntaxKind.ForEachVariableStatement);
+            context.RegisterSyntaxNodeAction(f => AnalyzeCommonForEachStatement(f), SyntaxKind.ForEachStatement);
+            context.RegisterSyntaxNodeAction(f => AnalyzeCommonForEachStatement(f), SyntaxKind.ForEachVariableStatement);
             context.RegisterSyntaxNodeAction(f => AnalyzeForStatement(f), SyntaxKind.ForStatement);
             context.RegisterSyntaxNodeAction(f => AnalyzeUsingStatement(f), SyntaxKind.UsingStatement);
             context.RegisterSyntaxNodeAction(f => AnalyzeWhileStatement(f), SyntaxKind.WhileStatement);
@@ -195,7 +195,7 @@ namespace Roslynator.CSharp.Analysis
             AnalyzeEmbeddedStatement(context, ifStatement.CloseParenToken, ifStatement.Statement);
         }
 
-        private static void AnalyzeCommonForEachStement(SyntaxNodeAnalysisContext context)
+        private static void AnalyzeCommonForEachStatement(SyntaxNodeAnalysisContext context)
         {
             var forEachStatement = (CommonForEachStatementSyntax)context.Node;
 

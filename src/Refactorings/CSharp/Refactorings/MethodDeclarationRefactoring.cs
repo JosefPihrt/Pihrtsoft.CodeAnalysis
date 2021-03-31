@@ -69,7 +69,7 @@ namespace Roslynator.CSharp.Refactorings
             }
 
             if (context.IsRefactoringEnabled(RefactoringIdentifiers.RenameMethodAccordingToTypeName))
-                await RenameMethodAccoringToTypeNameAsync(context, methodDeclaration).ConfigureAwait(false);
+                await RenameMethodAccordingToTypeNameAsync(context, methodDeclaration).ConfigureAwait(false);
 
             if (context.IsRefactoringEnabled(RefactoringIdentifiers.AddParameterToInterfaceMember)
                 && context.Span.IsEmptyAndContainedInSpanOrBetweenSpans(methodDeclaration.Identifier))
@@ -93,7 +93,7 @@ namespace Roslynator.CSharp.Refactorings
             }
         }
 
-        private static async Task RenameMethodAccoringToTypeNameAsync(
+        private static async Task RenameMethodAccordingToTypeNameAsync(
             RefactoringContext context,
             MethodDeclarationSyntax methodDeclaration)
         {

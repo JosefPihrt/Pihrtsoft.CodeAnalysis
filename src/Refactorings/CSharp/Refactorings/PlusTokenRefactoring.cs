@@ -18,14 +18,14 @@ namespace Roslynator.CSharp.Refactorings
                 && context.Span.IsEmptyAndContainedInSpan(token)
                 && token.IsParentKind(SyntaxKind.AddExpression))
             {
-                var addExpresion = (BinaryExpressionSyntax)token.Parent;
+                var addExpression = (BinaryExpressionSyntax)token.Parent;
 
-                while (addExpresion.IsParentKind(SyntaxKind.AddExpression))
-                    addExpresion = (BinaryExpressionSyntax)addExpresion.Parent;
+                while (addExpression.IsParentKind(SyntaxKind.AddExpression))
+                    addExpression = (BinaryExpressionSyntax)addExpression.Parent;
 
                 SemanticModel semanticModel = await context.GetSemanticModelAsync().ConfigureAwait(false);
 
-                StringConcatenationExpressionInfo concatenationInfo = SyntaxInfo.StringConcatenationExpressionInfo(addExpresion, semanticModel, context.CancellationToken);
+                StringConcatenationExpressionInfo concatenationInfo = SyntaxInfo.StringConcatenationExpressionInfo(addExpression, semanticModel, context.CancellationToken);
 
                 if (concatenationInfo.Success)
                 {

@@ -56,7 +56,7 @@ namespace Roslynator.CSharp
         public const string MemberCannotBeSealedBecauseItIsNotOverride = "CS0238";
         public const string TypeOrNamespaceNameCouldNotBeFound = "CS0246";
         public const string MissingPartialModifier = "CS0260";
-        public const string PartialDeclarationsHaveConfictingAccessibilityModifiers = "CS0262";
+        public const string PartialDeclarationsHaveConflictingAccessibilityModifiers = "CS0262";
         public const string CannotImplicitlyConvertTypeExplicitConversionExists = "CS0266";
         public const string PartialModifierCanOnlyAppearImmediatelyBeforeClassStructInterfaceOrVoid = "CS0267";
         public const string PropertyOrIndexerCannotBeUsedInThisContextBecauseSetAccessorIsAccessible = "CS0272";

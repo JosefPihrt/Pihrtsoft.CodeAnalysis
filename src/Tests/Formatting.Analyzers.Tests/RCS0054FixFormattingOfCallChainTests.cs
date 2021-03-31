@@ -185,7 +185,7 @@ class C
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.FixFormattingOfCallChain)]
-        public async Task Test_Invocation_IndendationsDiffer()
+        public async Task Test_Invocation_IndentationsDiffer()
         {
             await VerifyDiagnosticAndFixAsync(@"
 class C

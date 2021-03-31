@@ -64,7 +64,7 @@ Roslynator ruleset file can be used to:
  2) Change DEFAULT severity (action) of the analyzer(s).
  
 Default configuration is applied once when analyzers are loaded.
-Therefore, it may be neccessary to restart IDE for changes to take effect.
+Therefore, it may be necessary to restart IDE for changes to take effect.
 
 ### Location of Roslynator Ruleset File
 

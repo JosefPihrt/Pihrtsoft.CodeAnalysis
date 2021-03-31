@@ -328,5 +328,32 @@ class C
 }
 ");
         }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AvoidNullReferenceException)]
+        public async Task TestNoDiagnostic_ExtensionMethod()
+        {
+            await VerifyNoDiagnosticAsync(@"
+using System.Collections.Generic;
+using System.Linq;
+
+class C
+{
+    void M()
+    {
+        var items = new List<C>();
+
+        var s = items.LastOrDefault().GetString();
+    }
+}
+
+static class E
+{
+    public static string GetString(this C c)
+    {
+        return c?.ToString() ?? """";
+    }
+}
+");
+        }
     }
 }

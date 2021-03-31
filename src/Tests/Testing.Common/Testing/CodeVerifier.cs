@@ -252,7 +252,7 @@ namespace Roslynator.Testing
         }
 
         internal static (Document document, ImmutableArray<ExpectedDocument> expectedDocuments)
-            CreateDocument(Solution solution, string source, ImmutableArray<AdditionalFile> additionalFiles, TestOptions options)
+            CreateDocument(Solution solution, string source, ImmutableArray<AdditionalFile> additionalFiles, TestOptions options, DiagnosticDescriptor? descriptor = null)
         {
             const string DefaultProjectName = "TestProject";
 
@@ -263,6 +263,13 @@ namespace Roslynator.Testing
                 .WithMetadataReferences(options.MetadataReferences)
                 .WithCompilationOptions(compilationOptions)
                 .WithParseOptions(options.ParseOptions);
+
+            if (descriptor != null)
+            {
+                CompilationOptions newCompilationOptions = project.CompilationOptions.EnsureDiagnosticEnabled(descriptor);
+
+                project = project.WithCompilationOptions(newCompilationOptions);
+            }
 
             Document document = project.AddDocument(options.DocumentName, SourceText.From(source));
 

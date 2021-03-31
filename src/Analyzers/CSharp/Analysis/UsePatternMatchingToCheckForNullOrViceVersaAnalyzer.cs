@@ -11,11 +11,11 @@ using Roslynator.CSharp.Syntax;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class UseIsNullPatternInsteadOfComparisonOrViceVersaAnalyzer : BaseDiagnosticAnalyzer
+    public class UsePatternMatchingToCheckForNullOrViceVersaAnalyzer : BaseDiagnosticAnalyzer
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.UseIsNullPatternInsteadOfComparisonOrViceVersa); }
+            get { return ImmutableArray.Create(DiagnosticDescriptors.UsePatternMatchingToCheckForNullOrViceVersa); }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -25,7 +25,7 @@ namespace Roslynator.CSharp.Analysis
             context.RegisterSyntaxNodeAction(
                 c =>
                 {
-                    if (AnalyzerOptions.UseComparisonInsteadOfIsNullPattern.IsEnabled(c))
+                    if (AnalyzerOptions.UseComparisonInsteadPatternMatchingToCheckForNull.IsEnabled(c))
                         AnalyzeIsPatternExpression(c);
                 },
                 SyntaxKind.IsPatternExpression);
@@ -33,7 +33,7 @@ namespace Roslynator.CSharp.Analysis
             context.RegisterSyntaxNodeAction(
                 c =>
                 {
-                    if (!AnalyzerOptions.UseComparisonInsteadOfIsNullPattern.IsEnabled(c))
+                    if (!AnalyzerOptions.UseComparisonInsteadPatternMatchingToCheckForNull.IsEnabled(c))
                         AnalyzeEqualsExpression(c);
                 },
                 SyntaxKind.EqualsExpression);
@@ -41,10 +41,13 @@ namespace Roslynator.CSharp.Analysis
             context.RegisterSyntaxNodeAction(
                 c =>
                 {
-                    if (!AnalyzerOptions.UseComparisonInsteadOfIsNullPattern.IsEnabled(c)
-                        && AnalyzerOptions.UseIsNullPatternInsteadOfInequalityOperator.IsEnabled(c))
+                    if (!AnalyzerOptions.UseComparisonInsteadPatternMatchingToCheckForNull.IsEnabled(c))
                     {
-                        AnalyzeNotEqualsExpression(c);
+                        if (AnalyzerOptions.UseLogicalNegationAndPatternMatchingToCheckForNull.IsEnabled(c)
+                            || ((CSharpCompilation)c.Compilation).LanguageVersion >= LanguageVersion.CSharp9)
+                        {
+                            AnalyzeNotEqualsExpression(c);
+                        }
                     }
                 },
                 SyntaxKind.NotEqualsExpression);
@@ -63,7 +66,7 @@ namespace Roslynator.CSharp.Analysis
             {
                 DiagnosticHelpers.ReportDiagnostic(
                     context,
-                    DiagnosticDescriptors.UseIsNullPatternInsteadOfComparisonOrViceVersa,
+                    DiagnosticDescriptors.UsePatternMatchingToCheckForNullOrViceVersa,
                     binaryExpression,
                     "==");
             }
@@ -82,7 +85,7 @@ namespace Roslynator.CSharp.Analysis
             {
                 DiagnosticHelpers.ReportDiagnostic(
                     context,
-                    DiagnosticDescriptors.UseIsNullPatternInsteadOfComparisonOrViceVersa,
+                    DiagnosticDescriptors.UsePatternMatchingToCheckForNullOrViceVersa,
                     binaryExpression,
                     "!=");
             }
@@ -100,7 +103,7 @@ namespace Roslynator.CSharp.Analysis
             {
                 DiagnosticHelpers.ReportDiagnostic(
                     context,
-                    DiagnosticDescriptors.ReportOnly.UseComparisonInsteadOfIsNullPattern,
+                    DiagnosticDescriptors.ReportOnly.UseComparisonInsteadPatternMatchingToCheckForNull,
                     isPatternExpression);
             }
         }

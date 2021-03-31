@@ -24,7 +24,7 @@
 * Disable by default analyzer [RCS1207i](https://github.com/JosefPihrt/Roslynator/blob/master/docs/analyzers/RCS1207i.md) (Convert method group to anonymous function)
 * Remove analyzer [RCS1219](https://github.com/JosefPihrt/Roslynator/blob/master/docs/analyzers/RCS1219.md) (Call 'Enumerable.Skip' and 'Enumerable.Any' instead of 'Enumerable.Count')
 * Rename analyzer "Avoid 'null' on left side of binary expression" to "Constant values should be placed on right side of comparisons" [RCS1098](https://github.com/JosefPihrt/Roslynator/blob/master/docs/analyzers/RCS1098.md)
-* Rename analyzer "Simplify boolean expression" to "Unncessary null check" [RCS1199](https://github.com/JosefPihrt/Roslynator/blob/master/docs/analyzers/RCS1199.md) ([issue](https://github.com/JosefPihrt/Roslynator/issues/373))
+* Rename analyzer "Simplify boolean expression" to "Unnecessary null check" [RCS1199](https://github.com/JosefPihrt/Roslynator/blob/master/docs/analyzers/RCS1199.md) ([issue](https://github.com/JosefPihrt/Roslynator/issues/373))
 
 * More syntax is considered as having obvious type:
   * string literal
@@ -348,7 +348,7 @@
 
 #### Analyzers
 
-* Add analyzer [RCS1216](https://github.com/JosefPihrt/Roslynator/blob/master/docs/analyzers/RCS1216.md) (UnneccesaryUnsafeContext).
+* Add analyzer [RCS1216](https://github.com/JosefPihrt/Roslynator/blob/master/docs/analyzers/RCS1216.md) (UnnecessaryUnsafeContext).
 * Improve analyzer [RCS1181](https://github.com/JosefPihrt/Roslynator/blob/master/docs/analyzers/RCS1181.md) (ReplaceCommentWithDocumentationComment) - support trailing comment.
 
 ### 1.7.0 (2018-02-02)
@@ -821,7 +821,7 @@ Code fixes has been added for the following compiler diagnostics:
 ##### New Analyzers
 
 * ParameterNameDiffersFromBase
-* OverridingMemberCannotChnageAccessModifiers
+* OverridingMemberCannotChangeAccessModifiers
 * ValueTypeCheckedForNull
 * UnconstrainedTypeParameterCheckedForNull
 * UnusedTypeParameter
@@ -841,7 +841,7 @@ Code fixes has been added for the following compiler diagnostics:
 * UseGenericEventHandler
 * AbstractTypeShouldNotHavePublicConstructors
 * EnumMemberShouldDeclareExplicitValue
-* AvoidChainOfAssginments
+* AvoidChainOfAssignments
 
 #### Refactorings
 
@@ -885,7 +885,7 @@ Code fixes has been added for the following compiler diagnostics:
 
 * BitwiseOperatorOnEnumWithoutFlagsAttribute
 * ReplaceReturnWithYieldReturn
-* RemoveRedundantOverridenMember
+* RemoveRedundantOverriddenMember
 * RemoveRedundantDisposeOrCloseCall
 * RemoveRedundantContinueStatement
 * DeclareEnumMemberWithZeroValue
@@ -1298,7 +1298,7 @@ Code fixes has been added for the following compiler diagnostics:
 
 * CommentOutMember
 * CommentOutStatement
-* IntializerLocalWithDefaultValue
+* InitializerLocalWithDefaultValue
 * AddDefaultValueToParameter
 
 ##### Improvements

@@ -72,7 +72,7 @@ namespace Roslynator
         }
 
         /// <summary>
-        /// Returns true if the accessibility if more restrictrive than the other accessibility.
+        /// Returns true if the accessibility if more restrictive than the other accessibility.
         /// </summary>
         /// <param name="accessibility"></param>
         /// <param name="other"></param>

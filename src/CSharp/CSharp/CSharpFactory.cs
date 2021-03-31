@@ -2034,6 +2034,11 @@ namespace Roslynator.CSharp
             return List(names.Select(f => UsingDirective(ParseName(f))));
         }
 
+        public static UnaryPatternSyntax NotPattern(PatternSyntax pattern)
+        {
+            return UnaryPattern(Token(SyntaxKind.NotKeyword), pattern);
+        }
+
         internal static bool AreEquivalent(
             SyntaxNode node1,
             SyntaxNode node2,

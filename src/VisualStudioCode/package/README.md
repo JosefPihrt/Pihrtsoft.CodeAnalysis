@@ -21,7 +21,7 @@ Ruleset can be used to:
 1. Enable/disable analyzer(s) by DEFAULT.
 2. Change DEFAULT severity (action) of the analyzer(s).
 
-Ruleset is applied once when the extension is loaded. Therefore, it may be neccessary to restart IDE for changes to take effect.
+Ruleset is applied once when the extension is loaded. Therefore, it may be necessary to restart IDE for changes to take effect.
 
 ## Configuration of Refactorings and Fixes
 
@@ -31,7 +31,7 @@ How to open config file:
 2) Type "roslynator"
 3) Select "Roslynator: Open Configuration of Refactorings and Fixes (roslynator.config)"
 
-Config file is applied once when the extension is loaded. Therefore, it may be neccessary to restart IDE for changes to take effect.
+Config file is applied once when the extension is loaded. Therefore, it may be necessary to restart IDE for changes to take effect.
 
 Full list of refactorings identifiers can be found [here](https://github.com/JosefPihrt/Roslynator/blob/master/src/Refactorings/README.md). Full list of fixes identifiers can be found [here](https://github.com/JosefPihrt/Roslynator/blob/master/src/CodeFixes/README.md).
 

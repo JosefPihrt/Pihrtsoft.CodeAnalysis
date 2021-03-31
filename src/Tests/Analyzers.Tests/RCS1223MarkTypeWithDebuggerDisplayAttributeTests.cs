@@ -258,7 +258,7 @@ internal class IC
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.MarkTypeWithDebuggerDisplayAttribute)]
-        public async Task TestNoDiagnostic_NonPubliclyVisibleType_PrivateProtecteed()
+        public async Task TestNoDiagnostic_NonPubliclyVisibleType_PrivateProtected()
         {
             await VerifyNoDiagnosticAsync(@"
 using System.Diagnostics;

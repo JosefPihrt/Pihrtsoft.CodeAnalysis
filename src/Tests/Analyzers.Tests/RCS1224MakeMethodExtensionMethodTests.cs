@@ -13,7 +13,7 @@ namespace Roslynator.CSharp.Analysis.Tests
         public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.MakeMethodExtensionMethod;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.MakeMethodExtensionMethod)]
-        public async Task Test_Accessibility_ImplictlyInternal()
+        public async Task Test_Accessibility_ImplicitlyInternal()
         {
             await VerifyDiagnosticAndFixAsync(@"
 static class FooExtensions

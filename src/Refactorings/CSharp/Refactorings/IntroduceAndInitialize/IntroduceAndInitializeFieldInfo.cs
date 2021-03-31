@@ -11,10 +11,10 @@ namespace Roslynator.CSharp.Refactorings.IntroduceAndInitialize
     {
         private string _name;
 
-        public IntroduceAndInitializeFieldInfo(ParameterSyntax parameter, bool prefixFieldIndentifierWithUnderscore = false)
+        public IntroduceAndInitializeFieldInfo(ParameterSyntax parameter, bool prefixFieldIdentifierWithUnderscore = false)
             : base(parameter)
         {
-            PrefixFieldIdentifierWithUnderscore = prefixFieldIndentifierWithUnderscore;
+            PrefixFieldIdentifierWithUnderscore = prefixFieldIdentifierWithUnderscore;
         }
 
         public bool PrefixFieldIdentifierWithUnderscore { get; }

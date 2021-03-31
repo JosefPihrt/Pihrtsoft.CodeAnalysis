@@ -70,7 +70,7 @@ namespace Roslynator.CSharp.Analysis
             }
             else if (IsFixableSimpleIfInsideWhileOrDo(ifStatement, semanticModel, cancellationToken))
             {
-                return SimplifyCodeBranchingKind.SimplifIfInsideWhileOrDo;
+                return SimplifyCodeBranchingKind.SimplifyIfInsideWhileOrDo;
             }
             else if (!ifStatement.IsParentKind(SyntaxKind.ElseClause)
                 && (ifStatement.SingleNonBlockStatementOrDefault() is DoStatementSyntax doStatement)

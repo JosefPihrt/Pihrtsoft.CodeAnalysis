@@ -345,7 +345,7 @@
     HelpUrl="http://docs.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-messages/cs0246" />
   <Diagnostic
     Id="CS0262"
-    Identifier="PartialDeclarationsHaveConfictingAccessibilityModifiers"
+    Identifier="PartialDeclarationsHaveConflictingAccessibilityModifiers"
     Severity="Error"
     Title="Partial declarations of 'type' have conflicting accessibility modifiers."
     Message="Partial declarations of '{0}' have conflicting accessibility modifiers"

@@ -49,7 +49,7 @@ namespace Roslynator.CSharp.Syntax
         }
 
         /// <summary>
-        /// The argumet list.
+        /// The argument list.
         /// </summary>
         public ArgumentListSyntax ArgumentList
         {

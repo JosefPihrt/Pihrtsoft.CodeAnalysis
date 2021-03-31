@@ -609,8 +609,8 @@ namespace Roslynator.CSharp
             customTags:         WellKnownDiagnosticTags.Compiler);
 
         /// <summary>CS0262</summary>
-        public static readonly DiagnosticDescriptor PartialDeclarationsHaveConfictingAccessibilityModifiers = new DiagnosticDescriptor(
-            id:                 CompilerDiagnosticIdentifiers.PartialDeclarationsHaveConfictingAccessibilityModifiers, 
+        public static readonly DiagnosticDescriptor PartialDeclarationsHaveConflictingAccessibilityModifiers = new DiagnosticDescriptor(
+            id:                 CompilerDiagnosticIdentifiers.PartialDeclarationsHaveConflictingAccessibilityModifiers, 
             title:              "Partial declarations of 'type' have conflicting accessibility modifiers.", 
             messageFormat:      "Partial declarations of '{0}' have conflicting accessibility modifiers", 
             category:           "Compiler", 

@@ -46,7 +46,7 @@ namespace Roslynator.CodeAnalysis.CSharp
                     {
                         CodeAction codeAction = CodeAction.Create(
                             "Use [] instead of calling 'First'",
-                            ct => UseElementAccessinsteadOfCallingFirstAsync(document, invocationExpression, ct),
+                            ct => UseElementAccessInsteadOfCallingFirstAsync(document, invocationExpression, ct),
                             GetEquivalenceKey(diagnostic));
 
                         context.RegisterCodeFix(codeAction, diagnostic);
@@ -66,7 +66,7 @@ namespace Roslynator.CodeAnalysis.CSharp
             }
         }
 
-        private static Task<Document> UseElementAccessinsteadOfCallingFirstAsync(
+        private static Task<Document> UseElementAccessInsteadOfCallingFirstAsync(
             Document document,
             InvocationExpressionSyntax invocationExpression,
             CancellationToken cancellationToken)

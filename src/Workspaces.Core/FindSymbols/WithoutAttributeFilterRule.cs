@@ -13,7 +13,7 @@ namespace Roslynator.FindSymbols
         {
         }
 
-        public override SymbolFilterReason Reason => SymbolFilterReason.WithoutAttibute;
+        public override SymbolFilterReason Reason => SymbolFilterReason.WithoutAttribute;
 
         public override bool IsMatch(ISymbol value)
         {

@@ -148,7 +148,7 @@
   <Refactoring Id="RR0023" Identifier="ChangeVarToExplicitType" Title="Change 'var' to explicit type">
     <Syntaxes>
       <Syntax>variable declaration</Syntax>
-      <Syntax>foreach statetement</Syntax>
+      <Syntax>foreach statement</Syntax>
     </Syntaxes>
     <Span>type</Span>
   </Refactoring>
@@ -164,7 +164,7 @@
     </Syntaxes>
     <Span>parameter identifier</Span>
   </Refactoring>
-  <Refactoring Id="RR0026" Identifier="CollapseToInitializer" Title="Collapse to initalizer">
+  <Refactoring Id="RR0026" Identifier="CollapseToInitializer" Title="Collapse to initializer">
     <Syntaxes>
       <Syntax>object creation followed with assignment(s)</Syntax>
     </Syntaxes>
@@ -1791,7 +1791,7 @@ else
     <Syntaxes>
       <Syntax>field declaration</Syntax>
     </Syntaxes>
-    <Span>idenifier</Span>
+    <Span>identifier</Span>
     <Samples>
       <Sample>
         <Before><![CDATA[public class Foo

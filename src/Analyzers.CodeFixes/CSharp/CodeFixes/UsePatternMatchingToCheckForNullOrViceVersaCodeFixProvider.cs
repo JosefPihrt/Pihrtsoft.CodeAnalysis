@@ -17,13 +17,13 @@ using static Roslynator.CSharp.CSharpFactory;
 
 namespace Roslynator.CSharp.CodeFixes
 {
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UseIsNullPatternInsteadOfComparisonOrViceVersaCodeFixProvider))]
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UsePatternMatchingToCheckForNullOrViceVersaCodeFixProvider))]
     [Shared]
-    public class UseIsNullPatternInsteadOfComparisonOrViceVersaCodeFixProvider : BaseCodeFixProvider
+    public class UsePatternMatchingToCheckForNullOrViceVersaCodeFixProvider : BaseCodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {
-            get { return ImmutableArray.Create(DiagnosticIdentifiers.UseIsNullPatternInsteadOfComparisonOrViceVersa); }
+            get { return ImmutableArray.Create(DiagnosticIdentifiers.UsePatternMatchingToCheckForNullOrViceVersa); }
         }
 
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
@@ -89,13 +89,26 @@ namespace Roslynator.CSharp.CodeFixes
                 nullLiteral = binaryExpression.Left.WithLeadingTrivia(expression.GetLeadingTrivia());
             }
 
+            bool useIsNotNull = !AnalyzerOptions.UseLogicalNegationAndPatternMatchingToCheckForNull.IsEnabled(document, binaryExpression);
+
+            PatternSyntax pattern = ConstantPattern(nullLiteral);
+
+            if (binaryExpression.IsKind(SyntaxKind.NotEqualsExpression)
+                && useIsNotNull)
+            {
+                pattern = NotPattern(pattern);
+            }
+
             ExpressionSyntax newExpression = IsPatternExpression(
                 expression,
                 Token(binaryExpression.OperatorToken.LeadingTrivia, SyntaxKind.IsKeyword, binaryExpression.OperatorToken.TrailingTrivia),
-                ConstantPattern(nullLiteral));
+                pattern);
 
-            if (binaryExpression.IsKind(SyntaxKind.NotEqualsExpression))
+            if (binaryExpression.IsKind(SyntaxKind.NotEqualsExpression)
+                && !useIsNotNull)
+            {
                 newExpression = LogicalNotExpression(ParenthesizedExpression(newExpression.WithoutTrivia()));
+            }
 
             newExpression = newExpression
                 .WithTriviaFrom(binaryExpression)

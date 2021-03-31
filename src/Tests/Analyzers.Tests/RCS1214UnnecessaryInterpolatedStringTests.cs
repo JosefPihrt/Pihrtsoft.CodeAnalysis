@@ -59,7 +59,7 @@ class C
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UnnecessaryInterpolatedString)]
-        public async Task Test_NonNulStringConstant()
+        public async Task Test_NonNullStringConstant()
         {
             await VerifyDiagnosticAndFixAsync(@"
 class C

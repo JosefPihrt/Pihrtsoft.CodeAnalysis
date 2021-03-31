@@ -82,14 +82,14 @@ namespace Roslynator.FindSymbols
                                     break;
                                 }
                             case SymbolFilterReason.Visibility:
-                            case SymbolFilterReason.WithoutAttibute:
+                            case SymbolFilterReason.WithoutAttribute:
                             case SymbolFilterReason.ImplicitlyDeclared:
                                 {
                                     continue;
                                 }
                             case SymbolFilterReason.SymbolGroup:
                             case SymbolFilterReason.Ignored:
-                            case SymbolFilterReason.WithAttibute:
+                            case SymbolFilterReason.WithAttribute:
                             case SymbolFilterReason.Other:
                                 {
                                     break;

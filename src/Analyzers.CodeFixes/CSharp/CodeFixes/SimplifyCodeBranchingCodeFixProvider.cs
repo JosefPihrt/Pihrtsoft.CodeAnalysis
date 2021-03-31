@@ -133,7 +133,7 @@ namespace Roslynator.CSharp.CodeFixes
 
                 return await document.ReplaceNodeAsync(whileStatement, newWhileStatement, cancellationToken).ConfigureAwait(false);
             }
-            else if (kind == SimplifyCodeBranchingKind.SimplifIfInsideWhileOrDo)
+            else if (kind == SimplifyCodeBranchingKind.SimplifyIfInsideWhileOrDo)
             {
                 var block = (BlockSyntax)ifStatement.Parent;
 
