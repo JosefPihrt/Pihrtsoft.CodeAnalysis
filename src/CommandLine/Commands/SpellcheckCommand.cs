@@ -46,24 +46,12 @@ namespace Roslynator.CommandLine
         {
             AssemblyResolver.Register();
 
-            SpellingFixerOptions options;
-            if (Options.Interactive)
-            {
-                options = new SpellingFixerOptions(
-                    splitMode: SplitMode.CaseAndHyphen,
-                    includeLocal: false,
-                    includeGeneratedCode: Options.IncludeGeneratedCode,
-                    interactive: Options.Interactive);
-            }
-            else
-            {
-                options = new SpellingFixerOptions(
-                    splitMode: SplitMode.CaseAndHyphen,
-                    includeLocal: true,
-                    includeGeneratedCode: Options.IncludeGeneratedCode,
-                    interactive: Options.Interactive,
-                    dryRun: true);
-            }
+            var options = new SpellingFixerOptions(
+                splitMode: SplitMode.CaseAndHyphen,
+                includeLocal: false,
+                includeGeneratedCode: Options.IncludeGeneratedCode,
+                interactive: Options.Interactive,
+                dryRun: Options.DryRun);
 
             CultureInfo culture = (Options.Culture != null) ? CultureInfo.GetCultureInfo(Options.Culture) : null;
 

@@ -376,18 +376,18 @@ namespace Roslynator.CommandLine
             if (!TryEnsureFullPath(options.Fixes, out ImmutableArray<string> fixListPaths2))
                 return ExitCodes.Error;
 
-            string newWordListPath = null;
+            string newWordsPath = null;
 
             if (options.NewWords != null
-                && !TryEnsureFullPath(options.NewWords, out newWordListPath))
+                && !TryEnsureFullPath(options.NewWords, out newWordsPath))
             {
                 return ExitCodes.Error;
             }
 
-            string newFixListPath = null;
+            string newFixesPath = null;
 
             if (options.NewFixes != null
-                && !TryEnsureFullPath(options.NewFixes, out newFixListPath))
+                && !TryEnsureFullPath(options.NewFixes, out newFixesPath))
             {
                 return ExitCodes.Error;
             }
@@ -403,7 +403,7 @@ namespace Roslynator.CommandLine
 
             var data = new SpellingData(wordList, fixList, default);
 
-            var command = new SpellcheckCommand(options, projectFilter, data);
+            var command = new SpellcheckCommand(options, projectFilter, data, newWordsPath, newFixesPath);
 
             IEnumerable<string> properties = options.Properties;
 #if DEBUG

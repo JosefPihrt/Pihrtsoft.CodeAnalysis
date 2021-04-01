@@ -6,6 +6,7 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 
 namespace Roslynator.Spelling
@@ -249,7 +250,7 @@ namespace Roslynator.Spelling
 
             Debug.WriteLine($"Saving '{path}'");
 
-            File.WriteAllText(path, string.Join(Environment.NewLine, values));
+            File.WriteAllText(path, string.Join(Environment.NewLine, values), Encoding.UTF8);
         }
 
         public void Save(string path)

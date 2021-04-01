@@ -6,6 +6,7 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace Roslynator.Spelling
 {
@@ -186,9 +187,10 @@ namespace Roslynator.Spelling
                     Environment.NewLine,
                     values
                         .SelectMany(f => f.Value.Select(g => (key: f.Key, fix: g)))
-                        .OrderBy(f => f.key)
+                        .OrderBy(f => f.key, StringComparer.InvariantCulture)
                         .ThenBy(f => f.fix, SpellingFixComparer.InvariantCulture)
-                        .Select(f => $"{f.key}={f.fix.Value}")));
+                        .Select(f => $"{f.key}={f.fix.Value}")),
+                Encoding.UTF8);
         }
 
         public FixList SaveAndLoad(string path)

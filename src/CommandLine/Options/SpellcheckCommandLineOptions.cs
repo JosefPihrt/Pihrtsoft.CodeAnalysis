@@ -15,6 +15,12 @@ namespace Roslynator.CommandLine
         public string Culture { get; set; }
 
         [Option(
+            shortName: OptionShortNames.DryRun,
+            longName: "dry-run",
+            HelpText = "")]
+        public bool DryRun { get; set; }
+
+        [Option(
             longName: "fixes",
             HelpText = "",
             MetaValue = "<PATH>")]
