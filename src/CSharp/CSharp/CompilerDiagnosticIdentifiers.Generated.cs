@@ -174,5 +174,6 @@ namespace Roslynator.CSharp
         public const string LocalFunctionMustAlwaysHaveBody = "CS8112";
         public const string CannotChangeTupleElementNameWhenOverridingInheritedMember = "CS8139";
         public const string InstanceFieldsOfReadOnlyStructsMustBeReadOnly = "CS8340";
+        public const string AnnotationForNullableReferenceTypesShouldOnlyBeUsedWithinNullableAnnotationsContext = "CS8632";
     }
 }

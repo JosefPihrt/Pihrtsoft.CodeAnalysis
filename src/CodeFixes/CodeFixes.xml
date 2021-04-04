@@ -665,4 +665,9 @@
       <Id>CS7036</Id>
     </FixableDiagnosticIds>
   </CodeFix>
+  <CodeFix Id="RCF0118" Identifier="RemoveAnnotationForNullableReferenceTypes" Title="Remove annotation for nullable reference types">
+    <FixableDiagnosticIds>
+      <Id>CS8632</Id>
+    </FixableDiagnosticIds>
+  </CodeFix>
 </CodeFixes>

@@ -13,6 +13,6 @@ namespace Roslynator.VisualStudio
             get;
         }
 
-        = CodeFixIdentifiers.MoveInitializerExpressionsToConstructor;
+        = CodeFixIdentifiers.RemoveAnnotationForNullableReferenceTypes;
     }
 }
