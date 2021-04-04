@@ -63,8 +63,6 @@
 
   <ItemGroup>
     <None Include="..\..\images\icon.png" Pack="true" PackagePath="\" Visible="false" />
-    <None Remove="Spelling\fixes\.gitignore" />
-    <None Remove="Spelling\words\.gitignore" />
     <None Remove="_._" />
     <None Update="Spelling\fixes\fixes.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
