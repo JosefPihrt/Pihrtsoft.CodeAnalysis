@@ -349,6 +349,9 @@ namespace Roslynator.CommandLine
 
         private static async Task<int> SpellcheckAsync(SpellcheckCommandLineOptions options)
         {
+            if (!TryParseOptionValueAsEnum(options.Visibility, ParameterNames.Visibility, out Visibility visibility))
+                return ExitCodes.Error;
+
             if (!options.TryGetProjectFilter(out ProjectFilter projectFilter))
                 return ExitCodes.Error;
 
@@ -397,13 +400,13 @@ namespace Roslynator.CommandLine
                 WordList.Normalize(filePath);
             }
 #endif
-            WordList wordList = WordList.Load(wordListPaths.Concat(wordListPaths2));
+            WordListLoaderResult loaderResult = WordListLoader.Load(wordListPaths.Concat(wordListPaths2));
 
-            FixList fixList = FixList.Load(fixListPaths.Concat(fixListPaths2));
+            FixList fixes = FixList.Load(fixListPaths.Concat(fixListPaths2));
 
-            var data = new SpellingData(wordList, fixList, default);
+            var data = new SpellingData(loaderResult.List, loaderResult.CaseSensitiveList, fixes);
 
-            var command = new SpellcheckCommand(options, projectFilter, data, newWordsPath, newFixesPath);
+            var command = new SpellcheckCommand(options, projectFilter, data, visibility, newWordsPath, newFixesPath);
 
             IEnumerable<string> properties = options.Properties;
 #if DEBUG

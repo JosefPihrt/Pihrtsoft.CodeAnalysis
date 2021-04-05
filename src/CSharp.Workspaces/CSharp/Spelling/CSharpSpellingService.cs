@@ -1,8 +1,10 @@
 ﻿// Copyright (c) Josef Pihrt. All rights reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using Microsoft.CodeAnalysis;
@@ -52,12 +54,17 @@ namespace Roslynator.CSharp.Spelling
         public override SpellingDiagnostic CreateSpellingDiagnostic(Diagnostic diagnostic)
         {
             Location location = diagnostic.Location;
-
             SyntaxTree syntaxTree = location.SourceTree;
-
             SyntaxNode root = syntaxTree.GetRoot();
-
             TextSpan span = location.SourceSpan;
+
+            string value = diagnostic.Properties["Value"];
+            int index = location.SourceSpan.Start;
+            string parent = diagnostic.Properties.GetValueOrDefault("Parent");
+
+            int parentIndex = (diagnostic.Properties.TryGetValue("ParentIndex", out string parentIndexText))
+                ? int.Parse(parentIndexText)
+                : 0;
 
             SyntaxTrivia trivia = root.FindTrivia(span.Start, findInsideTrivia: true);
 
@@ -66,11 +73,9 @@ namespace Roslynator.CSharp.Spelling
                 SyntaxKind.MultiLineCommentTrivia,
                 SyntaxKind.PreprocessingMessageTrivia))
             {
-                string triviaText = trivia.ToString();
+                Debug.Assert(value == trivia.ToString().Substring(span.Start - trivia.SpanStart, span.Length), value);
 
-                string value = triviaText.Substring(span.Start - trivia.SpanStart, span.Length);
-
-                return new CSharpSpellingDiagnostic(diagnostic, value, value, location, 0);
+                return new CSharpSpellingDiagnostic(diagnostic, value, index, parent, parentIndex);
             }
 
             SyntaxToken token = root.FindToken(span.Start, findInsideTrivia: true);
@@ -79,16 +84,18 @@ namespace Roslynator.CSharp.Spelling
                 SyntaxKind.IdentifierToken,
                 SyntaxKind.XmlTextLiteralToken))
             {
-                string text = token.ToString();
+                Debug.Assert(value == token.ToString().Substring(span.Start - token.SpanStart, span.Length), value);
 
-                int index = span.Start - token.SpanStart;
-
-                string value = text.Substring(index, span.Length);
-
-                return new CSharpSpellingDiagnostic(diagnostic, value, value, location, index, (token.IsKind(SyntaxKind.IdentifierToken)) ? token : default);
+                return new CSharpSpellingDiagnostic(
+                    diagnostic,
+                    value,
+                    index,
+                    parent,
+                    parentIndex,
+                    (token.IsKind(SyntaxKind.IdentifierToken)) ? token : default);
             }
 
-            return null;
+            throw new InvalidOperationException();
         }
 
         [SuppressMessage("MicrosoftCodeAnalysisCorrectness", "RS1001:Missing diagnostic analyzer attribute.")]

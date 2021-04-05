@@ -23,36 +23,39 @@ namespace Roslynator.CommandLine
                 WordList.Normalize(filePath);
             }
 
-            _ = WordList.LoadFile(_wordListDirPath + @"\ignore.txt");
-            WordList abbreviations = WordList.LoadFile(_wordListDirPath + @"\abbreviations.txt");
-            WordList acronyms = WordList.LoadFile(_wordListDirPath + @"\acronyms.txt");
-            WordList br = WordList.LoadFile(_wordListDirPath + @"\br.txt");
-            WordList us = WordList.LoadFile(_wordListDirPath + @"\us.txt");
-            WordList fonts = WordList.LoadFile(_wordListDirPath + @"\it\fonts.txt");
-            WordList languages = WordList.LoadFile(_wordListDirPath + @"\it\languages.txt");
-            WordList names = WordList.LoadFile(_wordListDirPath + @"\names.txt");
-            WordList plural = WordList.LoadFile(_wordListDirPath + @"\plural.txt");
-            WordList science = WordList.LoadFile(_wordListDirPath + @"\science.txt");
+            _ = WordListLoader.LoadFile(_wordListDirPath + @"\ignore.txt");
+            WordList abbreviations = WordListLoader.LoadFile(_wordListDirPath + @"\abbreviations.txt").List;
+            WordList acronyms = WordListLoader.LoadFile(_wordListDirPath + @"\acronyms.txt").List;
+            WordList br = WordListLoader.LoadFile(_wordListDirPath + @"\br.txt").List;
+            WordList us = WordListLoader.LoadFile(_wordListDirPath + @"\us.txt").List;
+            WordList fonts = WordListLoader.LoadFile(_wordListDirPath + @"\it\fonts.txt").List;
+            WordList languages = WordListLoader.LoadFile(_wordListDirPath + @"\it\languages.txt").List;
+            WordList names = WordListLoader.LoadFile(_wordListDirPath + @"\names.txt").List;
+            WordList plural = WordListLoader.LoadFile(_wordListDirPath + @"\plural.txt").List;
+            WordList science = WordListLoader.LoadFile(_wordListDirPath + @"\science.txt").List;
 
-            WordList geography = WordList.LoadFiles(
+            WordList geography = WordListLoader.Load(
                 Directory.EnumerateFiles(
                     _wordListDirPath + @"\geography",
                     "*.*",
-                    SearchOption.AllDirectories));
+                    SearchOption.AllDirectories)).List;
 
-            WordList it = WordList.LoadFiles(
+            WordList it = WordListLoader.Load(
                 Directory.EnumerateFiles(
                     _wordListDirPath + @"\it",
                     "*.*",
-                    SearchOption.AllDirectories));
+                    SearchOption.AllDirectories)).List;
 
-            WordList math = WordList.LoadFile(_wordListDirPath + @"\math.txt")
+            WordList math = WordListLoader.LoadFile(_wordListDirPath + @"\math.txt")
+                .List
                 .Except(abbreviations, acronyms, fonts);
 
-            WordList @default = WordList.LoadFile(_wordListDirPath + @"\default.txt")
+            WordList @default = WordListLoader.LoadFile(_wordListDirPath + @"\default.txt")
+                .List
                 .Except(br, us, geography);
 
-            WordList custom = WordList.LoadFile(_wordListDirPath + @"\custom.txt")
+            WordList custom = WordListLoader.LoadFile(_wordListDirPath + @"\custom.txt")
+                .List
                 .Except(
                     abbreviations,
                     acronyms,
@@ -76,8 +79,8 @@ namespace Roslynator.CommandLine
                 acronyms,
                 names,
                 geography,
-                WordList.LoadFile(_wordListDirPath + @"\it\main.txt"),
-                WordList.LoadFile(_wordListDirPath + @"\it\names.txt"));
+                WordListLoader.LoadFile(_wordListDirPath + @"\it\main.txt").List,
+                WordListLoader.LoadFile(_wordListDirPath + @"\it\names.txt").List);
 
             ProcessFixList(all);
         }

@@ -9,31 +9,31 @@ namespace Roslynator.Spelling
         public static SpellingFixerOptions Default { get; } = new SpellingFixerOptions();
 
         public SpellingFixerOptions(
+            SpellingScopeFilter scopeFilter = SpellingScopeFilter.All,
             VisibilityFilter symbolVisibility = VisibilityFilter.All,
-            SplitMode splitMode = SplitMode.None,
+            SplitMode splitMode = SplitMode.CaseAndHyphen,
             int minWordLength = 3,
             int codeContext = 1,
-            bool includeComments = true,
-            bool includeLocal = true,
             bool includeGeneratedCode = false,
             bool autoFix = true,
-            bool interactive = true,
+            bool interactive = false,
             bool dryRun = false)
         {
             if (codeContext < 0)
                 throw new ArgumentOutOfRangeException(nameof(codeContext), codeContext, "");
 
+            ScopeFilter = scopeFilter;
             SymbolVisibility = symbolVisibility;
             SplitMode = splitMode;
             MinWordLength = minWordLength;
             CodeContext = codeContext;
-            IncludeComments = includeComments;
-            IncludeLocal = includeLocal;
             IncludeGeneratedCode = includeGeneratedCode;
             AutoFix = autoFix;
             Interactive = interactive;
             DryRun = dryRun;
         }
+
+        public SpellingScopeFilter ScopeFilter { get; }
 
         public VisibilityFilter SymbolVisibility { get; }
 
@@ -43,10 +43,6 @@ namespace Roslynator.Spelling
 
         public int CodeContext { get; }
 
-        public bool IncludeComments { get; }
-
-        public bool IncludeLocal { get; }
-
         public bool IncludeGeneratedCode { get; }
 
         public bool AutoFix { get; }
@@ -54,5 +50,11 @@ namespace Roslynator.Spelling
         public bool Interactive { get; }
 
         public bool DryRun { get; }
+
+        public bool IncludeNonDocumentationComments => (ScopeFilter & SpellingScopeFilter.NonDocumentationComment) != 0;
+
+        public bool IncludeDocumentationComments => (ScopeFilter & SpellingScopeFilter.DocumentationComment) != 0;
+
+        public bool IncludeLocalVariable => (ScopeFilter & SpellingScopeFilter.LocalVariable) != 0;
     }
 }

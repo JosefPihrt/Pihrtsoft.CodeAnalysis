@@ -9,7 +9,7 @@ namespace Roslynator.Spelling
 {
     public static class SpellingFixProvider
     {
-        public static ImmutableArray<string> FuzzyMatches(
+        public static ImmutableArray<string> Fuzzy(
             string value,
             SpellingData spellingData,
             CancellationToken cancellationToken = default)
@@ -20,8 +20,8 @@ namespace Roslynator.Spelling
                 return ImmutableArray<string>.Empty;
 
             ImmutableHashSet<string>.Builder matches = null;
-            WordCharMap map = spellingData.List.CharIndexMap;
-            WordCharMap reversedMap = spellingData.List.ReversedCharIndexMap;
+            WordCharMap map = spellingData.CharIndexMap;
+            WordCharMap reversedMap = spellingData.ReversedCharIndexMap;
             var intersects = new ImmutableHashSet<string>[length];
 
             int i = 0;
@@ -136,9 +136,7 @@ namespace Roslynator.Spelling
             return success;
         }
 
-        public static ImmutableArray<string> SwapMatches(
-            string value,
-            SpellingData spellingData)
+        public static ImmutableArray<string> SwapLetters(string value, SpellingData spellingData)
         {
             int length = value.Length;
 
@@ -153,7 +151,7 @@ namespace Roslynator.Spelling
 
             var key = new string(arr);
 
-            if (!spellingData.List.CharMap.TryGetValue(key, out ImmutableHashSet<string> values))
+            if (!spellingData.CharMap.TryGetValue(key, out ImmutableHashSet<string> values))
                 return ImmutableArray<string>.Empty;
 
             int maxCharDiff = (length <= 6) ? 2 : 3;

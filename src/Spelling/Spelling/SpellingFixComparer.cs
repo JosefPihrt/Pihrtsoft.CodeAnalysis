@@ -77,17 +77,17 @@ namespace Roslynator.Spelling
         {
             public override int Compare(SpellingFix x, SpellingFix y)
             {
-                return StringComparer.InvariantCulture.Compare(x.Value, y.Value);
+                return StringComparer.CurrentCulture.Compare(x.Value, y.Value);
             }
 
             public override bool Equals(SpellingFix x, SpellingFix y)
             {
-                return StringComparer.InvariantCulture.Equals(x.Value, y.Value);
+                return StringComparer.CurrentCulture.Equals(x.Value, y.Value);
             }
 
             public override int GetHashCode(SpellingFix obj)
             {
-                return StringComparer.InvariantCulture.GetHashCode(obj.Value);
+                return StringComparer.CurrentCulture.GetHashCode(obj.Value);
             }
         }
 

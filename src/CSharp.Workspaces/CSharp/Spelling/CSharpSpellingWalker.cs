@@ -43,24 +43,30 @@ namespace Roslynator.CSharp.Spelling
                 case SyntaxKind.SingleLineCommentTrivia:
                 case SyntaxKind.MultiLineCommentTrivia:
                     {
-                        if (Options.IncludeComments)
+                        if (Options.IncludeNonDocumentationComments)
                             AnalyzeText(trivia.ToString(), trivia.SyntaxTree, trivia.Span);
 
                         break;
                     }
                 case SyntaxKind.SingleLineDocumentationCommentTrivia:
                 case SyntaxKind.MultiLineDocumentationCommentTrivia:
+                    {
+                        if (Options.IncludeDocumentationComments)
+                            base.VisitTrivia(trivia);
+
+                        break;
+                    }
                 case SyntaxKind.RegionDirectiveTrivia:
                 case SyntaxKind.EndRegionDirectiveTrivia:
                     {
-                        if (Options.IncludeComments)
+                        if (Options.IncludeNonDocumentationComments)
                             base.VisitTrivia(trivia);
 
                         break;
                     }
                 case SyntaxKind.PreprocessingMessageTrivia:
                     {
-                        Debug.Assert(Options.IncludeComments);
+                        Debug.Assert(Options.IncludeNonDocumentationComments);
 
                         AnalyzeText(trivia.ToString(), trivia.SyntaxTree, trivia.Span);
                         break;
@@ -70,7 +76,7 @@ namespace Roslynator.CSharp.Spelling
 
         public override void VisitTupleType(TupleTypeSyntax node)
         {
-            if (!Options.IncludeLocal
+            if (!Options.IncludeLocalVariable
                 && node.IsParentKind(SyntaxKind.VariableDeclaration)
                 && node.Parent.IsParentKind(SyntaxKind.LocalDeclarationStatement, SyntaxKind.UsingStatement))
             {
@@ -134,7 +140,7 @@ namespace Roslynator.CSharp.Spelling
                         case SyntaxKind.ForStatement:
                         case SyntaxKind.FixedStatement:
                             {
-                                if (!Options.IncludeLocal)
+                                if (!Options.IncludeLocalVariable)
                                     return false;
 
                                 break;
@@ -153,7 +159,7 @@ namespace Roslynator.CSharp.Spelling
 
         public override void VisitSingleVariableDesignation(SingleVariableDesignationSyntax node)
         {
-            if (Options.IncludeLocal)
+            if (Options.IncludeLocalVariable)
                 AnalyzeIdentifier(node.Identifier);
 
             base.VisitSingleVariableDesignation(node);
@@ -161,7 +167,7 @@ namespace Roslynator.CSharp.Spelling
 
         public override void VisitCatchDeclaration(CatchDeclarationSyntax node)
         {
-            if (Options.IncludeLocal)
+            if (Options.IncludeLocalVariable)
                 AnalyzeIdentifier(node.Identifier);
 
             base.VisitCatchDeclaration(node);
@@ -291,7 +297,7 @@ namespace Roslynator.CSharp.Spelling
 
         public override void VisitForEachStatement(ForEachStatementSyntax node)
         {
-            if (Options.IncludeLocal)
+            if (Options.IncludeLocalVariable)
                 AnalyzeIdentifier(node.Identifier);
         }
 
@@ -309,7 +315,7 @@ namespace Roslynator.CSharp.Spelling
 
         public override void VisitXmlText(XmlTextSyntax node)
         {
-            if (Options.IncludeComments)
+            if (Options.IncludeDocumentationComments)
             {
                 foreach (SyntaxToken token in node.TextTokens)
                 {

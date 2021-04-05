@@ -85,13 +85,13 @@ namespace Roslynator.Spelling
                     return 1;
 
                 int result = StringComparer.OrdinalIgnoreCase.Compare(
-                    x.Location.SourceTree?.FilePath,
-                    y.Location.SourceTree?.FilePath);
+                    x.FilePath,
+                    y.FilePath);
 
                 if (result != 0)
                     return result;
 
-                return x.Location.SourceSpan.Start.CompareTo(y.Location.SourceSpan.Start);
+                return x.Span.Start.CompareTo(y.Span.Start);
             }
 
             public override bool Equals(SpellingDiagnostic x, SpellingDiagnostic y)
@@ -106,9 +106,9 @@ namespace Roslynator.Spelling
                     return false;
 
                 return StringComparer.OrdinalIgnoreCase.Equals(
-                    x.Location.SourceTree?.FilePath,
-                    y.Location.SourceTree?.FilePath)
-                    && x.Location.SourceSpan.Start == y.Location.SourceSpan.Start;
+                    x.FilePath,
+                    y.FilePath)
+                    && x.Span.Start == y.Span.Start;
             }
 
             public override int GetHashCode(SpellingDiagnostic obj)
@@ -117,8 +117,8 @@ namespace Roslynator.Spelling
                     throw new ArgumentNullException(nameof(obj));
 
                 return Hash.Combine(
-                    StringComparer.OrdinalIgnoreCase.GetHashCode(obj.Location.SourceTree?.FilePath),
-                    obj.Location.SourceSpan.Start);
+                    StringComparer.OrdinalIgnoreCase.GetHashCode(obj.FilePath),
+                    obj.Span.Start);
             }
         }
     }

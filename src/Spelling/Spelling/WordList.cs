@@ -14,13 +14,9 @@ namespace Roslynator.Spelling
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
     public class WordList
     {
-        private WordCharMap _charIndexMap;
-        private WordCharMap _reversedCharIndexMap;
-        private ImmutableDictionary<string, ImmutableHashSet<string>> _charMap;
-
         public static StringComparison DefaultComparison { get; } = StringComparison.InvariantCultureIgnoreCase;
 
-        public static StringComparer DefaultComparer { get; } = SpellingUtility.CreateStringComparer(DefaultComparison);
+        public static StringComparer DefaultComparer { get; } = StringComparerUtility.FromComparison(DefaultComparison);
 
         public static WordList Default { get; } = new WordList(null, DefaultComparison);
 
@@ -29,148 +25,36 @@ namespace Roslynator.Spelling
             StringComparison.InvariantCulture);
 
         public WordList(IEnumerable<string> values, StringComparison? comparison = null)
+            : this(values, ImmutableArray<WordSequence>.Empty, comparison)
         {
-            Comparer = SpellingUtility.CreateStringComparer(comparison ?? DefaultComparison);
-            Values = values?.ToImmutableHashSet(Comparer) ?? ImmutableHashSet<string>.Empty;
+        }
+
+        public WordList(
+            IEnumerable<string> values,
+            IEnumerable<WordSequence> sequences,
+            StringComparison? comparison = null)
+        {
+            Comparer = StringComparerUtility.FromComparison(comparison ?? DefaultComparison);
             Comparison = comparison ?? DefaultComparison;
+
+            Values = values?.ToImmutableHashSet(Comparer) ?? ImmutableHashSet<string>.Empty;
+
+            Sequences = sequences?
+                .GroupBy(f => f.First, Comparer)
+                .ToImmutableDictionary(f => f.Key, f => f.ToImmutableArray())
+                ?? ImmutableDictionary<string, ImmutableArray<WordSequence>>.Empty;
         }
 
         public ImmutableHashSet<string> Values { get; }
+
+        public ImmutableDictionary<string, ImmutableArray<WordSequence>> Sequences { get; }
 
         public StringComparison Comparison { get; }
 
         public StringComparer Comparer { get; }
 
-        public int Count => Values.Count;
-
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private string DebuggerDisplay => $"Count = {Values.Count}";
-
-        public WordCharMap CharIndexMap
-        {
-            get
-            {
-                if (_charIndexMap == null)
-                    Interlocked.CompareExchange(ref _charIndexMap, WordCharMap.CreateCharIndexMap(this), null);
-
-                return _charIndexMap;
-            }
-        }
-
-        public WordCharMap ReversedCharIndexMap
-        {
-            get
-            {
-                if (_reversedCharIndexMap == null)
-                    Interlocked.CompareExchange(ref _reversedCharIndexMap, WordCharMap.CreateCharIndexMap(this, reverse: true), null);
-
-                return _reversedCharIndexMap;
-            }
-        }
-
-        public ImmutableDictionary<string, ImmutableHashSet<string>> CharMap
-        {
-            get
-            {
-                if (_charMap == null)
-                    Interlocked.CompareExchange(ref _charMap, Create(), null);
-
-                return _charMap;
-
-                ImmutableDictionary<string, ImmutableHashSet<string>> Create()
-                {
-                    return Values
-                        .Select(s =>
-                        {
-                            char[] arr = s.ToCharArray();
-
-                            Array.Sort(arr, (x, y) => x.CompareTo(y));
-
-                            return (value: s, value2: new string(arr));
-                        })
-                        .GroupBy(f => f.value, Comparer)
-                        .ToImmutableDictionary(f => f.Key, f => f.Select(f => f.value2).ToImmutableHashSet(Comparer));
-                }
-            }
-        }
-
-        public static WordList Load(IEnumerable<string> paths)
-        {
-            IEnumerable<string> values = GetFiles().SelectMany(path => ReadWords(path));
-
-            return new WordList(values, DefaultComparison);
-
-            IEnumerable<string> GetFiles()
-            {
-                foreach (string path in paths)
-                {
-                    if (File.Exists(path))
-                    {
-                        yield return path;
-                    }
-                    else if (Directory.Exists(path))
-                    {
-                        foreach (string filePath in Directory.EnumerateFiles(
-                            path,
-                            "*.*",
-                            SearchOption.AllDirectories))
-                        {
-                            yield return filePath;
-                        }
-                    }
-                }
-            }
-        }
-
-        public static WordList LoadFiles(IEnumerable<string> filePaths)
-        {
-            WordList wordList = Default;
-
-            foreach (string filePath in filePaths)
-                wordList = wordList.AddValues(LoadFile(filePath));
-
-            return wordList;
-        }
-
-        public static WordList LoadFile(string path, StringComparison? stringComparison = null)
-        {
-            IEnumerable<string> values = ReadWords(path);
-
-            return new WordList(values, stringComparison);
-        }
-
-        public static WordList LoadText(string text, StringComparison? comparison = null)
-        {
-            IEnumerable<string> values = ReadLines();
-
-            values = ReadWords(values);
-
-            return new WordList(values, comparison);
-
-            IEnumerable<string> ReadLines()
-            {
-                using (var sr = new StringReader(text))
-                {
-                    string line;
-
-                    while ((line = sr.ReadLine()) != null)
-                        yield return line;
-                }
-            }
-        }
-
-        private static IEnumerable<string> ReadWords(string path)
-        {
-            return ReadWords(File.ReadLines(path));
-        }
-
-        private static IEnumerable<string> ReadWords(IEnumerable<string> values)
-        {
-            return values
-                .Where(f => !string.IsNullOrWhiteSpace(f))
-                .Select(f => f.Trim())
-                .Where(f => !f.StartsWith("#"));
-        }
+        private string DebuggerDisplay => $"Words = {Values.Count}  Sequences = {Sequences.Sum(f => f.Value.Length)}";
 
         public WordList Intersect(WordList wordList, params WordList[] additionalWordLists)
         {
@@ -250,7 +134,7 @@ namespace Roslynator.Spelling
 
             Debug.WriteLine($"Saving '{path}'");
 
-            File.WriteAllText(path, string.Join(Environment.NewLine, values), Encoding.UTF8);
+            File.WriteAllText(path, string.Join(Environment.NewLine, values));
         }
 
         public void Save(string path)
@@ -260,9 +144,14 @@ namespace Roslynator.Spelling
 
         public static void Normalize(string path)
         {
-            WordList list = LoadFile(path);
+            List<string> values = File.ReadLines(path)
+                .Where(f => !string.IsNullOrWhiteSpace(f))
+                .Select(f => f.Trim())
+                .Distinct(StringComparer.InvariantCulture)
+                .OrderBy(f => f, StringComparer.InvariantCulture)
+                .ToList();
 
-            list.Save(path);
+            File.WriteAllText(path, string.Join(Environment.NewLine, values), Encoding.UTF8);
         }
     }
 }

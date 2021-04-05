@@ -2,11 +2,11 @@
 
 namespace Roslynator.Spelling
 {
-    public class SpellingParserOptions
+    public class SpellcheckerOptions
     {
-        public static SpellingParserOptions Default { get; } = new SpellingParserOptions();
+        public static SpellcheckerOptions Default { get; } = new SpellcheckerOptions();
 
-        public SpellingParserOptions(
+        public SpellcheckerOptions(
             SplitMode splitMode = SplitMode.None,
             int minWordLength = 3)
         {

@@ -21,34 +21,45 @@ namespace Roslynator.CommandLine
             SpellcheckCommandLineOptions options,
             in ProjectFilter projectFilter,
             SpellingData spellingData,
+            Visibility visibility,
             string newWordsPath = null,
             string newFixesPath = null) : base(projectFilter)
         {
             Options = options;
             SpellingData = spellingData;
 
-            OriginalFixList = spellingData.FixList;
+            OriginalFixes = spellingData.Fixes;
             NewWordsPath = newWordsPath;
             NewFixesPath = newFixesPath;
+            Visibility = visibility;
         }
 
         public SpellcheckCommandLineOptions Options { get; }
 
         public SpellingData SpellingData { get; }
 
-        private FixList OriginalFixList { get; }
+        public Visibility Visibility { get; }
 
         private string NewWordsPath { get; }
 
         private string NewFixesPath { get; }
 
+        private FixList OriginalFixes { get; }
+
         public override async Task<CommandResult> ExecuteAsync(ProjectOrSolution projectOrSolution, CancellationToken cancellationToken = default)
         {
             AssemblyResolver.Register();
 
+            VisibilityFilter visibilityFilter = Visibility switch
+            {
+                Visibility.Public => VisibilityFilter.All,
+                Visibility.Internal => VisibilityFilter.Internal | VisibilityFilter.Private,
+                Visibility.Private => VisibilityFilter.Private,
+                _ => throw new InvalidOperationException()
+            };
+
             var options = new SpellingFixerOptions(
-                splitMode: SplitMode.CaseAndHyphen,
-                includeLocal: false,
+                symbolVisibility: visibilityFilter,
                 includeGeneratedCode: Options.IncludeGeneratedCode,
                 interactive: Options.Interactive,
                 dryRun: Options.DryRun);
@@ -97,7 +108,7 @@ namespace Roslynator.CommandLine
             }
 #if DEBUG
             Console.WriteLine("Saving new values");
-            SaveNewValues(spellingFixer.SpellingData, OriginalFixList, NewWordsPath, NewFixesPath, cancellationToken);
+            SaveNewValues(spellingFixer.SpellingData, OriginalFixes, NewWordsPath, NewFixesPath, cancellationToken);
 #endif
             return CommandResult.Success;
 
@@ -118,7 +129,7 @@ namespace Roslynator.CommandLine
             string fixListNewPath = null,
             CancellationToken cancellationToken = default)
         {
-            Dictionary<string, List<SpellingFix>> dic = data.FixList.Items.ToDictionary(
+            Dictionary<string, List<SpellingFix>> dic = data.Fixes.Items.ToDictionary(
                 f => f.Key,
                 f => f.Value.ToList(),
                 WordList.DefaultComparer);
@@ -153,19 +164,19 @@ namespace Roslynator.CommandLine
             }
 
             const StringComparison comparison = StringComparison.InvariantCulture;
-            StringComparer comparer = SpellingUtility.CreateStringComparer(comparison);
+            StringComparer comparer = StringComparerUtility.FromComparison(comparison);
 
             if (wordListNewPath != null)
             {
-                HashSet<string> values = data.IgnoreList.Values.ToHashSet(comparer);
+                HashSet<string> values = data.IgnoredValues.ToHashSet(comparer);
 
                 if (values.Count > 0)
                 {
                     if (File.Exists(wordListNewPath))
-                        values.UnionWith(WordList.LoadFile(wordListNewPath, comparison).Values);
+                        values.UnionWith(WordListLoader.LoadFile(wordListNewPath).List.Values);
 
                     IEnumerable<string> newValues = values
-                        .Except(data.FixList.Items.Select(f => f.Key), WordList.DefaultComparer)
+                        .Except(data.Fixes.Items.Select(f => f.Key), WordList.DefaultComparer)
                         .Distinct(StringComparer.CurrentCulture)
                         .OrderBy(f => f)
                         .Select(f =>
@@ -174,14 +185,14 @@ namespace Roslynator.CommandLine
 
                             var fixes = new List<string>();
 
-                            fixes.AddRange(SpellingFixProvider.SwapMatches(
+                            fixes.AddRange(SpellingFixProvider.SwapLetters(
                                 value,
                                 data));
 
                             if (fixes.Count == 0
                                 && value.Length >= 8)
                             {
-                                fixes.AddRange(SpellingFixProvider.FuzzyMatches(
+                                fixes.AddRange(SpellingFixProvider.Fuzzy(
                                     value,
                                     data,
                                     cancellationToken));

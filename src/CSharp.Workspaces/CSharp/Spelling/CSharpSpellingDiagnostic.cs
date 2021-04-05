@@ -11,10 +11,10 @@ namespace Roslynator.CSharp.Spelling
         public CSharpSpellingDiagnostic(
             Diagnostic diagnostic,
             string value,
+            int valueIndex,
             string containingValue,
-            Location location,
-            int index,
-            SyntaxToken identifier = default) : base(diagnostic, value, containingValue, location, index, identifier)
+            int containingValueIndex,
+            SyntaxToken identifier = default) : base(diagnostic, value, valueIndex, containingValue, containingValueIndex, identifier)
         {
         }
 
@@ -25,8 +25,12 @@ namespace Roslynator.CSharp.Spelling
                 if (string.IsNullOrEmpty(fix))
                     return false;
 
-                if (Index == 0
-                    && !SyntaxFacts.IsIdentifierStartCharacter(fix[0]))
+                if (Offset == 0)
+                {
+                    if (!SyntaxFacts.IsIdentifierStartCharacter(fix[0]))
+                        return false;
+                }
+                else if (!SyntaxFacts.IsIdentifierPartCharacter(fix[0]))
                 {
                     return false;
                 }

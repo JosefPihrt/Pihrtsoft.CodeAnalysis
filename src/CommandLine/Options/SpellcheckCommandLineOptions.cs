@@ -49,6 +49,13 @@ namespace Roslynator.CommandLine
         public string NewFixes { get; set; }
 
         [Option(
+            longName: ParameterNames.Visibility,
+            Default = nameof(Roslynator.Visibility.Public),
+            HelpText = "Defines a  maximal visibility of a symbol to be fixable. Allowed values are public, internal or private. Default value is public.",
+            MetaValue = "<VISIBILITY>")]
+        public string Visibility { get; set; }
+
+        [Option(
             longName: "words",
             HelpText = "",
             MetaValue = "<PATH>")]

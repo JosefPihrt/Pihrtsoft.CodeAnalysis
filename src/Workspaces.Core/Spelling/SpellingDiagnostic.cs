@@ -3,6 +3,7 @@
 using System;
 using System.Diagnostics;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Text;
 
 namespace Roslynator.Spelling
 {
@@ -10,22 +11,21 @@ namespace Roslynator.Spelling
     internal abstract class SpellingDiagnostic
     {
         private string _valueLower;
-        private bool? _isContained;
         private TextCasing? _casing;
 
         protected SpellingDiagnostic(
             Diagnostic diagnostic,
             string value,
-            string containingValue,
-            Location location,
             int index,
+            string parent,
+            int parentIndex,
             SyntaxToken identifier = default)
         {
-            Diagnostic = diagnostic;
+            Diagnostic = diagnostic ?? throw new ArgumentNullException(nameof(diagnostic));
             Value = value;
-            ContainingValue = containingValue;
-            Location = location;
             Index = index;
+            Parent = parent;
+            ParentIndex = parentIndex;
             Identifier = identifier;
         }
 
@@ -33,46 +33,36 @@ namespace Roslynator.Spelling
 
         public string Value { get; }
 
-        public string ContainingValue { get; }
+        public int Index { get; }
 
-        public Location Location { get; }
+        public int Length => Value.Length;
+
+        public int EndIndex => Index + Value.Length;
+
+        public string Parent { get; }
+
+        public int ParentIndex { get; }
+
+        public int Offset => (Parent != null) ? Index - ParentIndex : 0;
+
+        public Location Location => Diagnostic.Location;
+
+        public SyntaxTree SyntaxTree => Location.SourceTree;
+
+        public string FilePath => SyntaxTree?.FilePath;
+
+        public TextSpan Span => Location.SourceSpan;
 
         public SyntaxToken Identifier { get; }
 
-        public int Index { get; }
-
         public bool IsSymbol => Identifier.Parent != null;
-
-        public bool IsContained => _isContained ??= !string.Equals(Value, ContainingValue, StringComparison.Ordinal);
 
         public string ValueLower => _valueLower ??= Value.ToLowerInvariant();
 
         public TextCasing Casing => _casing ??= TextUtility.GetTextCasing(Value);
 
-        public int EndIndex => Index + Length;
-
-        public int Length => Value.Length;
-
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private string DebuggerDisplay
-        {
-            get
-            {
-                string value2 = (string.Equals(Value, ContainingValue, StringComparison.Ordinal))
-                    ? null
-                    : ContainingValue;
-
-                return $"{Value}  {value2}";
-            }
-        }
-
-        public string ApplyFix(string fix)
-        {
-            if (!IsSymbol)
-                return fix;
-
-            return TextUtility.ReplaceRange(ContainingValue, fix, Index, Length);
-        }
+        private string DebuggerDisplay => $"{Value}  {Parent}";
 
         public abstract bool IsApplicableFix(string fix);
     }

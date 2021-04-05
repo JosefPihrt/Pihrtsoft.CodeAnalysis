@@ -4,16 +4,12 @@ using System.Collections.Immutable;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading;
-using Roslynator.RegularExpressions;
 
 namespace Roslynator.Spelling
 {
-    //TODO: decode html entity?
-    //TODO: parse email address
-    public class SpellingParser
+    public class Spellchecker
     {
-        private static readonly Regex _wordInCommentRegex = new Regex(
+        private static readonly Regex _wordRegex = new Regex(
             @"
 \b
 \p{L}{2,}
@@ -30,41 +26,22 @@ namespace Roslynator.Spelling
 )",
             RegexOptions.ExplicitCapture | RegexOptions.IgnorePatternWhitespace);
 
-        // NaN, IDs, GACed, JSONify, AND'd
-        private static readonly Regex _specialWordRegex = new Regex(
-            @"
-\A
-(?:
-    (?:
-        (?<g>\p{Lu}\p{Ll}\p{Lu})
-    )
-    |
-    (?:
-        (?<g>\p{Lu}{2,})
-        (?:s|ed|ify|'d)
-    )
-)
-\z
-",
-            RegexOptions.IgnorePatternWhitespace);
-
         private static readonly Regex _urlRegex = new Regex(
             @"\bhttps?://[^\s]+(?=\s|\z)", RegexOptions.IgnoreCase);
 
-        public SpellingData SpellingData { get; }
+        private readonly Regex _splitRegex;
 
-        public SpellingParserOptions Options { get; }
+        public SpellingData Data { get; }
 
-        public CancellationToken CancellationToken { get; }
+        public SpellcheckerOptions Options { get; }
 
-        public SpellingParser(
-            SpellingData spellingData,
-            SpellingParserOptions options,
-            CancellationToken cancellationToken)
+        public Spellchecker(
+            SpellingData data,
+            SpellcheckerOptions options)
         {
-            SpellingData = spellingData;
+            Data = data;
             Options = options;
-            CancellationToken = cancellationToken;
+            _splitRegex = SplitUtility.GetSplitRegex(Options.SplitMode);
         }
 
         public ImmutableArray<SpellingMatch> AnalyzeText(string value)
@@ -95,36 +72,42 @@ namespace Roslynator.Spelling
             int length,
             ref ImmutableArray<SpellingMatch>.Builder builder)
         {
-            Regex splitRegex = SplitUtility.GetSplitRegex(Options.SplitMode);
+            int sequenceEndIndex = -1;
 
             for (
-                Match match = _wordInCommentRegex.Match(value, startIndex, length);
+                Match match = _wordRegex.Match(value, startIndex, length);
                 match.Success;
                 match = match.NextMatch())
             {
-                if (match.Length >= Options.MinWordLength)
+                if (sequenceEndIndex >= 0)
                 {
-                    if (splitRegex == null)
+                    if (match.Index <= sequenceEndIndex)
                     {
-                        TryAddMatch(match.Value, match.Index, ref builder);
+                        continue;
                     }
                     else
                     {
-                        Match match2 = _specialWordRegex.Match(match.Value);
+                        sequenceEndIndex = -1;
+                    }
+                }
 
-                        if (match2.Success)
-                        {
-                            Group group = match2.Groups["g"];
+                WordSequenceMatch sequenceMatch = Data.GetSequenceMatch(value, startIndex, length, match);
 
-                            TryAddMatch(group.Value, group.Index, ref builder);
-                        }
-                        else
-                        {
-                            foreach (SplitItem splitItem in SplitItemCollection.Create(splitRegex, match.Value))
-                            {
-                                TryAddMatch(splitItem.Value, match.Index + splitItem.Index, ref builder);
-                            }
-                        }
+                if (!sequenceMatch.IsDefault)
+                {
+                    sequenceEndIndex = sequenceMatch.EndIndex;
+                    continue;
+                }
+
+                if (match.Length >= Options.MinWordLength)
+                {
+                    if (_splitRegex == null)
+                    {
+                        AnalyzeValue(match.Value, match.Index, null, 0, ref builder);
+                    }
+                    else
+                    {
+                        AnalyzeSplit(_splitRegex, match.Value, match.Index, 0, ref builder);
                     }
                 }
             }
@@ -137,62 +120,69 @@ namespace Roslynator.Spelling
             if (value.Length < Options.MinWordLength)
                 return ImmutableArray<SpellingMatch>.Empty;
 
-            if (prefixLength > 0)
+            if (prefixLength > 0
+                && Data.Contains(value))
             {
-                if (SpellingData.IgnoreList.Contains(value))
-                    return ImmutableArray<SpellingMatch>.Empty;
-
-                if (SpellingData.List.Contains(value))
-                    return ImmutableArray<SpellingMatch>.Empty;
+                return ImmutableArray<SpellingMatch>.Empty;
             }
-
-            string value2 = (prefixLength > 0) ? value.Substring(prefixLength) : value;
-
-            Match match = _specialWordRegex.Match(value2);
 
             ImmutableArray<SpellingMatch>.Builder builder = null;
 
-            if (match.Success)
-            {
-                Group group = match.Groups["g"];
-
-                TryAddMatch(
-                    group.Value,
-                    prefixLength,
-                    ref builder);
-            }
-            else
-            {
-                SplitItemCollection splitItems = SplitItemCollection.Create(SplitUtility.SplitIdentifierRegex, value2);
-
-                if (splitItems.Count > 1)
-                {
-                    if (SpellingData.IgnoreList.Contains(value2))
-                        return ImmutableArray<SpellingMatch>.Empty;
-
-                    if (SpellingData.List.Contains(value2))
-                        return ImmutableArray<SpellingMatch>.Empty;
-                }
-
-                foreach (SplitItem splitItem in splitItems)
-                {
-                    Debug.Assert(splitItem.Value.All(f => char.IsLetter(f)), splitItem.Value);
-
-                    TryAddMatch(
-                        splitItem.Value,
-                        splitItem.Index + prefixLength,
-                        ref builder);
-                }
-            }
+            AnalyzeSplit(SplitUtility.SplitIdentifierRegex, value, 0, prefixLength, ref builder);
 
             return builder?.ToImmutableArray() ?? ImmutableArray<SpellingMatch>.Empty;
         }
 
-        private void TryAddMatch(string value, int index, ref ImmutableArray<SpellingMatch>.Builder builder)
+        private void AnalyzeSplit(
+            Regex regex,
+            string input,
+            int offset,
+            int prefixLength,
+            ref ImmutableArray<SpellingMatch>.Builder builder)
+        {
+            Match match = regex.Match(input, prefixLength);
+
+            if (!match.Success)
+            {
+                if (prefixLength > 0)
+                {
+                    AnalyzeValue(input.Substring(prefixLength), offset + prefixLength, input, offset, ref builder);
+                }
+                else
+                {
+                    AnalyzeValue(input, offset, null, 0, ref builder);
+                }
+            }
+            else if (!Data.Contains(input))
+            {
+                int prevIndex = prefixLength;
+
+                do
+                {
+                    AnalyzeValue(input.Substring(prevIndex, match.Index - prevIndex), prevIndex + offset, input, offset, ref builder);
+
+                    prevIndex = match.Index + match.Length;
+
+                    match = match.NextMatch();
+
+                } while (match.Success);
+
+                AnalyzeValue(input.Substring(prevIndex), prevIndex + offset, input, offset, ref builder);
+            }
+        }
+
+        private void AnalyzeValue(
+            string value,
+            int valueIndex,
+            string containingValue,
+            int containingValueIndex,
+            ref ImmutableArray<SpellingMatch>.Builder builder)
         {
             if (IsMatch(value))
             {
-                (builder ??= ImmutableArray.CreateBuilder<SpellingMatch>()).Add(new SpellingMatch(value, index));
+                var spellingMatch = new SpellingMatch(value, valueIndex, containingValue, containingValueIndex);
+
+                (builder ??= ImmutableArray.CreateBuilder<SpellingMatch>()).Add(spellingMatch);
             }
         }
 
@@ -206,16 +196,13 @@ namespace Roslynator.Spelling
             if (IsAllowedNonsensicalWord(value))
                 return false;
 
-            if (SpellingData.IgnoreList.Contains(value))
-                return false;
-
-            if (SpellingData.List.Contains(value))
+            if (Data.Contains(value))
                 return false;
 
             return true;
         }
 
-        public static bool IsAllowedNonsensicalWord(string value)
+        private static bool IsAllowedNonsensicalWord(string value)
         {
             if (value.Length < 3)
                 return false;

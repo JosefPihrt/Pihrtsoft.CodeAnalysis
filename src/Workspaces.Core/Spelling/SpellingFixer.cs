@@ -4,10 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -20,8 +18,6 @@ namespace Roslynator.Spelling
 {
     internal class SpellingFixer
     {
-        private static readonly Regex _lowercasedSeparatedWithUnderscoresRegex = new Regex(@"\A_*\p{Ll}+(_+\p{Ll}+)+\z");
-
         public SpellingFixer(
             Solution solution,
             SpellingData spellingData,
@@ -162,10 +158,7 @@ namespace Roslynator.Spelling
 
                     SpellingDiagnostic spellingDiagnostic = service.CreateSpellingDiagnostic(diagnostic);
 
-                    Debug.Assert(spellingDiagnostic != null);
-
-                    if (spellingDiagnostic != null)
-                        spellingDiagnostics.Add(spellingDiagnostic);
+                    spellingDiagnostics.Add(spellingDiagnostic);
                 }
 
                 if (!commentsFixed)
@@ -201,7 +194,7 @@ namespace Roslynator.Spelling
             project = CurrentSolution.GetProject(project.Id);
 
             foreach (IGrouping<SyntaxTree, SpellingDiagnostic> grouping in commentDiagnostics
-                .GroupBy(f => f.Location.SourceTree))
+                .GroupBy(f => f.SyntaxTree))
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
@@ -211,24 +204,24 @@ namespace Roslynator.Spelling
 
                 List<TextChange> textChanges = null;
 
-                foreach (SpellingDiagnostic diagnostic in grouping.OrderBy(f => f.Location.SourceSpan.Start))
+                //TODO: group by ContainingValue?
+                foreach (SpellingDiagnostic diagnostic in grouping.OrderBy(f => f.Span.Start))
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
-                    if (SpellingData.IgnoreList.Contains(diagnostic.Value))
+                    if (SpellingData.IgnoredValues.Contains(diagnostic.Value))
                         continue;
 
                     LogHelpers.WriteSpellingDiagnostic(diagnostic, Options, sourceText, Path.GetDirectoryName(project.FilePath), "    ", Verbosity.Normal);
 
-                    SpellingFix fix = GetFix(diagnostic, cancellationToken);
+                    SpellingFix fix = GetFix(diagnostic);
 
-                    Debug.Assert(fix.Value != "");
-
-                    if (!fix.IsDefault
-                        && !string.Equals(fix.Value, diagnostic.Value, StringComparison.Ordinal))
+                    if (!fix.IsDefault)
                     {
+                        WriteFix(diagnostic, fix, ConsoleColor.Green);
+
                         if (!Options.DryRun)
-                            (textChanges ??= new List<TextChange>()).Add(new TextChange(diagnostic.Location.SourceSpan, fix.Value));
+                            (textChanges ??= new List<TextChange>()).Add(new TextChange(diagnostic.Span, fix.Value));
 
                         results.Add(new SpellingFixResult(
                             diagnostic.Value,
@@ -275,7 +268,7 @@ namespace Roslynator.Spelling
                 .GroupBy(f => f.Identifier)
                 .Select(f => (
                     identifier: f.Key,
-                    diagnostics: f.OrderBy(f => f.Location.SourceSpan.Start).ToList(),
+                    diagnostics: f.OrderBy(f => f.Span.Start).ToList(),
                     documentId: project.GetDocument(f.Key.SyntaxTree).Id))
                 .OrderBy(f => f.documentId.Id)
                 .ThenByDescending(f => f.identifier.SpanStart)
@@ -299,7 +292,10 @@ namespace Roslynator.Spelling
                 }
 
                 if (node == null)
+                {
+                    AddIgnoredValues(diagnostics);
                     continue;
+                }
 
                 Document document = project.GetDocument(documentId);
 
@@ -308,7 +304,7 @@ namespace Roslynator.Spelling
                 if (document == null)
                 {
                     WriteLine($"    Cannot find document for'{identifier.ValueText}'", ConsoleColor.Yellow, Verbosity.Detailed);
-                    SpellingData = SpellingData.AddIgnoredValues(diagnostics);
+                    AddIgnoredValues(diagnostics);
                     continue;
                 }
 
@@ -322,6 +318,7 @@ namespace Roslynator.Spelling
                         || identifier.RawKind != identifier2.RawKind
                         || !string.Equals(identifier2.ValueText, identifier2.ValueText, StringComparison.Ordinal))
                     {
+                        AddIgnoredValues(diagnostics);
                         continue;
                     }
 
@@ -350,13 +347,14 @@ namespace Roslynator.Spelling
                 if (symbol == null)
                 {
                     WriteLine($"    Cannot find symbol for '{identifier.ValueText}'", ConsoleColor.Yellow, Verbosity.Detailed);
-                    SpellingData = SpellingData.AddIgnoredValues(diagnostics);
+                    AddIgnoredValues(diagnostics);
                     continue;
                 }
 
                 if (!symbol.IsKind(SymbolKind.Namespace, SymbolKind.Alias)
                     && !symbol.IsVisible(Options.SymbolVisibility))
                 {
+                    AddIgnoredValues(diagnostics);
                     continue;
                 }
 
@@ -373,12 +371,13 @@ namespace Roslynator.Spelling
 
                     LogHelpers.WriteSpellingDiagnostic(diagnostic, Options, sourceText, Path.GetDirectoryName(project.FilePath), "    ", Verbosity.Normal);
 
-                    SpellingFix fix = GetFix(diagnostic, cancellationToken);
+                    SpellingFix fix = GetFix(diagnostic);
                     fixes.Add((diagnostic, fix));
 
                     if (!fix.IsDefault)
                     {
-                        newName = TextUtility.ReplaceRange(newName, fix.Value, diagnostic.Index + indexOffset, diagnostic.Length);
+                        WriteFix(diagnostic, fix);
+                        newName = TextUtility.ReplaceRange(newName, fix.Value, diagnostic.Offset + indexOffset, diagnostic.Length);
 
                         indexOffset += fix.Value.Length - diagnostic.Length;
                     }
@@ -392,7 +391,7 @@ namespace Roslynator.Spelling
 
                             for (int l = 0; l < diagnostics2.Count; l++)
                             {
-                                if (SpellingData.IgnoreList.Comparer.Equals(diagnostics2[l]?.Value, diagnostic.Value))
+                                if (SpellingData.IgnoredValues.KeyComparer.Equals(diagnostics2[l]?.Value, diagnostic.Value))
                                     diagnostics2[l] = null;
                             }
                         }
@@ -405,7 +404,7 @@ namespace Roslynator.Spelling
                 Solution newSolution = null;
                 if (!Options.DryRun)
                 {
-                    WriteLine($"    Rename '{identifier.ValueText}' to '{newName}'", Verbosity.Minimal);
+                    WriteLine($"    Rename '{identifier.ValueText}' to '{newName}'", ConsoleColor.Green, Verbosity.Minimal);
 
                     try
                     {
@@ -430,7 +429,7 @@ namespace Roslynator.Spelling
                         WriteLine(identifier.ValueText);
                         WriteLine(ex.ToString());
 #endif
-                        SpellingData = SpellingData.AddIgnoredValues(diagnostics);
+                        AddIgnoredValues(diagnostics);
                         continue;
                     }
                 }
@@ -446,7 +445,7 @@ namespace Roslynator.Spelling
                         Debug.Fail($"Cannot apply changes to solution '{newSolution.FilePath}'");
                         WriteLine($"    Cannot apply changes to solution '{newSolution.FilePath}'", ConsoleColor.Yellow, Verbosity.Diagnostic);
 
-                        SpellingData = SpellingData.AddIgnoredValues(diagnostics);
+                        AddIgnoredValues(diagnostics);
                         continue;
                     }
                 }
@@ -471,289 +470,82 @@ namespace Roslynator.Spelling
             return results;
         }
 
-        private SpellingFix GetFix(SpellingDiagnostic diagnostic, CancellationToken cancellationToken)
+        private SpellingFix GetParentFix(SpellingDiagnostic diagnostic)
         {
-            string value = diagnostic.Value;
-            string containingValue = diagnostic.ContainingValue;
+            string containingValue = diagnostic.Parent;
 
             if (Options.AutoFix
-                && diagnostic.IsContained
-                && SpellingData.FixList.TryGetValue(containingValue, out ImmutableHashSet<SpellingFix> fixes2))
+                && containingValue != null
+                && SpellingData.Fixes.TryGetKey(containingValue, out string actualKey)
+                && string.Equals(containingValue, actualKey, StringComparison.Ordinal))
             {
-                SpellingFix fix2 = fixes2.SingleOrDefault(
+                SpellingFix fix = SpellingData.Fixes.Items[containingValue].SingleOrDefault(
                     f => f.Kind == SpellingFixKind.Predefined && diagnostic.IsApplicableFix(f.Value),
                     shouldThrow: false);
 
-                if (string.Equals(containingValue, fix2.Value, StringComparison.Ordinal))
-                {
-                    WriteFix(diagnostic, fix2);
-                    return fix2;
-                }
+                if (!fix.IsDefault)
+                    return fix;
             }
 
-            SpellingFix fix = default;
-            var fixes = new List<SpellingFix>();
+            return default;
+        }
 
-            TextCasing textCasing = TextUtility.GetTextCasing(value);
+        private SpellingFix GetFix(SpellingDiagnostic diagnostic)
+        {
+            string value = diagnostic.Value;
 
-            if (SpellingData.FixList.TryGetValue(value, out fixes2))
+            if (Options.AutoFix)
             {
-                if (Options.AutoFix
-                    && textCasing != TextCasing.Undefined)
+                TextCasing textCasing = TextUtility.GetTextCasing(value);
+
+                if (textCasing != TextCasing.Undefined
+                    && SpellingData.Fixes.TryGetValue(value, out ImmutableHashSet<SpellingFix> fixes))
                 {
-                    fix = fixes2.SingleOrDefault(
+                    SpellingFix fix = fixes.SingleOrDefault(
                         f => TextUtility.GetTextCasing(f.Value) != TextCasing.Undefined
                             && diagnostic.IsApplicableFix(f.Value),
                         shouldThrow: false);
 
                     if (!fix.IsDefault)
-                        fix = fix.WithValue(TextUtility.SetTextCasing(fix.Value, textCasing));
-                }
-
-                if (fix.IsDefault)
-                {
-                    fixes = fixes2
-                        .Where(f => TextUtility.GetTextCasing(f.Value) != TextCasing.Undefined
-                            && diagnostic.IsApplicableFix(f.Value))
-                        .Select(f => f.WithValue(TextUtility.SetTextCasing(f.Value, textCasing)))
-                        .ToList();
+                        return fix.WithValue(TextUtility.SetTextCasing(fix.Value, textCasing));
                 }
             }
 
-            if (fix.IsDefault
-                && Options.Interactive)
+            if (Options.Interactive)
             {
-                if (textCasing != TextCasing.Undefined)
+                while (true)
                 {
-                    if (fixes.Count == 0)
-                        AddPossibleFixes(diagnostic, ref fixes, cancellationToken);
+                    string replacement = ConsoleUtility.ReadUserInput(value, "    Replacement: ");
 
-                    fix = ChooseFix(diagnostic, fixes);
-                }
+                    if (string.Equals(value, replacement, StringComparison.Ordinal))
+                        break;
 
-                if (fix.IsDefault)
-                    fix = GetUserFix();
-            }
-
-            if (!fix.IsDefault)
-                WriteFix(diagnostic, fix);
-
-            return fix;
-        }
-
-        private SpellingFix ChooseFix(
-            SpellingDiagnostic diagnostic,
-            List<SpellingFix> fixes)
-        {
-            //TODO: set max number of suggestions
-            fixes = fixes
-                .Distinct(SpellingFixComparer.InvariantCulture)
-                .Where(f =>
-                {
-                    return f.Kind == SpellingFixKind.Predefined
-                        || diagnostic.IsApplicableFix(f.Value);
-                })
-                .Select(fix =>
-                {
-                    if (TextUtility.GetTextCasing(fix.Value) != TextCasing.Undefined)
-                        return fix.WithValue(TextUtility.SetTextCasing(fix.Value, diagnostic.Casing));
-
-                    return fix;
-                })
-                .OrderBy(f => f.Kind)
-                .Take(9)
-                .ToList();
-
-            if (fixes.Count > 0)
-            {
-                for (int i = 0; i < fixes.Count; i++)
-                    WriteSuggestion(diagnostic, fixes[i], i);
-
-                if (TryReadSuggestion(out int index)
-                    && index < fixes.Count)
-                {
-                    return fixes[index];
+                    if (diagnostic.IsApplicableFix(replacement))
+                    {
+                        return new SpellingFix(replacement, SpellingFixKind.User);
+                    }
+                    else
+                    {
+                        Console.WriteLine("    Replacement is invalid.");
+                    }
                 }
             }
 
             return default;
         }
 
-        private void AddPossibleFixes(
-            SpellingDiagnostic diagnostic,
-            ref List<SpellingFix> fixes,
-#pragma warning disable RCS1163
-            CancellationToken cancellationToken)
-#pragma warning restore RCS1163
+        private static void WriteFix(SpellingDiagnostic diagnostic, SpellingFix fix, ConsoleColor? color = null)
         {
-            Debug.WriteLine($"find possible fix for '{diagnostic.Value}'");
+            string message = $"    Replace '{diagnostic.Value}' with '{fix.Value}'";
 
-            string value = diagnostic.Value;
-
-            ImmutableArray<string> matches = SpellingFixProvider.SwapMatches(
-                diagnostic.ValueLower,
-                SpellingData);
-
-            foreach (string match in matches)
-                fixes.Add(new SpellingFix(match, SpellingFixKind.Swap));
-
-            if (fixes.Count == 0
-                && (diagnostic.Casing == TextCasing.Lower
-                    || diagnostic.Casing == TextCasing.FirstUpper))
+            if (color != null)
             {
-                foreach (int splitIndex in GetSplitIndexes(diagnostic, SpellingData))
-                {
-                    //TODO: foofooBar > fooBar
-                    //if (value.Length - splitIndex >= splitIndex
-                    //    && string.Compare(value, 0, value, splitIndex, splitIndex, StringComparison.Ordinal) == 0)
-                    //{
-                    //    fixes.Add(new SpellingFix(value.Remove(splitIndex, splitIndex), SpellingFixKind.Split));
-                    //}
-
-                    bool? canInsertUnderscore = null;
-
-                    if (!diagnostic.IsSymbol
-                        || !(canInsertUnderscore ??= _lowercasedSeparatedWithUnderscoresRegex.IsMatch(value)))
-                    {
-                        // foobar > fooBar
-                        // Tvalue > TValue
-                        fixes.Add(new SpellingFix(
-                            TextUtility.ReplaceRange(value, char.ToUpperInvariant(value[splitIndex]).ToString(), splitIndex, 1),
-                            SpellingFixKind.Split));
-                    }
-
-                    if (diagnostic.IsSymbol)
-                    {
-                        // foobar > foo_bar
-                        if (canInsertUnderscore == true)
-                            fixes.Add(new SpellingFix(value.Insert(splitIndex, "_"), SpellingFixKind.Split));
-                    }
-                    else if (splitIndex > 1)
-                    {
-                        // foobar > foo bar
-                        fixes.Add(new SpellingFix(value.Insert(splitIndex, " "), SpellingFixKind.Split));
-                    }
-                }
-            }
-
-            //TODO: 
-            //if (matches.Length == 0)
-            //{
-            //    matches = SpellingFixProvider.FuzzyMatches(
-            //        diagnostic.ValueLower,
-            //        SpellingData,
-            //        cancellationToken);
-
-            //    foreach (string match in matches)
-            //        fixes.Add(new SpellingFix(match, SpellingFixKind.Fuzzy));
-            //}
-        }
-
-        private SpellingFix GetUserFix()
-        {
-            Write("    Enter fix: ");
-
-            string fix = Console.ReadLine()?.Trim();
-
-            return (!string.IsNullOrEmpty(fix))
-                ? new SpellingFix(fix, SpellingFixKind.User)
-                : default;
-        }
-
-        private static void WriteFix(SpellingDiagnostic diagnostic, SpellingFix fix)
-        {
-            WriteLine($"    Replace '{diagnostic.Value}' with '{fix.Value}'", ConsoleColor.Green, Verbosity.Minimal);
-        }
-
-        private void WriteSuggestion(
-            SpellingDiagnostic diagnostic,
-            SpellingFix fix,
-            int index)
-        {
-            string value = diagnostic.Value;
-            string containingValue = diagnostic.ContainingValue;
-
-            if (index == 0)
-            {
-                Write("    Replace  '");
-
-                if (diagnostic.IsContained)
-                {
-                    Write(containingValue.Remove(diagnostic.Index));
-                    Write(value);
-                    Write(containingValue.Substring(diagnostic.EndIndex, containingValue.Length - diagnostic.EndIndex));
-                }
-                else
-                {
-                    Write(value, ConsoleColor.Cyan);
-                }
-
-                WriteLine("'");
-            }
-
-            Write("    ");
-
-            if (Options.Interactive)
-            {
-                Write($"({index + 1}) ");
+                WriteLine(message, color.Value, Verbosity.Minimal);
             }
             else
             {
-                Write("   ");
+                WriteLine(message, Verbosity.Minimal);
             }
-
-            Write("with '");
-
-            if (diagnostic.IsContained)
-            {
-                Write(containingValue.Remove(diagnostic.Index));
-                Write(fix.Value, ConsoleColor.Cyan);
-                Write(containingValue.Substring(diagnostic.EndIndex, containingValue.Length - diagnostic.EndIndex));
-            }
-            else
-            {
-                Write(fix.Value, ConsoleColor.Cyan);
-            }
-
-            Write("'");
-
-            if (Options.Interactive)
-                Write($" ({index + 1})");
-
-            WriteLine();
-        }
-
-        private static bool TryReadSuggestion(out int index)
-        {
-            Write("    Enter number of a suggestion: ");
-
-            string text = Console.ReadLine()?.Trim();
-
-            if (text?.Length == 1)
-            {
-                int num = text[0];
-
-                if (num >= 97
-                    && num <= 122)
-                {
-                    index = num - 97;
-                    return true;
-                }
-            }
-
-            if (int.TryParse(
-                text,
-                NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite,
-                CultureInfo.CurrentCulture,
-                out index)
-                && index > 0)
-            {
-                index--;
-                return true;
-            }
-
-            index = -1;
-            return false;
         }
 
         private void ProcessFix(SpellingDiagnostic diagnostic, SpellingFix spellingFix)
@@ -768,86 +560,9 @@ namespace Roslynator.Spelling
             SpellingData = SpellingData.AddWord(spellingFix.Value);
         }
 
-        private static ImmutableArray<int> GetSplitIndexes(
-            SpellingDiagnostic diagnostic,
-            SpellingData spellingData,
-            CancellationToken cancellationToken = default)
+        private void AddIgnoredValues(List<SpellingDiagnostic> diagnostics)
         {
-            string value = diagnostic.Value;
-            int length = value.Length;
-
-            ImmutableArray<int>.Builder splitIndexes = null;
-
-            if (length >= 4)
-            {
-                char ch = value[0];
-
-                // Tvalue > TValue
-                // Ienumerable > IEnumerable
-                if ((ch == 'I' || ch == 'T')
-                    && diagnostic.Casing == TextCasing.FirstUpper
-                    && spellingData.List.Contains(value.Substring(1)))
-                {
-                    (splitIndexes ??= ImmutableArray.CreateBuilder<int>()).Add(1);
-                }
-            }
-
-            if (length < 6)
-                return splitIndexes?.ToImmutableArray() ?? ImmutableArray<int>.Empty;
-
-            value = diagnostic.ValueLower;
-
-            WordCharMap map = spellingData.List.CharIndexMap;
-
-            ImmutableHashSet<string> values = ImmutableHashSet<string>.Empty;
-
-            for (int i = 0; i < length - 3; i++)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                if (!map.TryGetValue(value, i, out ImmutableHashSet<string> values2))
-                    break;
-
-                values = (i == 0) ? values2 : values.Intersect(values2);
-
-                if (values.Count == 0)
-                    break;
-
-                if (i < 2)
-                    continue;
-
-                foreach (string value2 in values)
-                {
-                    if (value2.Length != i + 1)
-                        continue;
-
-                    ImmutableHashSet<string> values3 = ImmutableHashSet<string>.Empty;
-
-                    for (int j = i + 1; j < length; j++)
-                    {
-                        if (!map.TryGetValue(value[j], j - i - 1, out ImmutableHashSet<string> values4))
-                            break;
-
-                        values3 = (j == i + 1) ? values4 : values3.Intersect(values4);
-
-                        if (values3.Count == 0)
-                            break;
-                    }
-
-                    foreach (string value3 in values3)
-                    {
-                        if (value3.Length != length - i - 1)
-                            continue;
-
-                        (splitIndexes ??= ImmutableArray.CreateBuilder<int>()).Add(i + 1);
-                        break;
-                    }
-
-                    break;
-                }
-            }
-
-            return splitIndexes?.ToImmutableArray() ?? ImmutableArray<int>.Empty;
+            SpellingData = SpellingData.AddIgnoredValues(diagnostics);
         }
     }
 }

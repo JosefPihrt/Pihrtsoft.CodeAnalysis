@@ -3,26 +3,20 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static Roslynator.Logger;
 
 namespace Roslynator
 {
     internal static class ConsoleUtility
     {
-        public static string? ReadUserInput(
-            string prompt,
+        internal static string ReadUserInput(
             string defaultValue,
-            string? indent = null)
+            string prompt,
+            string indent)
         {
-            string? value = ReadUserInput(defaultValue, indent + prompt);
-
-            if (value == null)
-                ConsoleOut.WriteLine();
-
-            return value;
+            return ReadUserInput(defaultValue, indent + prompt);
         }
 
-        private static string? ReadUserInput(string defaultValue, string? prompt = null)
+        public static string ReadUserInput(string defaultValue, string prompt = null)
         {
             bool treatControlCAsInput = Console.TreatControlCAsInput;
 
@@ -38,7 +32,7 @@ namespace Roslynator
             }
         }
 
-        private static string? ReadUserInputImpl(string defaultValue, string prompt)
+        private static string ReadUserInputImpl(string defaultValue, string prompt)
         {
             Console.Write(prompt);
 

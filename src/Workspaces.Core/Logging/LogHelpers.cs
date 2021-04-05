@@ -76,7 +76,7 @@ namespace Roslynator
         {
             WriteDiagnostic(diagnostic.Diagnostic, baseDirectoryPath, default(IFormatProvider), indentation, verbosity);
 
-            TextSpan span = diagnostic.Location.SourceSpan;
+            TextSpan span = diagnostic.Span;
             TextLineCollection lines = sourceText.Lines;
             int lineIndex = lines.IndexOf(span.Start);
             TextLine line = lines[lineIndex];
