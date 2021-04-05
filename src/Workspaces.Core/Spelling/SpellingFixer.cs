@@ -39,6 +39,8 @@ namespace Roslynator.Spelling
 
         public SpellingFixerOptions Options { get; }
 
+        public List<NewWord> NewWords { get; } = new List<NewWord>();
+
         private Solution CurrentSolution => Workspace.CurrentSolution;
 
         public async Task FixSolutionAsync(Func<Project, bool> predicate, CancellationToken cancellationToken = default)
@@ -83,7 +85,7 @@ namespace Roslynator.Spelling
             stopwatch.Stop();
 
             WriteLine($"Done fixing solution '{CurrentSolution.FilePath}' in {stopwatch.Elapsed:mm\\:ss\\.ff}", Verbosity.Minimal);
-
+#if DEBUG
             WriteLine(Verbosity.Normal);
 
             foreach (IGrouping<SpellingFixResult, SpellingFixResult> grouping in results
@@ -100,6 +102,7 @@ namespace Roslynator.Spelling
                         WriteLine($"  {result.OldIdentifier}  {result.NewIdentifier}", Verbosity.Normal);
                 }
             }
+#endif
         }
 
         public async Task<ImmutableArray<SpellingFixResult>> FixProjectAsync(
@@ -204,7 +207,6 @@ namespace Roslynator.Spelling
 
                 List<TextChange> textChanges = null;
 
-                //TODO: group by ContainingValue?
                 foreach (SpellingDiagnostic diagnostic in grouping.OrderBy(f => f.Span.Start))
                 {
                     cancellationToken.ThrowIfCancellationRequested();
@@ -218,21 +220,29 @@ namespace Roslynator.Spelling
 
                     if (!fix.IsDefault)
                     {
-                        WriteFix(diagnostic, fix, ConsoleColor.Green);
+                        if (!string.Equals(diagnostic.Value, fix.Value, StringComparison.Ordinal))
+                        {
+                            WriteFix(diagnostic, fix, ConsoleColor.Green);
 
-                        if (!Options.DryRun)
-                            (textChanges ??= new List<TextChange>()).Add(new TextChange(diagnostic.Span, fix.Value));
+                            if (!Options.DryRun)
+                                (textChanges ??= new List<TextChange>()).Add(new TextChange(diagnostic.Span, fix.Value));
 
-                        results.Add(new SpellingFixResult(
-                            diagnostic.Value,
-                            fix.Value,
-                            diagnostic.Location.GetMappedLineSpan()));
+                            results.Add(new SpellingFixResult(
+                                diagnostic.Value,
+                                fix.Value,
+                                diagnostic.Location.GetMappedLineSpan()));
 
-                        ProcessFix(diagnostic, fix);
+                            ProcessFix(diagnostic, fix);
+                        }
+                        else
+                        {
+                            AddIgnoredValue(diagnostic);
+                            AddNewWord(diagnostic, sourceText);
+                        }
                     }
                     else
                     {
-                        SpellingData = SpellingData.AddIgnoredValue(diagnostic.Value);
+                        AddNewWord(diagnostic, sourceText);
                     }
                 }
 
@@ -376,25 +386,33 @@ namespace Roslynator.Spelling
 
                     if (!fix.IsDefault)
                     {
-                        WriteFix(diagnostic, fix);
-                        newName = TextUtility.ReplaceRange(newName, fix.Value, diagnostic.Offset + indexOffset, diagnostic.Length);
+                        if (!string.Equals(diagnostic.Value, fix.Value, StringComparison.Ordinal))
+                        {
+                            WriteFix(diagnostic, fix);
+                            newName = TextUtility.ReplaceRange(newName, fix.Value, diagnostic.Offset + indexOffset, diagnostic.Length);
 
-                        indexOffset += fix.Value.Length - diagnostic.Length;
+                            indexOffset += fix.Value.Length - diagnostic.Length;
+                        }
+                        else
+                        {
+                            for (int k = 0; k < symbolDiagnostics.Count; k++)
+                            {
+                                List<SpellingDiagnostic> diagnostics2 = symbolDiagnostics[k].diagnostics;
+
+                                for (int l = 0; l < diagnostics2.Count; l++)
+                                {
+                                    if (SpellingData.IgnoredValues.KeyComparer.Equals(diagnostics2[l]?.Value, diagnostic.Value))
+                                        diagnostics2[l] = null;
+                                }
+                            }
+
+                            AddIgnoredValue(diagnostic);
+                            AddNewWord(diagnostic, sourceText);
+                        }
                     }
                     else
                     {
-                        SpellingData = SpellingData.AddIgnoredValue(diagnostic.Value);
-
-                        for (int k = 0; k < symbolDiagnostics.Count; k++)
-                        {
-                            List<SpellingDiagnostic> diagnostics2 = symbolDiagnostics[k].diagnostics;
-
-                            for (int l = 0; l < diagnostics2.Count; l++)
-                            {
-                                if (SpellingData.IgnoredValues.KeyComparer.Equals(diagnostics2[l]?.Value, diagnostic.Value))
-                                    diagnostics2[l] = null;
-                            }
-                        }
+                        AddNewWord(diagnostic, sourceText);
                     }
                 }
 
@@ -443,7 +461,7 @@ namespace Roslynator.Spelling
                     else
                     {
                         Debug.Fail($"Cannot apply changes to solution '{newSolution.FilePath}'");
-                        WriteLine($"    Cannot apply changes to solution '{newSolution.FilePath}'", ConsoleColor.Yellow, Verbosity.Diagnostic);
+                        WriteLine($"    Cannot apply changes to solution '{newSolution.FilePath}'", ConsoleColor.Yellow, Verbosity.Normal);
 
                         AddIgnoredValues(diagnostics);
                         continue;
@@ -518,7 +536,7 @@ namespace Roslynator.Spelling
                     string replacement = ConsoleUtility.ReadUserInput(value, "    Replacement: ");
 
                     if (string.Equals(value, replacement, StringComparison.Ordinal))
-                        break;
+                        return new SpellingFix(replacement, SpellingFixKind.User);
 
                     if (diagnostic.IsApplicableFix(replacement))
                     {
@@ -558,6 +576,22 @@ namespace Roslynator.Spelling
             }
 
             SpellingData = SpellingData.AddWord(spellingFix.Value);
+        }
+
+        private void AddNewWord(SpellingDiagnostic diagnostic, SourceText sourceText)
+        {
+            var newWord = new NewWord(
+                diagnostic.Value,
+                sourceText.Lines.GetLineFromPosition(diagnostic.Index).ToString(),
+                diagnostic.Location.GetLineSpan(),
+                diagnostic.Parent);
+
+            NewWords.Add(newWord);
+        }
+
+        private void AddIgnoredValue(SpellingDiagnostic diagnostic)
+        {
+            SpellingData = SpellingData.AddIgnoredValue(diagnostic.Value);
         }
 
         private void AddIgnoredValues(List<SpellingDiagnostic> diagnostics)

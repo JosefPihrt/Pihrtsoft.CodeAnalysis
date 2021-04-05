@@ -142,6 +142,13 @@ namespace Roslynator.Spelling
         {
             Match match = regex.Match(input, prefixLength);
 
+            if (match.Success
+                && prefixLength > 0
+                && match.Index == prefixLength)
+            {
+                match = match.NextMatch();
+            }
+
             if (!match.Success)
             {
                 if (prefixLength > 0)

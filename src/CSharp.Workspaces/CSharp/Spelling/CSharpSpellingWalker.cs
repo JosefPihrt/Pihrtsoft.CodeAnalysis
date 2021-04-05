@@ -90,18 +90,24 @@ namespace Roslynator.CSharp.Spelling
         {
             if (node.Identifier.Parent != null)
                 AnalyzeIdentifier(node.Identifier);
+
+            base.VisitTupleElement(node);
         }
 
         public override void VisitArgument(ArgumentSyntax node)
         {
             if (node.Expression is DeclarationExpressionSyntax declarationExpression)
                 VisitDeclarationExpression(declarationExpression);
+
+            base.VisitArgument(node);
         }
 
         public override void VisitAnonymousObjectMemberDeclarator(AnonymousObjectMemberDeclaratorSyntax node)
         {
             if (node.NameEquals != null)
                 AnalyzeIdentifier(node.NameEquals.Name.Identifier);
+
+            base.VisitAnonymousObjectMemberDeclarator(node);
         }
 
         public override void VisitLocalFunctionStatement(LocalFunctionStatementSyntax node)
@@ -177,6 +183,8 @@ namespace Roslynator.CSharp.Spelling
         {
             if (node.Alias != null)
                 AnalyzeIdentifier(node.Alias.Name.Identifier);
+
+            base.VisitUsingDirective(node);
         }
 
         public override void VisitNamespaceDeclaration(NamespaceDeclarationSyntax node)
@@ -291,7 +299,6 @@ namespace Roslynator.CSharp.Spelling
         public override void VisitParameter(ParameterSyntax node)
         {
             AnalyzeIdentifier(node.Identifier);
-
             base.VisitParameter(node);
         }
 
@@ -299,6 +306,8 @@ namespace Roslynator.CSharp.Spelling
         {
             if (Options.IncludeLocalVariable)
                 AnalyzeIdentifier(node.Identifier);
+
+            base.VisitForEachStatement(node);
         }
 
         public override void VisitXmlElement(XmlElementSyntax node)
@@ -323,6 +332,8 @@ namespace Roslynator.CSharp.Spelling
                         AnalyzeText(token.ValueText, node.SyntaxTree, token.Span);
                 }
             }
+
+            base.VisitXmlText(node);
         }
     }
 }

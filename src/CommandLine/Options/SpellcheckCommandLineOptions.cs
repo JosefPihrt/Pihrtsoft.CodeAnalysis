@@ -37,6 +37,11 @@ namespace Roslynator.CommandLine
         public bool Interactive { get; set; }
 
         [Option(
+            longName: "output",
+            HelpText = "")]
+        public string Output { get; set; }
+
+        [Option(
             longName: "new-words",
             HelpText = "",
             MetaValue = "<PATH>")]

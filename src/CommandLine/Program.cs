@@ -373,6 +373,9 @@ namespace Roslynator.CommandLine
                     SearchOption.AllDirectories);
             }
 
+            if (!TryEnsureFullPath(options.Output, out string outputPath))
+                return ExitCodes.Error;
+
             if (!TryEnsureFullPath(options.Words, out ImmutableArray<string> wordListPaths2))
                 return ExitCodes.Error;
 
@@ -406,7 +409,7 @@ namespace Roslynator.CommandLine
 
             var data = new SpellingData(loaderResult.List, loaderResult.CaseSensitiveList, fixes);
 
-            var command = new SpellcheckCommand(options, projectFilter, data, visibility, newWordsPath, newFixesPath);
+            var command = new SpellcheckCommand(options, projectFilter, data, visibility, newWordsPath, newFixesPath, outputPath);
 
             IEnumerable<string> properties = options.Properties;
 #if DEBUG
