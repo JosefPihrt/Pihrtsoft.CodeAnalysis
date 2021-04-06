@@ -70,7 +70,7 @@ namespace Roslynator.Spelling
                 spellingData);
 
             foreach (string match in matches)
-                fixes.Add(new SpellingFix(match, SpellingFixKind.Swap));
+                fixes.Add(new SpellingFix(match, SpellingFixKind.None));
 
             if (fixes.Count == 0
                 && (diagnostic.Casing == TextCasing.Lower
@@ -94,19 +94,19 @@ namespace Roslynator.Spelling
                         // Tvalue > TValue
                         fixes.Add(new SpellingFix(
                             TextUtility.ReplaceRange(value, char.ToUpperInvariant(value[splitIndex]).ToString(), splitIndex, 1),
-                            SpellingFixKind.Split));
+                            SpellingFixKind.None));
                     }
 
                     if (diagnostic.IsSymbol)
                     {
                         // foobar > foo_bar
                         if (canInsertUnderscore == true)
-                            fixes.Add(new SpellingFix(value.Insert(splitIndex, "_"), SpellingFixKind.Split));
+                            fixes.Add(new SpellingFix(value.Insert(splitIndex, "_"), SpellingFixKind.None));
                     }
                     else if (splitIndex > 1)
                     {
                         // foobar > foo bar
-                        fixes.Add(new SpellingFix(value.Insert(splitIndex, " "), SpellingFixKind.Split));
+                        fixes.Add(new SpellingFix(value.Insert(splitIndex, " "), SpellingFixKind.None));
                     }
                 }
             }

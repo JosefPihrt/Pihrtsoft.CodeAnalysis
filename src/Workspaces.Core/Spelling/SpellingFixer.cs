@@ -383,7 +383,6 @@ namespace Roslynator.Spelling
 
                 } while (s != null);
 
-
                 if (symbolId == null)
                 {
                     Debug.Fail(symbol.ToDisplayString(SymbolDisplayFormats.Test));
@@ -393,13 +392,11 @@ namespace Roslynator.Spelling
                 if (ignoredSymbols.Contains(symbolId))
                     continue;
 
-                if (!symbol.IsKind(SymbolKind.Namespace, SymbolKind.Alias))
+                if (!symbol.IsKind(SymbolKind.Namespace, SymbolKind.Alias)
+                    && !symbol.IsVisible(Options.SymbolVisibility))
                 {
-                    if (!symbol.IsVisible(Options.SymbolVisibility))
-                    {
-                        ignoredSymbols.Add(symbolId);
-                        continue;
-                    }
+                    ignoredSymbols.Add(symbolId);
+                    continue;
                 }
 
                 allIgnored = false;
@@ -553,15 +550,21 @@ namespace Roslynator.Spelling
                 TextCasing textCasing = TextUtility.GetTextCasing(value);
 
                 if (textCasing != TextCasing.Undefined
-                    && SpellingData.Fixes.TryGetValue(value, out ImmutableHashSet<SpellingFix> fixes))
+                    && SpellingData.Fixes.TryGetValue(value, out ImmutableHashSet<SpellingFix> possibleFixes))
                 {
-                    SpellingFix fix = fixes.SingleOrDefault(
-                        f => TextUtility.GetTextCasing(f.Value) != TextCasing.Undefined
+                    SpellingFix fix = possibleFixes.SingleOrDefault(
+                        f => (TextUtility.GetTextCasing(f.Value) != TextCasing.Undefined
+                            || string.Equals(value, f.Value, StringComparison.OrdinalIgnoreCase))
                             && diagnostic.IsApplicableFix(f.Value),
                         shouldThrow: false);
 
                     if (!fix.IsDefault)
-                        return fix.WithValue(TextUtility.SetTextCasing(fix.Value, textCasing));
+                    {
+                        if (!string.Equals(value, fix.Value, StringComparison.OrdinalIgnoreCase))
+                            fix = fix.WithValue(TextUtility.SetTextCasing(fix.Value, textCasing));
+
+                        return fix;
+                    }
                 }
             }
 
@@ -604,11 +607,13 @@ namespace Roslynator.Spelling
 
         private void ProcessFix(SpellingDiagnostic diagnostic, SpellingFix spellingFix)
         {
-            if (spellingFix.Kind != SpellingFixKind.Predefined
-                && (spellingFix.Kind != SpellingFixKind.User
-                    || TextUtility.TextCasingEquals(diagnostic.Value, spellingFix.Value)))
+            if (spellingFix.Kind != SpellingFixKind.Predefined)
             {
-                SpellingData = SpellingData.AddFix(diagnostic.Value, spellingFix);
+                if (string.Equals(diagnostic.Value, spellingFix.Value, StringComparison.OrdinalIgnoreCase)
+                    || TextUtility.TextCasingEquals(diagnostic.Value, spellingFix.Value))
+                {
+                    SpellingData = SpellingData.AddFix(diagnostic.Value, spellingFix);
+                }
             }
 
             SpellingData = SpellingData.AddWord(spellingFix.Value);

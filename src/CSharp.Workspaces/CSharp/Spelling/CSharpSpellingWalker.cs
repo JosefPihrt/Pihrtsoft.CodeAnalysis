@@ -9,7 +9,7 @@ using Roslynator.Spelling;
 
 namespace Roslynator.CSharp.Spelling
 {
-    internal class CSharpSpellingWalker : CSharpSyntaxWalker
+    internal sealed class CSharpSpellingWalker : CSharpSyntaxWalker
     {
         private readonly SpellingAnalysisContext _analysisContext;
 
@@ -91,6 +91,9 @@ namespace Roslynator.CSharp.Spelling
 
         public override void VisitTupleType(TupleTypeSyntax node)
         {
+            if (node.Elements.All(f => f.Identifier.IsKind(SyntaxKind.None)))
+                return;
+
             if (!ShouldVisit(SpellingScopeFilter.LocalVariable
                 | SpellingScopeFilter.Field
                 | SpellingScopeFilter.Constant

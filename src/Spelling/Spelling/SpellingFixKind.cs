@@ -7,8 +7,5 @@ namespace Roslynator.Spelling
         None = 0,
         Predefined = 1,
         User = 2,
-        Fuzzy = 3,
-        Split = 4,
-        Swap = 5,
     }
 }
