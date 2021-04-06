@@ -11,6 +11,7 @@ using System.Text;
 
 namespace Roslynator.Spelling
 {
+    [DebuggerDisplay("{DebuggerDisplay,nq}")]
     public class FixList
     {
         public static FixList Empty { get; }
@@ -25,6 +26,9 @@ namespace Roslynator.Spelling
         public ImmutableDictionary<string, ImmutableHashSet<SpellingFix>> Items { get; }
 
         public int Count => Items.Count;
+
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
+        private string DebuggerDisplay => $"Count = {Items.Count}";
 
         public bool ContainsKey(string key) => Items.ContainsKey(key);
 
@@ -190,7 +194,7 @@ namespace Roslynator.Spelling
                         .SelectMany(f => f.Value.Select(g => (key: f.Key, fix: g)))
                         .OrderBy(f => f.key, StringComparer.InvariantCulture)
                         .ThenBy(f => f.fix, SpellingFixComparer.InvariantCulture)
-                        .Select(f => $"{f.key}={f.fix.Value}")),
+                        .Select(f => GetItemText(f.key, f.fix.Value))),
                 Encoding.UTF8);
         }
 
@@ -199,6 +203,11 @@ namespace Roslynator.Spelling
             Save(path);
 
             return LoadFile(path);
+        }
+
+        internal static string GetItemText(string key, string value)
+        {
+            return $"{key}={value}";
         }
     }
 }

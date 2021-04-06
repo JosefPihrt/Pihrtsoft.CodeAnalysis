@@ -44,7 +44,7 @@ namespace Roslynator.CSharp.Spelling
                 options,
                 cancellationToken);
 
-            var walker = new CSharpSpellingWalker(analysisContext);
+            CSharpSpellingWalker walker = CSharpSpellingWalker.Create(analysisContext);
 
             walker.Visit(node);
 
@@ -140,7 +140,7 @@ namespace Roslynator.CSharp.Spelling
                     _options,
                     context.CancellationToken);
 
-                var walker = new CSharpSpellingWalker(analysisContext);
+                CSharpSpellingWalker walker = CSharpSpellingWalker.Create(analysisContext);
 
                 walker.Visit(root);
             }

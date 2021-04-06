@@ -54,6 +54,12 @@ namespace Roslynator.CommandLine
         public string NewFixes { get; set; }
 
         [Option(
+            longName: ParameterNames.Scope,
+            HelpText = "",
+            MetaValue = "<SCOPE>")]
+        public IEnumerable<string> Scope { get; set; }
+
+        [Option(
             longName: ParameterNames.Visibility,
             Default = nameof(Roslynator.Visibility.Public),
             HelpText = "Defines a  maximal visibility of a symbol to be fixable. Allowed values are public, internal or private. Default value is public.",

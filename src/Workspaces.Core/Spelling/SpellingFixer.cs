@@ -111,11 +111,6 @@ namespace Roslynator.Spelling
         {
             project = CurrentSolution.GetProject(project.Id);
 
-            ReportDiagnostic reportDiagnostic = SpellingAnalyzer.DiagnosticDescriptor.GetEffectiveSeverity(project.CompilationOptions);
-
-            if (reportDiagnostic == ReportDiagnostic.Suppress)
-                return ImmutableArray<SpellingFixResult>.Empty;
-
             ISpellingService service = MefWorkspaceServices.Default.GetService<ISpellingService>(project.Language);
 
             if (service == null)
@@ -123,7 +118,8 @@ namespace Roslynator.Spelling
 
             ImmutableArray<SpellingFixResult>.Builder results = ImmutableArray.CreateBuilder<SpellingFixResult>();
 
-            var commentsFixed = false;
+            var ignoredSymbols = new HashSet<string>(StringComparer.Ordinal);
+            bool commentsFixed = (Options.ScopeFilter & SpellingScopeFilter.NonSymbol) == 0;
 
             while (true)
             {
@@ -171,8 +167,21 @@ namespace Roslynator.Spelling
                     commentsFixed = true;
                 }
 
-                List<SpellingFixResult> symbolResults = await FixSymbolsAsync(project, spellingDiagnostics, service.SyntaxFacts, cancellationToken).ConfigureAwait(false);
+                if ((Options.ScopeFilter & SpellingScopeFilter.Symbol) == 0)
+                    break;
+
+                (List<SpellingFixResult> symbolResults, bool allIgnored) = await FixSymbolsAsync(
+                    project,
+                    spellingDiagnostics,
+                    service.SyntaxFacts,
+                    ignoredSymbols,
+                    cancellationToken)
+                    .ConfigureAwait(false);
+
                 results.AddRange(symbolResults);
+
+                if (allIgnored)
+                    break;
 
                 if (Options.DryRun)
                     break;
@@ -265,13 +274,15 @@ namespace Roslynator.Spelling
             return results;
         }
 
-        private async Task<List<SpellingFixResult>> FixSymbolsAsync(
+        private async Task<(List<SpellingFixResult>, bool allIgnored)> FixSymbolsAsync(
             Project project,
             List<SpellingDiagnostic> spellingDiagnostics,
             ISyntaxFactsService syntaxFacts,
+            HashSet<string> ignoredSymbols,
             CancellationToken cancellationToken)
         {
             var results = new List<SpellingFixResult>();
+            var allIgnored = true;
 
             List<(SyntaxToken identifier, List<SpellingDiagnostic> diagnostics, DocumentId documentId)> symbolDiagnostics = spellingDiagnostics
                 .Where(f => f.IsSymbol)
@@ -302,17 +313,14 @@ namespace Roslynator.Spelling
                 }
 
                 if (node == null)
-                {
-                    AddIgnoredValues(diagnostics);
                     continue;
-                }
 
                 Document document = project.GetDocument(documentId);
 
-                Debug.Assert(document != null, identifier.GetLocation().ToString());
-
                 if (document == null)
                 {
+                    Debug.Fail(identifier.GetLocation().ToString());
+
                     WriteLine($"    Cannot find document for'{identifier.ValueText}'", ConsoleColor.Yellow, Verbosity.Detailed);
                     AddIgnoredValues(diagnostics);
                     continue;
@@ -352,21 +360,49 @@ namespace Roslynator.Spelling
                 ISymbol symbol = semanticModel.GetDeclaredSymbol(node, cancellationToken)
                     ?? semanticModel.GetSymbol(node, cancellationToken);
 
-                Debug.Assert(symbol != null, identifier.ToString());
-
                 if (symbol == null)
                 {
+                    Debug.Fail(identifier.ToString());
+
                     WriteLine($"    Cannot find symbol for '{identifier.ValueText}'", ConsoleColor.Yellow, Verbosity.Detailed);
                     AddIgnoredValues(diagnostics);
                     continue;
                 }
 
-                if (!symbol.IsKind(SymbolKind.Namespace, SymbolKind.Alias)
-                    && !symbol.IsVisible(Options.SymbolVisibility))
+                string symbolId = null;
+
+                ISymbol s = symbol;
+                do
                 {
+                    symbolId = s.GetDocumentationCommentId();
+
+                    if (symbolId != null)
+                        break;
+
+                    s = s.ContainingSymbol;
+
+                } while (s != null);
+
+
+                if (symbolId == null)
+                {
+                    Debug.Fail(symbol.ToDisplayString(SymbolDisplayFormats.Test));
                     AddIgnoredValues(diagnostics);
-                    continue;
                 }
+
+                if (ignoredSymbols.Contains(symbolId))
+                    continue;
+
+                if (!symbol.IsKind(SymbolKind.Namespace, SymbolKind.Alias))
+                {
+                    if (!symbol.IsVisible(Options.SymbolVisibility))
+                    {
+                        ignoredSymbols.Add(symbolId);
+                        continue;
+                    }
+                }
+
+                allIgnored = false;
 
                 var fixes = new List<(SpellingDiagnostic diagnostic, SpellingFix fix)>();
                 string newName = identifier.ValueText;
@@ -447,7 +483,7 @@ namespace Roslynator.Spelling
                         WriteLine(identifier.ValueText);
                         WriteLine(ex.ToString());
 #endif
-                        AddIgnoredValues(diagnostics);
+                        ignoredSymbols.Add(symbolId);
                         continue;
                     }
                 }
@@ -463,7 +499,7 @@ namespace Roslynator.Spelling
                         Debug.Fail($"Cannot apply changes to solution '{newSolution.FilePath}'");
                         WriteLine($"    Cannot apply changes to solution '{newSolution.FilePath}'", ConsoleColor.Yellow, Verbosity.Normal);
 
-                        AddIgnoredValues(diagnostics);
+                        ignoredSymbols.Add(symbolId);
                         continue;
                     }
                 }
@@ -485,7 +521,7 @@ namespace Roslynator.Spelling
                 }
             }
 
-            return results;
+            return (results, allIgnored);
         }
 
         private SpellingFix GetParentFix(SpellingDiagnostic diagnostic)
@@ -596,7 +632,7 @@ namespace Roslynator.Spelling
 
         private void AddIgnoredValues(List<SpellingDiagnostic> diagnostics)
         {
-            SpellingData = SpellingData.AddIgnoredValues(diagnostics);
+            SpellingData = SpellingData.AddIgnoredValues(diagnostics.Select(f => f.Value).Where(f => f != null));
         }
     }
 }

@@ -50,11 +50,5 @@ namespace Roslynator.Spelling
         public bool Interactive { get; }
 
         public bool DryRun { get; }
-
-        public bool IncludeNonDocumentationComments => (ScopeFilter & SpellingScopeFilter.NonDocumentationComment) != 0;
-
-        public bool IncludeDocumentationComments => (ScopeFilter & SpellingScopeFilter.DocumentationComment) != 0;
-
-        public bool IncludeLocalVariable => (ScopeFilter & SpellingScopeFilter.LocalVariable) != 0;
     }
 }

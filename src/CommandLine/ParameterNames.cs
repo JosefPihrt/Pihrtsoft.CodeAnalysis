@@ -20,6 +20,7 @@ namespace Roslynator.CommandLine
         public const string OmitMemberParts = "omit-member-parts";
         public const string Projects = "projects";
         public const string RootDirectoryUrl = "root-directory-url";
+        public const string Scope = "scope";
         public const string SeverityLevel = "severity-level";
         public const string SymbolGroups = "symbol-groups";
         public const string TargetVersion = "target-version";

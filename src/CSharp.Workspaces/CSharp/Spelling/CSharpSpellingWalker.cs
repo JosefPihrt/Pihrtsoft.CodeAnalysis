@@ -9,17 +9,32 @@ using Roslynator.Spelling;
 
 namespace Roslynator.CSharp.Spelling
 {
-    //TODO: allow parameter names in comments
     internal class CSharpSpellingWalker : CSharpSyntaxWalker
     {
         private readonly SpellingAnalysisContext _analysisContext;
 
         private SpellingFixerOptions Options => _analysisContext.Options;
 
-        public CSharpSpellingWalker(SpellingAnalysisContext analysisContext)
-            : base(SyntaxWalkerDepth.StructuredTrivia)
+        private CSharpSpellingWalker(SpellingAnalysisContext analysisContext, SyntaxWalkerDepth depth)
+            : base(depth)
         {
             _analysisContext = analysisContext;
+        }
+
+        public static CSharpSpellingWalker Create(SpellingAnalysisContext context)
+        {
+            return new CSharpSpellingWalker(context, GetWalkerDepth(context));
+
+            static SyntaxWalkerDepth GetWalkerDepth(SpellingAnalysisContext context)
+            {
+                if ((context.Options.ScopeFilter & (SpellingScopeFilter.DocumentationComment | SpellingScopeFilter.RegionDirective)) != 0)
+                    return SyntaxWalkerDepth.StructuredTrivia;
+
+                if ((context.Options.ScopeFilter & SpellingScopeFilter.NonDocumentationComment) != 0)
+                    return SyntaxWalkerDepth.Trivia;
+
+                return SyntaxWalkerDepth.Token;
+            }
         }
 
         private void AnalyzeText(string value, SyntaxTree syntaxTree, TextSpan textSpan)
@@ -43,7 +58,7 @@ namespace Roslynator.CSharp.Spelling
                 case SyntaxKind.SingleLineCommentTrivia:
                 case SyntaxKind.MultiLineCommentTrivia:
                     {
-                        if (Options.IncludeNonDocumentationComments)
+                        if (ShouldVisit(SpellingScopeFilter.NonDocumentationComment))
                             AnalyzeText(trivia.ToString(), trivia.SyntaxTree, trivia.Span);
 
                         break;
@@ -51,7 +66,7 @@ namespace Roslynator.CSharp.Spelling
                 case SyntaxKind.SingleLineDocumentationCommentTrivia:
                 case SyntaxKind.MultiLineDocumentationCommentTrivia:
                     {
-                        if (Options.IncludeDocumentationComments)
+                        if (ShouldVisit(SpellingScopeFilter.DocumentationComment))
                             base.VisitTrivia(trivia);
 
                         break;
@@ -59,14 +74,14 @@ namespace Roslynator.CSharp.Spelling
                 case SyntaxKind.RegionDirectiveTrivia:
                 case SyntaxKind.EndRegionDirectiveTrivia:
                     {
-                        if (Options.IncludeNonDocumentationComments)
+                        if (ShouldVisit(SpellingScopeFilter.RegionDirective))
                             base.VisitTrivia(trivia);
 
                         break;
                     }
                 case SyntaxKind.PreprocessingMessageTrivia:
                     {
-                        Debug.Assert(Options.IncludeNonDocumentationComments);
+                        Debug.Assert(ShouldVisit(SpellingScopeFilter.RegionDirective));
 
                         AnalyzeText(trivia.ToString(), trivia.SyntaxTree, trivia.Span);
                         break;
@@ -76,14 +91,85 @@ namespace Roslynator.CSharp.Spelling
 
         public override void VisitTupleType(TupleTypeSyntax node)
         {
-            if (!Options.IncludeLocalVariable
-                && node.IsParentKind(SyntaxKind.VariableDeclaration)
-                && node.Parent.IsParentKind(SyntaxKind.LocalDeclarationStatement, SyntaxKind.UsingStatement))
+            if (!ShouldVisit(SpellingScopeFilter.LocalVariable
+                | SpellingScopeFilter.Field
+                | SpellingScopeFilter.Constant
+                | SpellingScopeFilter.ReturnType))
             {
                 return;
             }
 
-            base.VisitTupleType(node);
+            SyntaxNode parent = node.Parent;
+
+            if (parent.IsKind(SyntaxKind.ArrayType))
+                parent = parent.Parent;
+
+            if (parent.IsKind(SyntaxKind.NullableType))
+                parent = parent.Parent;
+
+            switch (parent.Kind())
+            {
+                case SyntaxKind.VariableDeclaration:
+                    {
+                        parent = parent.Parent;
+
+                        switch (parent.Kind())
+                        {
+                            case SyntaxKind.LocalDeclarationStatement:
+                            case SyntaxKind.UsingStatement:
+                                {
+                                    if (ShouldVisit(SpellingScopeFilter.LocalVariable))
+                                        base.VisitTupleType(node);
+
+                                    break;
+                                }
+                            case SyntaxKind.FieldDeclaration:
+                                {
+                                    if (ShouldVisitFieldDeclaration(parent))
+                                        base.VisitTupleType(node);
+
+                                    break;
+                                }
+                            default:
+                                {
+                                    Debug.Fail(parent.Kind().ToString());
+                                    break;
+                                }
+                        }
+
+                        break;
+                    }
+                case SyntaxKind.ConversionOperatorDeclaration:
+                case SyntaxKind.DelegateDeclaration:
+                case SyntaxKind.IndexerDeclaration:
+                case SyntaxKind.MethodDeclaration:
+                case SyntaxKind.PropertyDeclaration:
+                    {
+                        if (ShouldVisit(SpellingScopeFilter.ReturnType))
+                            base.VisitTupleType(node);
+
+                        break;
+                    }
+                case SyntaxKind.ArrayCreationExpression:
+                    {
+                        if (ShouldVisit(SpellingScopeFilter.LocalVariable))
+                            base.VisitTupleType(node);
+
+                        break;
+                    }
+                case SyntaxKind.TypeOfExpression:
+                case SyntaxKind.TypeArgumentList:
+                case SyntaxKind.DefaultExpression:
+                case SyntaxKind.Parameter:
+                    {
+                        break;
+                    }
+                default:
+                    {
+                        Debug.Fail(parent.Kind().ToString());
+                        break;
+                    }
+            }
         }
 
         public override void VisitTupleElement(TupleElementSyntax node)
@@ -104,68 +190,69 @@ namespace Roslynator.CSharp.Spelling
 
         public override void VisitAnonymousObjectMemberDeclarator(AnonymousObjectMemberDeclaratorSyntax node)
         {
-            if (node.NameEquals != null)
+            if (node.NameEquals != null
+                && ShouldVisit(SpellingScopeFilter.LocalVariable))
+            {
                 AnalyzeIdentifier(node.NameEquals.Name.Identifier);
+            }
 
             base.VisitAnonymousObjectMemberDeclarator(node);
         }
 
         public override void VisitLocalFunctionStatement(LocalFunctionStatementSyntax node)
         {
-            AnalyzeIdentifier(node.Identifier);
+            if (ShouldVisit(SpellingScopeFilter.LocalFunction))
+                AnalyzeIdentifier(node.Identifier);
+
             base.VisitLocalFunctionStatement(node);
         }
 
         public override void VisitVariableDeclarator(VariableDeclaratorSyntax node)
         {
-            if (ShouldAnalyze(node))
-                AnalyzeIdentifier(node.Identifier);
+            Debug.Assert(node.IsParentKind(SyntaxKind.VariableDeclaration), node.Parent.Kind().ToString());
+
+            if (node.IsParentKind(SyntaxKind.VariableDeclaration))
+            {
+                switch (node.Parent.Parent.Kind())
+                {
+                    case SyntaxKind.LocalDeclarationStatement:
+                    case SyntaxKind.UsingStatement:
+                    case SyntaxKind.ForStatement:
+                    case SyntaxKind.FixedStatement:
+                        {
+                            if (ShouldVisit(SpellingScopeFilter.LocalVariable))
+                                AnalyzeIdentifier(node.Identifier);
+
+                            break;
+                        }
+                    case SyntaxKind.FieldDeclaration:
+                        {
+                            if (ShouldVisitFieldDeclaration(node.Parent.Parent))
+                                AnalyzeIdentifier(node.Identifier);
+
+                            break;
+                        }
+                    case SyntaxKind.EventFieldDeclaration:
+                        {
+                            if (ShouldVisit(SpellingScopeFilter.Event))
+                                AnalyzeIdentifier(node.Identifier);
+
+                            break;
+                        }
+                    default:
+                        {
+                            Debug.Fail(node.Parent.Parent.Kind().ToString());
+                            break;
+                        }
+                }
+            }
 
             base.VisitVariableDeclarator(node);
-
-            bool ShouldAnalyze(VariableDeclaratorSyntax node)
-            {
-                Debug.Assert(node.IsParentKind(SyntaxKind.VariableDeclaration), node.Parent.Kind().ToString());
-
-                if (node.IsParentKind(SyntaxKind.VariableDeclaration))
-                {
-                    Debug.Assert(
-                        node.Parent.IsParentKind(
-                            SyntaxKind.LocalDeclarationStatement,
-                            SyntaxKind.UsingStatement,
-                            SyntaxKind.ForStatement,
-                            SyntaxKind.FixedStatement,
-                            SyntaxKind.FieldDeclaration,
-                            SyntaxKind.EventFieldDeclaration),
-                        node.Parent.Parent.Kind().ToString());
-
-                    switch (node.Parent.Parent.Kind())
-                    {
-                        case SyntaxKind.LocalDeclarationStatement:
-                        case SyntaxKind.UsingStatement:
-                        case SyntaxKind.ForStatement:
-                        case SyntaxKind.FixedStatement:
-                            {
-                                if (!Options.IncludeLocalVariable)
-                                    return false;
-
-                                break;
-                            }
-                        case SyntaxKind.FieldDeclaration:
-                        case SyntaxKind.EventFieldDeclaration:
-                            {
-                                break;
-                            }
-                    }
-                }
-
-                return true;
-            }
         }
 
         public override void VisitSingleVariableDesignation(SingleVariableDesignationSyntax node)
         {
-            if (Options.IncludeLocalVariable)
+            if (ShouldVisit(SpellingScopeFilter.LocalVariable))
                 AnalyzeIdentifier(node.Identifier);
 
             base.VisitSingleVariableDesignation(node);
@@ -173,7 +260,7 @@ namespace Roslynator.CSharp.Spelling
 
         public override void VisitCatchDeclaration(CatchDeclarationSyntax node)
         {
-            if (Options.IncludeLocalVariable)
+            if (ShouldVisit(SpellingScopeFilter.LocalVariable))
                 AnalyzeIdentifier(node.Identifier);
 
             base.VisitCatchDeclaration(node);
@@ -181,15 +268,20 @@ namespace Roslynator.CSharp.Spelling
 
         public override void VisitUsingDirective(UsingDirectiveSyntax node)
         {
-            if (node.Alias != null)
+            if (node.Alias != null
+                && ShouldVisit(SpellingScopeFilter.UsingAlias))
+            {
                 AnalyzeIdentifier(node.Alias.Name.Identifier);
+            }
 
             base.VisitUsingDirective(node);
         }
 
         public override void VisitNamespaceDeclaration(NamespaceDeclarationSyntax node)
         {
-            VisitName(node.Name);
+            if (ShouldVisit(SpellingScopeFilter.Namespace))
+                VisitName(node.Name);
+
             base.VisitNamespaceDeclaration(node);
         }
 
@@ -216,95 +308,129 @@ namespace Roslynator.CSharp.Spelling
 
         public override void VisitTypeParameter(TypeParameterSyntax node)
         {
-            SyntaxToken identifier = node.Identifier;
-            string value = identifier.ValueText;
-
-            int prefixLength = 0;
-            if (value.Length > 1
-                && value[0] == 'T'
-                && char.IsUpper(value[1]))
+            if (ShouldVisit(SpellingScopeFilter.TypeParameter))
             {
-                prefixLength = 1;
+                SyntaxToken identifier = node.Identifier;
+                string value = identifier.ValueText;
+
+                int prefixLength = 0;
+                if (value.Length > 1
+                    && value[0] == 'T'
+                    && char.IsUpper(value[1]))
+                {
+                    prefixLength = 1;
+                }
+
+                AnalyzeIdentifier(identifier, prefixLength: prefixLength);
             }
 
-            AnalyzeIdentifier(identifier, prefixLength: prefixLength);
             base.VisitTypeParameter(node);
         }
 
         public override void VisitClassDeclaration(ClassDeclarationSyntax node)
         {
-            AnalyzeIdentifier(node.Identifier);
+            if (ShouldVisit(SpellingScopeFilter.Class))
+                AnalyzeIdentifier(node.Identifier);
+
             base.VisitClassDeclaration(node);
         }
 
         public override void VisitStructDeclaration(StructDeclarationSyntax node)
         {
-            AnalyzeIdentifier(node.Identifier);
+            if (ShouldVisit(SpellingScopeFilter.Struct))
+                AnalyzeIdentifier(node.Identifier);
+
             base.VisitStructDeclaration(node);
         }
 
         public override void VisitInterfaceDeclaration(InterfaceDeclarationSyntax node)
         {
-            SyntaxToken identifier = node.Identifier;
-            string value = identifier.ValueText;
-
-            int prefixLength = 0;
-            if (value.Length > 1
-                && value[0] == 'I'
-                && char.IsUpper(value[1]))
+            if (ShouldVisit(SpellingScopeFilter.Interface))
             {
-                prefixLength = 1;
+                SyntaxToken identifier = node.Identifier;
+                string value = identifier.ValueText;
+
+                int prefixLength = 0;
+                if (value.Length > 1
+                    && value[0] == 'I'
+                    && char.IsUpper(value[1]))
+                {
+                    prefixLength = 1;
+                }
+
+                AnalyzeIdentifier(identifier, prefixLength: prefixLength);
             }
 
-            AnalyzeIdentifier(identifier, prefixLength: prefixLength);
             base.VisitInterfaceDeclaration(node);
+        }
+
+        public override void VisitRecordDeclaration(RecordDeclarationSyntax node)
+        {
+            if (ShouldVisit(SpellingScopeFilter.Record))
+                AnalyzeIdentifier(node.Identifier);
+
+            base.VisitRecordDeclaration(node);
         }
 
         public override void VisitEnumDeclaration(EnumDeclarationSyntax node)
         {
-            AnalyzeIdentifier(node.Identifier);
+            if (ShouldVisit(SpellingScopeFilter.Enum))
+                AnalyzeIdentifier(node.Identifier);
+
             base.VisitEnumDeclaration(node);
         }
 
         public override void VisitDelegateDeclaration(DelegateDeclarationSyntax node)
         {
-            AnalyzeIdentifier(node.Identifier);
+            if (ShouldVisit(SpellingScopeFilter.Delegate))
+                AnalyzeIdentifier(node.Identifier);
+
             base.VisitDelegateDeclaration(node);
         }
 
         public override void VisitEnumMemberDeclaration(EnumMemberDeclarationSyntax node)
         {
-            AnalyzeIdentifier(node.Identifier);
+            if (ShouldVisit(SpellingScopeFilter.Field))
+                AnalyzeIdentifier(node.Identifier);
+
             base.VisitEnumMemberDeclaration(node);
         }
 
         public override void VisitMethodDeclaration(MethodDeclarationSyntax node)
         {
-            AnalyzeIdentifier(node.Identifier);
+            if (ShouldVisit(SpellingScopeFilter.Method))
+                AnalyzeIdentifier(node.Identifier);
+
             base.VisitMethodDeclaration(node);
         }
 
         public override void VisitPropertyDeclaration(PropertyDeclarationSyntax node)
         {
-            AnalyzeIdentifier(node.Identifier);
+            if (ShouldVisit(SpellingScopeFilter.Property))
+                AnalyzeIdentifier(node.Identifier);
+
             base.VisitPropertyDeclaration(node);
         }
 
         public override void VisitEventDeclaration(EventDeclarationSyntax node)
         {
-            AnalyzeIdentifier(node.Identifier);
+            if (ShouldVisit(SpellingScopeFilter.Event))
+                AnalyzeIdentifier(node.Identifier);
+
             base.VisitEventDeclaration(node);
         }
 
         public override void VisitParameter(ParameterSyntax node)
         {
-            AnalyzeIdentifier(node.Identifier);
+            if (ShouldVisit(SpellingScopeFilter.Parameter))
+                AnalyzeIdentifier(node.Identifier);
+
             base.VisitParameter(node);
         }
 
         public override void VisitForEachStatement(ForEachStatementSyntax node)
         {
-            if (Options.IncludeLocalVariable)
+            if (ShouldVisit(SpellingScopeFilter.LocalVariable))
                 AnalyzeIdentifier(node.Identifier);
 
             base.VisitForEachStatement(node);
@@ -324,7 +450,7 @@ namespace Roslynator.CSharp.Spelling
 
         public override void VisitXmlText(XmlTextSyntax node)
         {
-            if (Options.IncludeDocumentationComments)
+            if (ShouldVisit(SpellingScopeFilter.DocumentationComment))
             {
                 foreach (SyntaxToken token in node.TextTokens)
                 {
@@ -334,6 +460,18 @@ namespace Roslynator.CSharp.Spelling
             }
 
             base.VisitXmlText(node);
+        }
+
+        private bool ShouldVisit(SpellingScopeFilter filter)
+        {
+            return (Options.ScopeFilter & filter) != 0;
+        }
+
+        private bool ShouldVisitFieldDeclaration(SyntaxNode fieldDeclaration)
+        {
+            return ShouldVisit((((FieldDeclarationSyntax)fieldDeclaration).Modifiers.Contains(SyntaxKind.ConstKeyword))
+                ? SpellingScopeFilter.Constant
+                : SpellingScopeFilter.Field);
         }
     }
 }

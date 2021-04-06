@@ -124,13 +124,22 @@ namespace Roslynator.Spelling
         public static void Save(
             string path,
             IEnumerable<string> values,
-            StringComparer comparer)
+            StringComparer comparer,
+            bool merge = false)
         {
+            if (merge
+                && File.Exists(path))
+            {
+                WordListLoaderResult result = WordListLoader.LoadFile(path);
+
+                values = values.Concat(result.List.Values).Concat(result.CaseSensitiveList.Values);
+            }
+
             values = values
                 .Where(f => !string.IsNullOrWhiteSpace(f))
                 .Select(f => f.Trim())
                 .Distinct(comparer)
-                .OrderBy(f => f, StringComparer.InvariantCulture);
+                .OrderBy(f => f, comparer);
 
             Debug.WriteLine($"Saving '{path}'");
 

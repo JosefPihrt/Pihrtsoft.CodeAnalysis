@@ -2,20 +2,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Roslynator
 {
     internal static class ConsoleUtility
     {
-        internal static string ReadUserInput(
-            string defaultValue,
-            string prompt,
-            string indent)
-        {
-            return ReadUserInput(defaultValue, indent + prompt);
-        }
-
         public static string ReadUserInput(string defaultValue, string prompt = null)
         {
             bool treatControlCAsInput = Console.TreatControlCAsInput;
@@ -24,7 +17,7 @@ namespace Roslynator
             {
                 Console.TreatControlCAsInput = true;
 
-                return ReadUserInputImpl(defaultValue, prompt ?? "");
+                return ReadUserInput(defaultValue, prompt ?? "", -1);
             }
             finally
             {
@@ -32,8 +25,13 @@ namespace Roslynator
             }
         }
 
-        private static string ReadUserInputImpl(string defaultValue, string prompt)
+        public static string ReadUserInput(string defaultValue, string prompt, int position)
         {
+            prompt ??= "";
+
+            if (position > prompt.Length)
+                throw new ArgumentOutOfRangeException(nameof(position), position, "");
+
             Console.Write(prompt);
 
             int initTop = Console.CursorTop;
@@ -43,10 +41,37 @@ namespace Roslynator
 
             Console.Write(defaultValue);
 
+            if (position >= 0)
+                MoveCursorLeft(defaultValue.Length - position);
+
             ConsoleKeyInfo keyInfo = Console.ReadKey(true);
 
             while (keyInfo.Key != ConsoleKey.Enter)
             {
+#if DEBUG
+                if (keyInfo.KeyChar == '\0')
+                {
+                    Debug.Write(keyInfo.Key);
+                }
+                else
+                {
+                    Debug.Write((int)keyInfo.KeyChar);
+
+                    if (keyInfo.KeyChar >= 32)
+                    {
+                        Debug.Write(" ");
+                        Debug.Write(keyInfo.KeyChar);
+                    }
+                }
+
+                if (keyInfo.Modifiers != 0)
+                {
+                    Debug.Write(" ");
+                    Debug.Write(keyInfo.Modifiers);
+                }
+
+                Debug.WriteLine("");
+#endif
                 switch (keyInfo.Key)
                 {
                     case ConsoleKey.LeftArrow:
@@ -70,27 +95,7 @@ namespace Roslynator
                                     i--;
                                 }
 
-                                int offset = index - i;
-
-                                int left = Console.CursorLeft;
-                                int top = Console.CursorTop;
-
-                                while (true)
-                                {
-                                    if (offset < left)
-                                    {
-                                        left -= offset;
-                                        break;
-                                    }
-                                    else
-                                    {
-                                        offset -= left;
-                                        left = Console.WindowWidth;
-                                        top--;
-                                    }
-                                }
-
-                                Console.SetCursorPosition(left, top);
+                                MoveCursorLeft(index - i);
                                 break;
                             }
 
@@ -126,29 +131,7 @@ namespace Roslynator
                                     i++;
                                 }
 
-                                int offset = i + 1 - index;
-
-                                int left = Console.CursorLeft;
-                                int top = Console.CursorTop;
-
-                                while (true)
-                                {
-                                    int right = Console.WindowWidth - left;
-
-                                    if (offset < right)
-                                    {
-                                        left += offset;
-                                        break;
-                                    }
-                                    else
-                                    {
-                                        offset -= right;
-                                        left = 0;
-                                        top++;
-                                    }
-                                }
-
-                                Console.SetCursorPosition(left, top);
+                                MoveCursorRight(i + 1 - index);
                                 break;
                             }
 
@@ -165,23 +148,12 @@ namespace Roslynator
                         }
                     case ConsoleKey.Home:
                         {
-                            int left = (Console.CursorTop == initTop)
-                                ? prompt.Length
-                                : 0;
-
-                            Console.SetCursorPosition(left, Console.CursorTop);
+                            Console.SetCursorPosition(initLeft, initTop);
                             break;
                         }
                     case ConsoleKey.End:
                         {
-                            int remainingLineCount = Console.WindowWidth - Console.CursorLeft;
-                            int remainingCharCount = buffer.Count - GetIndex();
-
-                            int left = (remainingCharCount > remainingLineCount)
-                                ? Console.WindowWidth - 1
-                                : Console.CursorLeft + remainingCharCount;
-
-                            Console.SetCursorPosition(left, Console.CursorTop);
+                            MoveCursorRight(buffer.Count - GetIndex());
                             break;
                         }
                     case ConsoleKey.Backspace:
@@ -237,20 +209,19 @@ namespace Roslynator
                         }
                     case ConsoleKey.Escape:
                         {
-                            Console.SetCursorPosition(initLeft, initTop);
-                            Console.Write(new string(' ', buffer.Count));
-                            Console.SetCursorPosition(initLeft, initTop);
+                            Reset(useDefaultValue: buffer.Count == 0);
+                            break;
+                        }
+                    case ConsoleKey.PageDown:
+                        {
+                            if (keyInfo.Modifiers != ConsoleModifiers.Control)
+                                Reset();
 
-                            if (buffer.Count > 0)
-                            {
-                                buffer.Clear();
-                            }
-                            else
-                            {
-                                Console.Write(defaultValue);
-                                buffer = defaultValue.ToList();
-                            }
-
+                            break;
+                        }
+                    case ConsoleKey.UpArrow:
+                        {
+                            Reset();
                             break;
                         }
                     default:
@@ -308,6 +279,74 @@ namespace Roslynator
                 index += Console.CursorLeft;
 
                 return index;
+            }
+
+            static void MoveCursorLeft(int count)
+            {
+                int left = Console.CursorLeft;
+                int top = Console.CursorTop;
+
+                while (true)
+                {
+                    if (count < left)
+                    {
+                        left -= count;
+                        break;
+                    }
+                    else
+                    {
+                        count -= left;
+                        left = Console.WindowWidth;
+                        top--;
+                    }
+                }
+
+                Console.SetCursorPosition(left, top);
+            }
+
+            static void MoveCursorRight(int offset)
+            {
+                int left = Console.CursorLeft;
+                int top = Console.CursorTop;
+
+                while (true)
+                {
+                    int right = Console.WindowWidth - left;
+
+                    if (offset < right)
+                    {
+                        left += offset;
+                        break;
+                    }
+                    else
+                    {
+                        offset -= right;
+                        left = 0;
+                        top++;
+                    }
+                }
+
+                Console.SetCursorPosition(left, top);
+            }
+
+            void Reset(bool useDefaultValue = false)
+            {
+                Console.SetCursorPosition(initLeft, initTop);
+                Console.Write(new string(' ', buffer.Count));
+                Console.SetCursorPosition(initLeft, initTop);
+
+                if (useDefaultValue)
+                {
+                    Console.Write(defaultValue);
+                    buffer = defaultValue.ToList();
+
+                    if (position >= 0)
+                        MoveCursorLeft(defaultValue.Length - position);
+                }
+                else
+                {
+                    buffer.Clear();
+                }
             }
         }
     }

@@ -23,6 +23,7 @@ namespace Roslynator.CommandLine
             in ProjectFilter projectFilter,
             SpellingData spellingData,
             Visibility visibility,
+            SpellingScopeFilter scopeFilter,
             string newWordsPath = null,
             string newFixesPath = null,
             string outputPath = null) : base(projectFilter)
@@ -30,6 +31,7 @@ namespace Roslynator.CommandLine
             Options = options;
             SpellingData = spellingData;
             Visibility = visibility;
+            ScopeFilter = scopeFilter;
             NewWordsPath = newWordsPath;
             NewFixesPath = newFixesPath;
             OutputPath = outputPath;
@@ -42,6 +44,8 @@ namespace Roslynator.CommandLine
         public SpellingData SpellingData { get; }
 
         public Visibility Visibility { get; }
+
+        public SpellingScopeFilter ScopeFilter { get; }
 
         private string NewWordsPath { get; }
 
@@ -64,6 +68,7 @@ namespace Roslynator.CommandLine
             };
 
             var options = new SpellingFixerOptions(
+                scopeFilter: ScopeFilter,
                 symbolVisibility: visibilityFilter,
                 includeGeneratedCode: Options.IncludeGeneratedCode,
                 interactive: Options.Interactive,
@@ -147,40 +152,51 @@ namespace Roslynator.CommandLine
             string outputPath = null,
             CancellationToken cancellationToken = default)
         {
-            Debug.WriteLine("Saving new values");
-
-            Dictionary<string, List<SpellingFix>> dic = spellingData.Fixes.Items.ToDictionary(
-                f => f.Key,
-                f => f.Value.ToList(),
-                WordList.DefaultComparer);
-
-            if (dic.Count > 0)
+            if (newFixesPath != null)
             {
-                if (File.Exists(newFixesPath))
+                Dictionary<string, List<SpellingFix>> fixes = spellingData.Fixes.Items.ToDictionary(
+                    f => f.Key,
+                    f => f.Value.ToList(),
+                    WordList.DefaultComparer);
+
+                if (fixes.Count > 0)
                 {
-                    foreach (KeyValuePair<string, ImmutableHashSet<SpellingFix>> kvp in FixList.LoadFile(newFixesPath!).Items)
+                    if (File.Exists(newFixesPath))
                     {
-                        if (dic.TryGetValue(kvp.Key, out List<SpellingFix> list))
+                        foreach (KeyValuePair<string, ImmutableHashSet<SpellingFix>> kvp in FixList.LoadFile(newFixesPath!).Items)
                         {
-                            list.AddRange(kvp.Value);
+                            if (fixes.TryGetValue(kvp.Key, out List<SpellingFix> list))
+                            {
+                                list.AddRange(kvp.Value);
+                            }
+                            else
+                            {
+                                fixes[kvp.Key] = kvp.Value.ToList();
+                            }
                         }
-                        else
+                    }
+
+                    foreach (KeyValuePair<string, ImmutableHashSet<SpellingFix>> kvp in originalFixList.Items)
+                    {
+                        if (fixes.TryGetValue(kvp.Key, out List<SpellingFix> list))
                         {
-                            dic[kvp.Key] = kvp.Value.ToList();
+                            list.RemoveAll(f => kvp.Value.Contains(f, SpellingFixComparer.InvariantCultureIgnoreCase));
+
+                            if (list.Count == 0)
+                                fixes.Remove(kvp.Key);
                         }
                     }
                 }
 
-                foreach (KeyValuePair<string, ImmutableHashSet<SpellingFix>> kvp in originalFixList.Items)
-                {
-                    if (dic.TryGetValue(kvp.Key, out List<SpellingFix> list))
-                    {
-                        list.RemoveAll(f => kvp.Value.Contains(f, SpellingFixComparer.InvariantCultureIgnoreCase));
+                ImmutableDictionary<string, ImmutableHashSet<SpellingFix>> newFixes = fixes.ToImmutableDictionary(
+                    f => f.Key.ToLowerInvariant(),
+                    f => f.Value
+                        .Select(f => f.WithValue(f.Value.ToLowerInvariant()))
+                        .Distinct(SpellingFixComparer.InvariantCultureIgnoreCase)
+                        .ToImmutableHashSet(SpellingFixComparer.InvariantCultureIgnoreCase));
 
-                        if (list.Count == 0)
-                            dic.Remove(kvp.Key);
-                    }
-                }
+                if (newFixes.Count > 0)
+                    FixList.Save(newFixesPath, newFixes);
             }
 
             const StringComparison comparison = StringComparison.InvariantCulture;
@@ -188,77 +204,34 @@ namespace Roslynator.CommandLine
 
             if (newWordsPath != null)
             {
-                HashSet<string> values = spellingData.IgnoredValues.ToHashSet(comparer);
+                HashSet<string> newValues = spellingData.IgnoredValues
+                    .Concat(newWords.Select(f => f.Value))
+                    .Except(spellingData.Fixes.Items.Select(f => f.Key), WordList.DefaultComparer)
+                    .ToHashSet(comparer);
 
-                if (values.Count > 0)
+                var possibleNewFixes = new List<string>();
+
+                foreach (string value in newValues)
                 {
-                    if (File.Exists(newWordsPath))
-                        values.UnionWith(WordListLoader.LoadFile(newWordsPath).List.Values);
+                    string valueLower = value.ToLowerInvariant();
 
-                    IEnumerable<string> newValues = values
-                        .Except(spellingData.Fixes.Items.Select(f => f.Key), WordList.DefaultComparer)
-                        .Distinct(comparer)
-                        .OrderBy(f => f, comparer);
+                    ImmutableArray<string> possibleFixes = SpellingFixProvider.SwapLetters(valueLower, spellingData);
 
-                    if (newFixesPath != null)
+                    if (possibleFixes.Length == 0
+                        && value.Length >= 8)
                     {
-                        newValues = newValues
-                            .Select(f =>
-                            {
-                                string value = f.ToLowerInvariant();
-
-                                var fixes = new List<string>();
-
-                                fixes.AddRange(SpellingFixProvider.SwapLetters(value, spellingData));
-
-                                if (fixes.Count == 0
-                                    && value.Length >= 8)
-                                {
-                                    fixes.AddRange(SpellingFixProvider.Fuzzy(value, spellingData, cancellationToken));
-                                }
-
-                                if (fixes.Count > 0)
-                                {
-                                    IEnumerable<SpellingFix> spellingFixes = fixes
-                                        .Select(fix => new SpellingFix(fix, SpellingFixKind.None));
-
-                                    if (dic.TryGetValue(value, out List<SpellingFix> list))
-                                    {
-                                        list.AddRange(spellingFixes);
-                                    }
-                                    else
-                                    {
-                                        dic[value] = new List<SpellingFix>(spellingFixes);
-                                    }
-
-                                    return null;
-                                }
-
-                                return f;
-                            })
-                            .Where(f => f != null)
-                            .Select(f => f!);
+                        possibleFixes = SpellingFixProvider.Fuzzy(valueLower, spellingData, cancellationToken);
                     }
 
-                    IEnumerable<string> compoundWords = newWords
-                        .Select(f => f.ContainingValue)
-                        .Where(f => f != null);
-
-                    WordList.Save(newWordsPath, newValues.Concat(compoundWords), comparer);
+                    possibleNewFixes.AddRange(possibleFixes.Select(f => FixList.GetItemText(value, f)));
                 }
-            }
 
-            if (newFixesPath != null)
-            {
-                ImmutableDictionary<string, ImmutableHashSet<SpellingFix>> fixes = dic.ToImmutableDictionary(
-                    f => f.Key.ToLowerInvariant(),
-                    f => f.Value
-                        .Select(f => f.WithValue(f.Value.ToLowerInvariant()))
-                        .Distinct(SpellingFixComparer.InvariantCultureIgnoreCase)
-                        .ToImmutableHashSet(SpellingFixComparer.InvariantCultureIgnoreCase));
+                IEnumerable<string> compoundWords = newWords
+                    .Select(f => f.ContainingValue)
+                    .Where(f => f != null)
+                    .Select(f => f!);
 
-                if (fixes.Count > 0)
-                    FixList.Save(newFixesPath, fixes);
+                WordList.Save(newWordsPath, newValues.Concat(compoundWords).Concat(possibleNewFixes), comparer, merge: true);
             }
 
             if (outputPath != null
@@ -273,13 +246,13 @@ namespace Roslynator.CommandLine
                         writer.WriteLine(grouping.Key);
 
                         foreach (IGrouping<string, NewWord> grouping2 in grouping
-                            .GroupBy(f => f.LineSpan.Path)
+                            .GroupBy(f => f.FilePath)
                             .OrderBy(f => f.Key, comparer))
                         {
                             writer.Write("  ");
                             writer.WriteLine(grouping2.Key);
 
-                            foreach (NewWord newWord in grouping2)
+                            foreach (NewWord newWord in grouping2.OrderBy(f => f.LineSpan.StartLine()))
                             {
                                 writer.Write("    ");
                                 writer.Write(newWord.LineSpan.StartLine() + 1);
@@ -291,9 +264,9 @@ namespace Roslynator.CommandLine
                                 int endIndex = lineCharIndex + value.Length;
 
                                 writer.Write(line.Substring(0, lineCharIndex));
-                                writer.Write(">>>>>");
+                                writer.Write(">>>");
                                 writer.Write(line.Substring(lineCharIndex, value.Length));
-                                writer.Write("<<<<<");
+                                writer.Write("<<<");
                                 writer.WriteLine(line.Substring(endIndex, line.Length - endIndex));
                             }
                         }
