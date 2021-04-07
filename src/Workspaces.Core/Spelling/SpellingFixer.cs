@@ -116,9 +116,11 @@ namespace Roslynator.Spelling
             if (service == null)
                 return ImmutableArray<SpellingFixResult>.Empty;
 
+            ImmutableArray<Diagnostic> previousDiagnostics = ImmutableArray<Diagnostic>.Empty;
+            ImmutableArray<Diagnostic> previousPreviousDiagnostics = ImmutableArray<Diagnostic>.Empty;
+
             ImmutableArray<SpellingFixResult>.Builder results = ImmutableArray.CreateBuilder<SpellingFixResult>();
 
-            var ignoredSymbols = new HashSet<string>(StringComparer.Ordinal);
             bool commentsFixed = (Options.ScopeFilter & SpellingScopeFilter.NonSymbol) == 0;
 
             while (true)
@@ -142,9 +144,37 @@ namespace Roslynator.Spelling
                     compilationWithAnalyzersOptions);
 
                 ImmutableArray<Diagnostic> diagnostics = await compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync(cancellationToken).ConfigureAwait(false);
+#if DEBUG
+                foreach (IGrouping<Diagnostic, Diagnostic> grouping in diagnostics
+                    .GroupBy(f => f, DiagnosticDeepEqualityComparer.Instance))
+                {
+                    using (IEnumerator<Diagnostic> en = grouping.GetEnumerator())
+                    {
+                        if (en.MoveNext()
+                            && en.MoveNext())
+                        {
+                            Debug.Fail(DiagnosticFormatter.FormatDiagnostic(en.Current));
+                        }
+                    }
+                }
+#endif
+                int length = diagnostics.Length;
 
-                if (!diagnostics.Any())
+                if (length == 0)
                     break;
+
+                if (length == previousDiagnostics.Length
+                    && !diagnostics.Except(previousDiagnostics, DiagnosticDeepEqualityComparer.Instance).Any())
+                {
+                    break;
+                }
+
+                if (length == previousPreviousDiagnostics.Length
+                    && !diagnostics.Except(previousPreviousDiagnostics, DiagnosticDeepEqualityComparer.Instance).Any())
+                {
+                    LogHelpers.WriteInfiniteLoopSummary(diagnostics, previousDiagnostics, project, FormatProvider);
+                    break;
+                }
 
                 var spellingDiagnostics = new List<SpellingDiagnostic>();
 
@@ -174,7 +204,6 @@ namespace Roslynator.Spelling
                     project,
                     spellingDiagnostics,
                     service.SyntaxFacts,
-                    ignoredSymbols,
                     cancellationToken)
                     .ConfigureAwait(false);
 
@@ -187,6 +216,9 @@ namespace Roslynator.Spelling
                     break;
 
                 project = CurrentSolution.GetProject(project.Id);
+
+                previousPreviousDiagnostics = previousDiagnostics;
+                previousDiagnostics = diagnostics;
             }
 
             return results.ToImmutableArray();
@@ -278,7 +310,6 @@ namespace Roslynator.Spelling
             Project project,
             List<SpellingDiagnostic> spellingDiagnostics,
             ISyntaxFactsService syntaxFacts,
-            HashSet<string> ignoredSymbols,
             CancellationToken cancellationToken)
         {
             var results = new List<SpellingFixResult>();
@@ -322,7 +353,6 @@ namespace Roslynator.Spelling
                     Debug.Fail(identifier.GetLocation().ToString());
 
                     WriteLine($"    Cannot find document for'{identifier.ValueText}'", ConsoleColor.Yellow, Verbosity.Detailed);
-                    AddIgnoredValues(diagnostics);
                     continue;
                 }
 
@@ -336,7 +366,6 @@ namespace Roslynator.Spelling
                         || identifier.RawKind != identifier2.RawKind
                         || !string.Equals(identifier2.ValueText, identifier2.ValueText, StringComparison.Ordinal))
                     {
-                        AddIgnoredValues(diagnostics);
                         continue;
                     }
 
@@ -365,37 +394,12 @@ namespace Roslynator.Spelling
                     Debug.Fail(identifier.ToString());
 
                     WriteLine($"    Cannot find symbol for '{identifier.ValueText}'", ConsoleColor.Yellow, Verbosity.Detailed);
-                    AddIgnoredValues(diagnostics);
                     continue;
                 }
-
-                string symbolId = null;
-
-                ISymbol s = symbol;
-                do
-                {
-                    symbolId = s.GetDocumentationCommentId();
-
-                    if (symbolId != null)
-                        break;
-
-                    s = s.ContainingSymbol;
-
-                } while (s != null);
-
-                if (symbolId == null)
-                {
-                    Debug.Fail(symbol.ToDisplayString(SymbolDisplayFormats.Test));
-                    AddIgnoredValues(diagnostics);
-                }
-
-                if (ignoredSymbols.Contains(symbolId))
-                    continue;
 
                 if (!symbol.IsKind(SymbolKind.Namespace, SymbolKind.Alias)
                     && !symbol.IsVisible(Options.SymbolVisibility))
                 {
-                    ignoredSymbols.Add(symbolId);
                     continue;
                 }
 
@@ -480,7 +484,6 @@ namespace Roslynator.Spelling
                         WriteLine(identifier.ValueText);
                         WriteLine(ex.ToString());
 #endif
-                        ignoredSymbols.Add(symbolId);
                         continue;
                     }
                 }
@@ -495,8 +498,6 @@ namespace Roslynator.Spelling
                     {
                         Debug.Fail($"Cannot apply changes to solution '{newSolution.FilePath}'");
                         WriteLine($"    Cannot apply changes to solution '{newSolution.FilePath}'", ConsoleColor.Yellow, Verbosity.Normal);
-
-                        ignoredSymbols.Add(symbolId);
                         continue;
                     }
                 }
@@ -633,11 +634,6 @@ namespace Roslynator.Spelling
         private void AddIgnoredValue(SpellingDiagnostic diagnostic)
         {
             SpellingData = SpellingData.AddIgnoredValue(diagnostic.Value);
-        }
-
-        private void AddIgnoredValues(List<SpellingDiagnostic> diagnostics)
-        {
-            SpellingData = SpellingData.AddIgnoredValues(diagnostics.Select(f => f.Value).Where(f => f != null));
         }
     }
 }
