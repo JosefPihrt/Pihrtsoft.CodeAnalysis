@@ -284,7 +284,7 @@ namespace Roslynator.Testing
         }
 
         internal static (Document document, ImmutableArray<ExpectedDocument> expectedDocuments)
-            CreateDocument(Solution solution, string source, ImmutableArray<AdditionalFile> additionalFiles, TestOptions options, DiagnosticDescriptor? descriptor = null)
+            CreateDocument(Solution solution, string source, ImmutableArray<AdditionalFile> additionalFiles, TestOptions options, DiagnosticDescriptor descriptor = null)
         {
             const string DefaultProjectName = "TestProject";
 
