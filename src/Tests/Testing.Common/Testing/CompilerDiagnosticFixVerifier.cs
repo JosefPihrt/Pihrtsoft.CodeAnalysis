@@ -71,7 +71,7 @@ namespace Roslynator.Testing
                         VerifyNoNewCompilerDiagnostics(previousDiagnostics, diagnostics, options);
 
                     if (DiagnosticDeepEqualityComparer.Equals(diagnostics, previousDiagnostics))
-                        Assert.True(false, "Same diagnostics returned before and after the fix was applied." + diagnostics.ToDebugString());
+                        Fail("Same diagnostics returned before and after the fix was applied.", diagnostics);
 
                     Diagnostic diagnostic = FindDiagnosticToFix(diagnostics);
 
@@ -90,7 +90,7 @@ namespace Roslynator.Testing
                                 && d.Contains(diagnostic))
                             {
                                 if (action != null)
-                                    Assert.True(false, $"Multiple fixes registered by '{fixProvider.GetType().Name}'.");
+                                    Fail($"Multiple fixes registered by '{fixProvider.GetType().Name}'.");
 
                                 action = a;
                             }
@@ -182,7 +182,7 @@ namespace Roslynator.Testing
                             if (!d.Contains(diagnostic))
                                 return;
 
-                            Assert.True(false, "No code fix expected.");
+                            Fail("No code fix expected.");
                         },
                         cancellationToken);
 

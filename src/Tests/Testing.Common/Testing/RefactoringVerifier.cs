@@ -35,7 +35,7 @@ namespace Roslynator.Testing
             CancellationToken cancellationToken = default)
         {
             if (state.Spans.IsEmpty)
-                Assert.True(false, "Span on which a refactoring should be invoked was not found.");
+                Fail("Span on which a refactoring should be invoked was not found.");
 
             options ??= Options;
 
@@ -66,7 +66,7 @@ namespace Roslynator.Testing
                                 || string.Equals(a.EquivalenceKey, state.EquivalenceKey, StringComparison.Ordinal))
                             {
                                 if (action != null)
-                                    Assert.True(false, "Multiple fixes available.");
+                                    Fail("Multiple fixes available.");
 
                                 action = a;
                             }
@@ -102,7 +102,7 @@ namespace Roslynator.Testing
             CancellationToken cancellationToken = default)
         {
             if (state.Spans.IsEmpty)
-                Assert.True(false, "Span on which a refactoring should be invoked was not found.");
+                Fail("Span on which a refactoring should be invoked was not found.");
 
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -132,7 +132,7 @@ namespace Roslynator.Testing
                             if (state.EquivalenceKey == null
                                 || string.Equals(a.EquivalenceKey, state.EquivalenceKey, StringComparison.Ordinal))
                             {
-                                Assert.True(false, "No code refactoring expected.");
+                                Fail("No code refactoring expected.");
                             }
                         },
                         cancellationToken);
