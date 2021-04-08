@@ -12,6 +12,7 @@ namespace Roslynator.Testing.CSharp
         private static CSharpTestOptions _default_CSharp6;
         private static CSharpTestOptions _default_CSharp7;
         private static CSharpTestOptions _default_CSharp7_3;
+        private static CSharpTestOptions _default_CSharp8;
         private static CSharpTestOptions _default_NullableReferenceTypes;
 
         public static CSharpTestOptions Default_CSharp5
@@ -63,6 +64,19 @@ namespace Roslynator.Testing.CSharp
                 return _default_CSharp7_3;
 
                 static CSharpTestOptions Create() => DefaultCSharpTestOptions.Value.WithParseOptions(DefaultCSharpTestOptions.Value.ParseOptions.WithLanguageVersion(LanguageVersion.CSharp7_3));
+            }
+        }
+
+        public static CSharpTestOptions Default_CSharp8
+        {
+            get
+            {
+                if (_default_CSharp8 == null)
+                    Interlocked.CompareExchange(ref _default_CSharp8, Create(), null);
+
+                return _default_CSharp8;
+
+                static CSharpTestOptions Create() => DefaultCSharpTestOptions.Value.WithParseOptions(DefaultCSharpTestOptions.Value.ParseOptions.WithLanguageVersion(LanguageVersion.CSharp8));
             }
         }
 

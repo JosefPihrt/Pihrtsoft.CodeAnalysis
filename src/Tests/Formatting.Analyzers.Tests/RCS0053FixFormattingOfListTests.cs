@@ -625,7 +625,7 @@ class C
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.FixFormattingOfList)]
-        public async Task Test_Multiline_SecondParameterIsAlreadIndented()
+        public async Task Test_Multiline_SecondParameterIsAlreadyIndented()
         {
             await VerifyDiagnosticAndFixAsync(@"
 using System.Linq;

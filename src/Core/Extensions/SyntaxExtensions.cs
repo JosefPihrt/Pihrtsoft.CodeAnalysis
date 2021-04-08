@@ -536,7 +536,7 @@ namespace Roslynator
         }
 
         /// <summary>
-        /// Creates a new node from this node with the leading trivia replaced with a new trivia where the specified trivia is inserted at the begining of the leading trivia.
+        /// Creates a new node from this node with the leading trivia replaced with a new trivia where the specified trivia is inserted at the beginning of the leading trivia.
         /// </summary>
         /// <typeparam name="TNode"></typeparam>
         /// <param name="node"></param>
@@ -553,7 +553,7 @@ namespace Roslynator
         }
 
         /// <summary>
-        /// Creates a new node from this node with the leading trivia replaced with a new trivia where the specified trivia is inserted at the begining of the leading trivia.
+        /// Creates a new node from this node with the leading trivia replaced with a new trivia where the specified trivia is inserted at the beginning of the leading trivia.
         /// </summary>
         /// <typeparam name="TNode"></typeparam>
         /// <param name="node"></param>
@@ -567,7 +567,7 @@ namespace Roslynator
         }
 
         /// <summary>
-        /// Creates a new node from this node with the trailing trivia replaced with a new trivia where the specified trivia is inserted at the begining of the trailing trivia.
+        /// Creates a new node from this node with the trailing trivia replaced with a new trivia where the specified trivia is inserted at the beginning of the trailing trivia.
         /// </summary>
         /// <typeparam name="TNode"></typeparam>
         /// <param name="node"></param>
@@ -584,7 +584,7 @@ namespace Roslynator
         }
 
         /// <summary>
-        /// Creates a new node from this node with the trailing trivia replaced with a new trivia where the specified trivia is inserted at the begining of the trailing trivia.
+        /// Creates a new node from this node with the trailing trivia replaced with a new trivia where the specified trivia is inserted at the beginning of the trailing trivia.
         /// </summary>
         /// <typeparam name="TNode"></typeparam>
         /// <param name="node"></param>
@@ -978,7 +978,7 @@ namespace Roslynator
 
         #region SyntaxToken
         /// <summary>
-        /// Creates a new token from this token with the leading trivia replaced with a new trivia where the specified trivia is inserted at the begining of the leading trivia.
+        /// Creates a new token from this token with the leading trivia replaced with a new trivia where the specified trivia is inserted at the beginning of the leading trivia.
         /// </summary>
         /// <param name="token"></param>
         /// <param name="trivia"></param>
@@ -991,7 +991,7 @@ namespace Roslynator
         }
 
         /// <summary>
-        /// Creates a new token from this token with the leading trivia replaced with a new trivia where the specified trivia is inserted at the begining of the leading trivia.
+        /// Creates a new token from this token with the leading trivia replaced with a new trivia where the specified trivia is inserted at the beginning of the leading trivia.
         /// </summary>
         /// <param name="token"></param>
         /// <param name="trivia"></param>
@@ -1001,7 +1001,7 @@ namespace Roslynator
         }
 
         /// <summary>
-        /// Creates a new token from this token with the trailing trivia replaced with a new trivia where the specified trivia is inserted at the begining of the trailing trivia.
+        /// Creates a new token from this token with the trailing trivia replaced with a new trivia where the specified trivia is inserted at the beginning of the trailing trivia.
         /// </summary>
         /// <param name="token"></param>
         /// <param name="trivia"></param>
@@ -1014,7 +1014,7 @@ namespace Roslynator
         }
 
         /// <summary>
-        /// Creates a new token from this token with the trailing trivia replaced with a new trivia where the specified trivia is inserted at the begining of the trailing trivia.
+        /// Creates a new token from this token with the trailing trivia replaced with a new trivia where the specified trivia is inserted at the beginning of the trailing trivia.
         /// </summary>
         /// <param name="token"></param>
         /// <param name="trivia"></param>

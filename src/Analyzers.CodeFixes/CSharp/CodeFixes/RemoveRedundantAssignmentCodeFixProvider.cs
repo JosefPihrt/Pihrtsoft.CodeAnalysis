@@ -49,7 +49,7 @@ namespace Roslynator.CSharp.CodeFixes
                                     {
                                         var variableDeclarator = (VariableDeclaratorSyntax)node;
 
-                                        return RemoveRedudantAssignmentAfterLocalDeclarationAsync(document, variableDeclarator, ct);
+                                        return RemoveRedundantAssignmentAfterLocalDeclarationAsync(document, variableDeclarator, ct);
                                     }
                                     else
                                     {
@@ -67,7 +67,7 @@ namespace Roslynator.CSharp.CodeFixes
             }
         }
 
-        public static Task<Document> RemoveRedudantAssignmentAfterLocalDeclarationAsync(
+        public static Task<Document> RemoveRedundantAssignmentAfterLocalDeclarationAsync(
             Document document,
             VariableDeclaratorSyntax declarator,
             CancellationToken cancellationToken = default)

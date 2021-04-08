@@ -20,7 +20,7 @@ namespace Roslynator.CSharp.CodeFixes
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {
-            get { return ImmutableArray.Create(CompilerDiagnosticIdentifiers.PartialDeclarationsHaveConfictingAccessibilityModifiers); }
+            get { return ImmutableArray.Create(CompilerDiagnosticIdentifiers.PartialDeclarationsHaveConflictingAccessibilityModifiers); }
         }
 
         public override FixAllProvider GetFixAllProvider()
@@ -57,7 +57,7 @@ namespace Roslynator.CSharp.CodeFixes
                     CodeAction codeAction = CodeAction.Create(
                         $"Change accessibility to '{SyntaxFacts.GetText(accessibility)}'",
                         cancellationToken => ChangeAccessibilityRefactoring.RefactorAsync(context.Solution(), memberDeclarations, accessibility, cancellationToken),
-                        GetEquivalenceKey(CompilerDiagnosticIdentifiers.PartialDeclarationsHaveConfictingAccessibilityModifiers, accessibility.ToString()));
+                        GetEquivalenceKey(CompilerDiagnosticIdentifiers.PartialDeclarationsHaveConflictingAccessibilityModifiers, accessibility.ToString()));
 
                     context.RegisterCodeFix(codeAction, diagnostic);
                 }

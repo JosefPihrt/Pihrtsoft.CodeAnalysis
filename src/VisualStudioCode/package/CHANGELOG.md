@@ -24,7 +24,7 @@
 * Disable by default analyzer [RCS1207i](https://github.com/JosefPihrt/Roslynator/blob/master/docs/analyzers/RCS1207i.md) (Convert method group to anonymous function)
 * Remove analyzer [RCS1219](https://github.com/JosefPihrt/Roslynator/blob/master/docs/analyzers/RCS1219.md) (Call 'Enumerable.Skip' and 'Enumerable.Any' instead of 'Enumerable.Count')
 * Rename analyzer "Avoid 'null' on left side of binary expression" to "Constant values should be placed on right side of comparisons" [RCS1098](https://github.com/JosefPihrt/Roslynator/blob/master/docs/analyzers/RCS1098.md)
-* Rename analyzer "Simplify boolean expression" to "Unncessary null check" [RCS1199](https://github.com/JosefPihrt/Roslynator/blob/master/docs/analyzers/RCS1199.md) ([issue](https://github.com/JosefPihrt/Roslynator/issues/373))
+* Rename analyzer "Simplify boolean expression" to "Unnecessary null check" [RCS1199](https://github.com/JosefPihrt/Roslynator/blob/master/docs/analyzers/RCS1199.md) ([issue](https://github.com/JosefPihrt/Roslynator/issues/373))
 
 * More syntax is considered as having obvious type:
   * string literal

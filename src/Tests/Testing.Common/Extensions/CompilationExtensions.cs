@@ -11,15 +11,7 @@ namespace Roslynator
     {
         public static Compilation EnsureDiagnosticEnabled(this Compilation compilation, DiagnosticDescriptor descriptor)
         {
-            CompilationOptions compilationOptions = compilation.Options;
-
-            ImmutableDictionary<string, ReportDiagnostic> specificDiagnosticOptions = compilationOptions.SpecificDiagnosticOptions;
-
-            specificDiagnosticOptions = specificDiagnosticOptions.SetItem(
-                descriptor.Id,
-                descriptor.DefaultSeverity.ToReportDiagnostic());
-
-            return compilation.WithOptions(compilationOptions.WithSpecificDiagnosticOptions(specificDiagnosticOptions));
+            return compilation.WithOptions(compilation.Options.EnsureDiagnosticEnabled(descriptor));
         }
 
         public static Compilation EnsureDiagnosticEnabled(this Compilation compilation, IEnumerable<DiagnosticDescriptor> descriptors)

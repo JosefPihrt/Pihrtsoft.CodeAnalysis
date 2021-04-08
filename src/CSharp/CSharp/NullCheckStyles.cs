@@ -43,11 +43,6 @@ namespace Roslynator.CSharp
         NotIsNull = 8,
 
         /// <summary>
-        /// Expression that uses pattern syntax.
-        /// </summary>
-        IsPattern = IsNull | NotIsNull,
-
-        /// <summary>
         /// <c>!x.HasValue</c>
         /// </summary>
         NotHasValue = 16,
@@ -63,14 +58,24 @@ namespace Roslynator.CSharp
         HasValue = 32,
 
         /// <summary>
-        /// Expression that checks whether an expression is not null.
-        /// </summary>
-        CheckingNotNull = NotEqualsToNull | NotIsNull | HasValue,
-
-        /// <summary>
         /// Expression that uses <see cref="Nullable{T}.HasValue"/> property.
         /// </summary>
         HasValueProperty = HasValue | NotHasValue,
+
+        /// <summary>
+        /// <c>x is not null</c>
+        /// </summary>
+        IsNotNull = 64,
+
+        /// <summary>
+        /// Expression that uses pattern syntax.
+        /// </summary>
+        IsPattern = IsNull | NotIsNull | IsNotNull,
+
+        /// <summary>
+        /// Expression that checks whether an expression is not null.
+        /// </summary>
+        CheckingNotNull = NotEqualsToNull | NotIsNull | IsNotNull | HasValue,
 
         /// <summary>
         /// All null check styles.

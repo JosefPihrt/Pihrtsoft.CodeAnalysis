@@ -38,15 +38,15 @@ namespace Roslynator.CSharp.Analysis.UseMethodChaining
                     }
                 case SyntaxKind.SimpleAssignmentExpression:
                     {
-                        var assinmentExpression = (AssignmentExpressionSyntax)parent;
+                        var assignmentExpression = (AssignmentExpressionSyntax)parent;
 
-                        if (!(assinmentExpression.Left is IdentifierNameSyntax identifierName))
+                        if (!(assignmentExpression.Left is IdentifierNameSyntax identifierName))
                             break;
 
-                        if (assinmentExpression.Right != invocationExpression)
+                        if (assignmentExpression.Right != invocationExpression)
                             break;
 
-                        if (!(assinmentExpression.Parent is ExpressionStatementSyntax expressionStatement))
+                        if (!(assignmentExpression.Parent is ExpressionStatementSyntax expressionStatement))
                             break;
 
                         string name = identifierName.Identifier.ValueText;

@@ -164,7 +164,17 @@ namespace Roslynator.CSharp.Syntax
                     {
                         var isPatternExpression = (IsPatternExpressionSyntax)expression;
 
-                        if (!(isPatternExpression.Pattern is ConstantPatternSyntax constantPattern))
+                        PatternSyntax pattern = isPatternExpression.Pattern;
+
+                        bool isNotPattern = pattern.IsKind(SyntaxKind.NotPattern);
+
+                        if (isNotPattern)
+                            pattern = ((UnaryPatternSyntax)pattern).Pattern;
+
+                        if (!(pattern is ConstantPatternSyntax constantPattern))
+                            break;
+
+                        if (!constantPattern.Expression.IsKind(SyntaxKind.NullLiteralExpression))
                             break;
 
                         ExpressionSyntax e = WalkAndCheck(isPatternExpression.Expression, walkDownParentheses, allowMissing);
@@ -172,10 +182,10 @@ namespace Roslynator.CSharp.Syntax
                         if (e == null)
                             break;
 
-                        if (!IsNullOrDefault(e, constantPattern.Expression, semanticModel, cancellationToken))
-                            break;
-
-                        return new NullCheckExpressionInfo(expression, e, NullCheckStyles.IsNull);
+                        return new NullCheckExpressionInfo(
+                            expression,
+                            e,
+                            (isNotPattern) ? NullCheckStyles.IsNotNull : NullCheckStyles.IsNull);
                     }
                 case SyntaxKind.LogicalNotExpression:
                     {
@@ -216,12 +226,12 @@ namespace Roslynator.CSharp.Syntax
                                     if (!(isPatternExpression.Pattern is ConstantPatternSyntax constantPattern))
                                         break;
 
+                                    if (!constantPattern.Expression.IsKind(SyntaxKind.NullLiteralExpression))
+                                        break;
+
                                     ExpressionSyntax e = WalkAndCheck(isPatternExpression.Expression, walkDownParentheses, allowMissing);
 
                                     if (e == null)
-                                        break;
-
-                                    if (!IsNullOrDefault(e, constantPattern.Expression, semanticModel, cancellationToken))
                                         break;
 
                                     return new NullCheckExpressionInfo(expression, e, NullCheckStyles.NotIsNull);

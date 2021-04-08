@@ -895,5 +895,12 @@ namespace Roslynator.CSharp
             isEnabledByDefault: true, 
             "CS7036");
 
+        /// <summary>RCF0118 (fixes CS8632)</summary>
+        public static readonly CodeFixDescriptor RemoveAnnotationForNullableReferenceTypes = new CodeFixDescriptor(
+            id:                 CodeFixIdentifiers.RemoveAnnotationForNullableReferenceTypes, 
+            title:              "Remove annotation for nullable reference types", 
+            isEnabledByDefault: true, 
+            "CS8632");
+
     }
 }

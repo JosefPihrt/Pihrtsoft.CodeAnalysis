@@ -45,7 +45,7 @@ namespace Roslynator.Testing
 
             using (Workspace workspace = new AdhocWorkspace())
             {
-                (Document document, ImmutableArray<ExpectedDocument> expectedDocuments) = CreateDocument(workspace.CurrentSolution, state.Source, state.AdditionalFiles, options);
+                (Document document, ImmutableArray<ExpectedDocument> expectedDocuments) = CreateDocument(workspace.CurrentSolution, state.Source, state.AdditionalFiles, options, state.Descriptor);
 
                 SyntaxTree tree = await document.GetSyntaxTreeAsync();
 
@@ -58,8 +58,6 @@ namespace Roslynator.Testing
                 ImmutableArray<Diagnostic> compilerDiagnostics = compilation.GetDiagnostics(cancellationToken);
 
                 VerifyCompilerDiagnostics(compilerDiagnostics, options);
-
-                compilation = UpdateCompilation(compilation, expectedDiagnostics);
 
                 ImmutableArray<Diagnostic> diagnostics = await GetAnalyzerDiagnosticsAsync(compilation, analyzer, DiagnosticComparer.SpanStart, cancellationToken);
 
@@ -115,7 +113,7 @@ namespace Roslynator.Testing
 
             using (Workspace workspace = new AdhocWorkspace())
             {
-                (Document document, ImmutableArray<ExpectedDocument> expectedDocuments) = CreateDocument(workspace.CurrentSolution, state.Source, state.AdditionalFiles, options);
+                (Document document, ImmutableArray<ExpectedDocument> expectedDocuments) = CreateDocument(workspace.CurrentSolution, state.Source, state.AdditionalFiles, options, state.Descriptor);
 
                 SyntaxTree tree = await document.GetSyntaxTreeAsync();
 
@@ -128,8 +126,6 @@ namespace Roslynator.Testing
                 ImmutableArray<Diagnostic> compilerDiagnostics = compilation.GetDiagnostics(cancellationToken);
 
                 VerifyCompilerDiagnostics(compilerDiagnostics, options);
-
-                compilation = UpdateCompilation(compilation, analyzer.SupportedDiagnostics);
 
                 ImmutableArray<Diagnostic> actualDiagnostics = await GetAnalyzerDiagnosticsAsync(compilation, analyzer, DiagnosticComparer.SpanStart, cancellationToken);
 
@@ -191,11 +187,9 @@ namespace Roslynator.Testing
 
             using (Workspace workspace = new AdhocWorkspace())
             {
-                (Document document, ImmutableArray<ExpectedDocument> expectedDocuments) = CreateDocument(workspace.CurrentSolution, state.Source, state.AdditionalFiles, options);
+                (Document document, ImmutableArray<ExpectedDocument> expectedDocuments) = CreateDocument(workspace.CurrentSolution, state.Source, state.AdditionalFiles, options, state.Descriptor);
 
                 Project project = document.Project;
-
-                document = project.GetDocument(document.Id);
 
                 SyntaxTree tree = await document.GetSyntaxTreeAsync();
 
@@ -211,8 +205,6 @@ namespace Roslynator.Testing
                 ImmutableArray<Diagnostic> compilerDiagnostics = compilation.GetDiagnostics(cancellationToken);
 
                 VerifyCompilerDiagnostics(compilerDiagnostics, options);
-
-                compilation = UpdateCompilation(compilation, expectedDiagnostics);
 
                 ImmutableArray<Diagnostic> previousDiagnostics = ImmutableArray<Diagnostic>.Empty;
 
@@ -292,8 +284,6 @@ namespace Roslynator.Testing
                     VerifyCompilerDiagnostics(newCompilerDiagnostics, options);
                     VerifyNoNewCompilerDiagnostics(compilerDiagnostics, newCompilerDiagnostics, options);
 
-                    compilation = UpdateCompilation(compilation, expectedDiagnostics);
-
                     previousPreviousDiagnostics = previousDiagnostics;
                     previousDiagnostics = diagnostics;
                 }
@@ -324,7 +314,7 @@ namespace Roslynator.Testing
 
             using (Workspace workspace = new AdhocWorkspace())
             {
-                (Document document, ImmutableArray<ExpectedDocument> expectedDocuments) = CreateDocument(workspace.CurrentSolution, state.Source, state.AdditionalFiles, options);
+                (Document document, ImmutableArray<ExpectedDocument> expectedDocuments) = CreateDocument(workspace.CurrentSolution, state.Source, state.AdditionalFiles, options, state.Descriptor);
 
                 Compilation compilation = await document.Project.GetCompilationAsync(cancellationToken);
 
@@ -337,8 +327,6 @@ namespace Roslynator.Testing
                 ImmutableArray<Diagnostic> compilerDiagnostics = compilation.GetDiagnostics(cancellationToken);
 
                 VerifyCompilerDiagnostics(compilerDiagnostics, options);
-
-                compilation = UpdateCompilation(compilation, analyzer.SupportedDiagnostics);
 
                 ImmutableArray<Diagnostic> diagnostics = await GetAnalyzerDiagnosticsAsync(compilation, analyzer, DiagnosticComparer.SpanStart, cancellationToken);
 
@@ -496,28 +484,6 @@ namespace Roslynator.Testing
             {
                 return $"\r\n\r\nExpected diagnostic:\r\n{expectedDiagnostic}\r\n\r\nActual diagnostic:\r\n{actualDiagnostic}\r\n";
             }
-        }
-
-        private Compilation UpdateCompilation(
-            Compilation compilation,
-            ImmutableArray<Diagnostic> diagnostics)
-        {
-            Debug.Assert(diagnostics.Any());
-
-            foreach (Diagnostic diagnostic in diagnostics)
-            {
-                if (!diagnostic.Descriptor.IsEnabledByDefault)
-                    compilation = compilation.EnsureDiagnosticEnabled(diagnostic.Descriptor);
-            }
-
-            return compilation;
-        }
-
-        private Compilation UpdateCompilation(
-            Compilation compilation,
-            ImmutableArray<DiagnosticDescriptor> descriptors)
-        {
-            return compilation.EnsureDiagnosticEnabled(descriptors.Where(f => !f.IsEnabledByDefault));
         }
 
         private Task<ImmutableArray<Diagnostic>> GetAnalyzerDiagnosticsAsync(

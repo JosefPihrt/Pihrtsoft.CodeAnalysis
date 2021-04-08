@@ -206,6 +206,6 @@ namespace Roslynator.CSharp
         public const string SimplifyDefaultExpression = "RCS1244";
         public const string UseElementAccess = "RCS1246";
         public const string FixDocumentationCommentTag = "RCS1247";
-        public const string UseIsNullPatternInsteadOfComparisonOrViceVersa = "RCS1248";
+        public const string UsePatternMatchingToCheckForNullOrViceVersa = "RCS1248";
     }
 }

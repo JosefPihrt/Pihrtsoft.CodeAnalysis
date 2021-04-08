@@ -2151,7 +2151,7 @@ namespace Roslynator.CSharp
 
         #region SwitchStatementSyntax
         /// <summary>
-        /// Returns a section that contains default label, or null if the specified swtich statement does not contains section with default label.
+        /// Returns a section that contains default label, or null if the specified switch statement does not contains section with default label.
         /// </summary>
         /// <param name="switchStatement"></param>
         public static SwitchSectionSyntax DefaultSection(this SwitchStatementSyntax switchStatement)

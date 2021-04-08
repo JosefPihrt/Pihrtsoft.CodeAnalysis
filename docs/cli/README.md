@@ -18,7 +18,7 @@ It is recommended to use it if you cannot use [Roslynator.CommandLine](https://n
 
 ## Which MSBuild Instance to Use
 
-If there are multiple instances of MSBuild on a machine it is neccesary to use parameter `--msbuild-path` to specify one that should be used.
+If there are multiple instances of MSBuild on a machine it is necessary to use parameter `--msbuild-path` to specify one that should be used.
 
 If you are using [Roslynator.CommandLine](https://nuget.org/packages/Roslynator.CommandLine) you should specify MSBuild
 instance that is part of Visual Studio installation. It should be similar to:
@@ -51,7 +51,7 @@ Value | Comment
 --- | ---
 0 | Success\*
 1 | Not a success\*\*
-2 | Error occured or execution canceled
+2 | Error occurred or execution canceled
 
 \* A diagnostic was found (`analyze` command ) or a diagnostic was fixed (`fix` command) etc.
 \*\* No diagnostic was found (`analyze` command) or no diagnostic was fixed (`fix` command) etc.

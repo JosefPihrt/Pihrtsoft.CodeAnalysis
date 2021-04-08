@@ -24,7 +24,7 @@ namespace Roslynator.CSharp
         public const string SimplifyConditionalExpressionWhenItIncludesNegationOfCondition = "RCS1104a";
         public const string ConvertMethodGroupToAnonymousFunction = "RCS1207i";
         public const string DoNotUseElementAccessWhenExpressionIsInvocation = "RCS1246a";
-        public const string UseIsNullPatternInsteadOfInequalityOperator = "RCS1248a";
-        public const string UseComparisonInsteadOfIsNullPattern = "RCS1248i";
+        public const string UseLogicalNegationAndPatternMatchingToCheckForNull = "RCS1248a";
+        public const string UseComparisonInsteadPatternMatchingToCheckForNull = "RCS1248i";
     }
 }

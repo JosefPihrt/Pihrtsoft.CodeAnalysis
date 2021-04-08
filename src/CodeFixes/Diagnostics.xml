@@ -345,7 +345,7 @@
     HelpUrl="http://docs.microsoft.com/en-us/dotnet/csharp/language-reference/compiler-messages/cs0246" />
   <Diagnostic
     Id="CS0262"
-    Identifier="PartialDeclarationsHaveConfictingAccessibilityModifiers"
+    Identifier="PartialDeclarationsHaveConflictingAccessibilityModifiers"
     Severity="Error"
     Title="Partial declarations of 'type' have conflicting accessibility modifiers."
     Message="Partial declarations of '{0}' have conflicting accessibility modifiers"
@@ -1175,5 +1175,12 @@
     Severity="Error"
     Title="Instance fields of read-only structs must be read-only."
     Message="Instance fields of readonly structs must be readonly"
+    HelpUrl="" />
+  <Diagnostic 
+    Id="CS8632"
+    Identifier="AnnotationForNullableReferenceTypesShouldOnlyBeUsedWithinNullableAnnotationsContext"
+    Severity="Warning"
+    Title="The annotation for nullable reference types should only be used in code within a '#nullable' annotations context." 
+    Message="The annotation for nullable reference types should only be used in code within a '#nullable' annotations context" 
     HelpUrl="" />
 </Diagnostics>

@@ -36,7 +36,7 @@ namespace Roslynator.CSharp.Analysis
             if (selectedMembers.Count < 2)
                 return AccessibilityFilter.None;
 
-            ImmutableArray<Accessibility> avaiableAccessibilities = AvailableAccessibilities;
+            ImmutableArray<Accessibility> availableAccessibilities = AvailableAccessibilities;
 
             var isAllExplicit = true;
             var all = AccessibilityFilter.None;
@@ -104,7 +104,7 @@ namespace Roslynator.CSharp.Analysis
                                 if (valid == AccessibilityFilter.None)
                                     return AccessibilityFilter.None;
 
-                                avaiableAccessibilities = _accessibilityArrayMap[accessibility];
+                                availableAccessibilities = _accessibilityArrayMap[accessibility];
                                 continue;
                             }
                         default:
@@ -114,7 +114,7 @@ namespace Roslynator.CSharp.Analysis
                     }
                 }
 
-                foreach (Accessibility accessibility2 in avaiableAccessibilities)
+                foreach (Accessibility accessibility2 in availableAccessibilities)
                 {
                     if (accessibility != accessibility2
                         && !SyntaxAccessibility.IsValidAccessibility(member, accessibility2, ignoreOverride: true))

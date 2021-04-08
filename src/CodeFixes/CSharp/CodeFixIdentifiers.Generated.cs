@@ -122,5 +122,6 @@ namespace Roslynator.CSharp
         public const string ReplaceInvocationWithMemberAccessOrViceVersa = CodeFixIdentifier.CodeFixIdPrefix + "0115";
         public const string AddParameterToExplicitlyImplementedInterfaceMember = CodeFixIdentifier.CodeFixIdPrefix + "0116";
         public const string MoveInitializerExpressionsToConstructor = CodeFixIdentifier.CodeFixIdPrefix + "0117";
+        public const string RemoveAnnotationForNullableReferenceTypes = CodeFixIdentifier.CodeFixIdPrefix + "0118";
     }
 }

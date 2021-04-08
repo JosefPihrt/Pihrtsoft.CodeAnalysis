@@ -492,8 +492,8 @@ namespace Roslynator.CSharp
         [Obsolete("", error: true)]
         internal static readonly DiagnosticDescriptor MemberTypeMustMatchOverriddenMemberType = DiagnosticDescriptorFactory.Default.Create(
             id:                 DiagnosticIdentifiers.MemberTypeMustMatchOverriddenMemberType, 
-            title:              "Member type must match overriden member type.", 
-            messageFormat:      "Member type must match overriden member type.", 
+            title:              "Member type must match overridden member type.", 
+            messageFormat:      "Member type must match overridden member type.", 
             category:           DiagnosticCategories.ErrorFix, 
             defaultSeverity:    DiagnosticSeverity.Hidden, 
             isEnabledByDefault: true, 

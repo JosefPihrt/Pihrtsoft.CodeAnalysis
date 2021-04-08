@@ -8,8 +8,8 @@ namespace Roslynator.FindSymbols
         Visibility = 1,
         SymbolGroup = 2,
         Ignored = 3,
-        WithAttibute = 4,
-        WithoutAttibute = 5,
+        WithAttribute = 4,
+        WithoutAttribute = 5,
         ImplicitlyDeclared = 6,
         Other = 7,
     }

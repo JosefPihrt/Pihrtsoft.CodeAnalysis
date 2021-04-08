@@ -202,27 +202,27 @@ namespace Roslynator.CSharp
             customTags:         Array.Empty<string>());
 
         /// <summary>RCS1248a</summary>
-        public static readonly DiagnosticDescriptor UseIsNullPatternInsteadOfInequalityOperator = DiagnosticDescriptorFactory.Default.Create(
-            id:                 AnalyzerOptionDiagnosticIdentifiers.UseIsNullPatternInsteadOfInequalityOperator, 
-            title:              "Use 'is null' pattern instead of '!=' operator.", 
-            messageFormat:      "Use 'is null' pattern instead of '!=' operator.", 
+        public static readonly DiagnosticDescriptor UseLogicalNegationAndPatternMatchingToCheckForNull = DiagnosticDescriptorFactory.Default.Create(
+            id:                 AnalyzerOptionDiagnosticIdentifiers.UseLogicalNegationAndPatternMatchingToCheckForNull, 
+            title:              "Use logical negation and pattern matching to check for null.", 
+            messageFormat:      "Use logical negation and pattern matching to check for null.", 
             category:           DiagnosticCategories.AnalyzerOption, 
             defaultSeverity:    DiagnosticSeverity.Info, 
             isEnabledByDefault: false, 
             description:        null, 
-            helpLinkUri:        AnalyzerOptionDiagnosticIdentifiers.UseIsNullPatternInsteadOfInequalityOperator, 
+            helpLinkUri:        AnalyzerOptionDiagnosticIdentifiers.UseLogicalNegationAndPatternMatchingToCheckForNull, 
             customTags:         Array.Empty<string>());
 
         /// <summary>RCS1248i</summary>
-        public static readonly DiagnosticDescriptor UseComparisonInsteadOfIsNullPattern = DiagnosticDescriptorFactory.Default.Create(
-            id:                 AnalyzerOptionDiagnosticIdentifiers.UseComparisonInsteadOfIsNullPattern, 
-            title:              "Use comparison instead of 'is null' pattern.", 
-            messageFormat:      "Use comparison instead of 'is null' pattern.", 
+        public static readonly DiagnosticDescriptor UseComparisonInsteadPatternMatchingToCheckForNull = DiagnosticDescriptorFactory.Default.Create(
+            id:                 AnalyzerOptionDiagnosticIdentifiers.UseComparisonInsteadPatternMatchingToCheckForNull, 
+            title:              "Use comparison instead of pattern matching to check for null.", 
+            messageFormat:      "Use comparison instead of pattern matching to check for null.", 
             category:           DiagnosticCategories.AnalyzerOption, 
             defaultSeverity:    DiagnosticSeverity.Info, 
             isEnabledByDefault: false, 
             description:        null, 
-            helpLinkUri:        AnalyzerOptionDiagnosticIdentifiers.UseComparisonInsteadOfIsNullPattern, 
+            helpLinkUri:        AnalyzerOptionDiagnosticIdentifiers.UseComparisonInsteadPatternMatchingToCheckForNull, 
             customTags:         Array.Empty<string>());
 
     }

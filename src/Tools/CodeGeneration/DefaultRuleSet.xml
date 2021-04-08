@@ -7,7 +7,7 @@ This rule set can be used to:
  2) Change DEFAULT severity (action) of the analyzer(s).
  
 Default configuration is applied once when analyzers are loaded.
-Therefore, it may be neccessary to restart IDE for changes to take effect.
+Therefore, it may be necessary to restart IDE for changes to take effect.
 
 Although it is possible to edit ruleset manually, Visual Studio has built-in support for editing ruleset.
 Just add ruleset file to a solution and open it.

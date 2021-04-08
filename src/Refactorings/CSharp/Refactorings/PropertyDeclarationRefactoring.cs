@@ -89,7 +89,7 @@ namespace Roslynator.CSharp.Refactorings
             }
 
             if (context.IsRefactoringEnabled(RefactoringIdentifiers.RenamePropertyAccordingToTypeName))
-                await RenamePropertyAccodingToTypeName(context, propertyDeclaration).ConfigureAwait(false);
+                await RenamePropertyAccordingToTypeName(context, propertyDeclaration).ConfigureAwait(false);
 
             if (context.IsRefactoringEnabled(RefactoringIdentifiers.AddMemberToInterface)
                 && context.Span.IsEmptyAndContainedInSpanOrBetweenSpans(propertyDeclaration.Identifier))
@@ -100,7 +100,7 @@ namespace Roslynator.CSharp.Refactorings
             }
         }
 
-        private static async Task RenamePropertyAccodingToTypeName(RefactoringContext context, PropertyDeclarationSyntax propertyDeclaration)
+        private static async Task RenamePropertyAccordingToTypeName(RefactoringContext context, PropertyDeclarationSyntax propertyDeclaration)
         {
             TypeSyntax type = propertyDeclaration.Type;
 

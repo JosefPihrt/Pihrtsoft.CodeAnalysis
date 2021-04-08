@@ -609,8 +609,8 @@ namespace Roslynator.CSharp
             customTags:         WellKnownDiagnosticTags.Compiler);
 
         /// <summary>CS0262</summary>
-        public static readonly DiagnosticDescriptor PartialDeclarationsHaveConfictingAccessibilityModifiers = new DiagnosticDescriptor(
-            id:                 CompilerDiagnosticIdentifiers.PartialDeclarationsHaveConfictingAccessibilityModifiers, 
+        public static readonly DiagnosticDescriptor PartialDeclarationsHaveConflictingAccessibilityModifiers = new DiagnosticDescriptor(
+            id:                 CompilerDiagnosticIdentifiers.PartialDeclarationsHaveConflictingAccessibilityModifiers, 
             title:              "Partial declarations of 'type' have conflicting accessibility modifiers.", 
             messageFormat:      "Partial declarations of '{0}' have conflicting accessibility modifiers", 
             category:           "Compiler", 
@@ -2019,6 +2019,18 @@ namespace Roslynator.CSharp
             messageFormat:      "Instance fields of readonly structs must be readonly", 
             category:           "Compiler", 
             defaultSeverity:    DiagnosticSeverity.Error, 
+            isEnabledByDefault: true, 
+            description:        null, 
+            helpLinkUri:        "", 
+            customTags:         WellKnownDiagnosticTags.Compiler);
+
+        /// <summary>CS8632</summary>
+        public static readonly DiagnosticDescriptor AnnotationForNullableReferenceTypesShouldOnlyBeUsedWithinNullableAnnotationsContext = new DiagnosticDescriptor(
+            id:                 CompilerDiagnosticIdentifiers.AnnotationForNullableReferenceTypesShouldOnlyBeUsedWithinNullableAnnotationsContext, 
+            title:              "The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.", 
+            messageFormat:      "The annotation for nullable reference types should only be used in code within a '#nullable' annotations context", 
+            category:           "Compiler", 
+            defaultSeverity:    DiagnosticSeverity.Warning, 
             isEnabledByDefault: true, 
             description:        null, 
             helpLinkUri:        "", 

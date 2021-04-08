@@ -66,7 +66,7 @@ class C
         }
 
         [Fact, Trait(Traits.Refactoring, RefactoringIdentifiers.MergeIfStatements)]
-        public async Task Test_SwitcSection()
+        public async Task Test_SwitchSection()
         {
             await VerifyRefactoringAsync(@"
 class C

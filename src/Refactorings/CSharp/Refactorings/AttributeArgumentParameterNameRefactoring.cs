@@ -171,11 +171,11 @@ namespace Roslynator.CSharp.Refactorings
         {
             private static readonly RemoveParameterNameSyntaxRewriter _instance = new RemoveParameterNameSyntaxRewriter();
 
-            private readonly AttributeArgumentSyntax[] _argumments;
+            private readonly AttributeArgumentSyntax[] _arguments;
 
             private RemoveParameterNameSyntaxRewriter(AttributeArgumentSyntax[] arguments = null)
             {
-                _argumments = arguments;
+                _arguments = arguments;
             }
 
             public static AttributeArgumentListSyntax VisitNode(AttributeArgumentListSyntax argumentList, AttributeArgumentSyntax[] arguments = null)
@@ -193,7 +193,7 @@ namespace Roslynator.CSharp.Refactorings
 
             public override SyntaxNode VisitAttributeArgument(AttributeArgumentSyntax node)
             {
-                if (_argumments == null || Array.IndexOf(_argumments, node) != -1)
+                if (_arguments == null || Array.IndexOf(_arguments, node) != -1)
                 {
                     return node
                         .WithNameColon(null)

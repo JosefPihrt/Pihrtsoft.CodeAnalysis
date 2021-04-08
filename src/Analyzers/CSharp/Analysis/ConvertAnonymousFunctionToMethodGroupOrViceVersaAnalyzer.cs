@@ -363,9 +363,9 @@ namespace Roslynator.CSharp.Analysis
         {
             if (expression.Kind() == SyntaxKind.SimpleMemberAccessExpression)
             {
-                var memberAccessExpfression = (MemberAccessExpressionSyntax)expression;
+                var memberAccessExpression = (MemberAccessExpressionSyntax)expression;
 
-                if (memberAccessExpfression.Expression is IdentifierNameSyntax identifierName)
+                if (memberAccessExpression.Expression is IdentifierNameSyntax identifierName)
                 {
                     string name = identifierName.Identifier.ValueText;
 

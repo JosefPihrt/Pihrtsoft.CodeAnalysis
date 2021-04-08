@@ -12,7 +12,7 @@ namespace Roslynator.CSharp.Refactorings
 {
     internal static class SelectedMemberDeclarationsRefactoring
     {
-        public static ImmutableDictionary<Accessibility, string> _accessiblityIdentifierMap = ImmutableDictionary.CreateRange(new[]
+        public static ImmutableDictionary<Accessibility, string> _accessibilityIdentifierMap = ImmutableDictionary.CreateRange(new[]
             {
                 new KeyValuePair<Accessibility, string>(Accessibility.Public, EquivalenceKey.Join(RefactoringIdentifiers.ChangeAccessibility, nameof(Accessibility.Public))),
                 new KeyValuePair<Accessibility, string>(Accessibility.Internal, EquivalenceKey.Join(RefactoringIdentifiers.ChangeAccessibility, nameof(Accessibility.Internal))),
@@ -71,7 +71,7 @@ namespace Roslynator.CSharp.Refactorings
                                 SemanticModel semanticModel = await context.Document.GetSemanticModelAsync(cancellationToken).ConfigureAwait(false);
                                 return await ChangeAccessibilityRefactoring.RefactorAsync(context.Document.Solution(), selectedMembers, accessibility, semanticModel, cancellationToken).ConfigureAwait(false);
                             },
-                            _accessiblityIdentifierMap[accessibility]);
+                            _accessibilityIdentifierMap[accessibility]);
                     }
                     else
                     {
