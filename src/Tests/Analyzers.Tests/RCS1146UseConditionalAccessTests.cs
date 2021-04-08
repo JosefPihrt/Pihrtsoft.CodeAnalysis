@@ -766,6 +766,23 @@ class C
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseConditionalAccess)]
+        public async Task TestNoDiagnostic_LocalDeclaration_ExpressionTree()
+        {
+            await VerifyNoDiagnosticAsync(@"
+using System;
+using System.Linq.Expressions;
+
+class C
+{
+    public void M()
+    {
+        Expression<Func<string, bool>> expression = x => x != null && x.Equals(x);
+    }
+}
+");
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseConditionalAccess)]
         public async Task TestNoDiagnostic_TypeOverloadsOrOperatorAndImplicitConversionToBooleanDoesNotExist()
         {
             await VerifyNoDiagnosticAsync(@"

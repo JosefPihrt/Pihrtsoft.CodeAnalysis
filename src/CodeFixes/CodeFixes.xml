@@ -459,6 +459,7 @@
       <Id>CS0029</Id>
       <Id>CS0127</Id>
       <Id>CS0201</Id>
+      <Id>CS0246</Id>
       <Id>CS0266</Id>
       <Id>CS1997</Id>
     </FixableDiagnosticIds>

@@ -3134,23 +3134,155 @@ namespace Roslynator.CSharp
 
                             break;
                         }
-                    case SyntaxKind.QueryExpression:
+                    case SyntaxKind.AscendingOrdering:
+                    case SyntaxKind.DescendingOrdering:
+                    case SyntaxKind.GroupClause:
+                    case SyntaxKind.SelectClause:
                         {
-                            if (semanticModel
-                                .GetTypeInfo(current, cancellationToken)
-                                .ConvertedType?
-                                .OriginalDefinition
-                                .HasMetadataName(MetadataNames.System_Linq_IQueryable_T) == true)
+                            SymbolInfo symbolInfo = semanticModel.GetSymbolInfo(current, cancellationToken);
+
+                            if (IsMethodThatAcceptsExpressionAsFirstParameter(symbolInfo))
+                                return true;
+
+                            break;
+                        }
+                    case SyntaxKind.FromClause:
+                    case SyntaxKind.JoinClause:
+                    case SyntaxKind.JoinIntoClause:
+                    case SyntaxKind.LetClause:
+                    case SyntaxKind.OrderByClause:
+                    case SyntaxKind.WhereClause:
+                        {
+                            QueryClauseInfo clauseInfo = semanticModel.GetQueryClauseInfo((QueryClauseSyntax)current, cancellationToken);
+
+                            if (IsMethodThatAcceptsExpressionAsFirstParameter(clauseInfo.CastInfo)
+                                || IsMethodThatAcceptsExpressionAsFirstParameter(clauseInfo.OperationInfo))
                             {
                                 return true;
                             }
 
                             break;
                         }
+                    case SyntaxKind.ClassDeclaration:
+                    case SyntaxKind.ConstructorDeclaration:
+                    case SyntaxKind.ConversionOperatorDeclaration:
+                    case SyntaxKind.DelegateDeclaration:
+                    case SyntaxKind.DestructorDeclaration:
+                    case SyntaxKind.EnumDeclaration:
+                    case SyntaxKind.EventDeclaration:
+                    case SyntaxKind.EventFieldDeclaration:
+                    case SyntaxKind.FieldDeclaration:
+                    case SyntaxKind.IndexerDeclaration:
+                    case SyntaxKind.InterfaceDeclaration:
+                    case SyntaxKind.MethodDeclaration:
+                    case SyntaxKind.OperatorDeclaration:
+                    case SyntaxKind.PropertyDeclaration:
+                    case SyntaxKind.RecordDeclaration:
+                    case SyntaxKind.StructDeclaration:
+                    case SyntaxKind.IncompleteMember:
+                    case SyntaxKind.GetAccessorDeclaration:
+                    case SyntaxKind.SetAccessorDeclaration:
+                    case SyntaxKind.InitAccessorDeclaration:
+                    case SyntaxKind.AddAccessorDeclaration:
+                    case SyntaxKind.RemoveAccessorDeclaration:
+                    case SyntaxKind.UnknownAccessorDeclaration:
+                    case SyntaxKind.Block:
+                    case SyntaxKind.LocalDeclarationStatement:
+                    case SyntaxKind.ExpressionStatement:
+                    case SyntaxKind.EmptyStatement:
+                    case SyntaxKind.LabeledStatement:
+                    case SyntaxKind.GotoStatement:
+                    case SyntaxKind.GotoCaseStatement:
+                    case SyntaxKind.GotoDefaultStatement:
+                    case SyntaxKind.BreakStatement:
+                    case SyntaxKind.ContinueStatement:
+                    case SyntaxKind.ReturnStatement:
+                    case SyntaxKind.YieldReturnStatement:
+                    case SyntaxKind.YieldBreakStatement:
+                    case SyntaxKind.ThrowStatement:
+                    case SyntaxKind.WhileStatement:
+                    case SyntaxKind.DoStatement:
+                    case SyntaxKind.ForStatement:
+                    case SyntaxKind.ForEachStatement:
+                    case SyntaxKind.UsingStatement:
+                    case SyntaxKind.FixedStatement:
+                    case SyntaxKind.CheckedStatement:
+                    case SyntaxKind.UncheckedStatement:
+                    case SyntaxKind.UnsafeStatement:
+                    case SyntaxKind.LockStatement:
+                    case SyntaxKind.IfStatement:
+                    case SyntaxKind.SwitchStatement:
+                    case SyntaxKind.TryStatement:
+                    case SyntaxKind.LocalFunctionStatement:
+                    case SyntaxKind.GlobalStatement:
+                    case SyntaxKind.ForEachVariableStatement:
+                    case SyntaxKind.ArrowExpressionClause:
+                    case SyntaxKind.CatchClause:
+                    case SyntaxKind.CatchFilterClause:
+                        {
+                            return false;
+                        }
+#if DEBUG
+                    case SyntaxKind.LogicalAndExpression:
+                    case SyntaxKind.LogicalOrExpression:
+                    case SyntaxKind.ConditionalExpression:
+                    case SyntaxKind.SimpleMemberAccessExpression:
+                    case SyntaxKind.InvocationExpression:
+                    case SyntaxKind.ElementAccessExpression:
+                    case SyntaxKind.ParenthesizedExpression:
+                    case SyntaxKind.ObjectInitializerExpression:
+                    case SyntaxKind.ObjectCreationExpression:
+                    case SyntaxKind.EqualsValueClause:
+                    case SyntaxKind.VariableDeclarator:
+                    case SyntaxKind.VariableDeclaration:
+                    case SyntaxKind.EqualsExpression:
+                    case SyntaxKind.NotEqualsExpression:
+                    case SyntaxKind.Argument:
+                    case SyntaxKind.ArgumentList:
+                    case SyntaxKind.SimpleAssignmentExpression:
+                    case SyntaxKind.LogicalNotExpression:
+                    case SyntaxKind.Interpolation:
+                    case SyntaxKind.InterpolatedStringExpression:
+                        {
+                            break;
+                        }
+                    default:
+                        {
+                            Debug.Fail(current.Kind().ToString());
+                            break;
+                        }
+#endif
                 }
             }
 
             return false;
+
+            static bool IsMethodThatAcceptsExpressionAsFirstParameter(SymbolInfo info)
+            {
+                ISymbol symbol = info.Symbol;
+
+                if (symbol != null)
+                    return IsMethodThatAcceptsExpressionAsFirstParameter2(symbol);
+
+                foreach (ISymbol candidateSymbol in info.CandidateSymbols)
+                {
+                    if (IsMethodThatAcceptsExpressionAsFirstParameter2(candidateSymbol))
+                        return true;
+                }
+
+                return false;
+            }
+
+            static bool IsMethodThatAcceptsExpressionAsFirstParameter2(ISymbol symbol)
+            {
+                return symbol is IMethodSymbol methodSymbol
+                    && methodSymbol
+                        .Parameters
+                        .FirstOrDefault()?
+                        .Type?
+                        .OriginalDefinition
+                        .HasMetadataName(MetadataNames.System_Linq_Expressions_Expression_T) == true;
+            }
         }
 
         /// <summary>
