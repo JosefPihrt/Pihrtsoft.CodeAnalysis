@@ -3134,13 +3134,29 @@ namespace Roslynator.CSharp
 
                             break;
                         }
-                    case SyntaxKind.QueryExpression:
+                    case SyntaxKind.AscendingOrdering:
+                    case SyntaxKind.DescendingOrdering:
+                    case SyntaxKind.GroupClause:
+                    case SyntaxKind.SelectClause:
                         {
-                            if (semanticModel
-                                .GetTypeInfo(current, cancellationToken)
-                                .ConvertedType?
-                                .OriginalDefinition
-                                .HasMetadataName(MetadataNames.System_Linq_IQueryable_T) == true)
+                            SymbolInfo symbolInfo = semanticModel.GetSymbolInfo(current, cancellationToken);
+
+                            if (IsMethodThatAcceptsExpressionAsFirstParameter(symbolInfo))
+                                return true;
+
+                            break;
+                        }
+                    case SyntaxKind.FromClause:
+                    case SyntaxKind.JoinClause:
+                    case SyntaxKind.JoinIntoClause:
+                    case SyntaxKind.LetClause:
+                    case SyntaxKind.OrderByClause:
+                    case SyntaxKind.WhereClause:
+                        {
+                            QueryClauseInfo clauseInfo = semanticModel.GetQueryClauseInfo((QueryClauseSyntax)current, cancellationToken);
+
+                            if (IsMethodThatAcceptsExpressionAsFirstParameter(clauseInfo.CastInfo)
+                                || IsMethodThatAcceptsExpressionAsFirstParameter(clauseInfo.OperationInfo))
                             {
                                 return true;
                             }
@@ -3206,6 +3222,7 @@ namespace Roslynator.CSharp
                         {
                             return false;
                         }
+#if DEBUG
                     case SyntaxKind.LogicalAndExpression:
                     case SyntaxKind.LogicalOrExpression:
                     case SyntaxKind.ConditionalExpression:
@@ -3234,10 +3251,38 @@ namespace Roslynator.CSharp
                             Debug.Fail(current.Kind().ToString());
                             break;
                         }
+#endif
                 }
             }
 
             return false;
+
+            static bool IsMethodThatAcceptsExpressionAsFirstParameter(SymbolInfo info)
+            {
+                ISymbol symbol = info.Symbol;
+
+                if (symbol != null)
+                    return IsMethodThatAcceptsExpressionAsFirstParameter2(symbol);
+
+                foreach (ISymbol candidateSymbol in info.CandidateSymbols)
+                {
+                    if (IsMethodThatAcceptsExpressionAsFirstParameter2(candidateSymbol))
+                        return true;
+                }
+
+                return false;
+            }
+
+            static bool IsMethodThatAcceptsExpressionAsFirstParameter2(ISymbol symbol)
+            {
+                return symbol is IMethodSymbol methodSymbol
+                    && methodSymbol
+                        .Parameters
+                        .FirstOrDefault()?
+                        .Type?
+                        .OriginalDefinition
+                        .HasMetadataName(MetadataNames.System_Linq_Expressions_Expression_T) == true;
+            }
         }
 
         /// <summary>
