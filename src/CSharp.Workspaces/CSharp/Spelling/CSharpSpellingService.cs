@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -19,7 +18,7 @@ namespace Roslynator.CSharp.Spelling
     [Export(typeof(ILanguageService))]
     [ExportMetadata("Language", LanguageNames.CSharp)]
     [ExportMetadata("ServiceType", "Roslynator.Spelling.ISpellingService")]
-    internal class CSharpSpellingService : SpellingService
+    internal partial class CSharpSpellingService : SpellingService
     {
         public override ISyntaxFactsService SyntaxFacts => CSharpSyntaxFactsService.Instance;
 
@@ -96,54 +95,6 @@ namespace Roslynator.CSharp.Spelling
             }
 
             throw new InvalidOperationException();
-        }
-
-        [SuppressMessage("MicrosoftCodeAnalysisCorrectness", "RS1001:Missing diagnostic analyzer attribute.")]
-        private class CSharpSpellingAnalyzer : DiagnosticAnalyzer
-        {
-            private readonly SpellingData _spellingData;
-            private readonly SpellingFixerOptions _options;
-
-            public CSharpSpellingAnalyzer(
-                SpellingData spellingData,
-                SpellingFixerOptions options)
-            {
-                _spellingData = spellingData;
-                _options = options;
-            }
-
-            public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
-            {
-                get { return ImmutableArray.Create(SpellingAnalyzer.DiagnosticDescriptor); }
-            }
-
-            public override void Initialize(AnalysisContext context)
-            {
-                context.EnableConcurrentExecution();
-
-                context.ConfigureGeneratedCodeAnalysis((_options.IncludeGeneratedCode)
-                    ? GeneratedCodeAnalysisFlags.ReportDiagnostics
-                    : GeneratedCodeAnalysisFlags.None);
-
-                context.RegisterSyntaxTreeAction(f => AnalyzeSyntaxTree(f));
-            }
-
-            private void AnalyzeSyntaxTree(SyntaxTreeAnalysisContext context)
-            {
-                SyntaxTree tree = context.Tree;
-
-                SyntaxNode root = tree.GetRoot(context.CancellationToken);
-
-                var analysisContext = new SpellingAnalysisContext(
-                    diagnostic => context.ReportDiagnostic(diagnostic),
-                    _spellingData,
-                    _options,
-                    context.CancellationToken);
-
-                CSharpSpellingWalker walker = CSharpSpellingWalker.Create(analysisContext);
-
-                walker.Visit(root);
-            }
         }
     }
 }
