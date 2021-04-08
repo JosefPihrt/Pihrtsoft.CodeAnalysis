@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Josef Pihrt. All rights reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
@@ -56,6 +57,7 @@ namespace Roslynator.Testing
                     VerifyCompilerDiagnostics(compilerDiagnostics, options);
 
                     CodeAction action = null;
+                    List<CodeAction> candidateActions = null;
 
                     var context = new CodeRefactoringContext(
                         document,
@@ -66,16 +68,21 @@ namespace Roslynator.Testing
                                 || string.Equals(a.EquivalenceKey, state.EquivalenceKey, StringComparison.Ordinal))
                             {
                                 if (action != null)
-                                    Fail("Multiple fixes available.");
+                                    Fail($"Multiple refactorings registered by '{refactoringProvider.GetType().Name}'.", new CodeAction[] { action, a });
 
                                 action = a;
+                            }
+                            else
+                            {
+                                (candidateActions ??= new List<CodeAction>()).Add(a);
                             }
                         },
                         cancellationToken);
 
                     await refactoringProvider.ComputeRefactoringsAsync(context);
 
-                    Assert.True(action != null, "No code refactoring has been registered.");
+                    if (action == null)
+                        Fail("No code refactoring has been registered.", candidateActions);
 
                     document = await VerifyAndApplyCodeActionAsync(document, action, expected.CodeActionTitle);
                     semanticModel = await document.GetSemanticModelAsync(cancellationToken);

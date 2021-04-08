@@ -221,7 +221,12 @@ namespace Roslynator.Testing
                     int length = diagnostics.Length;
 
                     if (length == 0)
+                    {
+                        if (!fixRegistered)
+                            Fail("No diagnostic found.");
+
                         break;
+                    }
 
                     if (DiagnosticDeepEqualityComparer.Equals(diagnostics, previousDiagnostics))
                         Fail("Same diagnostics returned before and after the fix was applied.", diagnostics);
@@ -248,9 +253,15 @@ namespace Roslynator.Testing
                     }
 
                     if (diagnostic == null)
+                    {
+                        if (!fixRegistered)
+                            Fail($"No diagnostic with ID '{state.Descriptor.Id}' found.", diagnostics);
+
                         break;
+                    }
 
                     CodeAction action = null;
+                    List<CodeAction> candidateActions = null;
 
                     var context = new CodeFixContext(
                         document,
@@ -262,9 +273,13 @@ namespace Roslynator.Testing
                                 && d.Contains(diagnostic))
                             {
                                 if (action != null)
-                                    Fail("Multiple fixes available.");
+                                    Fail($"Multiple fixes registered by '{fixProvider.GetType().Name}'.", new CodeAction[] { action, a });
 
                                 action = a;
+                            }
+                            else
+                            {
+                                (candidateActions ??= new List<CodeAction>()).Add(a);
                             }
                         },
                         cancellationToken);
@@ -272,7 +287,7 @@ namespace Roslynator.Testing
                     await fixProvider.RegisterCodeFixesAsync(context);
 
                     if (action == null)
-                        break;
+                        Fail("No code fix has been registered.", candidateActions);
 
                     fixRegistered = true;
 
@@ -287,8 +302,6 @@ namespace Roslynator.Testing
                     previousPreviousDiagnostics = previousDiagnostics;
                     previousDiagnostics = diagnostics;
                 }
-
-                Assert.True(fixRegistered, "No code fix has been registered.");
 
                 await VerifyExpectedDocument(expected, document, cancellationToken);
 

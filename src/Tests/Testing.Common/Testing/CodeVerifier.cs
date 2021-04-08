@@ -54,6 +54,21 @@ namespace Roslynator.Testing
             Fail(userMessage + s);
         }
 
+        protected void Fail(string userMessage, IEnumerable<CodeAction> codeActions)
+        {
+            if (codeActions == null)
+                return;
+
+            string s = string.Join("\r\n", codeActions.Select(a => $"\"{a.Title}\", EquivalenceKey: {a.EquivalenceKey}"));
+
+            if (s.Length == 0)
+                return;
+
+            s = $"\r\n\r\nCandidate actions:\r\n{s}\r\n";
+
+            Fail(userMessage + s);
+        }
+
         internal void VerifyCompilerDiagnostics(
             ImmutableArray<Diagnostic> diagnostics,
             TestOptions options)
