@@ -11,16 +11,16 @@ namespace Roslynator.Testing
     /// Represents test data for a compiler diagnostic fix.
     /// </summary>
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
-    public sealed class CompilerDiagnosticFixTestState
+    public sealed class CompilerDiagnosticFixTestData
     {
         /// <summary>
-        /// Initializes a new instance of <see cref="CompilerDiagnosticFixTestState"/>
+        /// Initializes a new instance of <see cref="CompilerDiagnosticFixTestData"/>
         /// </summary>
         /// <param name="diagnosticId"></param>
         /// <param name="source"></param>
         /// <param name="additionalFiles"></param>
         /// <param name="equivalenceKey"></param>
-        public CompilerDiagnosticFixTestState(
+        public CompilerDiagnosticFixTestData(
             string diagnosticId,
             string source,
             IEnumerable<AdditionalFile> additionalFiles = null,
@@ -32,7 +32,7 @@ namespace Roslynator.Testing
             EquivalenceKey = equivalenceKey;
         }
 
-        internal CompilerDiagnosticFixTestState(CompilerDiagnosticFixTestState other)
+        internal CompilerDiagnosticFixTestData(CompilerDiagnosticFixTestData other)
             : this(
                 diagnosticId: other.DiagnosticId,
                 source: other.Source,
@@ -65,19 +65,19 @@ namespace Roslynator.Testing
         private string DebuggerDisplay => $"{DiagnosticId}  {Source}";
 
         /// <summary>
-        /// Creates and return new instance of <see cref="CompilerDiagnosticFixTestState"/> updated with specified values.
+        /// Creates and return new instance of <see cref="CompilerDiagnosticFixTestData"/> updated with specified values.
         /// </summary>
         /// <param name="diagnosticId"></param>
         /// <param name="source"></param>
         /// <param name="additionalFiles"></param>
         /// <param name="equivalenceKey"></param>
-        public CompilerDiagnosticFixTestState Update(
+        public CompilerDiagnosticFixTestData Update(
             string diagnosticId,
             string source,
             IEnumerable<AdditionalFile> additionalFiles,
             string equivalenceKey)
         {
-            return new CompilerDiagnosticFixTestState(
+            return new CompilerDiagnosticFixTestData(
                 diagnosticId: diagnosticId,
                 source: source,
                 additionalFiles: additionalFiles,

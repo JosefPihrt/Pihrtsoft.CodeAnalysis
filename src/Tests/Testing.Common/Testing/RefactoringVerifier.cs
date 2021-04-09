@@ -25,30 +25,30 @@ namespace Roslynator.Testing
         /// <summary>
         /// Verifies that refactoring will be applied correctly using specified <typeparamref name="TRefactoringProvider"/>.
         /// </summary>
-        /// <param name="state"></param>
+        /// <param name="data"></param>
         /// <param name="expected"></param>
         /// <param name="options"></param>
         /// <param name="cancellationToken"></param>
         public async Task VerifyRefactoringAsync(
-            RefactoringTestState state,
+            RefactoringTestData data,
             ExpectedTestState expected,
             TestOptions options = null,
             CancellationToken cancellationToken = default)
         {
-            if (state.Spans.IsEmpty)
+            if (data.Spans.IsEmpty)
                 Fail("Span on which a refactoring should be invoked was not found.");
 
             options ??= Options;
 
             TRefactoringProvider refactoringProvider = Activator.CreateInstance<TRefactoringProvider>();
 
-            foreach (TextSpan span in state.Spans)
+            foreach (TextSpan span in data.Spans)
             {
                 cancellationToken.ThrowIfCancellationRequested();
 
                 using (Workspace workspace = new AdhocWorkspace())
                 {
-                    (Document document, ImmutableArray<ExpectedDocument> expectedDocuments) = CreateDocument(workspace.CurrentSolution, state.Source, state.AdditionalFiles, options);
+                    (Document document, ImmutableArray<ExpectedDocument> expectedDocuments) = CreateDocument(workspace.CurrentSolution, data.Source, data.AdditionalFiles, options);
 
                     SemanticModel semanticModel = await document.GetSemanticModelAsync(cancellationToken);
 
@@ -64,8 +64,8 @@ namespace Roslynator.Testing
                         span,
                         a =>
                         {
-                            if (state.EquivalenceKey == null
-                                || string.Equals(a.EquivalenceKey, state.EquivalenceKey, StringComparison.Ordinal))
+                            if (data.EquivalenceKey == null
+                                || string.Equals(a.EquivalenceKey, data.EquivalenceKey, StringComparison.Ordinal))
                             {
                                 if (action != null)
                                     Fail($"Multiple refactorings registered by '{refactoringProvider.GetType().Name}'.", new CodeAction[] { action, a });
@@ -100,15 +100,15 @@ namespace Roslynator.Testing
         /// <summary>
         /// Verifies that refactoring will not be applied using specified <typeparamref name="TRefactoringProvider"/>.
         /// </summary>
-        /// <param name="state"></param>
+        /// <param name="data"></param>
         /// <param name="options"></param>
         /// <param name="cancellationToken"></param>
         public async Task VerifyNoRefactoringAsync(
-            RefactoringTestState state,
+            RefactoringTestData data,
             TestOptions options = null,
             CancellationToken cancellationToken = default)
         {
-            if (state.Spans.IsEmpty)
+            if (data.Spans.IsEmpty)
                 Fail("Span on which a refactoring should be invoked was not found.");
 
             cancellationToken.ThrowIfCancellationRequested();
@@ -119,7 +119,7 @@ namespace Roslynator.Testing
 
             using (Workspace workspace = new AdhocWorkspace())
             {
-                (Document document, ImmutableArray<ExpectedDocument> expectedDocuments) = CreateDocument(workspace.CurrentSolution, state.Source, state.AdditionalFiles, options);
+                (Document document, ImmutableArray<ExpectedDocument> expectedDocuments) = CreateDocument(workspace.CurrentSolution, data.Source, data.AdditionalFiles, options);
 
                 SemanticModel semanticModel = await document.GetSemanticModelAsync(cancellationToken);
 
@@ -127,7 +127,7 @@ namespace Roslynator.Testing
 
                 VerifyCompilerDiagnostics(compilerDiagnostics, options);
 
-                foreach (TextSpan span in state.Spans)
+                foreach (TextSpan span in data.Spans)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
@@ -136,8 +136,8 @@ namespace Roslynator.Testing
                         span,
                         a =>
                         {
-                            if (state.EquivalenceKey == null
-                                || string.Equals(a.EquivalenceKey, state.EquivalenceKey, StringComparison.Ordinal))
+                            if (data.EquivalenceKey == null
+                                || string.Equals(a.EquivalenceKey, data.EquivalenceKey, StringComparison.Ordinal))
                             {
                                 Fail("No code refactoring expected.");
                             }

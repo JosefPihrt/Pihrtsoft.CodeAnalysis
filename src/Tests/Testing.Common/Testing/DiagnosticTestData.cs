@@ -14,10 +14,10 @@ namespace Roslynator.Testing
     /// Represents test data for a diagnostic and its fix.
     /// </summary>
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
-    public sealed class DiagnosticTestState
+    public sealed class DiagnosticTestData
     {
         /// <summary>
-        /// Initializes a new instance of <see cref="DiagnosticTestState"/>.
+        /// Initializes a new instance of <see cref="DiagnosticTestData"/>.
         /// </summary>
         /// <param name="descriptor"></param>
         /// <param name="source"></param>
@@ -28,7 +28,7 @@ namespace Roslynator.Testing
         /// <param name="formatProvider"></param>
         /// <param name="equivalenceKey"></param>
         /// <param name="alwaysVerifyAdditionalLocations"></param>
-        public DiagnosticTestState(
+        public DiagnosticTestData(
             DiagnosticDescriptor descriptor,
             string source,
             IEnumerable<TextSpan> spans,
@@ -56,7 +56,7 @@ namespace Roslynator.Testing
             }
         }
 
-        internal DiagnosticTestState(DiagnosticTestState other)
+        internal DiagnosticTestData(DiagnosticTestData other)
             : this(
                 descriptor: other.Descriptor,
                 source: other.Source,
@@ -129,7 +129,7 @@ namespace Roslynator.Testing
         }
 
         /// <summary>
-        /// Creates and return new instance of <see cref="DiagnosticTestState"/> updated with specified values.
+        /// Creates and return new instance of <see cref="DiagnosticTestData"/> updated with specified values.
         /// </summary>
         /// <param name="descriptor"></param>
         /// <param name="source"></param>
@@ -140,7 +140,7 @@ namespace Roslynator.Testing
         /// <param name="formatProvider"></param>
         /// <param name="equivalenceKey"></param>
         /// <param name="alwaysVerifyAdditionalLocations"></param>
-        public DiagnosticTestState Update(
+        public DiagnosticTestData Update(
             DiagnosticDescriptor descriptor,
             string source,
             IEnumerable<TextSpan> spans,
@@ -151,7 +151,7 @@ namespace Roslynator.Testing
             string equivalenceKey,
             bool alwaysVerifyAdditionalLocations)
         {
-            return new DiagnosticTestState(
+            return new DiagnosticTestData(
                 descriptor: descriptor,
                 source: source,
                 spans: spans,

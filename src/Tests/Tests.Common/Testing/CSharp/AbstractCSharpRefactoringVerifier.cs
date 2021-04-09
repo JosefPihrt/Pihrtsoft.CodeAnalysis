@@ -33,7 +33,7 @@ namespace Roslynator.Testing.CSharp
 
             var expected = ExpectedTestState.Parse(expectedSource);
 
-            var state = new RefactoringTestState(
+            var state = new RefactoringTestData(
                 code.Value,
                 code.Spans.OrderByDescending(f => f.Start).ToImmutableArray(),
                 AdditionalFile.CreateRange(additionalFiles),
@@ -61,7 +61,7 @@ namespace Roslynator.Testing.CSharp
 
             var expected = ExpectedTestState.Parse(code.ExpectedValue);
 
-            var state = new RefactoringTestState(
+            var state = new RefactoringTestData(
                 code.Value,
                 code.Spans.OrderByDescending(f => f.Start).ToImmutableArray(),
                 AdditionalFile.CreateRange(additionalFiles),
@@ -82,7 +82,7 @@ namespace Roslynator.Testing.CSharp
         {
             var code = TestCode.Parse(source);
 
-            var state = new RefactoringTestState(
+            var state = new RefactoringTestData(
                 code.Value,
                 code.Spans,
                 equivalenceKey: equivalenceKey);

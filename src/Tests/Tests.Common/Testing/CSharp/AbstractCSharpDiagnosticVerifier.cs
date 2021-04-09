@@ -32,7 +32,7 @@ namespace Roslynator.Testing.CSharp
 
             Debug.Assert(code.Spans.Length > 0);
 
-            var state = new DiagnosticTestState(
+            var state = new DiagnosticTestData(
                 Descriptor,
                 code.Value,
                 code.Spans,
@@ -56,7 +56,7 @@ namespace Roslynator.Testing.CSharp
 
             Debug.Assert(code.Spans.Length > 0);
 
-            var state = new DiagnosticTestState(
+            var state = new DiagnosticTestData(
                 Descriptor,
                 source,
                 code.Spans,
@@ -76,7 +76,7 @@ namespace Roslynator.Testing.CSharp
             TestOptions options = null,
             CancellationToken cancellationToken = default)
         {
-            var state = new DiagnosticTestState(
+            var state = new DiagnosticTestData(
                 Descriptor,
                 source,
                 ImmutableArray.Create(span),
@@ -95,7 +95,7 @@ namespace Roslynator.Testing.CSharp
             TestOptions options = null,
             CancellationToken cancellationToken = default)
         {
-            var state = new DiagnosticTestState(
+            var state = new DiagnosticTestData(
                 Descriptor,
                 source,
                 spans,
@@ -118,7 +118,7 @@ namespace Roslynator.Testing.CSharp
 
             Debug.Assert(code.Spans.Length == 0);
 
-            var state = new DiagnosticTestState(
+            var state = new DiagnosticTestData(
                 Descriptor,
                 code.Value,
                 code.Spans,
@@ -137,7 +137,7 @@ namespace Roslynator.Testing.CSharp
             TestOptions options = null,
             CancellationToken cancellationToken = default)
         {
-            var state = new DiagnosticTestState(
+            var state = new DiagnosticTestData(
                 Descriptor,
                 source,
                 spans: null,
@@ -163,7 +163,7 @@ namespace Roslynator.Testing.CSharp
 
             var expected = ExpectedTestState.Parse(expectedSource);
 
-            var state = new DiagnosticTestState(
+            var state = new DiagnosticTestData(
                 Descriptor,
                 code.Value,
                 code.Spans,
@@ -185,7 +185,7 @@ namespace Roslynator.Testing.CSharp
 
             Debug.Assert(code.Spans.Length > 0);
 
-            var state = new DiagnosticTestState(
+            var state = new DiagnosticTestData(
                 Descriptor,
                 code.Value,
                 code.Spans,
@@ -211,7 +211,7 @@ namespace Roslynator.Testing.CSharp
 
             var expected = ExpectedTestState.Parse(code.ExpectedValue);
 
-            var state = new DiagnosticTestState(
+            var state = new DiagnosticTestData(
                 Descriptor,
                 code.Value,
                 code.Spans,

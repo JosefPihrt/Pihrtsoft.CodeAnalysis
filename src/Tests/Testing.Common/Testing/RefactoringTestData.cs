@@ -12,16 +12,16 @@ namespace Roslynator.Testing
     /// Gets test data for a code refactoring.
     /// </summary>
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
-    public sealed class RefactoringTestState
+    public sealed class RefactoringTestData
     {
         /// <summary>
-        /// Initializes a new instance of <see cref="RefactoringTestState"/>.
+        /// Initializes a new instance of <see cref="RefactoringTestData"/>.
         /// </summary>
         /// <param name="source"></param>
         /// <param name="spans"></param>
         /// <param name="additionalFiles"></param>
         /// <param name="equivalenceKey"></param>
-        public RefactoringTestState(
+        public RefactoringTestData(
             string source,
             IEnumerable<TextSpan> spans,
             IEnumerable<AdditionalFile> additionalFiles = null,
@@ -56,7 +56,7 @@ namespace Roslynator.Testing
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private string DebuggerDisplay => Source;
 
-        internal RefactoringTestState(RefactoringTestState other)
+        internal RefactoringTestData(RefactoringTestData other)
             : this(
                 source: other.Source,
                 spans: other.Spans,
@@ -66,19 +66,19 @@ namespace Roslynator.Testing
         }
 
         /// <summary>
-        /// Creates and return new instance of <see cref="RefactoringTestState"/> updated with specified values.
+        /// Creates and return new instance of <see cref="RefactoringTestData"/> updated with specified values.
         /// </summary>
         /// <param name="source"></param>
         /// <param name="spans"></param>
         /// <param name="additionalFiles"></param>
         /// <param name="equivalenceKey"></param>
-        public RefactoringTestState Update(
+        public RefactoringTestData Update(
             string source,
             IEnumerable<TextSpan> spans,
             IEnumerable<AdditionalFile> additionalFiles,
             string equivalenceKey)
         {
-            return new RefactoringTestState(
+            return new RefactoringTestData(
                 source: source,
                 spans: spans,
                 additionalFiles: additionalFiles,

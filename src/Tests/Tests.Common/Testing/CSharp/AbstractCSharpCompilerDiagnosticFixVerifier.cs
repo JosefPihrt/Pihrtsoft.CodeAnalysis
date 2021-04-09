@@ -34,7 +34,7 @@ namespace Roslynator.Testing.CSharp
 
             ExpectedTestState expected = ExpectedTestState.Parse(code.ExpectedValue);
 
-            var state = new CompilerDiagnosticFixTestState(
+            var state = new CompilerDiagnosticFixTestData(
                 DiagnosticId,
                 code.Value,
                 AdditionalFile.CreateRange(additionalFiles),
@@ -57,7 +57,7 @@ namespace Roslynator.Testing.CSharp
         {
             var expected = ExpectedTestState.Parse(expectedSource);
 
-            var state = new CompilerDiagnosticFixTestState(
+            var state = new CompilerDiagnosticFixTestData(
                 DiagnosticId,
                 source,
                 AdditionalFile.CreateRange(additionalFiles),
@@ -77,7 +77,7 @@ namespace Roslynator.Testing.CSharp
             TestOptions options = null,
             CancellationToken cancellationToken = default)
         {
-            var state = new CompilerDiagnosticFixTestState(
+            var state = new CompilerDiagnosticFixTestData(
                 DiagnosticId,
                 source,
                 additionalFiles: AdditionalFile.CreateRange(additionalFiles),

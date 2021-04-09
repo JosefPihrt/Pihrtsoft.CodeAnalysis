@@ -25,12 +25,12 @@ namespace Roslynator.Testing
         /// <summary>
         /// Verifies that specified source will produce compiler diagnostic.
         /// </summary>
-        /// <param name="state"></param>
+        /// <param name="data"></param>
         /// <param name="expected"></param>
         /// <param name="options"></param>
         /// <param name="cancellationToken"></param>
         public async Task VerifyFixAsync(
-            CompilerDiagnosticFixTestState state,
+            CompilerDiagnosticFixTestData data,
             ExpectedTestState expected,
             TestOptions options = null,
             CancellationToken cancellationToken = default)
@@ -41,11 +41,11 @@ namespace Roslynator.Testing
 
             TFixProvider fixProvider = Activator.CreateInstance<TFixProvider>();
 
-            VerifyFixableDiagnostics(fixProvider, state.DiagnosticId);
+            VerifyFixableDiagnostics(fixProvider, data.DiagnosticId);
 
             using (Workspace workspace = new AdhocWorkspace())
             {
-                (Document document, ImmutableArray<ExpectedDocument> expectedDocuments) = CreateDocument(workspace.CurrentSolution, state.Source, state.AdditionalFiles, options);
+                (Document document, ImmutableArray<ExpectedDocument> expectedDocuments) = CreateDocument(workspace.CurrentSolution, data.Source, data.AdditionalFiles, options);
 
                 Project project = document.Project;
 
@@ -84,7 +84,7 @@ namespace Roslynator.Testing
                     if (diagnostic == null)
                     {
                         if (!fixRegistered)
-                            Fail($"No compiler diagnostic with ID '{state.DiagnosticId}' found.", diagnostics);
+                            Fail($"No compiler diagnostic with ID '{data.DiagnosticId}' found.", diagnostics);
 
                         break;
                     }
@@ -97,8 +97,8 @@ namespace Roslynator.Testing
                         diagnostic,
                         (a, d) =>
                         {
-                            if ((state.EquivalenceKey == null
-                                || string.Equals(state.EquivalenceKey, a.EquivalenceKey, StringComparison.Ordinal))
+                            if ((data.EquivalenceKey == null
+                                || string.Equals(data.EquivalenceKey, a.EquivalenceKey, StringComparison.Ordinal))
                                 && d.Contains(diagnostic))
                             {
                                 if (action != null)
@@ -137,7 +137,7 @@ namespace Roslynator.Testing
 
                 foreach (Diagnostic diagnostic in diagnostics)
                 {
-                    if (string.Equals(diagnostic.Id, state.DiagnosticId, StringComparison.Ordinal))
+                    if (string.Equals(diagnostic.Id, data.DiagnosticId, StringComparison.Ordinal))
                     {
                         if (match == null
                             || diagnostic.Location.SourceSpan.Start > match.Location.SourceSpan.Start)
@@ -154,11 +154,11 @@ namespace Roslynator.Testing
         /// <summary>
         /// Verifies that specified source will not produce compiler diagnostic.
         /// </summary>
-        /// <param name="state"></param>
+        /// <param name="data"></param>
         /// <param name="options"></param>
         /// <param name="cancellationToken"></param>
         public async Task VerifyNoFixAsync(
-            CompilerDiagnosticFixTestState state,
+            CompilerDiagnosticFixTestData data,
             TestOptions options = null,
             CancellationToken cancellationToken = default)
         {
@@ -171,7 +171,7 @@ namespace Roslynator.Testing
 
             using (Workspace workspace = new AdhocWorkspace())
             {
-                (Document document, ImmutableArray<ExpectedDocument> expectedDocuments) = CreateDocument(workspace.CurrentSolution, state.Source, state.AdditionalFiles, options);
+                (Document document, ImmutableArray<ExpectedDocument> expectedDocuments) = CreateDocument(workspace.CurrentSolution, data.Source, data.AdditionalFiles, options);
 
                 Compilation compilation = await document.Project.GetCompilationAsync(cancellationToken);
 
@@ -187,8 +187,8 @@ namespace Roslynator.Testing
                         diagnostic,
                         (a, d) =>
                         {
-                            if (state.EquivalenceKey != null
-                                && !string.Equals(a.EquivalenceKey, state.EquivalenceKey, StringComparison.Ordinal))
+                            if (data.EquivalenceKey != null
+                                && !string.Equals(a.EquivalenceKey, data.EquivalenceKey, StringComparison.Ordinal))
                             {
                                 return;
                             }
