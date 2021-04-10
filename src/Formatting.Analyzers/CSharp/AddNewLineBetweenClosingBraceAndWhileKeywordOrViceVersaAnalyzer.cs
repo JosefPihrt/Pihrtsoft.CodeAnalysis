@@ -11,11 +11,19 @@ using Roslynator.CSharp;
 namespace Roslynator.Formatting.CSharp
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class AddNewLineBetweenClosingBraceAndWhileKeywordOrViceVersaAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class AddNewLineBetweenClosingBraceAndWhileKeywordOrViceVersaAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.AddNewLineBetweenClosingBraceAndWhileKeywordOrViceVersa); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.AddNewLineBetweenClosingBraceAndWhileKeywordOrViceVersa);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -43,7 +51,7 @@ namespace Roslynator.Formatting.CSharp
                     && !AnalyzerOptions.RemoveNewLineBetweenClosingBraceAndWhileKeyword.IsEnabled(context))
                 {
                     context.ReportDiagnostic(
-                        DiagnosticDescriptors.AddNewLineBetweenClosingBraceAndWhileKeywordOrViceVersa,
+                        DiagnosticRules.AddNewLineBetweenClosingBraceAndWhileKeywordOrViceVersa,
                         Location.Create(doStatement.SyntaxTree, new TextSpan(statement.FullSpan.End, 0)));
                 }
             }
@@ -53,7 +61,7 @@ namespace Roslynator.Formatting.CSharp
                     && AnalyzerOptions.RemoveNewLineBetweenClosingBraceAndWhileKeyword.IsEnabled(context))
                 {
                     context.ReportDiagnostic(
-                        DiagnosticDescriptors.ReportOnly.RemoveNewLineBetweenClosingBraceAndWhileKeyword,
+                        DiagnosticRules.ReportOnly.RemoveNewLineBetweenClosingBraceAndWhileKeyword,
                         Location.Create(doStatement.SyntaxTree, new TextSpan(trailingTrivia.Last().SpanStart, 0)),
                         properties: DiagnosticProperties.AnalyzerOption_Invert);
                 }

@@ -2,8 +2,8 @@
 
 namespace Roslynator.CodeGeneration.CSharp
 {
-    public static class DiagnosticDescriptorsGenerators
+    public static class DiagnosticRulesGenerators
     {
-        public static DiagnosticDescriptorsGenerator Default { get; } = new DiagnosticDescriptorsGenerator();
+        public static DiagnosticRulesGenerator Default { get; } = new DiagnosticRulesGenerator();
     }
 }

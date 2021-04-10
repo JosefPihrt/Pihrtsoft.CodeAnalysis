@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1142AddTypeParamElementToDocumentationCommentTests : AbstractCSharpDiagnosticVerifier<SingleLineDocumentationCommentTriviaAnalyzer, SingleLineDocumentationCommentTriviaCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddTypeParamElementToDocumentationComment;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.AddTypeParamElementToDocumentationComment;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddTypeParamElementToDocumentationComment)]
         public async Task Test()

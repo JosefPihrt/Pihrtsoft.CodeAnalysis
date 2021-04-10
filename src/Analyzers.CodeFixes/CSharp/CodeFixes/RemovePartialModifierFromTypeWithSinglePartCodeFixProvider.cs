@@ -15,7 +15,7 @@ namespace Roslynator.CSharp.CodeFixes
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RemovePartialModifierFromTypeWithSinglePartCodeFixProvider))]
     [Shared]
-    public class RemovePartialModifierFromTypeWithSinglePartCodeFixProvider : BaseCodeFixProvider
+    public sealed class RemovePartialModifierFromTypeWithSinglePartCodeFixProvider : BaseCodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {

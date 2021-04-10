@@ -10,11 +10,19 @@ using Roslynator.CSharp;
 namespace Roslynator.Formatting.CSharp
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class AddNewLineBeforeBinaryOperatorInsteadOfAfterItOrViceVersaAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class AddNewLineBeforeBinaryOperatorInsteadOfAfterItOrViceVersaAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.AddNewLineBeforeBinaryOperatorInsteadOfAfterItOrViceVersa); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.AddNewLineBeforeBinaryOperatorInsteadOfAfterItOrViceVersa);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -62,12 +70,12 @@ namespace Roslynator.Formatting.CSharp
             if (SyntaxTriviaAnalysis.IsTokenFollowedWithNewLineAndNotPrecededWithNewLine(left, binaryExpression.OperatorToken, right))
             {
                 if (!AnalyzerOptions.AddNewLineAfterBinaryOperatorInsteadOfBeforeIt.IsEnabled(context))
-                    ReportDiagnostic(DiagnosticDescriptors.AddNewLineBeforeBinaryOperatorInsteadOfAfterItOrViceVersa, ImmutableDictionary<string, string>.Empty);
+                    ReportDiagnostic(DiagnosticRules.AddNewLineBeforeBinaryOperatorInsteadOfAfterItOrViceVersa, ImmutableDictionary<string, string>.Empty);
             }
             else if (SyntaxTriviaAnalysis.IsTokenPrecededWithNewLineAndNotFollowedWithNewLine(left, binaryExpression.OperatorToken, right)
                 && AnalyzerOptions.AddNewLineAfterBinaryOperatorInsteadOfBeforeIt.IsEnabled(context))
             {
-                ReportDiagnostic(DiagnosticDescriptors.ReportOnly.AddNewLineAfterBinaryOperatorInsteadOfBeforeIt, DiagnosticProperties.AnalyzerOption_Invert);
+                ReportDiagnostic(DiagnosticRules.ReportOnly.AddNewLineAfterBinaryOperatorInsteadOfBeforeIt, DiagnosticProperties.AnalyzerOption_Invert);
             }
 
             void ReportDiagnostic(DiagnosticDescriptor descriptor, ImmutableDictionary<string, string> properties)

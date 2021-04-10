@@ -10,7 +10,7 @@ namespace Roslynator.Formatting.CSharp.Tests
 {
     public class RCS0036RemoveEmptyLineBetweenSingleLineDeclarationsOfSameKindTests : AbstractCSharpDiagnosticVerifier<EmptyLineBetweenDeclarationsAnalyzer, EmptyLineBetweenDeclarationsCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.RemoveEmptyLineBetweenSingleLineDeclarationsOfSameKind;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.RemoveEmptyLineBetweenSingleLineDeclarationsOfSameKind;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemoveEmptyLineBetweenSingleLineDeclarationsOfSameKind)]
         public async Task Test_Properties()

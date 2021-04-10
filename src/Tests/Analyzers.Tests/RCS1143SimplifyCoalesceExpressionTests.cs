@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1143SimplifyCoalesceExpressionTests : AbstractCSharpDiagnosticVerifier<SimplifyCoalesceExpressionAnalyzer, BinaryExpressionCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.SimplifyCoalesceExpression;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.SimplifyCoalesceExpression;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyCoalesceExpression)]
         public async Task Test_DefaultOfNullableType()

@@ -14,7 +14,7 @@ namespace Roslynator.CSharp.CodeFixes
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RegionDirectiveTriviaCodeFixProvider))]
     [Shared]
-    public class RegionDirectiveTriviaCodeFixProvider : BaseCodeFixProvider
+    public sealed class RegionDirectiveTriviaCodeFixProvider : BaseCodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {

@@ -11,11 +11,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class NamedTypeSymbolAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class NamedTypeSymbolAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.ImplementNonGenericCounterpart); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.ImplementNonGenericCounterpart);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -140,7 +148,7 @@ namespace Roslynator.CSharp.Analysis
 
             DiagnosticHelpers.ReportDiagnostic(
                 context,
-                DiagnosticDescriptors.ImplementNonGenericCounterpart,
+                DiagnosticRules.ImplementNonGenericCounterpart,
                 identifier.GetLocation(),
                 ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string>("InterfaceName", interfaceName) }),
                 interfaceName);

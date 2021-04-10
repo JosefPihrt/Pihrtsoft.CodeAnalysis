@@ -12,11 +12,19 @@ using Microsoft.CodeAnalysis.Text;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SplitVariableDeclarationAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class SplitVariableDeclarationAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.SplitVariableDeclaration); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.SplitVariableDeclaration);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -40,7 +48,7 @@ namespace Roslynator.CSharp.Analysis
                     .DescendantTrivia(span)
                     .All(f => f.IsWhitespaceOrEndOfLineTrivia()))
                 {
-                    DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.SplitVariableDeclaration, variableDeclaration);
+                    DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.SplitVariableDeclaration, variableDeclaration);
                 }
             }
         }

@@ -15,7 +15,7 @@ namespace Roslynator.CSharp.CodeFixes
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UnnecessaryUsageOfVerbatimStringLiteralCodeFixProvider))]
     [Shared]
-    public class UnnecessaryUsageOfVerbatimStringLiteralCodeFixProvider : BaseCodeFixProvider
+    public sealed class UnnecessaryUsageOfVerbatimStringLiteralCodeFixProvider : BaseCodeFixProvider
     {
         private const string Title = "Remove '@'";
 

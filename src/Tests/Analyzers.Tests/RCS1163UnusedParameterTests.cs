@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1163UnusedParameterTests : AbstractCSharpDiagnosticVerifier<UnusedParameter.UnusedParameterAnalyzer, UnusedParameterCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UnusedParameter;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UnusedParameter;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UnusedParameter)]
         public async Task Test_Method()

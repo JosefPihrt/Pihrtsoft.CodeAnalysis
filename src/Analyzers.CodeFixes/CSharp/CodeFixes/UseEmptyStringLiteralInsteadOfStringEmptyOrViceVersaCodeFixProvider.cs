@@ -16,7 +16,7 @@ namespace Roslynator.CSharp.CodeFixes
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UseEmptyStringLiteralInsteadOfStringEmptyOrViceVersaCodeFixProvider))]
     [Shared]
-    public class UseEmptyStringLiteralInsteadOfStringEmptyOrViceVersaCodeFixProvider : BaseCodeFixProvider
+    public sealed class UseEmptyStringLiteralInsteadOfStringEmptyOrViceVersaCodeFixProvider : BaseCodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {

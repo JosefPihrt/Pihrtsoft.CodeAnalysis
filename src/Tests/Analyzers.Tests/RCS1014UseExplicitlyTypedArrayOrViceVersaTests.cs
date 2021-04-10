@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1014UseExplicitlyTypedArrayOrViceVersaTests : AbstractCSharpDiagnosticVerifier<UseExplicitlyTypedArrayOrViceVersaAnalyzer, UseExplicitlyTypedArrayOrViceVersaCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseExplicitlyTypedArrayOrViceVersa;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UseExplicitlyTypedArrayOrViceVersa;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseExplicitlyTypedArrayOrViceVersa)]
         public async Task Test()
@@ -57,7 +57,7 @@ class C
 
     string M2() => null;
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.UseImplicitlyTypedArrayWhenTypeIsObvious));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.UseImplicitlyTypedArrayWhenTypeIsObvious));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseExplicitlyTypedArrayOrViceVersa)]
@@ -145,7 +145,7 @@ class C
         var x = new[] { """" };
     }
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.UseImplicitlyTypedArrayWhenTypeIsObvious));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.UseImplicitlyTypedArrayWhenTypeIsObvious));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseExplicitlyTypedArrayOrViceVersa)]

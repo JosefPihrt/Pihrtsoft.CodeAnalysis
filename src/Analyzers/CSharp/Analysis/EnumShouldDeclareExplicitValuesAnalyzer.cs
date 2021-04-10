@@ -10,11 +10,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class EnumShouldDeclareExplicitValuesAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class EnumShouldDeclareExplicitValuesAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.EnumShouldDeclareExplicitValues); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.EnumShouldDeclareExplicitValues);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -33,7 +41,7 @@ namespace Roslynator.CSharp.Analysis
                 if (enumMember.EqualsValue == null
                     && context.SemanticModel.GetDeclaredSymbol(enumMember, context.CancellationToken)?.HasConstantValue == true)
                 {
-                    DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.EnumShouldDeclareExplicitValues, enumDeclaration.Identifier);
+                    DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.EnumShouldDeclareExplicitValues, enumDeclaration.Identifier);
                     break;
                 }
             }

@@ -9,11 +9,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class AvoidBoxingOfValueTypeAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class AvoidBoxingOfValueTypeAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.AvoidBoxingOfValueType); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.AvoidBoxingOfValueType);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -46,7 +54,7 @@ namespace Roslynator.CSharp.Analysis
             if (typeSymbol?.IsValueType != true)
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.AvoidBoxingOfValueType, expression);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.AvoidBoxingOfValueType, expression);
         }
     }
 }

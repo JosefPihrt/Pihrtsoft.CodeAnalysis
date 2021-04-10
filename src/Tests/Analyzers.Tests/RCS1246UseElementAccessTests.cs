@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1246UseElementAccessTests : AbstractCSharpDiagnosticVerifier<InvocationExpressionAnalyzer, OptimizeLinqMethodCallCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseElementAccess;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UseElementAccess;
 
         [Theory, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseElementAccess)]
         [InlineData("((List<object>)x).[|First()|]", "((List<object>)x)[0]")]
@@ -199,7 +199,7 @@ class C
         x = ((string)x).ToString().ElementAt(1);
     }
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.DoNotUseElementAccessWhenExpressionIsInvocation));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.DoNotUseElementAccessWhenExpressionIsInvocation));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseElementAccess)]

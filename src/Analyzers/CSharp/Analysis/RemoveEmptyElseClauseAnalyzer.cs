@@ -9,11 +9,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class RemoveEmptyElseClauseAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class RemoveEmptyElseClauseAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.RemoveEmptyElseClause); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.RemoveEmptyElseClause);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -61,7 +69,7 @@ namespace Roslynator.CSharp.Analysis
             if (!block.CloseBraceToken.LeadingTrivia.IsEmptyOrWhitespace())
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.RemoveEmptyElseClause, elseClause);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.RemoveEmptyElseClause, elseClause);
         }
     }
 }

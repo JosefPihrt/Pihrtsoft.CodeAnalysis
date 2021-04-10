@@ -11,7 +11,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1169MakeFieldReadOnlyTests : AbstractCSharpDiagnosticVerifier<MakeMemberReadOnlyAnalyzer, MemberDeclarationCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.MakeFieldReadOnly;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.MakeFieldReadOnly;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.MakeFieldReadOnly)]
         public async Task Test_InstanceField()

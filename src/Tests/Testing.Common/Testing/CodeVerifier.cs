@@ -12,6 +12,7 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
+using static System.Environment;
 
 namespace Roslynator.Testing
 {
@@ -37,6 +38,34 @@ namespace Roslynator.Testing
 
         internal IAssert Assert { get; }
 
+        protected void Fail(string userMessage)
+        {
+            Assert.True(false, userMessage);
+        }
+
+        protected void Fail(string userMessage, IEnumerable<Diagnostic> diagnostics)
+        {
+            string s = string.Join(NewLine, diagnostics.Select(d => d.ToString()));
+
+            if (s.Length == 0)
+                s = "-";
+
+            Fail(userMessage + $"{NewLine}{NewLine}Diagnostics:{NewLine}{s}{NewLine}");
+        }
+
+        protected void Fail(string userMessage, IEnumerable<CodeAction> codeActions)
+        {
+            var s = "";
+
+            if (codeActions != null)
+                s = string.Join(NewLine, codeActions.Select(a => $"\"{a.Title}\", EquivalenceKey: {a.EquivalenceKey}"));
+
+            if (s.Length == 0)
+                s = "-";
+
+            Fail(userMessage + $"{NewLine}{NewLine}Candidate actions:{NewLine}{s}{NewLine}");
+        }
+
         internal void VerifyCompilerDiagnostics(
             ImmutableArray<Diagnostic> diagnostics,
             TestOptions options)
@@ -45,8 +74,8 @@ namespace Roslynator.Testing
             {
                 if (!options.IsAllowedCompilerDiagnostic(diagnostic))
                 {
-                    Assert.True(false, $"No compiler diagnostics with severity higher than '{options.AllowedCompilerDiagnosticSeverity}' expected"
-                        + diagnostics.Where(d => !options.IsAllowedCompilerDiagnostic(d)).ToDebugString());
+                    Fail($"No compiler diagnostics with severity higher than '{options.AllowedCompilerDiagnosticSeverity}' expected.",
+                        diagnostics.Where(d => !options.IsAllowedCompilerDiagnostic(d)));
                 }
             }
         }
@@ -72,7 +101,7 @@ namespace Roslynator.Testing
 
                     message += ".";
 
-                    Assert.True(false, message + diff.ToDebugString());
+                    Fail(message, diff);
                 }
             }
 
@@ -133,7 +162,7 @@ namespace Roslynator.Testing
         internal void VerifySupportedDiagnostics(DiagnosticAnalyzer analyzer, Diagnostic diagnostic)
         {
             if (analyzer.SupportedDiagnostics.IndexOf(diagnostic.Descriptor, DiagnosticDescriptorComparer.Id) == -1)
-                Assert.True(false, $"Diagnostic \"{diagnostic.Id}\" is not supported by '{analyzer.GetType().Name}'.");
+                Fail($"Diagnostic \"{diagnostic.Id}\" is not supported by '{analyzer.GetType().Name}'.");
         }
 
         internal void VerifyFixableDiagnostics(CodeFixProvider fixProvider, string diagnosticId)
@@ -141,7 +170,7 @@ namespace Roslynator.Testing
             ImmutableArray<string> fixableDiagnosticIds = fixProvider.FixableDiagnosticIds;
 
             if (!fixableDiagnosticIds.Contains(diagnosticId))
-                Assert.True(false, $"Diagnostic '{diagnosticId}' is not fixable by '{fixProvider.GetType().Name}'.");
+                Fail($"Diagnostic '{diagnosticId}' is not fixable by '{fixProvider.GetType().Name}'.");
         }
 
         internal async Task VerifyExpectedDocument(
@@ -206,7 +235,7 @@ namespace Roslynator.Testing
             ImmutableArray<SyntaxToken> tokens = root.GetAnnotatedTokens(kind).OrderBy(f => f.SpanStart).ToImmutableArray();
 
             if (spans.Length != tokens.Length)
-                Assert.True(false, $"{spans.Length} '{kind}' annotation(s) expected, actual: {tokens.Length}");
+                Fail($"{spans.Length} '{kind}' annotation(s) expected, actual: {tokens.Length}");
 
             for (int i = 0; i < spans.Length; i++)
             {
@@ -220,7 +249,7 @@ namespace Roslynator.Testing
                         actualSpan.ToLinePositionSpan(source));
 
                     if (message != null)
-                        Assert.True(false, $"Annotation '{kind}'{message}");
+                        Fail($"Annotation '{kind}'{message}");
                 }
             }
         }
@@ -252,7 +281,7 @@ namespace Roslynator.Testing
         }
 
         internal static (Document document, ImmutableArray<ExpectedDocument> expectedDocuments)
-            CreateDocument(Solution solution, string source, ImmutableArray<AdditionalFile> additionalFiles, TestOptions options, DiagnosticDescriptor? descriptor = null)
+            CreateDocument(Solution solution, string source, ImmutableArray<AdditionalFile> additionalFiles, TestOptions options, DiagnosticDescriptor descriptor = null)
         {
             const string DefaultProjectName = "TestProject";
 

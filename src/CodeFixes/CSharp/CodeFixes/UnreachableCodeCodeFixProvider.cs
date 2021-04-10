@@ -18,7 +18,7 @@ namespace Roslynator.CSharp.CodeFixes
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UnreachableCodeCodeFixProvider))]
     [Shared]
-    public class UnreachableCodeCodeFixProvider : BaseCodeFixProvider
+    public sealed class UnreachableCodeCodeFixProvider : BaseCodeFixProvider
     {
         private const string Title = "Remove unreachable code";
 

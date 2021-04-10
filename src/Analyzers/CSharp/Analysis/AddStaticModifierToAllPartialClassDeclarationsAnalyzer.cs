@@ -10,11 +10,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class AddStaticModifierToAllPartialClassDeclarationsAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class AddStaticModifierToAllPartialClassDeclarationsAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.AddStaticModifierToAllPartialClassDeclarations); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.AddStaticModifierToAllPartialClassDeclarations);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -55,7 +63,7 @@ namespace Roslynator.CSharp.Analysis
                 {
                     DiagnosticHelpers.ReportDiagnostic(
                         context,
-                        DiagnosticDescriptors.AddStaticModifierToAllPartialClassDeclarations,
+                        DiagnosticRules.AddStaticModifierToAllPartialClassDeclarations,
                         classDeclaration.Identifier);
                 }
             }

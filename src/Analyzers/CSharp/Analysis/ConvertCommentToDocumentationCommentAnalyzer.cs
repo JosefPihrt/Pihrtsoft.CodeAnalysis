@@ -12,11 +12,19 @@ using static Roslynator.CSharp.Analysis.ConvertCommentToDocumentationCommentAnal
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class ConvertCommentToDocumentationCommentAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class ConvertCommentToDocumentationCommentAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.ConvertCommentToDocumentationComment); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.ConvertCommentToDocumentationComment);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -354,7 +362,7 @@ namespace Roslynator.CSharp.Analysis
         {
             DiagnosticHelpers.ReportDiagnostic(
                 context,
-                DiagnosticDescriptors.ConvertCommentToDocumentationComment,
+                DiagnosticRules.ConvertCommentToDocumentationComment,
                 Location.Create(context.Node.SyntaxTree, span));
         }
     }

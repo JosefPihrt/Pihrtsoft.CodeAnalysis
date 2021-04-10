@@ -11,15 +11,23 @@ using static Roslynator.CSharp.Analysis.EmbeddedStatementAnalysis;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class RemoveBracesAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class RemoveBracesAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                return ImmutableArray.Create(
-                    DiagnosticDescriptors.RemoveBraces,
-                    DiagnosticDescriptors.RemoveBracesFadeOut);
+                if (_supportedDiagnostics.IsDefault)
+                {
+                    Immutable.InterlockedInitialize(
+                        ref _supportedDiagnostics,
+                        DiagnosticRules.RemoveBraces,
+                        DiagnosticRules.RemoveBracesFadeOut);
+                }
+
+                return _supportedDiagnostics;
             }
         }
 
@@ -30,7 +38,7 @@ namespace Roslynator.CSharp.Analysis
             context.RegisterSyntaxNodeAction(
                 c =>
                 {
-                    if (DiagnosticDescriptors.RemoveBraces.IsEffective(c))
+                    if (DiagnosticRules.RemoveBraces.IsEffective(c))
                         AnalyzeIfStatement(c);
                 },
                 SyntaxKind.IfStatement);
@@ -38,7 +46,7 @@ namespace Roslynator.CSharp.Analysis
             context.RegisterSyntaxNodeAction(
                 c =>
                 {
-                    if (DiagnosticDescriptors.RemoveBraces.IsEffective(c))
+                    if (DiagnosticRules.RemoveBraces.IsEffective(c))
                         AnalyzeCommonForEachStatement(c);
                 },
                 SyntaxKind.ForEachStatement);
@@ -46,7 +54,7 @@ namespace Roslynator.CSharp.Analysis
             context.RegisterSyntaxNodeAction(
                 c =>
                 {
-                    if (DiagnosticDescriptors.RemoveBraces.IsEffective(c))
+                    if (DiagnosticRules.RemoveBraces.IsEffective(c))
                         AnalyzeCommonForEachStatement(c);
                 },
                 SyntaxKind.ForEachVariableStatement);
@@ -54,7 +62,7 @@ namespace Roslynator.CSharp.Analysis
             context.RegisterSyntaxNodeAction(
                 c =>
                 {
-                    if (DiagnosticDescriptors.RemoveBraces.IsEffective(c))
+                    if (DiagnosticRules.RemoveBraces.IsEffective(c))
                         AnalyzeForStatement(c);
                 },
                 SyntaxKind.ForStatement);
@@ -62,7 +70,7 @@ namespace Roslynator.CSharp.Analysis
             context.RegisterSyntaxNodeAction(
                 c =>
                 {
-                    if (DiagnosticDescriptors.RemoveBraces.IsEffective(c))
+                    if (DiagnosticRules.RemoveBraces.IsEffective(c))
                         AnalyzeUsingStatement(c);
                 },
                 SyntaxKind.UsingStatement);
@@ -70,7 +78,7 @@ namespace Roslynator.CSharp.Analysis
             context.RegisterSyntaxNodeAction(
                 c =>
                 {
-                    if (DiagnosticDescriptors.RemoveBraces.IsEffective(c))
+                    if (DiagnosticRules.RemoveBraces.IsEffective(c))
                         AnalyzeWhileStatement(c);
                 },
                 SyntaxKind.WhileStatement);
@@ -78,7 +86,7 @@ namespace Roslynator.CSharp.Analysis
             context.RegisterSyntaxNodeAction(
                 c =>
                 {
-                    if (DiagnosticDescriptors.RemoveBraces.IsEffective(c))
+                    if (DiagnosticRules.RemoveBraces.IsEffective(c))
                         AnalyzeDoStatement(c);
                 },
                 SyntaxKind.DoStatement);
@@ -86,7 +94,7 @@ namespace Roslynator.CSharp.Analysis
             context.RegisterSyntaxNodeAction(
                 c =>
                 {
-                    if (DiagnosticDescriptors.RemoveBraces.IsEffective(c))
+                    if (DiagnosticRules.RemoveBraces.IsEffective(c))
                         AnalyzeLockStatement(c);
                 },
                 SyntaxKind.LockStatement);
@@ -94,7 +102,7 @@ namespace Roslynator.CSharp.Analysis
             context.RegisterSyntaxNodeAction(
                 c =>
                 {
-                    if (DiagnosticDescriptors.RemoveBraces.IsEffective(c))
+                    if (DiagnosticRules.RemoveBraces.IsEffective(c))
                         AnalyzeFixedStatement(c);
                 },
                 SyntaxKind.FixedStatement);
@@ -259,9 +267,9 @@ namespace Roslynator.CSharp.Analysis
 
             string title = CSharpFacts.GetTitle(block.Parent);
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.RemoveBraces, block, title);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.RemoveBraces, block, title);
 
-            CSharpDiagnosticHelpers.ReportBraces(context, DiagnosticDescriptors.RemoveBracesFadeOut, block, title);
+            CSharpDiagnosticHelpers.ReportBraces(context, DiagnosticRules.RemoveBracesFadeOut, block, title);
         }
     }
 }

@@ -10,11 +10,19 @@ using Roslynator.CSharp;
 namespace Roslynator.Formatting.CSharp
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class RemoveNewlinesFromInitializerWithSingleLineExpressionAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class RemoveNewlinesFromInitializerWithSingleLineExpressionAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.RemoveNewlinesFromInitializerWithSingleLineExpression); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.RemoveNewlinesFromInitializerWithSingleLineExpression);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -66,7 +74,7 @@ namespace Roslynator.Formatting.CSharp
             if (!initializer.OpenBraceToken.GetPreviousToken().TrailingTrivia.IsEmptyOrWhitespace())
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.RemoveNewlinesFromInitializerWithSingleLineExpression, initializer);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.RemoveNewlinesFromInitializerWithSingleLineExpression, initializer);
         }
     }
 }

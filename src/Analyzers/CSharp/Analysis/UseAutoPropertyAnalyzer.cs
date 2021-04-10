@@ -15,15 +15,23 @@ using Roslynator.CSharp.SyntaxWalkers;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class UseAutoPropertyAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class UseAutoPropertyAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                return ImmutableArray.Create(
-                    DiagnosticDescriptors.UseAutoProperty,
-                    DiagnosticDescriptors.UseAutoPropertyFadeOut);
+                if (_supportedDiagnostics.IsDefault)
+                {
+                    Immutable.InterlockedInitialize(
+                        ref _supportedDiagnostics,
+                        DiagnosticRules.UseAutoProperty,
+                        DiagnosticRules.UseAutoPropertyFadeOut);
+                }
+
+                return _supportedDiagnostics;
             }
         }
 
@@ -34,7 +42,7 @@ namespace Roslynator.CSharp.Analysis
             context.RegisterSyntaxNodeAction(
                 c =>
                 {
-                    if (DiagnosticDescriptors.UseAutoProperty.IsEffective(c))
+                    if (DiagnosticRules.UseAutoProperty.IsEffective(c))
                         AnalyzePropertyDeclaration(c);
                 },
                 SyntaxKind.PropertyDeclaration);
@@ -135,11 +143,11 @@ namespace Roslynator.CSharp.Analysis
             if (!IsFixableBackingField(property, propertySymbol, fieldSymbol, semanticModel, cancellationToken))
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UseAutoProperty, property.Identifier);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UseAutoProperty, property.Identifier);
 
             if (property.ExpressionBody != null)
             {
-                DiagnosticHelpers.ReportNode(context, DiagnosticDescriptors.UseAutoPropertyFadeOut, property.ExpressionBody);
+                DiagnosticHelpers.ReportNode(context, DiagnosticRules.UseAutoPropertyFadeOut, property.ExpressionBody);
             }
             else
             {
@@ -160,22 +168,22 @@ namespace Roslynator.CSharp.Analysis
                     {
                         case ReturnStatementSyntax returnStatement:
                             {
-                                DiagnosticHelpers.ReportToken(context, DiagnosticDescriptors.UseAutoPropertyFadeOut, returnStatement.ReturnKeyword);
-                                DiagnosticHelpers.ReportNode(context, DiagnosticDescriptors.UseAutoPropertyFadeOut, returnStatement.Expression);
+                                DiagnosticHelpers.ReportToken(context, DiagnosticRules.UseAutoPropertyFadeOut, returnStatement.ReturnKeyword);
+                                DiagnosticHelpers.ReportNode(context, DiagnosticRules.UseAutoPropertyFadeOut, returnStatement.Expression);
                                 break;
                             }
                         case ExpressionStatementSyntax expressionStatement:
                             {
-                                DiagnosticHelpers.ReportNode(context, DiagnosticDescriptors.UseAutoPropertyFadeOut, expressionStatement.Expression);
+                                DiagnosticHelpers.ReportNode(context, DiagnosticRules.UseAutoPropertyFadeOut, expressionStatement.Expression);
                                 break;
                             }
                     }
 
-                    CSharpDiagnosticHelpers.ReportBraces(context, DiagnosticDescriptors.UseAutoPropertyFadeOut, body);
+                    CSharpDiagnosticHelpers.ReportBraces(context, DiagnosticRules.UseAutoPropertyFadeOut, body);
                 }
                 else
                 {
-                    DiagnosticHelpers.ReportNode(context, DiagnosticDescriptors.UseAutoPropertyFadeOut, accessor.ExpressionBody);
+                    DiagnosticHelpers.ReportNode(context, DiagnosticRules.UseAutoPropertyFadeOut, accessor.ExpressionBody);
                 }
             }
         }

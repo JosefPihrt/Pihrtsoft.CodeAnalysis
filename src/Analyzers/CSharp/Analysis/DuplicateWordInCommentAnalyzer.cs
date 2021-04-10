@@ -12,11 +12,19 @@ using static Roslynator.DiagnosticHelpers;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class DuplicateWordInCommentAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class DuplicateWordInCommentAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.DuplicateWordInComment); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.DuplicateWordInComment);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -71,7 +79,7 @@ namespace Roslynator.CSharp.Analysis
                                         {
                                             ReportDiagnostic(
                                                 context,
-                                                DiagnosticDescriptors.DuplicateWordInComment,
+                                                DiagnosticRules.DuplicateWordInComment,
                                                 Location.Create(context.Node.SyntaxTree, TextSpan.FromBounds(token.SpanStart + index2, token.SpanStart + index2 + len2)));
                                         }
 

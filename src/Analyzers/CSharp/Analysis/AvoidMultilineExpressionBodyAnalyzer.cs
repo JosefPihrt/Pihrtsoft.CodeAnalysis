@@ -9,11 +9,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class AvoidMultilineExpressionBodyAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class AvoidMultilineExpressionBodyAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.AvoidMultilineExpressionBody); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.AvoidMultilineExpressionBody);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -42,7 +50,7 @@ namespace Roslynator.CSharp.Analysis
             ExpressionSyntax expression = arrowExpressionClause.Expression;
 
             if (expression?.IsMultiLine() == true)
-                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.AvoidMultilineExpressionBody, expression);
+                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.AvoidMultilineExpressionBody, expression);
         }
     }
 }

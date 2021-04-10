@@ -20,7 +20,7 @@ namespace Roslynator.CSharp.CodeFixes
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SingleLineDocumentationCommentTriviaCodeFixProvider))]
     [Shared]
-    public class SingleLineDocumentationCommentTriviaCodeFixProvider : BaseCodeFixProvider
+    public sealed class SingleLineDocumentationCommentTriviaCodeFixProvider : BaseCodeFixProvider
     {
         private static readonly Regex _formatSummaryOnSingleLineRegex = new Regex(
             @"

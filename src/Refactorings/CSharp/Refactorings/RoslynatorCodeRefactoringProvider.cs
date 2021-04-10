@@ -9,7 +9,7 @@ using Microsoft.CodeAnalysis.CodeRefactorings;
 namespace Roslynator.CSharp.Refactorings
 {
     [ExportCodeRefactoringProvider(LanguageNames.CSharp, Name = nameof(RoslynatorCodeRefactoringProvider))]
-    public class RoslynatorCodeRefactoringProvider : CodeRefactoringProvider
+    public sealed class RoslynatorCodeRefactoringProvider : CodeRefactoringProvider
     {
         public override async Task ComputeRefactoringsAsync(CodeRefactoringContext context)
         {

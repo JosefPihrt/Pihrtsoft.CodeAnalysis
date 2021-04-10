@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Josef Pihrt. All rights reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading;
@@ -65,20 +66,31 @@ namespace Roslynator.Testing
                     int length = diagnostics.Length;
 
                     if (length == 0)
+                    {
+                        if (!fixRegistered)
+                            Fail("No compiler diagnostic found.");
+
                         break;
+                    }
 
                     if (previousDiagnostics.Any())
                         VerifyNoNewCompilerDiagnostics(previousDiagnostics, diagnostics, options);
 
                     if (DiagnosticDeepEqualityComparer.Equals(diagnostics, previousDiagnostics))
-                        Assert.True(false, "Same diagnostics returned before and after the fix was applied." + diagnostics.ToDebugString());
+                        Fail("Same diagnostics returned before and after the fix was applied.", diagnostics);
 
                     Diagnostic diagnostic = FindDiagnosticToFix(diagnostics);
 
                     if (diagnostic == null)
+                    {
+                        if (!fixRegistered)
+                            Fail($"No compiler diagnostic with ID '{state.DiagnosticId}' found.", diagnostics);
+
                         break;
+                    }
 
                     CodeAction action = null;
+                    List<CodeAction> candidateActions = null;
 
                     var context = new CodeFixContext(
                         document,
@@ -90,9 +102,13 @@ namespace Roslynator.Testing
                                 && d.Contains(diagnostic))
                             {
                                 if (action != null)
-                                    Assert.True(false, $"Multiple fixes registered by '{fixProvider.GetType().Name}'.");
+                                    Fail($"Multiple fixes registered by '{fixProvider.GetType().Name}'.", new CodeAction[] { action, a });
 
                                 action = a;
+                            }
+                            else
+                            {
+                                (candidateActions ??= new List<CodeAction>()).Add(a);
                             }
                         },
                         cancellationToken);
@@ -100,7 +116,7 @@ namespace Roslynator.Testing
                     await fixProvider.RegisterCodeFixesAsync(context);
 
                     if (action == null)
-                        break;
+                        Fail("No code fix has been registered.", candidateActions);
 
                     fixRegistered = true;
 
@@ -108,8 +124,6 @@ namespace Roslynator.Testing
 
                     previousDiagnostics = diagnostics;
                 }
-
-                Assert.True(fixRegistered, "No code fix has been registered.");
 
                 await VerifyExpectedDocument(expected, document, cancellationToken);
 
@@ -182,7 +196,7 @@ namespace Roslynator.Testing
                             if (!d.Contains(diagnostic))
                                 return;
 
-                            Assert.True(false, "No code fix expected.");
+                            Fail("No code fix expected.");
                         },
                         cancellationToken);
 

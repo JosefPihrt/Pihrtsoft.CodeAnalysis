@@ -10,7 +10,7 @@ namespace Roslynator.Formatting.CSharp.Tests
 {
     public class RCS0038RemoveEmptyLineBetweenUsingDirectivesWithSameRootNamespaceTests : AbstractCSharpDiagnosticVerifier<AddOrRemoveEmptyLineBetweenUsingDirectiveAnalyzer, SyntaxTriviaCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.RemoveEmptyLineBetweenUsingDirectivesWithSameRootNamespace;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.RemoveEmptyLineBetweenUsingDirectivesWithSameRootNamespace;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemoveEmptyLineBetweenUsingDirectivesWithSameRootNamespace)]
         public async Task Test_EmptyLine()

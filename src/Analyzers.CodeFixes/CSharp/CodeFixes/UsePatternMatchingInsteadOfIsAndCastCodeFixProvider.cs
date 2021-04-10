@@ -19,7 +19,7 @@ namespace Roslynator.CSharp.CodeFixes
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UsePatternMatchingInsteadOfIsAndCastCodeFixProvider))]
     [Shared]
-    public class UsePatternMatchingInsteadOfIsAndCastCodeFixProvider : BaseCodeFixProvider
+    public sealed class UsePatternMatchingInsteadOfIsAndCastCodeFixProvider : BaseCodeFixProvider
     {
         private const string Title = "Use pattern matching";
 

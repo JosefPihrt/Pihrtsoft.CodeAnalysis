@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1041RemoveEmptyInitializerTests : AbstractCSharpDiagnosticVerifier<RemoveEmptyInitializerAnalyzer, RemoveEmptyInitializerCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.RemoveEmptyInitializer;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.RemoveEmptyInitializer;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemoveEmptyInitializer)]
         public async Task Test()

@@ -19,7 +19,7 @@ namespace Roslynator.CSharp.CodeFixes
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SimplifyCodeBranchingCodeFixProvider))]
     [Shared]
-    public class SimplifyCodeBranchingCodeFixProvider : BaseCodeFixProvider
+    public sealed class SimplifyCodeBranchingCodeFixProvider : BaseCodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {
@@ -34,7 +34,6 @@ namespace Roslynator.CSharp.CodeFixes
                 return;
 
             Diagnostic diagnostic = context.Diagnostics[0];
-
             Document document = context.Document;
 
             CodeAction codeAction = CodeAction.Create(
@@ -223,6 +222,19 @@ namespace Roslynator.CSharp.CodeFixes
                 whileStatement = whileStatement.WithFormatterAnnotation();
 
                 return await document.ReplaceNodeAsync(ifStatement, whileStatement, cancellationToken).ConfigureAwait(false);
+            }
+            else if (kind == SimplifyCodeBranchingKind.LastIfElseWithReturnOrContinueInsideIf)
+            {
+                IfStatementSyntax newIfStatement = ifStatement.Update(
+                    ifStatement.IfKeyword,
+                    ifStatement.OpenParenToken,
+                    SyntaxInverter.LogicallyInvert(condition, semanticModel, cancellationToken),
+                    ifStatement.CloseParenToken,
+                    elseClause.Statement,
+                    default(ElseClauseSyntax))
+                    .WithFormatterAnnotation();
+
+                return await document.ReplaceNodeAsync(ifStatement, newIfStatement, cancellationToken).ConfigureAwait(false);
             }
             else
             {

@@ -15,11 +15,19 @@ using Roslynator.CSharp.Syntax;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class RemoveRedundantOverridingMemberAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class RemoveRedundantOverridingMemberAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.RemoveRedundantOverridingMember); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.RemoveRedundantOverridingMember);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -89,7 +97,7 @@ namespace Roslynator.CSharp.Analysis
 
             DiagnosticHelpers.ReportDiagnostic(
                 context,
-                DiagnosticDescriptors.RemoveRedundantOverridingMember,
+                DiagnosticRules.RemoveRedundantOverridingMember,
                 methodDeclaration,
                 CSharpFacts.GetTitle(methodDeclaration));
         }
@@ -269,7 +277,7 @@ namespace Roslynator.CSharp.Analysis
 
             DiagnosticHelpers.ReportDiagnostic(
                 context,
-                DiagnosticDescriptors.RemoveRedundantOverridingMember,
+                DiagnosticRules.RemoveRedundantOverridingMember,
                 propertyDeclaration,
                 CSharpFacts.GetTitle(propertyDeclaration));
         }
@@ -401,7 +409,7 @@ namespace Roslynator.CSharp.Analysis
 
             DiagnosticHelpers.ReportDiagnostic(
                 context,
-                DiagnosticDescriptors.RemoveRedundantOverridingMember,
+                DiagnosticRules.RemoveRedundantOverridingMember,
                 indexerDeclaration,
                 CSharpFacts.GetTitle(indexerDeclaration));
         }

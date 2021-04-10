@@ -17,7 +17,7 @@ namespace Roslynator.CSharp.CodeFixes
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RenamePrivateFieldToCamelCaseWithUnderscoreCodeFixProvider))]
     [Shared]
-    public class RenamePrivateFieldToCamelCaseWithUnderscoreCodeFixProvider : BaseCodeFixProvider
+    public sealed class RenamePrivateFieldToCamelCaseWithUnderscoreCodeFixProvider : BaseCodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {

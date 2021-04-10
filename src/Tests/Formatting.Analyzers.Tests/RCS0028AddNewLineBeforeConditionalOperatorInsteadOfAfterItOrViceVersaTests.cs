@@ -10,7 +10,7 @@ namespace Roslynator.Formatting.CSharp.Tests
 {
     public class RCS0028AddNewLineBeforeConditionalOperatorInsteadOfAfterItOrViceVersaTests : AbstractCSharpDiagnosticVerifier<AddNewLineBeforeConditionalOperatorInsteadOfAfterItOrViceVersaAnalyzer, SyntaxTokenCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddNewLineBeforeConditionalOperatorInsteadOfAfterItOrViceVersa;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.AddNewLineBeforeConditionalOperatorInsteadOfAfterItOrViceVersa;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddNewLineBeforeConditionalOperatorInsteadOfAfterItOrViceVersa)]
         public async Task Test_BeforeInsteadOfAfter()
@@ -129,7 +129,7 @@ class C
             z;
     }
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.AddNewLineAfterConditionalOperatorInsteadOfBeforeIt));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.AddNewLineAfterConditionalOperatorInsteadOfBeforeIt));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddNewLineBeforeConditionalOperatorInsteadOfAfterItOrViceVersa)]
@@ -159,7 +159,7 @@ class C
             z;
     }
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.AddNewLineAfterConditionalOperatorInsteadOfBeforeIt));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.AddNewLineAfterConditionalOperatorInsteadOfBeforeIt));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddNewLineBeforeConditionalOperatorInsteadOfAfterItOrViceVersa)]
@@ -189,7 +189,7 @@ class C
             z;
     }
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.AddNewLineAfterConditionalOperatorInsteadOfBeforeIt));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.AddNewLineAfterConditionalOperatorInsteadOfBeforeIt));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddNewLineBeforeConditionalOperatorInsteadOfAfterItOrViceVersa)]
@@ -225,7 +225,7 @@ class C
             z;
     }
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.AddNewLineAfterConditionalOperatorInsteadOfBeforeIt));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.AddNewLineAfterConditionalOperatorInsteadOfBeforeIt));
         }
     }
 }

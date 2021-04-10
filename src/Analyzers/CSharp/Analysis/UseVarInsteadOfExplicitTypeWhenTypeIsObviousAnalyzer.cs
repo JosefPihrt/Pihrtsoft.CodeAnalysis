@@ -9,11 +9,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class UseVarInsteadOfExplicitTypeWhenTypeIsObviousAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class UseVarInsteadOfExplicitTypeWhenTypeIsObviousAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.UseVarInsteadOfExplicitTypeWhenTypeIsObvious); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.UseVarInsteadOfExplicitTypeWhenTypeIsObvious);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -47,7 +55,7 @@ namespace Roslynator.CSharp.Analysis
         {
             DiagnosticHelpers.ReportDiagnostic(
                 context,
-                DiagnosticDescriptors.UseVarInsteadOfExplicitTypeWhenTypeIsObvious,
+                DiagnosticRules.UseVarInsteadOfExplicitTypeWhenTypeIsObvious,
                 node);
         }
     }

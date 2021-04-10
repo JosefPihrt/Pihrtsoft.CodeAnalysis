@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1157CompositeEnumValueContainsUndefinedFlagTests : AbstractCSharpDiagnosticVerifier<EnumSymbolAnalyzer, CompositeEnumValueContainsUndefinedFlagCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.CompositeEnumValueContainsUndefinedFlag;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.CompositeEnumValueContainsUndefinedFlag;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.CompositeEnumValueContainsUndefinedFlag)]
         public async Task Test()

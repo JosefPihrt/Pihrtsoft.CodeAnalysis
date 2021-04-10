@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1239UseForStatementInsteadOfWhileStatementTests : AbstractCSharpDiagnosticVerifier<UseForStatementInsteadOfWhileStatementAnalyzer, WhileStatementCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseForStatementInsteadOfWhileStatement;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UseForStatementInsteadOfWhileStatement;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseForStatementInsteadOfWhileStatement)]
         public async Task Test()

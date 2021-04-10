@@ -12,11 +12,19 @@ using Roslynator.CSharp;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class RemoveUnnecessaryCaseLabelAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class RemoveUnnecessaryCaseLabelAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.RemoveUnnecessaryCaseLabel); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.RemoveUnnecessaryCaseLabel);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -47,7 +55,7 @@ namespace Roslynator.CSharp.Analysis
                     && label.Keyword.TrailingTrivia.IsEmptyOrWhitespace()
                     && label.ColonToken.LeadingTrivia.IsEmptyOrWhitespace())
                 {
-                    DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.RemoveUnnecessaryCaseLabel, label);
+                    DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.RemoveUnnecessaryCaseLabel, label);
                 }
             }
         }

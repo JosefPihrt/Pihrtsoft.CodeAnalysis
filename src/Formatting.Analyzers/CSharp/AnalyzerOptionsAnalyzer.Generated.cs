@@ -9,13 +9,13 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.Formatting.CSharp
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class AnalyzerOptionsAnalyzer : DiagnosticAnalyzer
+    internal sealed class AnalyzerOptionsAnalyzer : DiagnosticAnalyzer
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                return ImmutableArray.Create(AnalyzerOptionDiagnosticDescriptors.RemoveEmptyLineBetweenSingleLineAccessors, AnalyzerOptionDiagnosticDescriptors.RemoveEmptyLineBetweenUsingDirectivesWithDifferentRootNamespace, AnalyzerOptionDiagnosticDescriptors.AddNewLineAfterBinaryOperatorInsteadOfBeforeIt, AnalyzerOptionDiagnosticDescriptors.AddNewLineAfterConditionalOperatorInsteadOfBeforeIt, AnalyzerOptionDiagnosticDescriptors.AddNewLineAfterExpressionBodyArrowInsteadOfBeforeIt, AnalyzerOptionDiagnosticDescriptors.RemoveNewLineBetweenClosingBraceAndWhileKeyword, AnalyzerOptionDiagnosticDescriptors.AddNewLineAfterEqualsSignInsteadOfBeforeIt);
+                return ImmutableArray.Create(AnalyzerOptionDiagnosticRules.RemoveEmptyLineBetweenSingleLineAccessors, AnalyzerOptionDiagnosticRules.RemoveEmptyLineBetweenUsingDirectivesWithDifferentRootNamespace, AnalyzerOptionDiagnosticRules.AddNewLineAfterBinaryOperatorInsteadOfBeforeIt, AnalyzerOptionDiagnosticRules.AddNewLineAfterConditionalOperatorInsteadOfBeforeIt, AnalyzerOptionDiagnosticRules.AddNewLineAfterExpressionBodyArrowInsteadOfBeforeIt, AnalyzerOptionDiagnosticRules.RemoveNewLineBetweenClosingBraceAndWhileKeyword, AnalyzerOptionDiagnosticRules.AddNewLineAfterEqualsSignInsteadOfBeforeIt);
             }
         }
 

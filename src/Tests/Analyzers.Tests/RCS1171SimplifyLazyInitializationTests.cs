@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1171SimplifyLazyInitializationTests : AbstractCSharpDiagnosticVerifier<SimplifyLazyInitializationAnalyzer, BlockCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.SimplifyLazyInitialization;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.SimplifyLazyInitialization;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyLazyInitialization)]
         public async Task Test_IfWithBraces()

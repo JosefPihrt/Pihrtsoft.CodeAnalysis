@@ -12,11 +12,19 @@ using Roslynator.CSharp.Analysis.ReduceIfNesting;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class ReduceIfNestingAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class ReduceIfNestingAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.ReduceIfNesting); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.ReduceIfNesting);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -41,7 +49,7 @@ namespace Roslynator.CSharp.Analysis
 
             DiagnosticHelpers.ReportDiagnostic(
                 context,
-                DiagnosticDescriptors.ReduceIfNesting,
+                DiagnosticRules.ReduceIfNesting,
                 ifStatement.IfKeyword.GetLocation(),
                 ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string>("JumpKind", analysis.JumpKind.ToString()) }));
         }

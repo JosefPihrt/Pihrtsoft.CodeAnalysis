@@ -18,7 +18,7 @@ namespace Roslynator.CSharp.CodeFixes
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SimplifyLogicalNegationCodeFixProvider))]
     [Shared]
-    public class SimplifyLogicalNegationCodeFixProvider : BaseCodeFixProvider
+    public sealed class SimplifyLogicalNegationCodeFixProvider : BaseCodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {

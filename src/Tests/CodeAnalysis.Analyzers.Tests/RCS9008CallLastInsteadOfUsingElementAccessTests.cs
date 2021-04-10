@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS9008CallLastInsteadOfUsingElementAccessTests : AbstractCSharpDiagnosticVerifier<ElementAccessExpressionAnalyzer, ElementAccessExpressionCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.CallLastInsteadOfUsingElementAccess;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.CallLastInsteadOfUsingElementAccess;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.CallLastInsteadOfUsingElementAccess)]
         public async Task Test_SyntaxList()

@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1058UseCompoundAssignmentTests : AbstractCSharpDiagnosticVerifier<UseCompoundAssignmentAnalyzer, UseCompoundAssignmentCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseCompoundAssignment;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UseCompoundAssignment;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseCompoundAssignment)]
         public async Task Test_Property()

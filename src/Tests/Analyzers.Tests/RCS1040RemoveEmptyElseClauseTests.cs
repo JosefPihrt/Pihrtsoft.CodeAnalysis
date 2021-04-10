@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1040RemoveEmptyElseClauseTests : AbstractCSharpDiagnosticVerifier<RemoveEmptyElseClauseAnalyzer, ElseClauseCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.RemoveEmptyElseClause;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.RemoveEmptyElseClause;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemoveEmptyElseClause)]
         public async Task Test()

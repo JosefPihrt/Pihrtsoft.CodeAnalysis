@@ -15,11 +15,19 @@ using Roslynator.CSharp.Syntax;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class UseConditionalAccessAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class UseConditionalAccessAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.UseConditionalAccess); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.UseConditionalAccess);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -91,7 +99,7 @@ namespace Roslynator.CSharp.Analysis
             if (ifStatement.IsInExpressionTree(context.SemanticModel, context.CancellationToken))
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UseConditionalAccess, ifStatement);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UseConditionalAccess, ifStatement);
         }
 
         private static void AnalyzeBinaryExpression(SyntaxNodeAnalysisContext context)
@@ -129,7 +137,7 @@ namespace Roslynator.CSharp.Analysis
 
             DiagnosticHelpers.ReportDiagnostic(
                 context,
-                DiagnosticDescriptors.UseConditionalAccess,
+                DiagnosticRules.UseConditionalAccess,
                 Location.Create(binaryExpression.SyntaxTree, TextSpan.FromBounds(left.SpanStart, right.Span.End)));
 
             static bool ExistsImplicitConversionToBoolean(INamedTypeSymbol typeSymbol)

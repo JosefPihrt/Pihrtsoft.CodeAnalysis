@@ -49,9 +49,9 @@ namespace Roslynator.CodeGeneration.CSharp
                     IdentifierName(nameof(AnalyzerOptionDescriptor)),
                     ArgumentList(
                         (analyzer.Id != null)
-                            ? Argument(SimpleMemberAccessExpression(IdentifierName("AnalyzerOptionDiagnosticDescriptors"), IdentifierName(analyzer.Identifier)))
+                            ? Argument(SimpleMemberAccessExpression(IdentifierName("AnalyzerOptionDiagnosticRules"), IdentifierName(analyzer.Identifier)))
                             : Argument(NullLiteralExpression()),
-                        Argument(SimpleMemberAccessExpression(IdentifierName("DiagnosticDescriptors"), IdentifierName(parent.Identifier))),
+                        Argument(SimpleMemberAccessExpression(IdentifierName("DiagnosticRules"), IdentifierName(parent.Identifier))),
                         Argument(StringLiteralExpression(optionKey)))));
 
             if (analyzer.IsObsolete)

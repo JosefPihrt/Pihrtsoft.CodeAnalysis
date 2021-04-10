@@ -11,11 +11,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class UseGenericEventHandlerAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class UseGenericEventHandlerAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.UseGenericEventHandler); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.UseGenericEventHandler);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -72,7 +80,7 @@ namespace Roslynator.CSharp.Analysis
             if (type == null)
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UseGenericEventHandler, type);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UseGenericEventHandler, type);
         }
 
         private static TypeSyntax GetTypeSyntax(SyntaxNode node)

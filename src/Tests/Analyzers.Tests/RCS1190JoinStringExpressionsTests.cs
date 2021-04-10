@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1190JoinStringExpressionsTests : AbstractCSharpDiagnosticVerifier<JoinStringExpressionsAnalyzer, BinaryExpressionCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.JoinStringExpressions;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.JoinStringExpressions;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.JoinStringExpressions)]
         public async Task Test_Literal_Regular()

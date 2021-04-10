@@ -12,11 +12,19 @@ using static Roslynator.CSharp.Analysis.ConvertHasFlagCallToBitwiseOperationAnal
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class ConvertHasFlagCallToBitwiseOperationOrViceVersaAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class ConvertHasFlagCallToBitwiseOperationOrViceVersaAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.ConvertHasFlagCallToBitwiseOperationOrViceVersa); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.ConvertHasFlagCallToBitwiseOperationOrViceVersa);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -91,7 +99,7 @@ namespace Roslynator.CSharp.Analysis
 
             DiagnosticHelpers.ReportDiagnostic(
                 context,
-                DiagnosticDescriptors.ReportOnly.ConvertBitwiseOperationToHasFlagCall,
+                DiagnosticRules.ReportOnly.ConvertBitwiseOperationToHasFlagCall,
                 equalsOrNotEquals);
 
             bool IsSuitableAsExpressionOfHasFlag(ExpressionSyntax expression)
@@ -151,7 +159,7 @@ namespace Roslynator.CSharp.Analysis
 
             DiagnosticHelpers.ReportDiagnostic(
                 context,
-                DiagnosticDescriptors.ConvertHasFlagCallToBitwiseOperationOrViceVersa,
+                DiagnosticRules.ConvertHasFlagCallToBitwiseOperationOrViceVersa,
                 invocation);
         }
     }

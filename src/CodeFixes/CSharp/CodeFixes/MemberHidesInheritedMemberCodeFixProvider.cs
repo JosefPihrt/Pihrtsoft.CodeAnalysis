@@ -13,7 +13,7 @@ namespace Roslynator.CSharp.CodeFixes
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(MemberHidesInheritedMemberCodeFixProvider))]
     [Shared]
-    public class MemberHidesInheritedMemberCodeFixProvider : BaseCodeFixProvider
+    public sealed class MemberHidesInheritedMemberCodeFixProvider : BaseCodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {

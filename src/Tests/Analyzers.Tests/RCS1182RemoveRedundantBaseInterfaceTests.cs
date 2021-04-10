@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1182RemoveRedundantBaseInterfaceTests : AbstractCSharpDiagnosticVerifier<RemoveRedundantBaseInterfaceAnalyzer, BaseTypeCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.RemoveRedundantBaseInterface;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.RemoveRedundantBaseInterface;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemoveRedundantBaseInterface)]
         public async Task Test_IEnumerableOfT()

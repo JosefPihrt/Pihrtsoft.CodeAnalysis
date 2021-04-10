@@ -11,11 +11,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class BitwiseOperatorAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class BitwiseOperatorAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.BitwiseOperationOnEnumWithoutFlagsAttribute); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.BitwiseOperationOnEnumWithoutFlagsAttribute);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -45,7 +53,7 @@ namespace Roslynator.CSharp.Analysis
             {
                 DiagnosticHelpers.ReportDiagnostic(
                     context,
-                    DiagnosticDescriptors.BitwiseOperationOnEnumWithoutFlagsAttribute,
+                    DiagnosticRules.BitwiseOperationOnEnumWithoutFlagsAttribute,
                     binaryExpression);
             }
         }
@@ -58,7 +66,7 @@ namespace Roslynator.CSharp.Analysis
             {
                 DiagnosticHelpers.ReportDiagnostic(
                     context,
-                    DiagnosticDescriptors.BitwiseOperationOnEnumWithoutFlagsAttribute,
+                    DiagnosticRules.BitwiseOperationOnEnumWithoutFlagsAttribute,
                     prefixUnaryExpression);
             }
         }

@@ -12,15 +12,23 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis.MakeMemberReadOnly
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class MakeMemberReadOnlyAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class MakeMemberReadOnlyAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                return ImmutableArray.Create(
-                    DiagnosticDescriptors.MakeFieldReadOnly,
-                    DiagnosticDescriptors.UseReadOnlyAutoProperty);
+                if (_supportedDiagnostics.IsDefault)
+                {
+                    Immutable.InterlockedInitialize(
+                        ref _supportedDiagnostics,
+                        DiagnosticRules.MakeFieldReadOnly,
+                        DiagnosticRules.UseReadOnlyAutoProperty);
+                }
+
+                return _supportedDiagnostics;
             }
         }
 
@@ -39,9 +47,9 @@ namespace Roslynator.CSharp.Analysis.MakeMemberReadOnly
             if (typeDeclaration.Modifiers.Contains(SyntaxKind.PartialKeyword))
                 return;
 
-            bool skipField = !DiagnosticDescriptors.MakeFieldReadOnly.IsEffective(context);
+            bool skipField = !DiagnosticRules.MakeFieldReadOnly.IsEffective(context);
 
-            bool skipProperty = !DiagnosticDescriptors.UseReadOnlyAutoProperty.IsEffective(context)
+            bool skipProperty = !DiagnosticRules.UseReadOnlyAutoProperty.IsEffective(context)
                 || ((CSharpCompilation)context.Compilation).LanguageVersion < LanguageVersion.CSharp6;
 
             MakeMemberReadOnlyWalker walker = MakeMemberReadOnlyWalker.GetInstance();
@@ -130,7 +138,7 @@ namespace Roslynator.CSharp.Analysis.MakeMemberReadOnly
                         {
                             AccessorDeclarationSyntax setter = propertyDeclaration.Setter();
 
-                            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UseReadOnlyAutoProperty, setter);
+                            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UseReadOnlyAutoProperty, setter);
                         }
                     }
 
@@ -144,7 +152,7 @@ namespace Roslynator.CSharp.Analysis.MakeMemberReadOnly
                         if (count == 1
                             || count == grouping.Count())
                         {
-                            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.MakeFieldReadOnly, grouping.Key.Parent);
+                            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.MakeFieldReadOnly, grouping.Key.Parent);
                         }
                     }
                 }

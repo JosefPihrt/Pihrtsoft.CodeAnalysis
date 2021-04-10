@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1013UsePredefinedTypeTests : AbstractCSharpDiagnosticVerifier<UsePredefinedTypeAnalyzer, UsePredefinedTypeCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UsePredefinedType;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UsePredefinedType;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UsePredefinedType)]
         public async Task Test()

@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1032RemoveRedundantParenthesesTests : AbstractCSharpDiagnosticVerifier<RemoveRedundantParenthesesAnalyzer, ParenthesizedExpressionCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.RemoveRedundantParentheses;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.RemoveRedundantParentheses;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemoveRedundantParentheses)]
         public async Task Test_Argument()

@@ -85,15 +85,15 @@ namespace Roslynator.CSharp.Analysis
 
             DiagnosticHelpers.ReportDiagnostic(
                 context,
-                DiagnosticDescriptors.CombineEnumerableWhereMethodChain,
+                DiagnosticRules.CombineEnumerableWhereMethodChain,
                 Location.Create(invocation.SyntaxTree, span));
 
             TextSpan fadeOutSpan = TextSpan.FromBounds(
                 invocationInfo.OperatorToken.SpanStart,
                 ((LambdaExpressionSyntax)expression).ArrowToken.Span.End);
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.CombineEnumerableWhereMethodChainFadeOut, Location.Create(invocation.SyntaxTree, fadeOutSpan));
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.CombineEnumerableWhereMethodChainFadeOut, invocation.ArgumentList.CloseParenToken);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.CombineEnumerableWhereMethodChainFadeOut, Location.Create(invocation.SyntaxTree, fadeOutSpan));
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.CombineEnumerableWhereMethodChainFadeOut, invocation.ArgumentList.CloseParenToken);
         }
 
         private static bool AreEquivalentLambdas(ExpressionSyntax expression1, ExpressionSyntax expression2)

@@ -12,11 +12,19 @@ using Roslynator.CSharp;
 namespace Roslynator.Formatting.CSharp
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class AddNewLineBeforeTypeParameterConstraintAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class AddNewLineBeforeTypeParameterConstraintAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.AddNewLineBeforeTypeParameterConstraint); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.AddNewLineBeforeTypeParameterConstraint);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -87,7 +95,7 @@ namespace Roslynator.Formatting.CSharp
                 {
                     DiagnosticHelpers.ReportDiagnostic(
                         context,
-                        DiagnosticDescriptors.AddNewLineBeforeTypeParameterConstraint,
+                        DiagnosticRules.AddNewLineBeforeTypeParameterConstraint,
                         Location.Create(constraintClause.SyntaxTree, new TextSpan(constraintClause.SpanStart, 0)));
                 }
 

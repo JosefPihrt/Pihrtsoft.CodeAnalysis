@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1201UseMethodChainingTests : AbstractCSharpDiagnosticVerifier<InvocationExpressionAnalyzer, StatementCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseMethodChaining;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UseMethodChaining;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseMethodChaining)]
         public async Task Test()

@@ -17,7 +17,7 @@ namespace Roslynator.CSharp.CodeFixes
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ConvertAnonymousFunctionToMethodGroupOrViceVersaCodeFixProvider))]
     [Shared]
-    public class ConvertAnonymousFunctionToMethodGroupOrViceVersaCodeFixProvider : BaseCodeFixProvider
+    public sealed class ConvertAnonymousFunctionToMethodGroupOrViceVersaCodeFixProvider : BaseCodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {

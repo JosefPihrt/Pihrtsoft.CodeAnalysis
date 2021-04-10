@@ -10,11 +10,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class DeclareEachAttributeSeparatelyAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class DeclareEachAttributeSeparatelyAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.DeclareEachAttributeSeparately); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.DeclareEachAttributeSeparately);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -29,7 +37,7 @@ namespace Roslynator.CSharp.Analysis
             var attributeList = (AttributeListSyntax)context.Node;
 
             if (IsFixable(attributeList))
-                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.DeclareEachAttributeSeparately, attributeList);
+                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.DeclareEachAttributeSeparately, attributeList);
         }
 
         public static bool IsFixable(AttributeListSyntax attributeList)

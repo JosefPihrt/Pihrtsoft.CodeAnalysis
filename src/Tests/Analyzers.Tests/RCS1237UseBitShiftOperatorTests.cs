@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1237UseBitShiftOperatorTests : AbstractCSharpDiagnosticVerifier<EnumSymbolAnalyzer, EnumDeclarationCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseBitShiftOperator;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UseBitShiftOperator;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseBitShiftOperator)]
         public async Task Test()

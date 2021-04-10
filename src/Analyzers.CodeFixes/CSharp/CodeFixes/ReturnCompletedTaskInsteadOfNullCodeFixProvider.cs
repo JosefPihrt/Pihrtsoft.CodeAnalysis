@@ -18,7 +18,7 @@ namespace Roslynator.CSharp.CodeFixes
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ReturnCompletedTaskInsteadOfNullCodeFixProvider))]
     [Shared]
-    public class ReturnCompletedTaskInsteadOfNullCodeFixProvider : BaseCodeFixProvider
+    public sealed class ReturnCompletedTaskInsteadOfNullCodeFixProvider : BaseCodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {

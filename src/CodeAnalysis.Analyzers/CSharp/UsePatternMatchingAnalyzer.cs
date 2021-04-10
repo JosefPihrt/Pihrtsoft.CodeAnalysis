@@ -17,15 +17,23 @@ using Roslynator.CSharp.SyntaxWalkers;
 namespace Roslynator.CodeAnalysis.CSharp
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class UsePatternMatchingAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class UsePatternMatchingAnalyzer : BaseDiagnosticAnalyzer
     {
         private static ImmutableHashSet<string> _syntaxKindNames;
         private static ImmutableHashSet<string> _syntaxTypeNames;
         private static ImmutableDictionary<ushort, string> _syntaxKindValuesToNames;
 
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.UsePatternMatching); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.UsePatternMatching);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -179,7 +187,7 @@ namespace Roslynator.CodeAnalysis.CSharp
                 return;
             }
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UsePatternMatching, switchStatement.SwitchKeyword);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UsePatternMatching, switchStatement.SwitchKeyword);
 
             string GetName()
             {
@@ -312,7 +320,7 @@ namespace Roslynator.CodeAnalysis.CSharp
                 if (!CSharpFactory.AreEquivalent(isKindExpression.Expression, castExpression.Expression))
                     return;
 
-                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UsePatternMatching, ifStatement.IfKeyword);
+                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UsePatternMatching, ifStatement.IfKeyword);
             }
         }
 

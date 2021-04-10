@@ -10,7 +10,7 @@ namespace Roslynator.Formatting.CSharp.Tests
 {
     public class RCS0031AddNewLineBeforeEnumMemberTests : AbstractCSharpDiagnosticVerifier<AddNewLineBeforeEnumMemberAnalyzer, EnumDeclarationCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddNewLineBeforeEnumMember;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.AddNewLineBeforeEnumMember;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddNewLineBeforeEnumMember)]
         public async Task Test_WithoutExplicitValues()

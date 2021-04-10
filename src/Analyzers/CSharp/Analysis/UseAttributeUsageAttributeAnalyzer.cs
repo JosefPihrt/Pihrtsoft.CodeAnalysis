@@ -9,11 +9,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class UseAttributeUsageAttributeAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class UseAttributeUsageAttributeAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.UseAttributeUsageAttribute); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.UseAttributeUsageAttribute);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -62,7 +70,7 @@ namespace Roslynator.CSharp.Analysis
                 {
                     var classDeclaration = (ClassDeclarationSyntax)typeSymbol.GetSyntax(context.CancellationToken);
 
-                    DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UseAttributeUsageAttribute, classDeclaration.Identifier);
+                    DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UseAttributeUsageAttribute, classDeclaration.Identifier);
 
                     return;
                 }

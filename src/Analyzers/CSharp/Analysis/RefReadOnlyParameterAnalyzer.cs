@@ -14,15 +14,23 @@ using Roslynator.CSharp.SyntaxWalkers;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class RefReadOnlyParameterAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class RefReadOnlyParameterAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                return ImmutableArray.Create(
-                    DiagnosticDescriptors.MakeParameterRefReadOnly,
-                    DiagnosticDescriptors.DoNotPassNonReadOnlyStructByReadOnlyReference);
+                if (_supportedDiagnostics.IsDefault)
+                {
+                    Immutable.InterlockedInitialize(
+                        ref _supportedDiagnostics,
+                        DiagnosticRules.MakeParameterRefReadOnly,
+                        DiagnosticRules.DoNotPassNonReadOnlyStructByReadOnlyReference);
+                }
+
+                return _supportedDiagnostics;
             }
         }
 
@@ -128,7 +136,7 @@ namespace Roslynator.CSharp.Analysis
 
                         Debug.Assert(parameterSyntax.Modifiers.Contains(SyntaxKind.InKeyword), "");
 
-                        DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.DoNotPassNonReadOnlyStructByReadOnlyReference, parameterSyntax.Identifier);
+                        DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.DoNotPassNonReadOnlyStructByReadOnlyReference, parameterSyntax.Identifier);
                     }
 
                     continue;
@@ -201,7 +209,7 @@ namespace Roslynator.CSharp.Analysis
                         {
                             DiagnosticHelpers.ReportDiagnostic(
                                 context,
-                                DiagnosticDescriptors.MakeParameterRefReadOnly,
+                                DiagnosticRules.MakeParameterRefReadOnly,
                                 parameter.Identifier);
                         }
                     }

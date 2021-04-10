@@ -12,18 +12,26 @@ using Roslynator.CSharp;
 namespace Roslynator.Formatting.CSharp
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class EmptyLineBetweenDeclarationsAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class EmptyLineBetweenDeclarationsAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                return ImmutableArray.Create(
-                    DiagnosticDescriptors.AddEmptyLineBetweenDeclarations,
-                    DiagnosticDescriptors.AddEmptyLineBetweenSingleLineDeclarations,
-                    DiagnosticDescriptors.AddEmptyLineBetweenDeclarationAndDocumentationComment,
-                    DiagnosticDescriptors.AddEmptyLineBetweenSingleLineDeclarationsOfDifferentKind,
-                    DiagnosticDescriptors.RemoveEmptyLineBetweenSingleLineDeclarationsOfSameKind);
+                if (_supportedDiagnostics.IsDefault)
+                {
+                    Immutable.InterlockedInitialize(
+                        ref _supportedDiagnostics,
+                        DiagnosticRules.AddEmptyLineBetweenDeclarations,
+                        DiagnosticRules.AddEmptyLineBetweenSingleLineDeclarations,
+                        DiagnosticRules.AddEmptyLineBetweenDeclarationAndDocumentationComment,
+                        DiagnosticRules.AddEmptyLineBetweenSingleLineDeclarationsOfDifferentKind,
+                        DiagnosticRules.RemoveEmptyLineBetweenSingleLineDeclarationsOfSameKind);
+                }
+
+                return _supportedDiagnostics;
             }
         }
 
@@ -89,7 +97,7 @@ namespace Roslynator.Formatting.CSharp
 
                 if (documentationComment)
                 {
-                    ReportDiagnostic(context, DiagnosticDescriptors.AddEmptyLineBetweenDeclarationAndDocumentationComment, trailingTrivia.Last());
+                    ReportDiagnostic(context, DiagnosticRules.AddEmptyLineBetweenDeclarationAndDocumentationComment, trailingTrivia.Last());
                     continue;
                 }
 
@@ -105,19 +113,19 @@ namespace Roslynator.Formatting.CSharp
                     if (emptyLine)
                     {
                         if (MemberKindEquals(previousMember, member))
-                            ReportDiagnostic(context, DiagnosticDescriptors.RemoveEmptyLineBetweenSingleLineDeclarationsOfSameKind, leadingTrivia[0]);
+                            ReportDiagnostic(context, DiagnosticRules.RemoveEmptyLineBetweenSingleLineDeclarationsOfSameKind, leadingTrivia[0]);
                     }
                     else if (emptyOrWhitespaceTrivia)
                     {
-                        ReportDiagnostic(context, DiagnosticDescriptors.AddEmptyLineBetweenSingleLineDeclarations, trailingTrivia.Last());
+                        ReportDiagnostic(context, DiagnosticRules.AddEmptyLineBetweenSingleLineDeclarations, trailingTrivia.Last());
 
                         if (!MemberKindEquals(previousMember, member))
-                            ReportDiagnostic(context, DiagnosticDescriptors.AddEmptyLineBetweenSingleLineDeclarationsOfDifferentKind, trailingTrivia.Last());
+                            ReportDiagnostic(context, DiagnosticRules.AddEmptyLineBetweenSingleLineDeclarationsOfDifferentKind, trailingTrivia.Last());
                     }
                 }
                 else if (emptyOrWhitespaceTrivia)
                 {
-                    ReportDiagnostic(context, DiagnosticDescriptors.AddEmptyLineBetweenDeclarations, trailingTrivia.Last());
+                    ReportDiagnostic(context, DiagnosticRules.AddEmptyLineBetweenDeclarations, trailingTrivia.Last());
                 }
             }
         }
@@ -182,7 +190,7 @@ namespace Roslynator.Formatting.CSharp
 
                 if (documentationComment)
                 {
-                    ReportDiagnostic(context, DiagnosticDescriptors.AddEmptyLineBetweenDeclarationAndDocumentationComment, trailingTrivia.Last());
+                    ReportDiagnostic(context, DiagnosticRules.AddEmptyLineBetweenDeclarationAndDocumentationComment, trailingTrivia.Last());
                     continue;
                 }
 
@@ -197,16 +205,16 @@ namespace Roslynator.Formatting.CSharp
                 {
                     if (emptyLine)
                     {
-                        ReportDiagnostic(context, DiagnosticDescriptors.RemoveEmptyLineBetweenSingleLineDeclarationsOfSameKind, leadingTrivia[0]);
+                        ReportDiagnostic(context, DiagnosticRules.RemoveEmptyLineBetweenSingleLineDeclarationsOfSameKind, leadingTrivia[0]);
                     }
                     else if (emptyOrWhitespaceTrivia)
                     {
-                        ReportDiagnostic(context, DiagnosticDescriptors.AddEmptyLineBetweenSingleLineDeclarations, trailingTrivia.Last());
+                        ReportDiagnostic(context, DiagnosticRules.AddEmptyLineBetweenSingleLineDeclarations, trailingTrivia.Last());
                     }
                 }
                 else if (emptyOrWhitespaceTrivia)
                 {
-                    ReportDiagnostic(context, DiagnosticDescriptors.AddEmptyLineBetweenDeclarations, trailingTrivia.Last());
+                    ReportDiagnostic(context, DiagnosticRules.AddEmptyLineBetweenDeclarations, trailingTrivia.Last());
                 }
             }
         }

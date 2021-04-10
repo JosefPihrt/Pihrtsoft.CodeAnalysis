@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1089UseUnaryOperatorInsteadOfAssignmentTests : AbstractCSharpDiagnosticVerifier<UseUnaryOperatorInsteadOfAssignmentAnalyzer, AssignmentExpressionCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseUnaryOperatorInsteadOfAssignment;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UseUnaryOperatorInsteadOfAssignment;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseUnaryOperatorInsteadOfAssignment)]
         public async Task Test_PostIncrement()

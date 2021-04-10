@@ -14,15 +14,23 @@ using Roslynator.CSharp.Syntax;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class BinaryOperatorAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class BinaryOperatorAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                return ImmutableArray.Create(
-                    DiagnosticDescriptors.ExpressionIsAlwaysEqualToTrueOrFalse,
-                    DiagnosticDescriptors.UnnecessaryOperator);
+                if (_supportedDiagnostics.IsDefault)
+                {
+                    Immutable.InterlockedInitialize(
+                        ref _supportedDiagnostics,
+                        DiagnosticRules.ExpressionIsAlwaysEqualToTrueOrFalse,
+                        DiagnosticRules.UnnecessaryOperator);
+                }
+
+                return _supportedDiagnostics;
             }
         }
 
@@ -33,7 +41,7 @@ namespace Roslynator.CSharp.Analysis
             context.RegisterSyntaxNodeAction(
                 c =>
                 {
-                    if (DiagnosticDescriptors.UnnecessaryOperator.IsEffective(c))
+                    if (DiagnosticRules.UnnecessaryOperator.IsEffective(c))
                         AnalyzeLessThanExpression(c);
                 },
                 SyntaxKind.LessThanExpression);
@@ -41,7 +49,7 @@ namespace Roslynator.CSharp.Analysis
             context.RegisterSyntaxNodeAction(
                 c =>
                 {
-                    if (DiagnosticDescriptors.UnnecessaryOperator.IsEffective(c))
+                    if (DiagnosticRules.UnnecessaryOperator.IsEffective(c))
                         AnalyzeGreaterThanExpression(c);
                 },
                 SyntaxKind.GreaterThanExpression);
@@ -49,7 +57,7 @@ namespace Roslynator.CSharp.Analysis
             context.RegisterSyntaxNodeAction(
                 c =>
                 {
-                    if (DiagnosticDescriptors.ExpressionIsAlwaysEqualToTrueOrFalse.IsEffective(c))
+                    if (DiagnosticRules.ExpressionIsAlwaysEqualToTrueOrFalse.IsEffective(c))
                         AnalyzeSimpleMemberAccessExpression(c);
                 },
                 SyntaxKind.SimpleMemberAccessExpression);
@@ -85,7 +93,7 @@ namespace Roslynator.CSharp.Analysis
 
             DiagnosticHelpers.ReportDiagnostic(
                 context,
-                DiagnosticDescriptors.ExpressionIsAlwaysEqualToTrueOrFalse,
+                DiagnosticRules.ExpressionIsAlwaysEqualToTrueOrFalse,
                 binaryExpression.GetLocation(),
                 ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string>("DoubleNaN", (((BinaryExpressionSyntax)binaryExpression).Left == expression) ? "Right" : "Left") }),
                 (binaryExpression.IsKind(SyntaxKind.EqualsExpression)) ? "false" : "true");
@@ -112,12 +120,12 @@ namespace Roslynator.CSharp.Analysis
             if (!info.Success)
                 return;
 
-            if (DiagnosticDescriptors.ExpressionIsAlwaysEqualToTrueOrFalse.IsEffective(context)
+            if (DiagnosticRules.ExpressionIsAlwaysEqualToTrueOrFalse.IsEffective(context)
                 && IsAlwaysEqualToTrueOrFalse(greaterThanOrEqualExpression, info.Left, info.Right, context.SemanticModel, context.CancellationToken))
             {
                 ReportExpressionAlwaysEqualToTrueOrFalse(context, "true");
             }
-            else if (DiagnosticDescriptors.UnnecessaryOperator.IsEffective(context)
+            else if (DiagnosticRules.UnnecessaryOperator.IsEffective(context)
                 && IsUnnecessaryRelationalOperator(info.Right, info.Left, context.SemanticModel, context.CancellationToken))
             {
                 ReportUnnecessaryRelationalOperator(context, info.OperatorToken);
@@ -151,12 +159,12 @@ namespace Roslynator.CSharp.Analysis
             if (!info.Success)
                 return;
 
-            if (DiagnosticDescriptors.ExpressionIsAlwaysEqualToTrueOrFalse.IsEffective(context)
+            if (DiagnosticRules.ExpressionIsAlwaysEqualToTrueOrFalse.IsEffective(context)
                 && IsAlwaysEqualToTrueOrFalse(lessThanOrEqualExpression, info.Right, info.Left, context.SemanticModel, context.CancellationToken))
             {
                 ReportExpressionAlwaysEqualToTrueOrFalse(context, "true");
             }
-            else if (DiagnosticDescriptors.UnnecessaryOperator.IsEffective(context)
+            else if (DiagnosticRules.UnnecessaryOperator.IsEffective(context)
                 && IsUnnecessaryRelationalOperator(info.Left, info.Right, context.SemanticModel, context.CancellationToken))
             {
                 ReportUnnecessaryRelationalOperator(context, info.OperatorToken);
@@ -349,7 +357,7 @@ namespace Roslynator.CSharp.Analysis
         {
             DiagnosticHelpers.ReportDiagnostic(
                 context,
-                DiagnosticDescriptors.ExpressionIsAlwaysEqualToTrueOrFalse,
+                DiagnosticRules.ExpressionIsAlwaysEqualToTrueOrFalse,
                 node,
                 booleanName);
         }
@@ -358,7 +366,7 @@ namespace Roslynator.CSharp.Analysis
         {
             DiagnosticHelpers.ReportDiagnostic(
                 context,
-                DiagnosticDescriptors.UnnecessaryOperator,
+                DiagnosticRules.UnnecessaryOperator,
                 Location.Create(operatorToken.SyntaxTree, new TextSpan(operatorToken.SpanStart, 1)),
                 operatorToken.ToString());
         }

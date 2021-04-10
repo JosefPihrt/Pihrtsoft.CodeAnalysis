@@ -14,7 +14,7 @@ namespace Roslynator.CSharp.CodeFixes
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ConvertLambdaExpressionBodyToExpressionBodyCodeFixProvider))]
     [Shared]
-    public class ConvertLambdaExpressionBodyToExpressionBodyCodeFixProvider : BaseCodeFixProvider
+    public sealed class ConvertLambdaExpressionBodyToExpressionBodyCodeFixProvider : BaseCodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {

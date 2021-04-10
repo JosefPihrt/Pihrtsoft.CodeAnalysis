@@ -14,7 +14,7 @@ namespace Roslynator.CSharp.CodeFixes
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UseNameOfOperatorCodeFixProvider))]
     [Shared]
-    public class UseNameOfOperatorCodeFixProvider : BaseCodeFixProvider
+    public sealed class UseNameOfOperatorCodeFixProvider : BaseCodeFixProvider
     {
         private const string Title = "Use nameof operator";
 

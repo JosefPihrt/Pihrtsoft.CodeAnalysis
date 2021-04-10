@@ -10,11 +10,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class AttributeArgumentListAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class AttributeArgumentListAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.RemoveArgumentListFromAttribute); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.RemoveArgumentListFromAttribute);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -29,7 +37,7 @@ namespace Roslynator.CSharp.Analysis
             var attributeArgumentList = (AttributeArgumentListSyntax)context.Node;
 
             if (!attributeArgumentList.Arguments.Any())
-                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.RemoveArgumentListFromAttribute, attributeArgumentList);
+                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.RemoveArgumentListFromAttribute, attributeArgumentList);
         }
     }
 }

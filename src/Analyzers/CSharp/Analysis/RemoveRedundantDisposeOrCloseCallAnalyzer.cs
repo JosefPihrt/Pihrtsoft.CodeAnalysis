@@ -11,11 +11,19 @@ using Roslynator.CSharp.Syntax;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class RemoveRedundantDisposeOrCloseCallAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class RemoveRedundantDisposeOrCloseCallAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.RemoveRedundantDisposeOrCloseCall); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.RemoveRedundantDisposeOrCloseCall);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -91,7 +99,7 @@ namespace Roslynator.CSharp.Analysis
         {
             DiagnosticHelpers.ReportDiagnostic(
                 context,
-                DiagnosticDescriptors.RemoveRedundantDisposeOrCloseCall,
+                DiagnosticRules.RemoveRedundantDisposeOrCloseCall,
                 expressionStatement,
                 methodName);
         }

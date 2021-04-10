@@ -10,7 +10,7 @@ namespace Roslynator.Formatting.CSharp.Tests
 {
     public class RCS0011AddEmptyLineBetweenSingleLineAccessorsOrViceVersaTests : AbstractCSharpDiagnosticVerifier<AddOrRemoveEmptyLineBetweenAccessorsAnalyzer, SyntaxTriviaCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddEmptyLineBetweenSingleLineAccessorsOrViceVersa;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.AddEmptyLineBetweenSingleLineAccessorsOrViceVersa;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddEmptyLineBetweenSingleLineAccessorsOrViceVersa)]
         public async Task Test_Property()
@@ -67,7 +67,7 @@ class C
         set { _p = value; }
     }
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.RemoveEmptyLineBetweenSingleLineAccessors));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.RemoveEmptyLineBetweenSingleLineAccessors));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddEmptyLineBetweenSingleLineAccessorsOrViceVersa)]
@@ -97,7 +97,7 @@ class C
         set { _p = value; }
     }
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.RemoveEmptyLineBetweenSingleLineAccessors));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.RemoveEmptyLineBetweenSingleLineAccessors));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddEmptyLineBetweenSingleLineAccessorsOrViceVersa)]
@@ -126,7 +126,7 @@ class C
         remove { }
     }
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.RemoveEmptyLineBetweenSingleLineAccessors));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.RemoveEmptyLineBetweenSingleLineAccessors));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddEmptyLineBetweenSingleLineAccessorsOrViceVersa)]

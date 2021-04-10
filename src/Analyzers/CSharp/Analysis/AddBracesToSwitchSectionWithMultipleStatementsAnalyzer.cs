@@ -10,11 +10,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class AddBracesToSwitchSectionWithMultipleStatementsAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class AddBracesToSwitchSectionWithMultipleStatementsAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.AddBracesToSwitchSectionWithMultipleStatements); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.AddBracesToSwitchSectionWithMultipleStatements);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -34,7 +42,7 @@ namespace Roslynator.CSharp.Analysis
             {
                 DiagnosticHelpers.ReportDiagnostic(
                     context,
-                    DiagnosticDescriptors.AddBracesToSwitchSectionWithMultipleStatements,
+                    DiagnosticRules.AddBracesToSwitchSectionWithMultipleStatements,
                     Location.Create(switchSection.SyntaxTree, statements.Span));
             }
         }

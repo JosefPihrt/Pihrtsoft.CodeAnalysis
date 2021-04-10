@@ -10,11 +10,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class UseShortCircuitingOperatorAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class UseShortCircuitingOperatorAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.UseShortCircuitingOperator); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.UseShortCircuitingOperator);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -49,7 +57,7 @@ namespace Roslynator.CSharp.Analysis
                     return;
             }
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UseShortCircuitingOperator, binaryExpression.OperatorToken);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UseShortCircuitingOperator, binaryExpression.OperatorToken);
         }
     }
 }

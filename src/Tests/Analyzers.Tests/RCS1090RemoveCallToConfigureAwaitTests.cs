@@ -10,11 +10,11 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1090RemoveCallToConfigureAwaitTests : AbstractCSharpDiagnosticVerifier<AddCallToConfigureAwaitOrViceVersaAnalyzer, AwaitExpressionCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddCallToConfigureAwaitOrViceVersa;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.AddCallToConfigureAwaitOrViceVersa;
 
         public override CSharpTestOptions Options
         {
-            get { return base.Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.RemoveCallToConfigureAwait); }
+            get { return base.Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.RemoveCallToConfigureAwait); }
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddCallToConfigureAwaitOrViceVersa)]

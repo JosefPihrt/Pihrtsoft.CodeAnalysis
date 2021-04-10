@@ -20,7 +20,7 @@ namespace Roslynator.CSharp.CodeFixes
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UseAsyncAwaitCodeFixProvider))]
     [Shared]
-    public class UseAsyncAwaitCodeFixProvider : BaseCodeFixProvider
+    public sealed class UseAsyncAwaitCodeFixProvider : BaseCodeFixProvider
     {
         private static readonly SyntaxAnnotation[] _asyncAwaitAnnotation = new[] { new SyntaxAnnotation() };
 

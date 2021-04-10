@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1036RemoveRedundantEmptyLineTests : AbstractCSharpDiagnosticVerifier<RemoveRedundantEmptyLineAnalyzer, WhitespaceTriviaCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.RemoveRedundantEmptyLine;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.RemoveRedundantEmptyLine;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemoveRedundantEmptyLine)]
         public async Task Test_ObjectInitializer()
@@ -268,7 +268,7 @@ class C
         }
     }
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.RemoveEmptyLineBetweenClosingBraceAndSwitchSection));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.RemoveEmptyLineBetweenClosingBraceAndSwitchSection));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemoveRedundantEmptyLine)]

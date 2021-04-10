@@ -31,7 +31,7 @@ namespace Roslynator.CSharp.Analysis
             {
                 DiagnosticHelpers.ReportDiagnostic(
                     context,
-                    DiagnosticDescriptors.CallThenByInsteadOfOrderBy,
+                    DiagnosticRules.CallThenByInsteadOfOrderBy,
                     invocationInfo.Name,
                     (invocationInfo.NameText == "OrderByDescending") ? "Descending" : null);
             }

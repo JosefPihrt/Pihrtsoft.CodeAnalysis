@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis;
 
 namespace Roslynator.CSharp
 {
-    public static partial class CompilerDiagnosticDescriptors
+    public static partial class CompilerDiagnosticRules
     {
         /// <summary>CS0019</summary>
         public static readonly DiagnosticDescriptor OperatorCannotBeAppliedToOperands = new DiagnosticDescriptor(

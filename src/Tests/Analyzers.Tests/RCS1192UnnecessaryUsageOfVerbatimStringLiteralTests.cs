@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1192UnnecessaryUsageOfVerbatimStringLiteralTests : AbstractCSharpDiagnosticVerifier<UnnecessaryUsageOfVerbatimStringLiteralAnalyzer, UnnecessaryUsageOfVerbatimStringLiteralCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UnnecessaryUsageOfVerbatimStringLiteral;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UnnecessaryUsageOfVerbatimStringLiteral;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UnnecessaryUsageOfVerbatimStringLiteral)]
         public async Task Test_EmptyStringLiteral()

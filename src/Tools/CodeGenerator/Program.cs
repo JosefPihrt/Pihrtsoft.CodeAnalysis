@@ -58,8 +58,8 @@ namespace Roslynator.CodeGeneration
             WriteDiagnostics(@"Formatting.Analyzers\CSharp", formattingAnalyzers, @namespace: "Roslynator.Formatting.CSharp");
 
             WriteCompilationUnit(
-                @"CodeFixes\CSharp\CompilerDiagnosticDescriptors.Generated.cs",
-                CompilerDiagnosticDescriptorsGenerator.Generate(compilerDiagnostics, comparer: comparer, @namespace: "Roslynator.CSharp"),
+                @"CodeFixes\CSharp\CompilerDiagnosticRules.Generated.cs",
+                CompilerDiagnosticRulesGenerator.Generate(compilerDiagnostics, comparer: comparer, @namespace: "Roslynator.CSharp"),
                 normalizeWhitespace: false);
 
             WriteCompilationUnit(
@@ -129,17 +129,17 @@ namespace Roslynator.CodeGeneration
                 string dirPath,
                 ImmutableArray<AnalyzerMetadata> analyzers,
                 string @namespace,
-                string descriptorsClassName = "DiagnosticDescriptors",
+                string descriptorsClassName = "DiagnosticRules",
                 string identifiersClassName = "DiagnosticIdentifiers")
             {
                 WriteCompilationUnit(
                     Path.Combine(dirPath, $"{descriptorsClassName}.Generated.cs"),
-                    DiagnosticDescriptorsGenerators.Default.Generate(analyzers, obsolete: false, comparer: comparer, @namespace: @namespace, className: descriptorsClassName, identifiersClassName: identifiersClassName),
+                    DiagnosticRulesGenerators.Default.Generate(analyzers, obsolete: false, comparer: comparer, @namespace: @namespace, className: descriptorsClassName, identifiersClassName: identifiersClassName),
                     normalizeWhitespace: false);
 
                 WriteCompilationUnit(
                     Path.Combine(dirPath, $"{descriptorsClassName}.Deprecated.Generated.cs"),
-                    DiagnosticDescriptorsGenerators.Default.Generate(analyzers, obsolete: true, comparer: comparer, @namespace: @namespace, className: descriptorsClassName, identifiersClassName: identifiersClassName),
+                    DiagnosticRulesGenerators.Default.Generate(analyzers, obsolete: true, comparer: comparer, @namespace: @namespace, className: descriptorsClassName, identifiersClassName: identifiersClassName),
                     normalizeWhitespace: false);
 
                 WriteCompilationUnit(
@@ -155,8 +155,8 @@ namespace Roslynator.CodeGeneration
                 if (optionAnalyzers.Any())
                 {
                     WriteCompilationUnit(
-                        Path.Combine(dirPath, "AnalyzerOptionDiagnosticDescriptors.Generated.cs"),
-                        DiagnosticDescriptorsGenerators.Default.Generate(optionAnalyzers, obsolete: false, comparer: comparer, @namespace: @namespace, className: "AnalyzerOptionDiagnosticDescriptors", identifiersClassName: "AnalyzerOptionDiagnosticIdentifiers"),
+                        Path.Combine(dirPath, "AnalyzerOptionDiagnosticRules.Generated.cs"),
+                        DiagnosticRulesGenerators.Default.Generate(optionAnalyzers, obsolete: false, comparer: comparer, @namespace: @namespace, className: "AnalyzerOptionDiagnosticRules", identifiersClassName: "AnalyzerOptionDiagnosticIdentifiers"),
                         normalizeWhitespace: false,
                         fileMustExist: false);
 

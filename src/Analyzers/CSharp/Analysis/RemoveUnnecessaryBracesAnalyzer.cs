@@ -10,15 +10,23 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class RemoveUnnecessaryBracesAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class RemoveUnnecessaryBracesAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                return ImmutableArray.Create(
-                    DiagnosticDescriptors.RemoveUnnecessaryBraces,
-                    DiagnosticDescriptors.RemoveUnnecessaryBracesFadeOut);
+                if (_supportedDiagnostics.IsDefault)
+                {
+                    Immutable.InterlockedInitialize(
+                        ref _supportedDiagnostics,
+                        DiagnosticRules.RemoveUnnecessaryBraces,
+                        DiagnosticRules.RemoveUnnecessaryBracesFadeOut);
+                }
+
+                return _supportedDiagnostics;
             }
         }
 
@@ -29,7 +37,7 @@ namespace Roslynator.CSharp.Analysis
             context.RegisterSyntaxNodeAction(
                 c =>
                 {
-                    if (DiagnosticDescriptors.RemoveUnnecessaryBraces.IsEffective(c))
+                    if (DiagnosticRules.RemoveUnnecessaryBraces.IsEffective(c))
                         AnalyzerSwitchSection(c);
                 },
                 SyntaxKind.SwitchSection);
@@ -83,8 +91,8 @@ namespace Roslynator.CSharp.Analysis
             if (!AnalyzeTrivia(closeBrace.TrailingTrivia))
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.RemoveUnnecessaryBraces, openBrace);
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.RemoveUnnecessaryBracesFadeOut, closeBrace);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.RemoveUnnecessaryBraces, openBrace);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.RemoveUnnecessaryBracesFadeOut, closeBrace);
 
             static bool AnalyzeTrivia(SyntaxTriviaList trivia)
             {

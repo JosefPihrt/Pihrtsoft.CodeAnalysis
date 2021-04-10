@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1005SimplifyNestedUsingStatementTests : AbstractCSharpDiagnosticVerifier<SimplifyNestedUsingStatementAnalyzer, SimplifyNestedUsingStatementCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.SimplifyNestedUsingStatement;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.SimplifyNestedUsingStatement;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyNestedUsingStatement)]
         public async Task Test()

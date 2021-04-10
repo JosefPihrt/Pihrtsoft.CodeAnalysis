@@ -106,7 +106,7 @@ namespace Roslynator
 
                 static ReadOnlyDictionary<string, DiagnosticDescriptor> LoadCompilerDiagnosticsById()
                 {
-                    Dictionary<string, DiagnosticDescriptor> dic = typeof(CompilerDiagnosticDescriptors)
+                    Dictionary<string, DiagnosticDescriptor> dic = typeof(CompilerDiagnosticRules)
                         .GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.DeclaredOnly)
                         .Select(f => (DiagnosticDescriptor)f.GetValue(null))
                         .ToDictionary(f => f.Id, f => f);

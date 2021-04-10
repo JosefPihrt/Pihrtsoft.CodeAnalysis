@@ -10,7 +10,7 @@ namespace Roslynator.Formatting.CSharp.Tests
 {
     public class RCS0043RemoveNewLinesFromAccessorWithSingleLineExpressionTests : AbstractCSharpDiagnosticVerifier<AccessorListAnalyzer, AccessorDeclarationCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.RemoveNewLinesFromAccessorWithSingleLineExpression;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.RemoveNewLinesFromAccessorWithSingleLineExpression;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemoveNewLinesFromAccessorWithSingleLineExpression)]
         public async Task Test_Getter_Setter()

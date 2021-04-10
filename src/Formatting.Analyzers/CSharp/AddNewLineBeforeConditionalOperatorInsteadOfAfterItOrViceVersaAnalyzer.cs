@@ -10,11 +10,19 @@ using Roslynator.CSharp;
 namespace Roslynator.Formatting.CSharp
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class AddNewLineBeforeConditionalOperatorInsteadOfAfterItOrViceVersaAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class AddNewLineBeforeConditionalOperatorInsteadOfAfterItOrViceVersaAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.AddNewLineBeforeConditionalOperatorInsteadOfAfterItOrViceVersa); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.AddNewLineBeforeConditionalOperatorInsteadOfAfterItOrViceVersa);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -42,7 +50,7 @@ namespace Roslynator.Formatting.CSharp
             {
                 if (!AnalyzerOptions.AddNewLineAfterConditionalOperatorInsteadOfBeforeIt.IsEnabled(context))
                 {
-                    ReportDiagnostic(DiagnosticDescriptors.AddNewLineBeforeConditionalOperatorInsteadOfAfterItOrViceVersa, conditionalExpression.QuestionToken, ImmutableDictionary<string, string>.Empty);
+                    ReportDiagnostic(DiagnosticRules.AddNewLineBeforeConditionalOperatorInsteadOfAfterItOrViceVersa, conditionalExpression.QuestionToken, ImmutableDictionary<string, string>.Empty);
                     return;
                 }
             }
@@ -50,7 +58,7 @@ namespace Roslynator.Formatting.CSharp
             {
                 if (AnalyzerOptions.AddNewLineAfterConditionalOperatorInsteadOfBeforeIt.IsEnabled(context))
                 {
-                    ReportDiagnostic(DiagnosticDescriptors.ReportOnly.AddNewLineAfterConditionalOperatorInsteadOfBeforeIt, conditionalExpression.QuestionToken, DiagnosticProperties.AnalyzerOption_Invert);
+                    ReportDiagnostic(DiagnosticRules.ReportOnly.AddNewLineAfterConditionalOperatorInsteadOfBeforeIt, conditionalExpression.QuestionToken, DiagnosticProperties.AnalyzerOption_Invert);
                     return;
                 }
             }
@@ -62,12 +70,12 @@ namespace Roslynator.Formatting.CSharp
                 if (SyntaxTriviaAnalysis.IsTokenFollowedWithNewLineAndNotPrecededWithNewLine(whenTrue, conditionalExpression.ColonToken, whenFalse))
                 {
                     if (!AnalyzerOptions.AddNewLineAfterConditionalOperatorInsteadOfBeforeIt.IsEnabled(context))
-                        ReportDiagnostic(DiagnosticDescriptors.AddNewLineBeforeConditionalOperatorInsteadOfAfterItOrViceVersa, conditionalExpression.ColonToken, ImmutableDictionary<string, string>.Empty);
+                        ReportDiagnostic(DiagnosticRules.AddNewLineBeforeConditionalOperatorInsteadOfAfterItOrViceVersa, conditionalExpression.ColonToken, ImmutableDictionary<string, string>.Empty);
                 }
                 else if (SyntaxTriviaAnalysis.IsTokenPrecededWithNewLineAndNotFollowedWithNewLine(whenTrue, conditionalExpression.ColonToken, whenFalse))
                 {
                     if (AnalyzerOptions.AddNewLineAfterConditionalOperatorInsteadOfBeforeIt.IsEnabled(context))
-                        ReportDiagnostic(DiagnosticDescriptors.ReportOnly.AddNewLineAfterConditionalOperatorInsteadOfBeforeIt, conditionalExpression.ColonToken, DiagnosticProperties.AnalyzerOption_Invert);
+                        ReportDiagnostic(DiagnosticRules.ReportOnly.AddNewLineAfterConditionalOperatorInsteadOfBeforeIt, conditionalExpression.ColonToken, DiagnosticProperties.AnalyzerOption_Invert);
                 }
             }
 

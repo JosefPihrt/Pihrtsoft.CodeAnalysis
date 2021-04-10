@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1244SimplifyDefaultExpressionTests : AbstractCSharpDiagnosticVerifier<DefaultExpressionAnalyzer, DefaultExpressionCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.SimplifyDefaultExpression;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.SimplifyDefaultExpression;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyDefaultExpression)]
         public async Task Test_ParameterDefaultValue()

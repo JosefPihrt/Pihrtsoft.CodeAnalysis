@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1084UseCoalesceExpressionInsteadOfConditionalExpressionTests : AbstractCSharpDiagnosticVerifier<SimplifyNullCheckAnalyzer, ConditionalExpressionCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseCoalesceExpressionInsteadOfConditionalExpression;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UseCoalesceExpressionInsteadOfConditionalExpression;
 
         [Theory, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseCoalesceExpressionInsteadOfConditionalExpression)]
         [InlineData("s != null ? s : \"\"", "s ?? \"\"")]

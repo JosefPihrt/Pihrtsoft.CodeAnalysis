@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1101FormatDocumentationSummaryOnMultipleLinesTests : AbstractCSharpDiagnosticVerifier<FormatSummaryOnMultipleLinesAnalyzer, SingleLineDocumentationCommentTriviaCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.FormatDocumentationSummaryOnMultipleLines;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.FormatDocumentationSummaryOnMultipleLines;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.FormatDocumentationSummaryOnMultipleLines)]
         public async Task Test()

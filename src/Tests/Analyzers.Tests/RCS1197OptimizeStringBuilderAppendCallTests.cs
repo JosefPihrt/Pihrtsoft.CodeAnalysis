@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1197OptimizeStringBuilderAppendCallTests : AbstractCSharpDiagnosticVerifier<InvocationExpressionAnalyzer, OptimizeStringBuilderAppendCallCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.OptimizeStringBuilderAppendCall;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.OptimizeStringBuilderAppendCall;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.OptimizeStringBuilderAppendCall)]
         public async Task Test_Substring_Int32_Int32()

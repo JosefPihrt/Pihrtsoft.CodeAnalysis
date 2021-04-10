@@ -11,11 +11,19 @@ using Roslynator.CSharp.Syntax;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class AddCallToConfigureAwaitOrViceVersaAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class AddCallToConfigureAwaitOrViceVersaAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.AddCallToConfigureAwaitOrViceVersa); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.AddCallToConfigureAwaitOrViceVersa);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -54,7 +62,7 @@ namespace Roslynator.CSharp.Analysis
             if (!SymbolUtility.IsAwaitable(typeSymbol))
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.AddCallToConfigureAwaitOrViceVersa, awaitExpression.Expression);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.AddCallToConfigureAwaitOrViceVersa, awaitExpression.Expression);
         }
 
         private static void RemoveCallToConfigureAwait(SyntaxNodeAnalysisContext context)
@@ -84,7 +92,7 @@ namespace Roslynator.CSharp.Analysis
                         {
                             DiagnosticHelpers.ReportDiagnostic(
                                 context,
-                                DiagnosticDescriptors.ReportOnly.RemoveCallToConfigureAwait,
+                                DiagnosticRules.ReportOnly.RemoveCallToConfigureAwait,
                                 Location.Create(
                                     awaitExpression.SyntaxTree,
                                     TextSpan.FromBounds(invocationInfo.OperatorToken.SpanStart, expression.Span.End)));

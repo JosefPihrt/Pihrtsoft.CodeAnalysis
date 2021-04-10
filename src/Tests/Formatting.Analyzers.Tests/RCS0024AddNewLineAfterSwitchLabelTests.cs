@@ -10,7 +10,7 @@ namespace Roslynator.Formatting.CSharp.Tests
 {
     public class RCS0024AddNewLineAfterSwitchLabelTests : AbstractCSharpDiagnosticVerifier<AddNewLineAfterSwitchLabelAnalyzer, StatementCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddNewLineAfterSwitchLabel;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.AddNewLineAfterSwitchLabel;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddNewLineAfterSwitchLabel)]
         public async Task Test()

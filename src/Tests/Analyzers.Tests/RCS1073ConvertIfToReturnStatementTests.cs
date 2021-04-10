@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1073ConvertIfToReturnStatementTests : AbstractCSharpDiagnosticVerifier<IfStatementAnalyzer, IfStatementCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.ConvertIfToReturnStatement;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.ConvertIfToReturnStatement;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.ConvertIfToReturnStatement)]
         public async Task Test_IfElse()

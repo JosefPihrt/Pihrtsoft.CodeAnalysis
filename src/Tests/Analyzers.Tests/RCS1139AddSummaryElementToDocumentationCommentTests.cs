@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1139AddSummaryElementToDocumentationCommentTests : AbstractCSharpDiagnosticVerifier<SingleLineDocumentationCommentTriviaAnalyzer, DocumentationCommentCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddSummaryElementToDocumentationComment;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.AddSummaryElementToDocumentationComment;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddSummaryElementToDocumentationComment)]
         public async Task Test_Class()

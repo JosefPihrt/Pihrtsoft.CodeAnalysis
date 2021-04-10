@@ -127,11 +127,11 @@ namespace Roslynator
             IFormatProvider formatProvider = null,
             Verbosity verbosity = Verbosity.None)
         {
-            WriteDiagnosticDescriptors(unfixableDiagnostics, "Unfixable diagnostics:");
-            WriteDiagnosticDescriptors(unfixedDiagnostics, "Unfixed diagnostics:");
-            WriteDiagnosticDescriptors(fixedDiagnostics, "Fixed diagnostics:");
+            WriteDiagnosticRules(unfixableDiagnostics, "Unfixable diagnostics:");
+            WriteDiagnosticRules(unfixedDiagnostics, "Unfixed diagnostics:");
+            WriteDiagnosticRules(fixedDiagnostics, "Fixed diagnostics:");
 
-            void WriteDiagnosticDescriptors(
+            void WriteDiagnosticRules(
                 IEnumerable<Diagnostic> diagnostics,
                 string title)
             {

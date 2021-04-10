@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1223MarkTypeWithDebuggerDisplayAttributeTests : AbstractCSharpDiagnosticVerifier<MarkTypeWithDebuggerDisplayAttributeAnalyzer, MarkTypeWithDebuggerDisplayAttributeCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.MarkTypeWithDebuggerDisplayAttribute;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.MarkTypeWithDebuggerDisplayAttribute;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.MarkTypeWithDebuggerDisplayAttribute)]
         public async Task Test_PublicClass()

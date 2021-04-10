@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1104SimplifyConditionalExpressionTests : AbstractCSharpDiagnosticVerifier<SimplifyConditionalExpressionAnalyzer, ConditionalExpressionCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.SimplifyConditionalExpression;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.SimplifyConditionalExpression;
 
         [Theory, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyConditionalExpression)]
         [InlineData("f ? true : false", "f")]
@@ -104,7 +104,7 @@ class C
         bool z = !x && y;
     }
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.SimplifyConditionalExpressionWhenItIncludesNegationOfCondition));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.SimplifyConditionalExpressionWhenItIncludesNegationOfCondition));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyConditionalExpression)]
@@ -130,7 +130,7 @@ class C
         bool z = !x || y;
     }
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.SimplifyConditionalExpressionWhenItIncludesNegationOfCondition));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.SimplifyConditionalExpressionWhenItIncludesNegationOfCondition));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyConditionalExpression)]

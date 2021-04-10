@@ -10,7 +10,7 @@ namespace Roslynator.Formatting.CSharp.Tests
 {
     public class RCS0049AddEmptyLineAfterTopCommentTests : AbstractCSharpDiagnosticVerifier<AddEmptyLineAfterTopCommentAnalyzer, SyntaxTriviaCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddEmptyLineAfterTopComment;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.AddEmptyLineAfterTopComment;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddEmptyLineAfterTopComment)]
         public async Task Test_Class()

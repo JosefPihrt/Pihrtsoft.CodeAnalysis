@@ -20,7 +20,7 @@ namespace Roslynator.CSharp.CodeFixes
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UseAutoPropertyCodeFixProvider))]
     [Shared]
-    public class UseAutoPropertyCodeFixProvider : BaseCodeFixProvider
+    public sealed class UseAutoPropertyCodeFixProvider : BaseCodeFixProvider
     {
         private static readonly SyntaxAnnotation _removeAnnotation = new SyntaxAnnotation();
 

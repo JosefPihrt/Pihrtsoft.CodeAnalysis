@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1020SimplifyNullableOfTTests : AbstractCSharpDiagnosticVerifier<SimplifyNullableOfTAnalyzer, SimplifyNullableOfTCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.SimplifyNullableOfT;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.SimplifyNullableOfT;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyNullableOfT)]
         public async Task Test()

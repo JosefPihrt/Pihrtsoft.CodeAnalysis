@@ -22,7 +22,7 @@ namespace Roslynator.CSharp.CodeFixes
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UseConditionalAccessCodeFixProvider))]
     [Shared]
-    public class UseConditionalAccessCodeFixProvider : BaseCodeFixProvider
+    public sealed class UseConditionalAccessCodeFixProvider : BaseCodeFixProvider
     {
         private const string Title = "Use conditional access";
 

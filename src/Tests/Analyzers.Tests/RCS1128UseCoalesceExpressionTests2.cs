@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1128UseCoalesceExpressionTests2 : AbstractCSharpDiagnosticVerifier<InvocationExpressionAnalyzer, UseCoalesceExpressionCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseCoalesceExpression;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UseCoalesceExpression;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseCoalesceExpression)]
         public async Task Test_GetValueOrDefault()

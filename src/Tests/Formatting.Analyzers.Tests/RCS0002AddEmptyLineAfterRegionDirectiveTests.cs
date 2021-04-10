@@ -10,7 +10,7 @@ namespace Roslynator.Formatting.CSharp.Tests
 {
     public class RCS0002AddEmptyLineAfterRegionDirectiveTests : AbstractCSharpDiagnosticVerifier<AddEmptyLineAfterRegionDirectiveAnalyzer, DirectiveTriviaCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddEmptyLineAfterRegionDirective;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.AddEmptyLineAfterRegionDirective;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddEmptyLineAfterRegionDirective)]
         public async Task Test()

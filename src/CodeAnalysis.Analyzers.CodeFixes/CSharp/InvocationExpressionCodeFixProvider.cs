@@ -18,7 +18,7 @@ namespace Roslynator.CodeAnalysis.CSharp
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(InvocationExpressionCodeFixProvider))]
     [Shared]
-    public class InvocationExpressionCodeFixProvider : BaseCodeFixProvider
+    public sealed class InvocationExpressionCodeFixProvider : BaseCodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {

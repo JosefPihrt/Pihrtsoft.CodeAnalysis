@@ -11,11 +11,19 @@ using Roslynator.CSharp.Syntax;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class UnnecessaryAssignmentAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class UnnecessaryAssignmentAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.UnnecessaryAssignment); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.UnnecessaryAssignment);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -76,7 +84,7 @@ namespace Roslynator.CSharp.Analysis
                 }
             }
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UnnecessaryAssignment, ifStatement);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UnnecessaryAssignment, ifStatement);
         }
 
         private static void AnalyzeSwitchStatement(SyntaxNodeAnalysisContext context)
@@ -142,7 +150,7 @@ namespace Roslynator.CSharp.Analysis
                 }
             }
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UnnecessaryAssignment, switchStatement);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UnnecessaryAssignment, switchStatement);
         }
 
         internal static ReturnStatementSyntax FindReturnStatementBelow(SyntaxList<StatementSyntax> statements, StatementSyntax statement)

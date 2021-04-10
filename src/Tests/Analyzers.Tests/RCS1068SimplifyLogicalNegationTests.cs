@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1068SimplifyLogicalNegationTests : AbstractCSharpDiagnosticVerifier<SimplifyLogicalNegationAnalyzer, SimplifyLogicalNegationCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.SimplifyLogicalNegation;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.SimplifyLogicalNegation;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyLogicalNegation)]
         public async Task Test_NotTrue()

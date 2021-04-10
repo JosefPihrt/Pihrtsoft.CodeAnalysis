@@ -10,7 +10,7 @@ namespace Roslynator.Formatting.CSharp.Tests
 {
     public class RCS0025AddNewLineBeforeAccessorOfFullPropertyTests : AbstractCSharpDiagnosticVerifier<AccessorListAnalyzer, AccessorDeclarationCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddNewLineBeforeAccessorOfFullProperty;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.AddNewLineBeforeAccessorOfFullProperty;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddNewLineBeforeAccessorOfFullProperty)]
         public async Task Test_Property()

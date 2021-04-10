@@ -10,11 +10,11 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1207ConvertMethodGroupToAnonymousFunctionTests : AbstractCSharpDiagnosticVerifier<ConvertAnonymousFunctionToMethodGroupOrViceVersaAnalyzer, ConvertAnonymousFunctionToMethodGroupOrViceVersaCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.ConvertAnonymousFunctionToMethodGroupOrViceVersa;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.ConvertAnonymousFunctionToMethodGroupOrViceVersa;
 
         public override CSharpTestOptions Options
         {
-            get { return base.Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.ConvertMethodGroupToAnonymousFunction); }
+            get { return base.Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.ConvertMethodGroupToAnonymousFunction); }
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.ConvertAnonymousFunctionToMethodGroupOrViceVersa)]
@@ -596,7 +596,7 @@ class C
         M2(M);
     }
 }
-", options: Options.DisableDiagnostic(AnalyzerOptionDiagnosticDescriptors.ConvertMethodGroupToAnonymousFunction));
+", options: Options.DisableDiagnostic(AnalyzerOptionDiagnosticRules.ConvertMethodGroupToAnonymousFunction));
         }
     }
 }

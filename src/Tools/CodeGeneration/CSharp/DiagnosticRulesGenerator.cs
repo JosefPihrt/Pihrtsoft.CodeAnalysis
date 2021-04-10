@@ -13,7 +13,7 @@ using static Roslynator.CSharp.CSharpFactory;
 
 namespace Roslynator.CodeGeneration.CSharp
 {
-    public class DiagnosticDescriptorsGenerator
+    public class DiagnosticRulesGenerator
     {
         public CompilationUnitSyntax Generate(
             IEnumerable<AnalyzerMetadata> analyzers,

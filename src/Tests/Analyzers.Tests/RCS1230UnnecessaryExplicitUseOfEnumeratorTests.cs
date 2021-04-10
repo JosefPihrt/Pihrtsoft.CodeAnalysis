@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1230UnnecessaryExplicitUseOfEnumeratorTests : AbstractCSharpDiagnosticVerifier<UnnecessaryExplicitUseOfEnumeratorAnalyzer, UnnecessaryExplicitUseOfEnumeratorCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UnnecessaryExplicitUseOfEnumerator;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UnnecessaryExplicitUseOfEnumerator;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UnnecessaryExplicitUseOfEnumerator)]
         public async Task Test()

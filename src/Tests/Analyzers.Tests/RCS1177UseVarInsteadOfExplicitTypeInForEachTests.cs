@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1177UseVarInsteadOfExplicitTypeInForEachTests : AbstractCSharpDiagnosticVerifier<UseVarInsteadOfExplicitTypeInForEachAnalyzer, UseVarInsteadOfExplicitTypeCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseVarInsteadOfExplicitTypeInForEach;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UseVarInsteadOfExplicitTypeInForEach;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseVarInsteadOfExplicitTypeInForEach)]
         public async Task Test()

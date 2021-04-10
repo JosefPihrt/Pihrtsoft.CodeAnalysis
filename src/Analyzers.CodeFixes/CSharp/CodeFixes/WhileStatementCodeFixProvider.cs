@@ -15,7 +15,7 @@ namespace Roslynator.CSharp.CodeFixes
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(WhileStatementCodeFixProvider))]
     [Shared]
-    public class WhileStatementCodeFixProvider : BaseCodeFixProvider
+    public sealed class WhileStatementCodeFixProvider : BaseCodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {

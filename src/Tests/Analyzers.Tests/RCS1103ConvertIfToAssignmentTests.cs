@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1103ConvertIfToAssignmentTests : AbstractCSharpDiagnosticVerifier<IfStatementAnalyzer, IfStatementCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.ConvertIfToAssignment;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.ConvertIfToAssignment;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.ConvertIfToAssignment)]
         public async Task Test_InvertCondition()

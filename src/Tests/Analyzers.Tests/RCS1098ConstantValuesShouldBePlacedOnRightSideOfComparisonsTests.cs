@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1098ConstantValuesShouldBePlacedOnRightSideOfComparisonsTests : AbstractCSharpDiagnosticVerifier<ConstantValuesShouldBePlacedOnRightSideOfComparisonsAnalyzer, BinaryExpressionCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.ConstantValuesShouldBePlacedOnRightSideOfComparisons;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.ConstantValuesShouldBePlacedOnRightSideOfComparisons;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.ConstantValuesShouldBePlacedOnRightSideOfComparisons)]
         public async Task TestDiagnostic_NullLiteral()

@@ -13,15 +13,23 @@ using Roslynator.CSharp.Syntax;
 namespace Roslynator.CodeAnalysis.CSharp
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SimpleMemberAccessExpressionAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class SimpleMemberAccessExpressionAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                return ImmutableArray.Create(
-                    DiagnosticDescriptors.UsePropertySyntaxNodeSpanStart,
-                    DiagnosticDescriptors.CallAnyInsteadOfAccessingCount);
+                if (_supportedDiagnostics.IsDefault)
+                {
+                    Immutable.InterlockedInitialize(
+                        ref _supportedDiagnostics,
+                        DiagnosticRules.UsePropertySyntaxNodeSpanStart,
+                        DiagnosticRules.CallAnyInsteadOfAccessingCount);
+                }
+
+                return _supportedDiagnostics;
             }
         }
 
@@ -77,7 +85,7 @@ namespace Roslynator.CodeAnalysis.CSharp
                                     if (!symbol2.ContainingType.HasMetadataName(RoslynMetadataNames.Microsoft_CodeAnalysis_SyntaxNode))
                                         break;
 
-                                    DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UsePropertySyntaxNodeSpanStart, memberAccessExpression);
+                                    DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UsePropertySyntaxNodeSpanStart, memberAccessExpression);
                                     break;
                                 }
                             case "Count":
@@ -131,7 +139,7 @@ namespace Roslynator.CodeAnalysis.CSharp
                     ? TextSpan.FromBounds(name.SpanStart, numericLiteralExpression.Span.End)
                     : TextSpan.FromBounds(numericLiteralExpression.SpanStart, name.Span.End);
 
-                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.CallAnyInsteadOfAccessingCount, Location.Create(memberAccessExpression.SyntaxTree, span));
+                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.CallAnyInsteadOfAccessingCount, Location.Create(memberAccessExpression.SyntaxTree, span));
             }
         }
     }

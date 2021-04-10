@@ -15,7 +15,7 @@ namespace Roslynator.CSharp.CodeFixes
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AddArgumentListToObjectCreationOrViceVersaCodeFixProvider))]
     [Shared]
-    public class AddArgumentListToObjectCreationOrViceVersaCodeFixProvider : BaseCodeFixProvider
+    public sealed class AddArgumentListToObjectCreationOrViceVersaCodeFixProvider : BaseCodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {

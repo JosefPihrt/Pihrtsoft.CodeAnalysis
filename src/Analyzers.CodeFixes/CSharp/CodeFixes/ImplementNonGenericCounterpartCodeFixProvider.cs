@@ -17,7 +17,7 @@ namespace Roslynator.CSharp.CodeFixes
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ImplementNonGenericCounterpartCodeFixProvider))]
     [Shared]
-    public class ImplementNonGenericCounterpartCodeFixProvider : BaseCodeFixProvider
+    public sealed class ImplementNonGenericCounterpartCodeFixProvider : BaseCodeFixProvider
     {
         public ImplementNonGenericCounterpartCodeFixProvider()
         {

@@ -10,7 +10,7 @@ namespace Roslynator.Formatting.CSharp.Tests
 {
     public class RCS0032AddNewLineBeforeExpressionBodyArrowInsteadOfAfterItOrViceVersaTests : AbstractCSharpDiagnosticVerifier<AddNewLineBeforeExpressionBodyArrowInsteadOfAfterItOrViceVersaAnalyzer, SyntaxTokenCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddNewLineBeforeExpressionBodyArrowInsteadOfAfterItOrViceVersa;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.AddNewLineBeforeExpressionBodyArrowInsteadOfAfterItOrViceVersa;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddNewLineBeforeExpressionBodyArrowInsteadOfAfterItOrViceVersa)]
         public async Task Test_BeforeInsteadOfAfter()
@@ -45,7 +45,7 @@ class C
     string M() =>
         null;
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.AddNewLineAfterExpressionBodyArrowInsteadOfBeforeIt));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.AddNewLineAfterExpressionBodyArrowInsteadOfBeforeIt));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddNewLineBeforeExpressionBodyArrowInsteadOfAfterItOrViceVersa)]
@@ -69,7 +69,7 @@ class C
     string M() // x
         => null;
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.AddNewLineAfterExpressionBodyArrowInsteadOfBeforeIt));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.AddNewLineAfterExpressionBodyArrowInsteadOfBeforeIt));
         }
     }
 }

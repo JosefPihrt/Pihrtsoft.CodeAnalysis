@@ -10,7 +10,7 @@ namespace Roslynator.Formatting.CSharp.Tests
 {
     public class RCS0020AddNewLineAfterOpeningBraceOfAccessorTests : AbstractCSharpDiagnosticVerifier<AddNewLineAfterOpeningBraceOfAccessorAnalyzer, BlockCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddNewLineAfterOpeningBraceOfAccessor;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.AddNewLineAfterOpeningBraceOfAccessor;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddNewLineAfterOpeningBraceOfAccessor)]
         public async Task Test_Getter()

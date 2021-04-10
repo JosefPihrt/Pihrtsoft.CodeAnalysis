@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1225MakeClassSealedTests : AbstractCSharpDiagnosticVerifier<MakeClassSealedAnalyzer, ClassDeclarationCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.MakeClassSealed;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.MakeClassSealed;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.MakeClassSealed)]
         public async Task Test_ClassWithoutAccessibilityModifier()

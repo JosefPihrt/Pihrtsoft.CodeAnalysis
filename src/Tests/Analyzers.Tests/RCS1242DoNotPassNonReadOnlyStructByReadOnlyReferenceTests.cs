@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1242DoNotPassNonReadOnlyStructByReadOnlyReferenceTests : AbstractCSharpDiagnosticVerifier<RefReadOnlyParameterAnalyzer, ParameterCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.DoNotPassNonReadOnlyStructByReadOnlyReference;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.DoNotPassNonReadOnlyStructByReadOnlyReference;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.DoNotPassNonReadOnlyStructByReadOnlyReference)]
         public async Task Test()

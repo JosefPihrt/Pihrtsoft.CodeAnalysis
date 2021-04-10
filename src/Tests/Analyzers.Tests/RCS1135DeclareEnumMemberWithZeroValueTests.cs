@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1135DeclareEnumMemberWithZeroValueTests : AbstractCSharpDiagnosticVerifier<EnumSymbolAnalyzer, DeclareEnumMemberWithZeroValueCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.DeclareEnumMemberWithZeroValue;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.DeclareEnumMemberWithZeroValue;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.DeclareEnumMemberWithZeroValue)]
         public async Task Test()

@@ -14,11 +14,19 @@ using Roslynator.CSharp.Syntax;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class UnconstrainedTypeParameterCheckedForNullAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class UnconstrainedTypeParameterCheckedForNullAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.UnconstrainedTypeParameterCheckedForNull); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.UnconstrainedTypeParameterCheckedForNull);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -53,7 +61,7 @@ namespace Roslynator.CSharp.Analysis
                 && IsUnconstrainedTypeParameter(context.SemanticModel.GetTypeSymbol(nullCheck.Expression, context.CancellationToken))
                 && !binaryExpression.SpanContainsDirectives())
             {
-                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UnconstrainedTypeParameterCheckedForNull, binaryExpression);
+                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UnconstrainedTypeParameterCheckedForNull, binaryExpression);
             }
         }
 

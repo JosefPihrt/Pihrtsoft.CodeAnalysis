@@ -12,11 +12,19 @@ using static Roslynator.CSharp.Analysis.AddExceptionToDocumentationComment.AddEx
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class AddExceptionToDocumentationCommentAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class AddExceptionToDocumentationCommentAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.AddExceptionToDocumentationComment); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.AddExceptionToDocumentationComment);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -44,7 +52,7 @@ namespace Roslynator.CSharp.Analysis
             if (!analysis.Success)
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.AddExceptionToDocumentationComment, throwStatement);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.AddExceptionToDocumentationComment, throwStatement);
         }
 
         private static void AnalyzeThrowExpression(SyntaxNodeAnalysisContext context, INamedTypeSymbol exceptionSymbol)
@@ -56,7 +64,7 @@ namespace Roslynator.CSharp.Analysis
             if (!analysis.Success)
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.AddExceptionToDocumentationComment, throwExpression);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.AddExceptionToDocumentationComment, throwExpression);
         }
     }
 }

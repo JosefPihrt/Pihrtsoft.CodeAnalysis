@@ -30,7 +30,7 @@ namespace Roslynator.CodeGeneration.CSharp
                                         SimpleMemberAccessExpression(
                                             IdentifierName("LanguageNames"),
                                             IdentifierName("CSharp")))))),
-                        Modifiers.Internal(),
+                        TokenList(SyntaxKind.InternalKeyword, SyntaxKind.SealedKeyword),
                         Identifier("AnalyzerOptionsAnalyzer"),
                         default,
                         BaseList(SimpleBaseType(IdentifierName("DiagnosticAnalyzer"))),
@@ -54,7 +54,7 @@ namespace Roslynator.CodeGeneration.CSharp
                                     ? SimpleMemberInvocationExpression(
                                         IdentifierName("ImmutableArray"),
                                         IdentifierName("Create"),
-                                        ArgumentList(identifiers.Select(identifier => Argument(SimpleMemberAccessExpression(IdentifierName("AnalyzerOptionDiagnosticDescriptors"), IdentifierName(identifier)).WithTrailingTrivia(NewLine()))).ToSeparatedSyntaxList()))
+                                        ArgumentList(identifiers.Select(identifier => Argument(SimpleMemberAccessExpression(IdentifierName("AnalyzerOptionDiagnosticRules"), IdentifierName(identifier)).WithTrailingTrivia(NewLine()))).ToSeparatedSyntaxList()))
                                     : ParseExpression("ImmutableArray<DiagnosticDescriptor>.Empty"))))));
 
             yield return MethodDeclaration(

@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS9003UnnecessaryConditionalAccessTests : AbstractCSharpDiagnosticVerifier<UnnecessaryConditionalAccessAnalyzer, ConditionalAccessExpressionCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UnnecessaryConditionalAccess;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UnnecessaryConditionalAccess;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UnnecessaryConditionalAccess)]
         public async Task Test()

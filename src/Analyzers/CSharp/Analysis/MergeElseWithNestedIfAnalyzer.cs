@@ -10,15 +10,23 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class MergeElseWithNestedIfAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class MergeElseWithNestedIfAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                return ImmutableArray.Create(
-                    DiagnosticDescriptors.MergeElseWithNestedIf,
-                    DiagnosticDescriptors.MergeElseWithNestedIfFadeOut);
+                if (_supportedDiagnostics.IsDefault)
+                {
+                    Immutable.InterlockedInitialize(
+                        ref _supportedDiagnostics,
+                        DiagnosticRules.MergeElseWithNestedIf,
+                        DiagnosticRules.MergeElseWithNestedIfFadeOut);
+                }
+
+                return _supportedDiagnostics;
             }
         }
 
@@ -29,7 +37,7 @@ namespace Roslynator.CSharp.Analysis
             context.RegisterSyntaxNodeAction(
                 c =>
                 {
-                    if (DiagnosticDescriptors.MergeElseWithNestedIf.IsEffective(c))
+                    if (DiagnosticRules.MergeElseWithNestedIf.IsEffective(c))
                         AnalyzeElseClause(c);
                 },
                 SyntaxKind.ElseClause);
@@ -55,8 +63,8 @@ namespace Roslynator.CSharp.Analysis
                 return;
             }
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.MergeElseWithNestedIf, block);
-            CSharpDiagnosticHelpers.ReportBraces(context, DiagnosticDescriptors.MergeElseWithNestedIfFadeOut, block);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.MergeElseWithNestedIf, block);
+            CSharpDiagnosticHelpers.ReportBraces(context, DiagnosticRules.MergeElseWithNestedIfFadeOut, block);
         }
     }
 }

@@ -860,7 +860,7 @@ namespace Roslynator.CSharp.Analysis
 
             DiagnosticHelpers.ReportDiagnostic(
                 context,
-                descriptor: DiagnosticDescriptors.OptimizeLinqMethodCall,
+                descriptor: DiagnosticRules.OptimizeLinqMethodCall,
                 location: Location.Create(node.SyntaxTree, span),
                 properties: properties ?? ImmutableDictionary<string, string>.Empty,
                 messageArgs: messageArgs);

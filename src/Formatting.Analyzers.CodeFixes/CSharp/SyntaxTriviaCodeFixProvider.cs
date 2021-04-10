@@ -13,7 +13,7 @@ namespace Roslynator.Formatting.CodeFixes.CSharp
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(SyntaxTriviaCodeFixProvider))]
     [Shared]
-    public class SyntaxTriviaCodeFixProvider : BaseCodeFixProvider
+    public sealed class SyntaxTriviaCodeFixProvider : BaseCodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {

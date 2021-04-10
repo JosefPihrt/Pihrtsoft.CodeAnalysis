@@ -15,7 +15,7 @@ namespace Roslynator.CSharp.CodeFixes
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RemovePropertyOrFieldInitializerCodeFixProvider))]
     [Shared]
-    public class RemovePropertyOrFieldInitializerCodeFixProvider : BaseCodeFixProvider
+    public sealed class RemovePropertyOrFieldInitializerCodeFixProvider : BaseCodeFixProvider
     {
         private const string Title = "Remove initializer";
 

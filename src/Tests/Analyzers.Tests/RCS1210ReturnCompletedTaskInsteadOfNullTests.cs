@@ -11,7 +11,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1210ReturnCompletedTaskInsteadOfNullTests : AbstractCSharpDiagnosticVerifier<ReturnCompletedTaskInsteadOfNullAnalyzer, ReturnCompletedTaskInsteadOfNullCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.ReturnCompletedTaskInsteadOfNull;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.ReturnCompletedTaskInsteadOfNull;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.ReturnCompletedTaskInsteadOfNull)]
         public async Task Test_TaskOfT_Body()

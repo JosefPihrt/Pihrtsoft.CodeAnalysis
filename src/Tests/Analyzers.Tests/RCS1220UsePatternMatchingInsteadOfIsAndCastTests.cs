@@ -11,7 +11,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1220UsePatternMatchingInsteadOfIsAndCastTests : AbstractCSharpDiagnosticVerifier<UsePatternMatchingInsteadOfIsAndCastAnalyzer, UsePatternMatchingInsteadOfIsAndCastCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UsePatternMatchingInsteadOfIsAndCast;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UsePatternMatchingInsteadOfIsAndCast;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UsePatternMatchingInsteadOfIsAndCast)]
         public async Task Test_LogicalAndExpression()

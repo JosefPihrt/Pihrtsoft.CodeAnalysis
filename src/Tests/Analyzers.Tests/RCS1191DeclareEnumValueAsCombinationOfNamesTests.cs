@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1191DeclareEnumValueAsCombinationOfNamesTests : AbstractCSharpDiagnosticVerifier<EnumSymbolAnalyzer, EnumMemberDeclarationCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.DeclareEnumValueAsCombinationOfNames;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.DeclareEnumValueAsCombinationOfNames;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.DeclareEnumValueAsCombinationOfNames)]
         public async Task Test()

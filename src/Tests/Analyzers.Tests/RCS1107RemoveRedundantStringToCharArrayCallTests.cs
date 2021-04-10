@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1107RemoveRedundantStringToCharArrayCallTests : AbstractCSharpDiagnosticVerifier<InvocationExpressionAnalyzer, InvocationExpressionCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.RemoveRedundantStringToCharArrayCall;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.RemoveRedundantStringToCharArrayCall;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemoveRedundantStringToCharArrayCall)]
         public async Task Test_ElementAccess()

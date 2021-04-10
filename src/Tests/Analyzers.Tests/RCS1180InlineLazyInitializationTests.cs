@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1180InlineLazyInitializationTests : AbstractCSharpDiagnosticVerifier<UseCoalesceExpressionAnalyzer, StatementCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.InlineLazyInitialization;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.InlineLazyInitialization;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.InlineLazyInitialization)]
         public async Task Test_If()

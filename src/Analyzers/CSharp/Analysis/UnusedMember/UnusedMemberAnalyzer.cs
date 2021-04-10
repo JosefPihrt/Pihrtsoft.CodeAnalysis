@@ -14,11 +14,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis.UnusedMember
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class UnusedMemberAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class UnusedMemberAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.RemoveUnusedMemberDeclaration); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.RemoveUnusedMemberDeclaration);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -347,7 +355,7 @@ namespace Roslynator.CSharp.Analysis.UnusedMember
 
         private static void ReportDiagnostic(SyntaxNodeAnalysisContext context, SyntaxNode node, string declarationName)
         {
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.RemoveUnusedMemberDeclaration, CSharpUtility.GetIdentifier(node), declarationName);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.RemoveUnusedMemberDeclaration, CSharpUtility.GetIdentifier(node), declarationName);
         }
     }
 }

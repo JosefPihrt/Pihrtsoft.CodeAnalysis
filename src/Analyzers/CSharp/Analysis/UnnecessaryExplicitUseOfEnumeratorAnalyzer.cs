@@ -11,11 +11,19 @@ using Roslynator.CSharp.Syntax;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class UnnecessaryExplicitUseOfEnumeratorAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class UnnecessaryExplicitUseOfEnumeratorAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.UnnecessaryExplicitUseOfEnumerator); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.UnnecessaryExplicitUseOfEnumerator);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -74,7 +82,7 @@ namespace Roslynator.CSharp.Analysis
 
             if (isFixable == true)
             {
-                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UnnecessaryExplicitUseOfEnumerator, usingStatement.UsingKeyword);
+                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UnnecessaryExplicitUseOfEnumerator, usingStatement.UsingKeyword);
             }
         }
     }

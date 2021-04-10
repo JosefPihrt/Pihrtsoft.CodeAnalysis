@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1031RemoveUnnecessaryBracesTests : AbstractCSharpDiagnosticVerifier<RemoveUnnecessaryBracesAnalyzer, BlockCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.RemoveUnnecessaryBraces;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.RemoveUnnecessaryBraces;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemoveUnnecessaryBraces)]
         public async Task Test_Section()

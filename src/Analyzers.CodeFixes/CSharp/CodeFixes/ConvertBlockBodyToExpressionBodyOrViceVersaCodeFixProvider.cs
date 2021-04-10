@@ -15,7 +15,7 @@ namespace Roslynator.CSharp.CodeFixes
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ConvertBlockBodyToExpressionBodyOrViceVersaCodeFixProvider))]
     [Shared]
-    public class ConvertBlockBodyToExpressionBodyOrViceVersaCodeFixProvider : BaseCodeFixProvider
+    public sealed class ConvertBlockBodyToExpressionBodyOrViceVersaCodeFixProvider : BaseCodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {

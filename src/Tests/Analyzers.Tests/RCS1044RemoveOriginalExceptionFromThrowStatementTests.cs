@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1044RemoveOriginalExceptionFromThrowStatementTests : AbstractCSharpDiagnosticVerifier<RemoveOriginalExceptionFromThrowStatementAnalyzer, RemoveOriginalExceptionCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.RemoveOriginalExceptionFromThrowStatement;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.RemoveOriginalExceptionFromThrowStatement;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemoveOriginalExceptionFromThrowStatement)]
         public async Task Test_OriginalExceptionUsed()

@@ -10,11 +10,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class UseEmptyStringLiteralInsteadOfStringEmptyOrViceVersaAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class UseEmptyStringLiteralInsteadOfStringEmptyOrViceVersaAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.UseEmptyStringLiteralInsteadOfStringEmptyOrViceVersa); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.UseEmptyStringLiteralInsteadOfStringEmptyOrViceVersa);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -67,7 +75,7 @@ namespace Roslynator.CSharp.Analysis
             if (fieldSymbol.ContainingType?.SpecialType != SpecialType.System_String)
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UseEmptyStringLiteralInsteadOfStringEmptyOrViceVersa, memberAccess);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UseEmptyStringLiteralInsteadOfStringEmptyOrViceVersa, memberAccess);
         }
 
         private static void AnalyzeStringLiteralExpression(SyntaxNodeAnalysisContext context)
@@ -82,7 +90,7 @@ namespace Roslynator.CSharp.Analysis
 
             DiagnosticHelpers.ReportDiagnostic(
                 context,
-                DiagnosticDescriptors.ReportOnly.UseStringEmptyInsteadOfEmptyStringLiteral,
+                DiagnosticRules.ReportOnly.UseStringEmptyInsteadOfEmptyStringLiteral,
                 literalExpression);
         }
 
@@ -98,7 +106,7 @@ namespace Roslynator.CSharp.Analysis
 
             DiagnosticHelpers.ReportDiagnostic(
                 context,
-                DiagnosticDescriptors.ReportOnly.UseStringEmptyInsteadOfEmptyStringLiteral,
+                DiagnosticRules.ReportOnly.UseStringEmptyInsteadOfEmptyStringLiteral,
                 interpolatedString);
         }
     }

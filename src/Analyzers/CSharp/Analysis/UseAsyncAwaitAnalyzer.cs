@@ -14,11 +14,19 @@ using Roslynator.CSharp.SyntaxWalkers;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class UseAsyncAwaitAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class UseAsyncAwaitAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.UseAsyncAwait); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.UseAsyncAwait);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -56,7 +64,7 @@ namespace Roslynator.CSharp.Analysis
             }
 
             if (IsFixable(body))
-                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UseAsyncAwait, methodDeclaration.Identifier);
+                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UseAsyncAwait, methodDeclaration.Identifier);
         }
 
         private static void AnalyzeLocalFunctionStatement(SyntaxNodeAnalysisContext context)
@@ -83,7 +91,7 @@ namespace Roslynator.CSharp.Analysis
             }
 
             if (IsFixable(body))
-                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UseAsyncAwait, localFunction.Identifier);
+                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UseAsyncAwait, localFunction.Identifier);
         }
 
         private static void AnalyzeSimpleLambdaExpression(SyntaxNodeAnalysisContext context)
@@ -103,7 +111,7 @@ namespace Roslynator.CSharp.Analysis
                 return;
 
             if (IsFixable(body))
-                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UseAsyncAwait, simpleLambda);
+                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UseAsyncAwait, simpleLambda);
         }
 
         private static void AnalyzeParenthesizedLambdaExpression(SyntaxNodeAnalysisContext context)
@@ -123,7 +131,7 @@ namespace Roslynator.CSharp.Analysis
                 return;
 
             if (IsFixable(body))
-                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UseAsyncAwait, parenthesizedLambda);
+                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UseAsyncAwait, parenthesizedLambda);
         }
 
         private static void AnalyzeAnonymousMethodExpression(SyntaxNodeAnalysisContext context)
@@ -145,7 +153,7 @@ namespace Roslynator.CSharp.Analysis
                 return;
 
             if (IsFixable(body))
-                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UseAsyncAwait, anonymousMethod);
+                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UseAsyncAwait, anonymousMethod);
         }
 
         private static bool IsFixable(BlockSyntax body)

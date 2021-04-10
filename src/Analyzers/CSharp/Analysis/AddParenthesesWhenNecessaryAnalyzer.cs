@@ -9,11 +9,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class AddParenthesesWhenNecessaryAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class AddParenthesesWhenNecessaryAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.AddParenthesesWhenNecessary); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.AddParenthesesWhenNecessary);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -73,7 +81,7 @@ namespace Roslynator.CSharp.Analysis
             if (IsNestedDiagnostic(expression))
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.AddParenthesesWhenNecessary, expression);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.AddParenthesesWhenNecessary, expression);
         }
 
         private static bool IsNestedDiagnostic(SyntaxNode node)

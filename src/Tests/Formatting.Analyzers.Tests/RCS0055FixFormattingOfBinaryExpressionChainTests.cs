@@ -10,7 +10,7 @@ namespace Roslynator.Formatting.CSharp.Tests
 {
     public class RCS0055FixFormattingOfBinaryExpressionChainTests : AbstractCSharpDiagnosticVerifier<FixFormattingOfBinaryExpressionChainAnalyzer, FixFormattingOfBinaryExpressionChainCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.FixFormattingOfBinaryExpressionChain;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.FixFormattingOfBinaryExpressionChain;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.FixFormattingOfBinaryExpressionChain)]
         public async Task Test_NotWrapped()
@@ -125,7 +125,7 @@ class C
             """");
     }
 }
-", options: Options.EnableDiagnostic(DiagnosticDescriptors.AddNewLineBeforeBinaryOperatorInsteadOfAfterItOrViceVersa, AnalyzerOptionDiagnosticDescriptors.AddNewLineAfterBinaryOperatorInsteadOfBeforeIt));
+", options: Options.EnableDiagnostic(DiagnosticRules.AddNewLineBeforeBinaryOperatorInsteadOfAfterItOrViceVersa, AnalyzerOptionDiagnosticRules.AddNewLineAfterBinaryOperatorInsteadOfBeforeIt));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.FixFormattingOfBinaryExpressionChain)]

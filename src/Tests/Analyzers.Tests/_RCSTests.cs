@@ -12,7 +12,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCSTests : AbstractCSharpDiagnosticVerifier<AddBracesAnalyzer, AddBracesCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddBracesWhenExpressionSpansOverMultipleLines;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.AddBracesWhenExpressionSpansOverMultipleLines;
 
         //[Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddBracesWhenExpressionSpansOverMultipleLines)]
         public async Task Test()

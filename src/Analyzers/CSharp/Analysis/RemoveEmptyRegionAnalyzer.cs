@@ -11,15 +11,23 @@ using Roslynator.CSharp.Syntax;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class RemoveEmptyRegionAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class RemoveEmptyRegionAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                return ImmutableArray.Create(
-                    DiagnosticDescriptors.RemoveEmptyRegion,
-                    DiagnosticDescriptors.RemoveEmptyRegionFadeOut);
+                if (_supportedDiagnostics.IsDefault)
+                {
+                    Immutable.InterlockedInitialize(
+                        ref _supportedDiagnostics,
+                        DiagnosticRules.RemoveEmptyRegion,
+                        DiagnosticRules.RemoveEmptyRegionFadeOut);
+                }
+
+                return _supportedDiagnostics;
             }
         }
 
@@ -30,7 +38,7 @@ namespace Roslynator.CSharp.Analysis
             context.RegisterSyntaxNodeAction(
                 c =>
                 {
-                    if (DiagnosticDescriptors.RemoveEmptyRegion.IsEffective(c))
+                    if (DiagnosticRules.RemoveEmptyRegion.IsEffective(c))
                         AnalyzeRegionDirective(c);
                 },
                 SyntaxKind.RegionDirectiveTrivia);
@@ -50,12 +58,12 @@ namespace Roslynator.CSharp.Analysis
 
             DiagnosticHelpers.ReportDiagnostic(
                 context,
-                DiagnosticDescriptors.RemoveEmptyRegion,
+                DiagnosticRules.RemoveEmptyRegion,
                 regionDirective.GetLocation(),
                 additionalLocations: ImmutableArray.Create(region.EndDirective.GetLocation()));
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.RemoveEmptyRegionFadeOut, regionDirective.GetLocation());
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.RemoveEmptyRegionFadeOut, region.EndDirective.GetLocation());
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.RemoveEmptyRegionFadeOut, regionDirective.GetLocation());
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.RemoveEmptyRegionFadeOut, region.EndDirective.GetLocation());
         }
     }
 }

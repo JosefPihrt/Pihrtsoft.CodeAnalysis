@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1049SimplifyBooleanComparisonTests : AbstractCSharpDiagnosticVerifier<BooleanLiteralAnalyzer, BinaryExpressionCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.SimplifyBooleanComparison;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.SimplifyBooleanComparison;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyBooleanComparison)]
         public async Task Test()

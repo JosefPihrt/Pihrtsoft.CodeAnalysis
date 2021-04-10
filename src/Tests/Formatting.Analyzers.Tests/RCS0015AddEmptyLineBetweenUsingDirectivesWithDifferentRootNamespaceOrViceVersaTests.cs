@@ -10,7 +10,7 @@ namespace Roslynator.Formatting.CSharp.Tests
 {
     public class RCS0015AddEmptyLineBetweenUsingDirectivesWithDifferentRootNamespaceOrViceVersaTests : AbstractCSharpDiagnosticVerifier<AddOrRemoveEmptyLineBetweenUsingDirectiveAnalyzer, SyntaxTriviaCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddEmptyLineBetweenUsingDirectivesWithDifferentRootNamespaceOrViceVersa;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.AddEmptyLineBetweenUsingDirectivesWithDifferentRootNamespaceOrViceVersa;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddEmptyLineBetweenUsingDirectivesWithDifferentRootNamespaceOrViceVersa)]
         public async Task Test_AddEmptyLine_EmptyLine()
@@ -57,7 +57,7 @@ using System.Threading;
 class C
 {
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.RemoveEmptyLineBetweenUsingDirectivesWithDifferentRootNamespace));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.RemoveEmptyLineBetweenUsingDirectivesWithDifferentRootNamespace));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddEmptyLineBetweenUsingDirectivesWithDifferentRootNamespaceOrViceVersa)]
@@ -79,7 +79,7 @@ using Microsoft.CodeAnalysis;
 class C
 {
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.RemoveEmptyLineBetweenUsingDirectivesWithDifferentRootNamespace));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.RemoveEmptyLineBetweenUsingDirectivesWithDifferentRootNamespace));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddEmptyLineBetweenUsingDirectivesWithDifferentRootNamespaceOrViceVersa)]
@@ -146,7 +146,7 @@ using static System.IO.Path;
 class C
 {
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.RemoveEmptyLineBetweenUsingDirectivesWithDifferentRootNamespace));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.RemoveEmptyLineBetweenUsingDirectivesWithDifferentRootNamespace));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddEmptyLineBetweenUsingDirectivesWithDifferentRootNamespaceOrViceVersa)]
@@ -160,7 +160,7 @@ using I = System.Int32;
 class C
 {
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.RemoveEmptyLineBetweenUsingDirectivesWithDifferentRootNamespace));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.RemoveEmptyLineBetweenUsingDirectivesWithDifferentRootNamespace));
         }
     }
 }

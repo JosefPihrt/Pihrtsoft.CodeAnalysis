@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1021ConvertLambdaExpressionBodyToExpressionBodyTests : AbstractCSharpDiagnosticVerifier<LambdaExpressionAnalyzer, ConvertLambdaExpressionBodyToExpressionBodyCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.ConvertLambdaExpressionBodyToExpressionBody;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.ConvertLambdaExpressionBodyToExpressionBody;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.ConvertLambdaExpressionBodyToExpressionBody)]
         public async Task Test()

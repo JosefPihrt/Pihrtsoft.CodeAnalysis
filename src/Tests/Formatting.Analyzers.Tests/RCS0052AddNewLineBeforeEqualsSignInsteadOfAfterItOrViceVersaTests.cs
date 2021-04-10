@@ -10,7 +10,7 @@ namespace Roslynator.Formatting.CSharp.Tests
 {
     public class RCS0052AddNewLineBeforeEqualsSignInsteadOfAfterItOrViceVersaTests : AbstractCSharpDiagnosticVerifier<AddNewLineBeforeEqualsSignInsteadOfAfterItOrViceVersaAnalyzer, SyntaxTokenCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddNewLineBeforeEqualsSignInsteadOfAfterItOrViceVersa;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.AddNewLineBeforeEqualsSignInsteadOfAfterItOrViceVersa;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddNewLineBeforeEqualsSignInsteadOfAfterItOrViceVersa)]
         public async Task Test_LocalDeclaration_BeforeInsteadOfAfter()
@@ -57,7 +57,7 @@ class C
             null;
     }
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.AddNewLineAfterEqualsSignInsteadOfBeforeIt));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.AddNewLineAfterEqualsSignInsteadOfBeforeIt));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddNewLineBeforeEqualsSignInsteadOfAfterItOrViceVersa)]
@@ -113,7 +113,7 @@ class C
             null;
     }
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.AddNewLineAfterEqualsSignInsteadOfBeforeIt));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.AddNewLineAfterEqualsSignInsteadOfBeforeIt));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddNewLineBeforeEqualsSignInsteadOfAfterItOrViceVersa)]
@@ -149,7 +149,7 @@ class C
     string P { get; } =
         null;
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.AddNewLineAfterEqualsSignInsteadOfBeforeIt));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.AddNewLineAfterEqualsSignInsteadOfBeforeIt));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddNewLineBeforeEqualsSignInsteadOfAfterItOrViceVersa)]
@@ -185,7 +185,7 @@ class C
     string F =
         null;
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.AddNewLineAfterEqualsSignInsteadOfBeforeIt));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.AddNewLineAfterEqualsSignInsteadOfBeforeIt));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddNewLineBeforeEqualsSignInsteadOfAfterItOrViceVersa)]
@@ -229,7 +229,7 @@ class C
     {
     }
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.AddNewLineAfterEqualsSignInsteadOfBeforeIt));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.AddNewLineAfterEqualsSignInsteadOfBeforeIt));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddNewLineBeforeEqualsSignInsteadOfAfterItOrViceVersa)]
@@ -293,7 +293,7 @@ class C
             """" });
     }
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.AddNewLineAfterEqualsSignInsteadOfBeforeIt));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.AddNewLineAfterEqualsSignInsteadOfBeforeIt));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddNewLineBeforeEqualsSignInsteadOfAfterItOrViceVersa)]
@@ -337,7 +337,7 @@ using System.Diagnostics;
 class C
 {
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.AddNewLineAfterEqualsSignInsteadOfBeforeIt));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.AddNewLineAfterEqualsSignInsteadOfBeforeIt));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddNewLineBeforeEqualsSignInsteadOfAfterItOrViceVersa)]
@@ -367,7 +367,7 @@ class C
             = null;
     }
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.AddNewLineAfterEqualsSignInsteadOfBeforeIt));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.AddNewLineAfterEqualsSignInsteadOfBeforeIt));
         }
     }
 }

@@ -14,11 +14,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class RemoveRedundantBaseInterfaceAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class RemoveRedundantBaseInterfaceAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.RemoveRedundantBaseInterface); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.RemoveRedundantBaseInterface);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -128,7 +136,7 @@ namespace Roslynator.CSharp.Analysis
 
                         DiagnosticHelpers.ReportDiagnostic(
                             context,
-                            DiagnosticDescriptors.RemoveRedundantBaseInterface,
+                            DiagnosticRules.RemoveRedundantBaseInterface,
                             baseType,
                             SymbolDisplay.ToMinimalDisplayString(interfaceInfo.Symbol, context.SemanticModel, baseType.SpanStart, SymbolDisplayFormats.DisplayName),
                             SymbolDisplay.ToMinimalDisplayString(interfaceInfo2.Symbol, context.SemanticModel, baseType.SpanStart, SymbolDisplayFormats.DisplayName));

@@ -10,11 +10,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class UseExplicitTypeInsteadOfVarInForEachAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class UseExplicitTypeInsteadOfVarInForEachAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.UseExplicitTypeInsteadOfVarInForEach); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.UseExplicitTypeInsteadOfVarInForEach);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -33,7 +41,7 @@ namespace Roslynator.CSharp.Analysis
             {
                 DiagnosticHelpers.ReportDiagnostic(
                     context,
-                    DiagnosticDescriptors.UseExplicitTypeInsteadOfVarInForEach,
+                    DiagnosticRules.UseExplicitTypeInsteadOfVarInForEach,
                     forEachStatement.Type);
             }
         }
@@ -76,7 +84,7 @@ namespace Roslynator.CSharp.Analysis
         {
             DiagnosticHelpers.ReportDiagnostic(
                 context,
-                DiagnosticDescriptors.UseExplicitTypeInsteadOfVarInForEach,
+                DiagnosticRules.UseExplicitTypeInsteadOfVarInForEach,
                 type);
         }
     }

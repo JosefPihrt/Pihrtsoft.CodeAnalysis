@@ -10,7 +10,7 @@ namespace Roslynator.Formatting.CSharp.Tests
 {
     public class RCS0014AddEmptyLineBetweenSwitchSectionsTests : AbstractCSharpDiagnosticVerifier<AddEmptyLineBetweenSwitchSectionsAnalyzer, SwitchSectionCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddEmptyLineBetweenSwitchSections;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.AddEmptyLineBetweenSwitchSections;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddEmptyLineBetweenSwitchSections)]
         public async Task Test()

@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1231MakeParameterRefReadOnlyTests : AbstractCSharpDiagnosticVerifier<RefReadOnlyParameterAnalyzer, ParameterCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.MakeParameterRefReadOnly;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.MakeParameterRefReadOnly;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.MakeParameterRefReadOnly)]
         public async Task Test()

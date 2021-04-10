@@ -10,7 +10,7 @@ namespace Roslynator.Formatting.CSharp.Tests
 {
     public class RCS0054FixFormattingOfCallChainTests : AbstractCSharpDiagnosticVerifier<FixFormattingOfCallChainAnalyzer, FixFormattingOfCallChainCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.FixFormattingOfCallChain;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.FixFormattingOfCallChain;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.FixFormattingOfCallChain)]
         public async Task Test_WrongIndentation()

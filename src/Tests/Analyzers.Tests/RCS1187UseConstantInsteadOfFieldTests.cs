@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1187UseConstantInsteadOfFieldTests : AbstractCSharpDiagnosticVerifier<UseConstantInsteadOfFieldAnalyzer, MemberDeclarationCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseConstantInsteadOfField;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UseConstantInsteadOfField;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseConstantInsteadOfField)]
         public async Task TestNoDiagnostic_AssignmentInInStaticConstructor()

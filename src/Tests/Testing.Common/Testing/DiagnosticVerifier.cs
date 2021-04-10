@@ -134,7 +134,7 @@ namespace Roslynator.Testing
                     .ToImmutableArray();
 
                 if (!actualDiagnostics.IsEmpty)
-                    Assert.True(false, $"No diagnostic expected{actualDiagnostics.ToDebugString()}");
+                    Fail("No diagnostic expected.", actualDiagnostics);
             }
         }
 
@@ -221,13 +221,18 @@ namespace Roslynator.Testing
                     int length = diagnostics.Length;
 
                     if (length == 0)
+                    {
+                        if (!fixRegistered)
+                            Fail("No diagnostic found.");
+
                         break;
+                    }
 
                     if (DiagnosticDeepEqualityComparer.Equals(diagnostics, previousDiagnostics))
-                        Assert.True(false, "Same diagnostics returned before and after the fix was applied." + diagnostics.ToDebugString());
+                        Fail("Same diagnostics returned before and after the fix was applied.", diagnostics);
 
                     if (DiagnosticDeepEqualityComparer.Equals(diagnostics, previousPreviousDiagnostics))
-                        Assert.True(false, "Infinite loop detected: Reported diagnostics have been previously fixed." + diagnostics.ToDebugString());
+                        Fail("Infinite loop detected: Reported diagnostics have been previously fixed.", diagnostics);
 
                     Diagnostic diagnostic = FindDiagnosticToFix(diagnostics, expectedDiagnostics);
 
@@ -248,9 +253,15 @@ namespace Roslynator.Testing
                     }
 
                     if (diagnostic == null)
+                    {
+                        if (!fixRegistered)
+                            Fail($"No diagnostic with ID '{state.Descriptor.Id}' found.", diagnostics);
+
                         break;
+                    }
 
                     CodeAction action = null;
+                    List<CodeAction> candidateActions = null;
 
                     var context = new CodeFixContext(
                         document,
@@ -262,9 +273,13 @@ namespace Roslynator.Testing
                                 && d.Contains(diagnostic))
                             {
                                 if (action != null)
-                                    Assert.True(false, "Multiple fixes available.");
+                                    Fail($"Multiple fixes registered by '{fixProvider.GetType().Name}'.", new CodeAction[] { action, a });
 
                                 action = a;
+                            }
+                            else
+                            {
+                                (candidateActions ??= new List<CodeAction>()).Add(a);
                             }
                         },
                         cancellationToken);
@@ -272,7 +287,7 @@ namespace Roslynator.Testing
                     await fixProvider.RegisterCodeFixesAsync(context);
 
                     if (action == null)
-                        break;
+                        Fail("No code fix has been registered.", candidateActions);
 
                     fixRegistered = true;
 
@@ -287,8 +302,6 @@ namespace Roslynator.Testing
                     previousPreviousDiagnostics = previousDiagnostics;
                     previousDiagnostics = diagnostics;
                 }
-
-                Assert.True(fixRegistered, "No code fix has been registered.");
 
                 await VerifyExpectedDocument(expected, document, cancellationToken);
 
@@ -346,7 +359,7 @@ namespace Roslynator.Testing
                                     || string.Equals(a.EquivalenceKey, state.EquivalenceKey, StringComparison.Ordinal))
                                     && d.Contains(diagnostic))
                                 {
-                                    Assert.True(false, "No code fix expected.");
+                                    Fail("No code fix expected.");
                                 }
                             },
                             cancellationToken);
@@ -371,7 +384,7 @@ namespace Roslynator.Testing
             using (IEnumerator<Diagnostic> actualEnumerator = actualDiagnostics.OrderBy(f => f, DiagnosticComparer.SpanStart).GetEnumerator())
             {
                 if (!expectedEnumerator.MoveNext())
-                    Assert.True(false, "Diagnostic's location not found in a source text.");
+                    Fail("Diagnostic's location not found in a source text.");
 
                 do
                 {
@@ -419,11 +432,11 @@ namespace Roslynator.Testing
             {
                 if (actualCount == 0)
                 {
-                    Assert.True(false, $"No diagnostic found, expected: {expectedCount}.");
+                    Fail($"No diagnostic found, expected: {expectedCount}.");
                 }
                 else
                 {
-                    Assert.True(false, $"Mismatch between number of diagnostics, expected: {expectedCount} actual: {actualCount}{actualDiagnostics.ToDebugString()}");
+                    Fail($"Mismatch between number of diagnostics, expected: {expectedCount} actual: {actualCount}.", actualDiagnostics);
                 }
             }
         }
@@ -436,7 +449,7 @@ namespace Roslynator.Testing
             bool verifyAdditionalLocations = false)
         {
             if (expectedDiagnostic.Id != actualDiagnostic.Id)
-                Assert.True(false, $"Diagnostic's ID expected to be \"{expectedDiagnostic.Id}\", actual: \"{actualDiagnostic.Id}\"{GetMessage()}");
+                Fail($"Diagnostic's ID expected to be \"{expectedDiagnostic.Id}\", actual: \"{actualDiagnostic.Id}\"{GetMessage()}");
 
             VerifyLocation(expectedDiagnostic.Location, actualDiagnostic.Location);
 
@@ -461,7 +474,7 @@ namespace Roslynator.Testing
                 int actualCount = actual.Count;
 
                 if (expectedCount != actualCount)
-                    Assert.True(false, $"{expectedCount} additional location(s) expected, actual: {actualCount}{GetMessage()}");
+                    Fail($"{expectedCount} additional location(s) expected, actual: {actualCount}{GetMessage()}");
 
                 for (int j = 0; j < actualCount; j++)
                     VerifyLocation(expected[j], actual[j]);
@@ -472,12 +485,12 @@ namespace Roslynator.Testing
                 FileLinePositionSpan actual)
             {
                 if (expected.Path != actual.Path)
-                    Assert.True(false, $"Diagnostic expected to be in file \"{expected.Path}\", actual: \"{actual.Path}\"{GetMessage()}");
+                    Fail($"Diagnostic expected to be in file \"{expected.Path}\", actual: \"{actual.Path}\"{GetMessage()}");
 
                 string message = VerifyLinePositionSpan(expected.Span, actual.Span);
 
                 if (message != null)
-                    Assert.True(false, $"Diagnostic{message}{GetMessage()}");
+                    Fail($"Diagnostic{message}{GetMessage()}");
             }
 
             string GetMessage()
@@ -525,7 +538,7 @@ namespace Roslynator.Testing
             ImmutableArray<Diagnostic> diagnostics = await compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync(cancellationToken);
 
             if (exception != null)
-                Assert.True(false, $"An exception occurred in analyzer '{analyzer.GetType()}'.{Environment.NewLine}{exception}");
+                Fail($"An exception occurred in analyzer '{analyzer.GetType()}'.{Environment.NewLine}{exception}");
 
             return (comparer != null)
                 ? diagnostics.Sort(comparer)

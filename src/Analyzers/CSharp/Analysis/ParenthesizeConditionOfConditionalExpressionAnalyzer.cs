@@ -9,11 +9,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class ParenthesizeConditionOfConditionalExpressionAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class ParenthesizeConditionOfConditionalExpressionAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.ParenthesizeConditionOfConditionalExpression); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.ParenthesizeConditionOfConditionalExpression);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -48,14 +56,14 @@ namespace Roslynator.CSharp.Analysis
                     if (!expression.IsMissing
                         && CSharpFacts.IsSingleTokenExpression(expression.Kind()))
                     {
-                        DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.ReportOnly.RemoveParenthesesFromConditionOfConditionalExpressionWhenExpressionIsSingleToken, condition);
+                        DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.ReportOnly.RemoveParenthesesFromConditionOfConditionalExpressionWhenExpressionIsSingleToken, condition);
                     }
                 }
             }
             else if (!CSharpFacts.IsSingleTokenExpression(kind)
                 || !AnalyzerOptions.RemoveParenthesesFromConditionOfConditionalExpressionWhenExpressionIsSingleToken.IsEnabled(context))
             {
-                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.ParenthesizeConditionOfConditionalExpression, condition);
+                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.ParenthesizeConditionOfConditionalExpression, condition);
             }
         }
     }

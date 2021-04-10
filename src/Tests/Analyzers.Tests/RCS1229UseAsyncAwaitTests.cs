@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1229UseAsyncAwaitTests : AbstractCSharpDiagnosticVerifier<UseAsyncAwaitAnalyzer, UseAsyncAwaitCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseAsyncAwait;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UseAsyncAwait;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseAsyncAwait)]
         public async Task Test_Method_TaskOfT()

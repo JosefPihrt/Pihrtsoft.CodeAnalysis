@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1051ParenthesizeConditionOfConditionalExpressionTests : AbstractCSharpDiagnosticVerifier<ParenthesizeConditionOfConditionalExpressionAnalyzer, ExpressionCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.ParenthesizeConditionOfConditionalExpression;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.ParenthesizeConditionOfConditionalExpression;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.ParenthesizeConditionOfConditionalExpression)]
         public async Task Test()
@@ -81,7 +81,7 @@ class C
         string s = b ? ""true"" : ""false"";
     }
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.RemoveParenthesesFromConditionOfConditionalExpressionWhenExpressionIsSingleToken));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.RemoveParenthesesFromConditionOfConditionalExpressionWhenExpressionIsSingleToken));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.ParenthesizeConditionOfConditionalExpression)]
@@ -96,7 +96,7 @@ public class C
         string s = b ? ""true"" : ""false"";
     }
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.RemoveParenthesesFromConditionOfConditionalExpressionWhenExpressionIsSingleToken));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.RemoveParenthesesFromConditionOfConditionalExpressionWhenExpressionIsSingleToken));
         }
     }
 }

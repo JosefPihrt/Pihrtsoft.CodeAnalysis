@@ -10,11 +10,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class AvoidEmptyCatchClauseThatCatchesSystemExceptionAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class AvoidEmptyCatchClauseThatCatchesSystemExceptionAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.AvoidEmptyCatchClauseThatCatchesSystemException); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.AvoidEmptyCatchClauseThatCatchesSystemException);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -57,7 +65,7 @@ namespace Roslynator.CSharp.Analysis
 
             DiagnosticHelpers.ReportDiagnostic(
                 context,
-                DiagnosticDescriptors.AvoidEmptyCatchClauseThatCatchesSystemException,
+                DiagnosticRules.AvoidEmptyCatchClauseThatCatchesSystemException,
                 catchClause.CatchKeyword);
         }
     }

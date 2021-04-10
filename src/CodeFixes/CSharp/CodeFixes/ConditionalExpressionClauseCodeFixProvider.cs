@@ -12,7 +12,7 @@ namespace Roslynator.CSharp.CodeFixes
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ConditionalExpressionClauseCodeFixProvider))]
     [Shared]
-    public class ConditionalExpressionClauseCodeFixProvider : BaseCodeFixProvider
+    public sealed class ConditionalExpressionClauseCodeFixProvider : BaseCodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {

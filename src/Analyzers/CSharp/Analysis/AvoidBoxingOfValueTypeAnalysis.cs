@@ -42,7 +42,7 @@ namespace Roslynator.CSharp.Analysis
                                     && parameters[0].Type.IsObject()
                                     && context.SemanticModel.GetTypeSymbol(expression, context.CancellationToken).IsValueType)
                                 {
-                                    DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.AvoidBoxingOfValueType, argument);
+                                    DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.AvoidBoxingOfValueType, argument);
                                     return;
                                 }
                             }
@@ -63,7 +63,7 @@ namespace Roslynator.CSharp.Analysis
                                     .GetTypeSymbol(arguments[1].Expression, context.CancellationToken)
                                     .IsValueType)
                             {
-                                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.AvoidBoxingOfValueType, arguments[1]);
+                                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.AvoidBoxingOfValueType, arguments[1]);
                             }
                         }
 

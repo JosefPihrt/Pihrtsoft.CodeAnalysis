@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1134RemoveRedundantStatementTests : AbstractCSharpDiagnosticVerifier<RemoveRedundantStatementAnalyzer, StatementCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.RemoveRedundantStatement;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.RemoveRedundantStatement;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemoveRedundantStatement)]
         public async Task Test_SimpleIf_ReturnNull()

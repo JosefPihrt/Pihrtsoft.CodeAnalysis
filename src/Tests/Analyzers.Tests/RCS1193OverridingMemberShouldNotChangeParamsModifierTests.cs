@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1193OverridingMemberShouldNotChangeParamsModifierTests : AbstractCSharpDiagnosticVerifier<OverridingMemberShouldNotChangeParamsModifierAnalyzer, ParameterCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.OverridingMemberShouldNotChangeParamsModifier;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.OverridingMemberShouldNotChangeParamsModifier;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.OverridingMemberShouldNotChangeParamsModifier)]
         public async Task Test_WithoutParams()

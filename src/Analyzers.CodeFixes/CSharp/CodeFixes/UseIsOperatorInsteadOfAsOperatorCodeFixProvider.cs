@@ -14,7 +14,7 @@ namespace Roslynator.CSharp.CodeFixes
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UseIsOperatorInsteadOfAsOperatorCodeFixProvider))]
     [Shared]
-    public class UseIsOperatorInsteadOfAsOperatorCodeFixProvider : BaseCodeFixProvider
+    public sealed class UseIsOperatorInsteadOfAsOperatorCodeFixProvider : BaseCodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {

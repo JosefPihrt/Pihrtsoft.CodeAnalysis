@@ -9,11 +9,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class AbstractTypeShouldNotHavePublicConstructorsAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class AbstractTypeShouldNotHavePublicConstructorsAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.AbstractTypeShouldNotHavePublicConstructors); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.AbstractTypeShouldNotHavePublicConstructors);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -51,7 +59,7 @@ namespace Roslynator.CSharp.Analysis
             if (!isAbstract)
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.AbstractTypeShouldNotHavePublicConstructors, constructorDeclaration.Identifier);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.AbstractTypeShouldNotHavePublicConstructors, constructorDeclaration.Identifier);
         }
     }
 }

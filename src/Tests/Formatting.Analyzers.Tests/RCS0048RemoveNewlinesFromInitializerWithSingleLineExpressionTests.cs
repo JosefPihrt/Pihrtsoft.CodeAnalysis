@@ -10,7 +10,7 @@ namespace Roslynator.Formatting.CSharp.Tests
 {
     public class RCS0048RemoveNewlinesFromInitializerWithSingleLineExpressionTests : AbstractCSharpDiagnosticVerifier<RemoveNewlinesFromInitializerWithSingleLineExpressionAnalyzer, InitializerCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.RemoveNewlinesFromInitializerWithSingleLineExpression;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.RemoveNewlinesFromInitializerWithSingleLineExpression;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemoveNewlinesFromInitializerWithSingleLineExpression)]
         public async Task Test_ObjectInitializer()

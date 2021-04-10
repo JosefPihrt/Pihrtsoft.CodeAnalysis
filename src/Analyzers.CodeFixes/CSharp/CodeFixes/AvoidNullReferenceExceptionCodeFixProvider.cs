@@ -17,7 +17,7 @@ namespace Roslynator.CSharp.CodeFixes
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AvoidNullReferenceExceptionCodeFixProvider))]
     [Shared]
-    public class AvoidNullReferenceExceptionCodeFixProvider : BaseCodeFixProvider
+    public sealed class AvoidNullReferenceExceptionCodeFixProvider : BaseCodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {

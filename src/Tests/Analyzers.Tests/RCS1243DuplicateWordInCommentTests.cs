@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1243DuplicateWordInCommentTests : AbstractCSharpDiagnosticVerifier<DuplicateWordInCommentAnalyzer, DuplicateWordInCommentCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.DuplicateWordInComment;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.DuplicateWordInComment;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.DuplicateWordInComment)]
         public async Task Test()

@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1240UnnecessaryOperatorTests : AbstractCSharpDiagnosticVerifier<BinaryOperatorAnalyzer, BinaryExpressionCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UnnecessaryOperator;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UnnecessaryOperator;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UnnecessaryOperator)]
         public async Task Test()

@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis;
 
 namespace Roslynator.CSharp
 {
-    public static partial class AnalyzerOptionDiagnosticDescriptors
+    public static partial class AnalyzerOptionDiagnosticRules
     {
         /// <summary>RCS1014a</summary>
         public static readonly DiagnosticDescriptor UseImplicitlyTypedArrayWhenTypeIsObvious = DiagnosticDescriptorFactory.Default.Create(

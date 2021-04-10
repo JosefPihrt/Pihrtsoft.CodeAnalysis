@@ -10,11 +10,19 @@ using Microsoft.CodeAnalysis.Text;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class AddArgumentListToObjectCreationOrViceVersaAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class AddArgumentListToObjectCreationOrViceVersaAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.AddArgumentListToObjectCreationOrViceVersa); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.AddArgumentListToObjectCreationOrViceVersa);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -44,7 +52,7 @@ namespace Roslynator.CSharp.Analysis
 
                     DiagnosticHelpers.ReportDiagnostic(
                         context,
-                        DiagnosticDescriptors.AddArgumentListToObjectCreationOrViceVersa,
+                        DiagnosticRules.AddArgumentListToObjectCreationOrViceVersa,
                         Location.Create(objectCreationExpression.SyntaxTree, span));
                 }
             }
@@ -61,7 +69,7 @@ namespace Roslynator.CSharp.Analysis
                 {
                     DiagnosticHelpers.ReportDiagnostic(
                         context,
-                        DiagnosticDescriptors.ReportOnly.RemoveArgumentListFromObjectCreation,
+                        DiagnosticRules.ReportOnly.RemoveArgumentListFromObjectCreation,
                         argumentList);
                 }
             }

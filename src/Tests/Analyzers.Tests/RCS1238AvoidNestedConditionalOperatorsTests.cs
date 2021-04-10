@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1238AvoidNestedConditionalOperatorsTests : AbstractCSharpDiagnosticVerifier<ConditionalExpressionAnalyzer, ConditionalExpressionCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AvoidNestedConditionalOperators;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.AvoidNestedConditionalOperators;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AvoidNestedConditionalOperators)]
         public async Task Test_LocalDeclaration()

@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1186UseRegexInstanceInsteadOfStaticMethodTests : AbstractCSharpDiagnosticVerifier<InvocationExpressionAnalyzer, UseRegexInstanceInsteadOfStaticMethodCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseRegexInstanceInsteadOfStaticMethod;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UseRegexInstanceInsteadOfStaticMethod;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseRegexInstanceInsteadOfStaticMethod)]
         public async Task Test_IsMatch1()

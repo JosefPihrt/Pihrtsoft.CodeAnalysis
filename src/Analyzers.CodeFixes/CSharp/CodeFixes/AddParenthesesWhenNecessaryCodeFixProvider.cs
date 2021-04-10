@@ -17,7 +17,7 @@ namespace Roslynator.CSharp.CodeFixes
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AddParenthesesWhenNecessaryCodeFixProvider))]
     [Shared]
-    public class AddParenthesesWhenNecessaryCodeFixProvider : BaseCodeFixProvider
+    public sealed class AddParenthesesWhenNecessaryCodeFixProvider : BaseCodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {

@@ -10,11 +10,11 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1014UseImplicitlyTypedArrayTests : AbstractCSharpDiagnosticVerifier<UseExplicitlyTypedArrayOrViceVersaAnalyzer, UseExplicitlyTypedArrayOrViceVersaCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseExplicitlyTypedArrayOrViceVersa;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UseExplicitlyTypedArrayOrViceVersa;
 
         public override CSharpTestOptions Options
         {
-            get { return base.Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.UseImplicitlyTypedArray); }
+            get { return base.Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.UseImplicitlyTypedArray); }
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseExplicitlyTypedArrayOrViceVersa)]
@@ -84,7 +84,7 @@ class C
         var x = new[] { """" };
     }
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.UseImplicitlyTypedArrayWhenTypeIsObvious));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.UseImplicitlyTypedArrayWhenTypeIsObvious));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseExplicitlyTypedArrayOrViceVersa)]
@@ -130,7 +130,7 @@ class A
 class B : A
 {
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.UseImplicitlyTypedArrayWhenTypeIsObvious));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.UseImplicitlyTypedArrayWhenTypeIsObvious));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseExplicitlyTypedArrayOrViceVersa)]
@@ -172,7 +172,7 @@ class C
 
     string M2() => null;
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.UseImplicitlyTypedArrayWhenTypeIsObvious));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.UseImplicitlyTypedArrayWhenTypeIsObvious));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseExplicitlyTypedArrayOrViceVersa)]

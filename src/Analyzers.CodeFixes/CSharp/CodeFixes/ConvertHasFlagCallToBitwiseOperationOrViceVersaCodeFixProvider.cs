@@ -20,7 +20,7 @@ namespace Roslynator.CSharp.CodeFixes
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ConvertHasFlagCallToBitwiseOperationOrViceVersaCodeFixProvider))]
     [Shared]
-    public class ConvertHasFlagCallToBitwiseOperationOrViceVersaCodeFixProvider : BaseCodeFixProvider
+    public sealed class ConvertHasFlagCallToBitwiseOperationOrViceVersaCodeFixProvider : BaseCodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {

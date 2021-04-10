@@ -11,16 +11,24 @@ using Microsoft.CodeAnalysis.Text;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class AsyncSuffixAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class AsyncSuffixAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                return ImmutableArray.Create(
-                    DiagnosticDescriptors.AsynchronousMethodNameShouldEndWithAsync,
-                    DiagnosticDescriptors.NonAsynchronousMethodNameShouldNotEndWithAsync,
-                    DiagnosticDescriptors.NonAsynchronousMethodNameShouldNotEndWithAsyncFadeOut);
+                if (_supportedDiagnostics.IsDefault)
+                {
+                    Immutable.InterlockedInitialize(
+                        ref _supportedDiagnostics,
+                        DiagnosticRules.AsynchronousMethodNameShouldEndWithAsync,
+                        DiagnosticRules.NonAsynchronousMethodNameShouldNotEndWithAsync,
+                        DiagnosticRules.NonAsynchronousMethodNameShouldNotEndWithAsyncFadeOut);
+                }
+
+                return _supportedDiagnostics;
             }
         }
 
@@ -39,8 +47,8 @@ namespace Roslynator.CSharp.Analysis
                     {
                         if (DiagnosticHelpers.IsAnyEffective(
                             c,
-                            DiagnosticDescriptors.AsynchronousMethodNameShouldEndWithAsync,
-                            DiagnosticDescriptors.NonAsynchronousMethodNameShouldNotEndWithAsync))
+                            DiagnosticRules.AsynchronousMethodNameShouldEndWithAsync,
+                            DiagnosticRules.NonAsynchronousMethodNameShouldNotEndWithAsync))
                         {
                             AnalyzeMethodDeclaration(c, shouldCheckWindowsRuntimeTypes);
                         }
@@ -73,12 +81,12 @@ namespace Roslynator.CSharp.Analysis
 
                 DiagnosticHelpers.ReportDiagnostic(
                     context,
-                    DiagnosticDescriptors.NonAsynchronousMethodNameShouldNotEndWithAsync,
+                    DiagnosticRules.NonAsynchronousMethodNameShouldNotEndWithAsync,
                     identifier);
 
                 DiagnosticHelpers.ReportDiagnostic(
                     context,
-                    DiagnosticDescriptors.NonAsynchronousMethodNameShouldNotEndWithAsyncFadeOut,
+                    DiagnosticRules.NonAsynchronousMethodNameShouldNotEndWithAsyncFadeOut,
                     Location.Create(identifier.SyntaxTree, TextSpan.FromBounds(identifier.Span.End - 5, identifier.Span.End)));
             }
             else
@@ -94,7 +102,7 @@ namespace Roslynator.CSharp.Analysis
                 if (!SymbolUtility.IsAwaitable(methodSymbol.ReturnType, shouldCheckWindowsRuntimeTypes))
                     return;
 
-                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.AsynchronousMethodNameShouldEndWithAsync, methodDeclaration.Identifier);
+                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.AsynchronousMethodNameShouldEndWithAsync, methodDeclaration.Identifier);
             }
         }
     }
