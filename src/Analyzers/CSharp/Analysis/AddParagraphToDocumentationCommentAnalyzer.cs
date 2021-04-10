@@ -15,11 +15,19 @@ using System.Diagnostics.CodeAnalysis;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class AddParagraphToDocumentationCommentAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class AddParagraphToDocumentationCommentAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.AddParagraphToDocumentationComment); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.AddParagraphToDocumentationComment);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -61,7 +69,7 @@ namespace Roslynator.CSharp.Analysis
                 {
                     DiagnosticHelpers.ReportDiagnostic(
                         context,
-                        DiagnosticDescriptors.AddParagraphToDocumentationComment,
+                        DiagnosticRules.AddParagraphToDocumentationComment,
                         Location.Create(documentationComment.SyntaxTree, TextSpan.FromBounds(span1.Start, span2.End)));
                 }
             }

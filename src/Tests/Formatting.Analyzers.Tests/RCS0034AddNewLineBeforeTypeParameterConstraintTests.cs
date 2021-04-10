@@ -10,7 +10,7 @@ namespace Roslynator.Formatting.CSharp.Tests
 {
     public class RCS0034AddNewLineBeforeTypeParameterConstraintTests : AbstractCSharpDiagnosticVerifier<AddNewLineBeforeTypeParameterConstraintAnalyzer, TypeParameterConstraintClauseSyntaxCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddNewLineBeforeTypeParameterConstraint;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.AddNewLineBeforeTypeParameterConstraint;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddNewLineBeforeTypeParameterConstraint)]
         public async Task Test_Class()

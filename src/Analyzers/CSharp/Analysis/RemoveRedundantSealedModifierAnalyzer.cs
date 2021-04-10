@@ -11,11 +11,19 @@ using Roslynator.CSharp.Syntax;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class RemoveRedundantSealedModifierAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class RemoveRedundantSealedModifierAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.RemoveRedundantSealedModifier); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.RemoveRedundantSealedModifier);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -67,7 +75,7 @@ namespace Roslynator.CSharp.Analysis
 
             SyntaxToken sealedKeyword = info.Modifiers.Find(SyntaxKind.SealedKeyword);
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.RemoveRedundantSealedModifier, sealedKeyword);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.RemoveRedundantSealedModifier, sealedKeyword);
         }
     }
 }

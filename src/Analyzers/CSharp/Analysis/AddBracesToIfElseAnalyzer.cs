@@ -10,11 +10,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class AddBracesToIfElseAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class AddBracesToIfElseAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.AddBracesToIfElse); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.AddBracesToIfElse);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -40,7 +48,7 @@ namespace Roslynator.CSharp.Analysis
             if (statement.ContainsDirectives)
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.AddBracesToIfElse, statement, CSharpFacts.GetTitle(ifStatement));
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.AddBracesToIfElse, statement, CSharpFacts.GetTitle(ifStatement));
         }
 
         private static void AnalyzeElseClause(SyntaxNodeAnalysisContext context)
@@ -55,7 +63,7 @@ namespace Roslynator.CSharp.Analysis
             if (statement.ContainsDirectives)
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.AddBracesToIfElse, statement, CSharpFacts.GetTitle(elseClause));
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.AddBracesToIfElse, statement, CSharpFacts.GetTitle(elseClause));
         }
     }
 }

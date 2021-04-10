@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1156UseStringLengthInsteadOfComparisonWithEmptyStringTests : AbstractCSharpDiagnosticVerifier<UseStringLengthInsteadOfComparisonWithEmptyStringAnalyzer, BinaryExpressionCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseStringLengthInsteadOfComparisonWithEmptyString;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UseStringLengthInsteadOfComparisonWithEmptyString;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseStringLengthInsteadOfComparisonWithEmptyString)]
         public async Task Test_ComparisonToEmptyString()

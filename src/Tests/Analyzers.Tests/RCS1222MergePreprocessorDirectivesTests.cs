@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1222MergePreprocessorDirectivesTests : AbstractCSharpDiagnosticVerifier<MergePreprocessorDirectivesAnalyzer, DirectiveTriviaCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.MergePreprocessorDirectives;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.MergePreprocessorDirectives;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.MergePreprocessorDirectives)]
         public async Task Test_PragmaWarningDisable()

@@ -10,11 +10,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class RemoveEmptyInitializerAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class RemoveEmptyInitializerAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.RemoveEmptyInitializer); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.RemoveEmptyInitializer);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -50,7 +58,7 @@ namespace Roslynator.CSharp.Analysis
             if (initializer.IsInExpressionTree(context.SemanticModel, context.CancellationToken))
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.RemoveEmptyInitializer, initializer);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.RemoveEmptyInitializer, initializer);
         }
     }
 }

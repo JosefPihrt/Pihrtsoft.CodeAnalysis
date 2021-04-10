@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1218SimplifyCodeBranchingTests : AbstractCSharpDiagnosticVerifier<SimplifyCodeBranchingAnalyzer, SimplifyCodeBranchingCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.SimplifyCodeBranching;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.SimplifyCodeBranching;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyCodeBranching)]
         public async Task Test_EmptyIf_Else_WithBraces()
@@ -926,6 +926,258 @@ class C
         {
             M();
         }
+    }
+}
+");
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyCodeBranching)]
+        public async Task Test_LastIfElseWithReturn_Method()
+        {
+            await VerifyDiagnosticAndFixAsync(@"
+class C
+{
+    void M()
+    {
+        bool x = false;
+
+        [|if|] (x)
+        {
+            return;
+        }
+        else
+        {
+            M();
+        }
+
+        object LF() => null;
+    }
+}
+", @"
+class C
+{
+    void M()
+    {
+        bool x = false;
+
+        if (!x)
+        {
+            M();
+        }
+
+        object LF() => null;
+    }
+}
+");
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyCodeBranching)]
+        public async Task Test_LastIfElseWithReturn_LocalFunction()
+        {
+            await VerifyDiagnosticAndFixAsync(@"
+class C
+{
+    void M()
+    {
+        bool x = false, y = false;
+
+        void LF()
+        {
+            if (x)
+            {
+                return;
+            }
+            else [|if|] (y)
+            {
+                return;
+            }
+            else
+            {
+                M();
+            }
+        }
+    }
+}
+", @"
+class C
+{
+    void M()
+    {
+        bool x = false, y = false;
+
+        void LF()
+        {
+            if (x)
+            {
+                return;
+            }
+            else if (!y)
+            {
+                M();
+            }
+        }
+    }
+}
+");
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyCodeBranching)]
+        public async Task Test_LastIfElseWithContinue_ForEach()
+        {
+            await VerifyDiagnosticAndFixAsync(@"
+using System.Collections.Generic;
+
+class C
+{
+    void M()
+    {
+        bool x = false, y = false;
+
+        var items = new List<string>();
+
+        for (int i = 0; i < items.Count; i++)
+        {
+            [|if|] (x)
+            {
+                continue;
+            }
+            else
+            {
+                M();
+            }
+        }
+
+        object LF() => null;
+    }
+}
+", @"
+using System.Collections.Generic;
+
+class C
+{
+    void M()
+    {
+        bool x = false, y = false;
+
+        var items = new List<string>();
+
+        for (int i = 0; i < items.Count; i++)
+        {
+            if (!x)
+            {
+                M();
+            }
+        }
+
+        object LF() => null;
+    }
+}
+");
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyCodeBranching)]
+        public async Task Test_LastIfElseWithContinue_For()
+        {
+            await VerifyDiagnosticAndFixAsync(@"
+using System.Collections.Generic;
+
+class C
+{
+    void M()
+    {
+        bool x = false, y = false;
+
+        var items = new List<string>();
+
+        for (int i = 0; i < items.Count; i++)
+        {
+            [|if|] (x)
+            {
+                continue;
+            }
+            else
+            {
+                M();
+            }
+        }
+
+        object LF() => null;
+    }
+}
+", @"
+using System.Collections.Generic;
+
+class C
+{
+    void M()
+    {
+        bool x = false, y = false;
+
+        var items = new List<string>();
+
+        for (int i = 0; i < items.Count; i++)
+        {
+            if (!x)
+            {
+                M();
+            }
+        }
+
+        object LF() => null;
+    }
+}
+");
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyCodeBranching)]
+        public async Task Test_LastIfElseWithContinue_While()
+        {
+            await VerifyDiagnosticAndFixAsync(@"
+using System.Collections.Generic;
+
+class C
+{
+    void M()
+    {
+        bool x = false, y = false;
+
+        var items = new List<string>();
+
+        while (x)
+        {
+            [|if|] (y)
+            {
+                continue;
+            }
+            else
+            {
+                M();
+            }
+        }
+
+        object LF() => null;
+    }
+}
+", @"
+using System.Collections.Generic;
+
+class C
+{
+    void M()
+    {
+        bool x = false, y = false;
+
+        var items = new List<string>();
+
+        while (x)
+        {
+            if (!y)
+            {
+                M();
+            }
+        }
+
+        object LF() => null;
     }
 }
 ");

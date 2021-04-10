@@ -10,11 +10,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class RemoveRedundantFieldInitializationAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class RemoveRedundantFieldInitializationAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.RemoveRedundantFieldInitialization); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.RemoveRedundantFieldInitialization);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -57,11 +65,11 @@ namespace Roslynator.CSharp.Analysis
                             if (CSharpFacts.IsNumericType(typeSymbol.SpecialType)
                                 && value.IsNumericLiteralExpression("0"))
                             {
-                                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.RemoveRedundantFieldInitialization, initializer);
+                                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.RemoveRedundantFieldInitialization, initializer);
                             }
                             else if (semanticModel.IsDefaultValue(typeSymbol, value, cancellationToken))
                             {
-                                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.RemoveRedundantFieldInitialization, initializer);
+                                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.RemoveRedundantFieldInitialization, initializer);
                             }
                         }
                     }

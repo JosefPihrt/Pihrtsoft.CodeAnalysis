@@ -13,11 +13,19 @@ using Roslynator.CSharp.Syntax;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class RemoveRedundantCastAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class RemoveRedundantCastAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.RemoveRedundantCast); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.RemoveRedundantCast);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -102,7 +110,7 @@ namespace Roslynator.CSharp.Analysis
 
             DiagnosticHelpers.ReportDiagnostic(
                 context,
-                DiagnosticDescriptors.RemoveRedundantCast,
+                DiagnosticRules.RemoveRedundantCast,
                 Location.Create(castExpression.SyntaxTree, castExpression.ParenthesesSpan()));
         }
 
@@ -237,7 +245,7 @@ namespace Roslynator.CSharp.Analysis
 
             DiagnosticHelpers.ReportDiagnostic(
                 context,
-                DiagnosticDescriptors.RemoveRedundantCast,
+                DiagnosticRules.RemoveRedundantCast,
                 Location.Create(invocationExpression.SyntaxTree, TextSpan.FromBounds(invocationInfo.Name.SpanStart, invocationInfo.ArgumentList.Span.End)));
         }
     }

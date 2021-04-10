@@ -10,11 +10,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class OverridingMemberShouldNotChangeParamsModifierAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class OverridingMemberShouldNotChangeParamsModifierAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.OverridingMemberShouldNotChangeParamsModifier); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.OverridingMemberShouldNotChangeParamsModifier);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -45,7 +53,7 @@ namespace Roslynator.CSharp.Analysis
             if (lastParameter.Modifiers.Contains(SyntaxKind.ParamsKeyword) == lastParameterSymbol.IsParams)
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.OverridingMemberShouldNotChangeParamsModifier, lastParameter);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.OverridingMemberShouldNotChangeParamsModifier, lastParameter);
         }
 
         private static void AnalyzePropertySymbol(SymbolAnalysisContext context)
@@ -71,7 +79,7 @@ namespace Roslynator.CSharp.Analysis
             if (lastParameter.Modifiers.Contains(SyntaxKind.ParamsKeyword) == lastParameterSymbol.IsParams)
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.OverridingMemberShouldNotChangeParamsModifier, lastParameter);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.OverridingMemberShouldNotChangeParamsModifier, lastParameter);
         }
     }
 }

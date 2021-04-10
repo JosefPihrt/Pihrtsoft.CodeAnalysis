@@ -11,11 +11,19 @@ using Roslynator.CSharp;
 namespace Roslynator.Formatting.CSharp
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class AddEmptyLineBeforeClosingBraceOfDoStatementAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class AddEmptyLineBeforeClosingBraceOfDoStatementAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.AddEmptyLineBeforeClosingBraceOfDoStatement); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.AddEmptyLineBeforeClosingBraceOfDoStatement);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -70,7 +78,7 @@ namespace Roslynator.Formatting.CSharp
 
             DiagnosticHelpers.ReportDiagnostic(
                 context,
-                DiagnosticDescriptors.AddEmptyLineBeforeClosingBraceOfDoStatement,
+                DiagnosticRules.AddEmptyLineBeforeClosingBraceOfDoStatement,
                 Location.Create(trivia.SyntaxTree, trivia.Span.WithLength(0)));
         }
     }

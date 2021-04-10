@@ -16,7 +16,7 @@ namespace Roslynator.CSharp.CodeFixes
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ModifiersCodeFixProvider))]
     [Shared]
-    public class ModifiersCodeFixProvider : BaseCodeFixProvider
+    public sealed class ModifiersCodeFixProvider : BaseCodeFixProvider
     {
         private static readonly Accessibility[] _publicOrInternal = new[]
         {

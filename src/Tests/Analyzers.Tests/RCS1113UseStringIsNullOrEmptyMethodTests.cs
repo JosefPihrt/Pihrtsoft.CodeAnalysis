@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1113UseStringIsNullOrEmptyMethodTests : AbstractCSharpDiagnosticVerifier<UseStringIsNullOrEmptyMethodAnalyzer, BinaryExpressionCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseStringIsNullOrEmptyMethod;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UseStringIsNullOrEmptyMethod;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseStringIsNullOrEmptyMethod)]
         public async Task Test_LogicalOr()

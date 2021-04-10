@@ -9,11 +9,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.Formatting.CSharp
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class AddNewLineBeforeExpressionBodyArrowInsteadOfAfterItOrViceVersaAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class AddNewLineBeforeExpressionBodyArrowInsteadOfAfterItOrViceVersaAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.AddNewLineBeforeExpressionBodyArrowInsteadOfAfterItOrViceVersa); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.AddNewLineBeforeExpressionBodyArrowInsteadOfAfterItOrViceVersa);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -29,20 +37,20 @@ namespace Roslynator.Formatting.CSharp
 
             SyntaxToken arrowToken = arrowExpressionClause.ArrowToken;
 
-            FormattingSuggestion suggestion = FormattingAnalysis.AnalyzeNewLineBeforeOrAfter(context, arrowToken, arrowExpressionClause.Expression, AnalyzerOptionDiagnosticDescriptors.AddNewLineAfterExpressionBodyArrowInsteadOfBeforeIt);
+            FormattingSuggestion suggestion = FormattingAnalysis.AnalyzeNewLineBeforeOrAfter(context, arrowToken, arrowExpressionClause.Expression, AnalyzerOptionDiagnosticRules.AddNewLineAfterExpressionBodyArrowInsteadOfBeforeIt);
 
             if (suggestion == FormattingSuggestion.AddNewLineBefore)
             {
                 DiagnosticHelpers.ReportDiagnostic(
                     context,
-                    DiagnosticDescriptors.AddNewLineBeforeExpressionBodyArrowInsteadOfAfterItOrViceVersa,
+                    DiagnosticRules.AddNewLineBeforeExpressionBodyArrowInsteadOfAfterItOrViceVersa,
                     arrowToken.GetLocation());
             }
             else if (suggestion == FormattingSuggestion.AddNewLineAfter)
             {
                 DiagnosticHelpers.ReportDiagnostic(
                     context,
-                    DiagnosticDescriptors.ReportOnly.AddNewLineAfterExpressionBodyArrowInsteadOfBeforeIt,
+                    DiagnosticRules.ReportOnly.AddNewLineAfterExpressionBodyArrowInsteadOfBeforeIt,
                     arrowToken.GetLocation(),
                     properties: DiagnosticProperties.AnalyzerOption_Invert);
             }

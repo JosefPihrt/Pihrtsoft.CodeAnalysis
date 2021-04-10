@@ -10,7 +10,7 @@ namespace Roslynator.Formatting.CSharp.Tests
 {
     public class RCS0029AddNewLineBeforeConstructorInitializerTests : AbstractCSharpDiagnosticVerifier<AddNewLineBeforeConstructorInitializerAnalyzer, MemberDeclarationCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddNewLineBeforeConstructorInitializer;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.AddNewLineBeforeConstructorInitializer;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddNewLineBeforeConstructorInitializer)]
         public async Task Test_ThisInitializer()

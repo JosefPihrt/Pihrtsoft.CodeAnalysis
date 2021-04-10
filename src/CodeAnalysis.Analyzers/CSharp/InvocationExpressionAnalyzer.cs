@@ -12,16 +12,24 @@ using Roslynator.CSharp.Syntax;
 namespace Roslynator.CodeAnalysis.CSharp
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class InvocationExpressionAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class InvocationExpressionAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                return ImmutableArray.Create(
-                    DiagnosticDescriptors.UnnecessaryNullCheck,
-                    DiagnosticDescriptors.UseElementAccess,
-                    DiagnosticDescriptors.UseReturnValue);
+                if (_supportedDiagnostics.IsDefault)
+                {
+                    Immutable.InterlockedInitialize(
+                        ref _supportedDiagnostics,
+                        DiagnosticRules.UnnecessaryNullCheck,
+                        DiagnosticRules.UseElementAccess,
+                        DiagnosticRules.UseReturnValue);
+                }
+
+                return _supportedDiagnostics;
             }
         }
 
@@ -56,7 +64,7 @@ namespace Roslynator.CodeAnalysis.CSharp
                         {
                             case "First":
                                 {
-                                    if (DiagnosticDescriptors.UseElementAccess.IsEffective(context))
+                                    if (DiagnosticRules.UseElementAccess.IsEffective(context))
                                         UseElementAccessInsteadOfCallingFirst();
 
                                     break;
@@ -71,14 +79,14 @@ namespace Roslynator.CodeAnalysis.CSharp
                         {
                             case "ElementAt":
                                 {
-                                    if (DiagnosticDescriptors.UseElementAccess.IsEffective(context))
+                                    if (DiagnosticRules.UseElementAccess.IsEffective(context))
                                         UseElementAccessInsteadOfCallingElementAt();
 
                                     break;
                                 }
                             case "IsKind":
                                 {
-                                    if (DiagnosticDescriptors.UnnecessaryNullCheck.IsEffective(context))
+                                    if (DiagnosticRules.UnnecessaryNullCheck.IsEffective(context))
                                         AnalyzeUnnecessaryNullCheck();
 
                                     break;
@@ -89,7 +97,7 @@ namespace Roslynator.CodeAnalysis.CSharp
                     }
             }
 
-            if (DiagnosticDescriptors.UseReturnValue.IsEffective(context)
+            if (DiagnosticRules.UseReturnValue.IsEffective(context)
                 && invocationExpression.IsParentKind(SyntaxKind.ExpressionStatement))
             {
                 UseReturnValue();
@@ -130,7 +138,7 @@ namespace Roslynator.CodeAnalysis.CSharp
 
                 DiagnosticHelpers.ReportDiagnostic(
                     context,
-                    DiagnosticDescriptors.UnnecessaryNullCheck,
+                    DiagnosticRules.UnnecessaryNullCheck,
                     Location.Create(invocationInfo.InvocationExpression.SyntaxTree, span));
             }
 
@@ -153,7 +161,7 @@ namespace Roslynator.CodeAnalysis.CSharp
 
                 DiagnosticHelpers.ReportDiagnostic(
                     context,
-                    DiagnosticDescriptors.UseElementAccess,
+                    DiagnosticRules.UseElementAccess,
                     Location.Create(invocationExpression.SyntaxTree, span));
             }
 
@@ -176,7 +184,7 @@ namespace Roslynator.CodeAnalysis.CSharp
 
                 DiagnosticHelpers.ReportDiagnostic(
                     context,
-                    DiagnosticDescriptors.UseElementAccess,
+                    DiagnosticRules.UseElementAccess,
                     Location.Create(invocationExpression.SyntaxTree, span));
             }
 
@@ -196,7 +204,7 @@ namespace Roslynator.CodeAnalysis.CSharp
                 if (!RoslynSymbolUtility.IsRoslynType(methodSymbol.ReturnType))
                     return;
 
-                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UseReturnValue, invocationExpression);
+                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UseReturnValue, invocationExpression);
             }
         }
     }

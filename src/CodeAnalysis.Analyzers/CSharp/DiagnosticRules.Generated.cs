@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis;
 
 namespace Roslynator.CodeAnalysis.CSharp
 {
-    public static partial class DiagnosticDescriptors
+    public static partial class DiagnosticRules
     {
         /// <summary>RCS9001</summary>
         public static readonly DiagnosticDescriptor UsePatternMatching = DiagnosticDescriptorFactory.Default.Create(

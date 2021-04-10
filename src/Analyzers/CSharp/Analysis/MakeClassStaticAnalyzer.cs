@@ -14,11 +14,19 @@ using Roslynator.CSharp.SyntaxWalkers;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class MakeClassStaticAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class MakeClassStaticAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.MakeClassStatic); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.MakeClassStatic);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -74,7 +82,7 @@ namespace Roslynator.CSharp.Analysis
             MakeClassStaticWalker.Free(walker);
 
             if (canBeMadeStatic)
-                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.MakeClassStatic, classDeclaration.Identifier);
+                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.MakeClassStatic, classDeclaration.Identifier);
         }
 
         public static bool AnalyzeMembers(ImmutableArray<ISymbol> members)

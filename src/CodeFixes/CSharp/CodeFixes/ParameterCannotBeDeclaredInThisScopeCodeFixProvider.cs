@@ -14,7 +14,7 @@ namespace Roslynator.CSharp.CodeFixes
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ParameterCannotBeDeclaredInThisScopeCodeFixProvider))]
     [Shared]
-    public class ParameterCannotBeDeclaredInThisScopeCodeFixProvider : BaseCodeFixProvider
+    public sealed class ParameterCannotBeDeclaredInThisScopeCodeFixProvider : BaseCodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {

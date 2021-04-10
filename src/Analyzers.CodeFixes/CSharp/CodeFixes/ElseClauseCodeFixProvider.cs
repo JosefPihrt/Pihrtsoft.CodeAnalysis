@@ -15,7 +15,7 @@ namespace Roslynator.CSharp.CodeFixes
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ElseClauseCodeFixProvider))]
     [Shared]
-    public class ElseClauseCodeFixProvider : BaseCodeFixProvider
+    public sealed class ElseClauseCodeFixProvider : BaseCodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {

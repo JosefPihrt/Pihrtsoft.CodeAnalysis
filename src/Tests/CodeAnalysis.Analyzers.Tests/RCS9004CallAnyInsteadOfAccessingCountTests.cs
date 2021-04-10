@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS9004CallAnyInsteadOfAccessingCountTests : AbstractCSharpDiagnosticVerifier<SimpleMemberAccessExpressionAnalyzer, BinaryExpressionCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.CallAnyInsteadOfAccessingCount;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.CallAnyInsteadOfAccessingCount;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.CallAnyInsteadOfAccessingCount)]
         public async Task Test_SyntaxList_Equals()

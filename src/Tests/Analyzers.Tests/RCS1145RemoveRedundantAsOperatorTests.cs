@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1145RemoveRedundantAsOperatorTests : AbstractCSharpDiagnosticVerifier<RemoveRedundantAsOperatorAnalyzer, BinaryExpressionCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.RemoveRedundantAsOperator;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.RemoveRedundantAsOperator;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemoveRedundantAsOperator)]
         public async Task TestNoDiagnostic_Dynamic()

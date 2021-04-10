@@ -11,15 +11,23 @@ using Roslynator.CSharp;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SimplifyNestedUsingStatementAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class SimplifyNestedUsingStatementAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                return ImmutableArray.Create(
-                    DiagnosticDescriptors.SimplifyNestedUsingStatement,
-                    DiagnosticDescriptors.SimplifyNestedUsingStatementFadeOut);
+                if (_supportedDiagnostics.IsDefault)
+                {
+                    Immutable.InterlockedInitialize(
+                        ref _supportedDiagnostics,
+                        DiagnosticRules.SimplifyNestedUsingStatement,
+                        DiagnosticRules.SimplifyNestedUsingStatementFadeOut);
+                }
+
+                return _supportedDiagnostics;
             }
         }
 
@@ -30,7 +38,7 @@ namespace Roslynator.CSharp.Analysis
             context.RegisterSyntaxNodeAction(
                 c =>
                 {
-                    if (DiagnosticDescriptors.SimplifyNestedUsingStatement.IsEffective(c))
+                    if (DiagnosticRules.SimplifyNestedUsingStatement.IsEffective(c))
                         AnalyzeUsingStatement(c);
                 },
                 SyntaxKind.UsingStatement);
@@ -54,9 +62,9 @@ namespace Roslynator.CSharp.Analysis
 
             var block = (BlockSyntax)usingStatement.Statement;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.SimplifyNestedUsingStatement, block);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.SimplifyNestedUsingStatement, block);
 
-            CSharpDiagnosticHelpers.ReportBraces(context, DiagnosticDescriptors.SimplifyNestedUsingStatementFadeOut, block);
+            CSharpDiagnosticHelpers.ReportBraces(context, DiagnosticRules.SimplifyNestedUsingStatementFadeOut, block);
         }
 
         public static bool ContainsEmbeddableUsingStatement(UsingStatementSyntax usingStatement)

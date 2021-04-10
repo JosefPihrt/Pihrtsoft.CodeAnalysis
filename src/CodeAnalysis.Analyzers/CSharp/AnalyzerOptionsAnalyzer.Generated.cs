@@ -9,7 +9,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CodeAnalysis.CSharp
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    internal class AnalyzerOptionsAnalyzer : DiagnosticAnalyzer
+    internal sealed class AnalyzerOptionsAnalyzer : DiagnosticAnalyzer
     {
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {

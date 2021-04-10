@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1214UnnecessaryInterpolatedStringTests : AbstractCSharpDiagnosticVerifier<UnnecessaryInterpolatedStringAnalyzer, InterpolatedStringCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UnnecessaryInterpolatedString;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UnnecessaryInterpolatedString;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UnnecessaryInterpolatedString)]
         public async Task Test_StringLiteral()

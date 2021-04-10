@@ -10,7 +10,7 @@ namespace Roslynator.Formatting.CSharp.Tests
 {
     public class RCS0009AddEmptyLineBetweenDeclarationAndDocumentationCommentTests : AbstractCSharpDiagnosticVerifier<EmptyLineBetweenDeclarationsAnalyzer, EmptyLineBetweenDeclarationsCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddEmptyLineBetweenDeclarationAndDocumentationComment;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.AddEmptyLineBetweenDeclarationAndDocumentationComment;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddEmptyLineBetweenDeclarationAndDocumentationComment)]
         public async Task Test_MemberDeclaration_SingleLine()

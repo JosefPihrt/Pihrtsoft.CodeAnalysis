@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1066RemoveEmptyFinallyClauseTests : AbstractCSharpDiagnosticVerifier<RemoveEmptyFinallyClauseAnalyzer, FinallyClauseCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.RemoveEmptyFinallyClause;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.RemoveEmptyFinallyClause;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemoveEmptyFinallyClause)]
         public async Task Test_TryCatchFinally()

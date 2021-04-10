@@ -67,7 +67,7 @@ namespace Roslynator.CSharp.Analysis
 
             DiagnosticHelpers.ReportDiagnostic(
                 context,
-                DiagnosticDescriptors.OptimizeLinqMethodCall,
+                DiagnosticRules.OptimizeLinqMethodCall,
                 Location.Create(invocationExpression.SyntaxTree, TextSpan.FromBounds(invocationInfo.Name.SpanStart, invocationExpression.Span.End)));
         }
 

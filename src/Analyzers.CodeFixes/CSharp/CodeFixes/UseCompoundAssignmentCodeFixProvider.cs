@@ -19,7 +19,7 @@ namespace Roslynator.CSharp.CodeFixes
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UseCompoundAssignmentCodeFixProvider))]
     [Shared]
-    public class UseCompoundAssignmentCodeFixProvider : BaseCodeFixProvider
+    public sealed class UseCompoundAssignmentCodeFixProvider : BaseCodeFixProvider
     {
         private const string Title = "Use compound assignment";
 

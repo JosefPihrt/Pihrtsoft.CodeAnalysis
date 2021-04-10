@@ -18,7 +18,7 @@ namespace Roslynator.CodeAnalysis.CSharp
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AttributeArgumentCodeFixProvider))]
     [Shared]
-    public class AttributeArgumentCodeFixProvider : BaseCodeFixProvider
+    public sealed class AttributeArgumentCodeFixProvider : BaseCodeFixProvider
     {
         private static ImmutableDictionary<string, string> _languageNames;
 

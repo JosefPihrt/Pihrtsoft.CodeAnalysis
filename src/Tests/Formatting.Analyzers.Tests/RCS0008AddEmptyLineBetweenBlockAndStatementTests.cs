@@ -10,7 +10,7 @@ namespace Roslynator.Formatting.CSharp.Tests
 {
     public class RCS0008AddEmptyLineBetweenBlockAndStatementTests : AbstractCSharpDiagnosticVerifier<AddEmptyLineBetweenBlockAndStatementAnalyzer, SyntaxTokenCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddEmptyLineBetweenBlockAndStatement;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.AddEmptyLineBetweenBlockAndStatement;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddEmptyLineBetweenBlockAndStatement)]
         public async Task Test_Block()

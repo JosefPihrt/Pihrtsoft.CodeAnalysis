@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis;
 
 namespace Roslynator.Formatting.CSharp
 {
-    public static partial class DiagnosticDescriptors
+    public static partial class DiagnosticRules
     {
         [Obsolete("", error: true)]
         internal static readonly DiagnosticDescriptor AddNewLineAfterBinaryOperatorInsteadOfBeforeIt2 = DiagnosticDescriptorFactory.Default.Create(

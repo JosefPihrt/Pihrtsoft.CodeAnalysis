@@ -11,15 +11,23 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class RemoveRedundantParenthesesAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class RemoveRedundantParenthesesAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                return ImmutableArray.Create(
-                    DiagnosticDescriptors.RemoveRedundantParentheses,
-                    DiagnosticDescriptors.RemoveRedundantParenthesesFadeOut);
+                if (_supportedDiagnostics.IsDefault)
+                {
+                    Immutable.InterlockedInitialize(
+                        ref _supportedDiagnostics,
+                        DiagnosticRules.RemoveRedundantParentheses,
+                        DiagnosticRules.RemoveRedundantParenthesesFadeOut);
+                }
+
+                return _supportedDiagnostics;
             }
         }
 
@@ -30,7 +38,7 @@ namespace Roslynator.CSharp.Analysis
             context.RegisterSyntaxNodeAction(
                 c =>
                 {
-                    if (DiagnosticDescriptors.RemoveRedundantParentheses.IsEffective(c))
+                    if (DiagnosticRules.RemoveRedundantParentheses.IsEffective(c))
                         AnalyzeParenthesizedExpression(c);
                 },
                 SyntaxKind.ParenthesizedExpression);
@@ -199,12 +207,12 @@ namespace Roslynator.CSharp.Analysis
             {
                 DiagnosticHelpers.ReportDiagnostic(
                     context,
-                    DiagnosticDescriptors.RemoveRedundantParentheses,
+                    DiagnosticRules.RemoveRedundantParentheses,
                     openParen.GetLocation(),
                     additionalLocations: ImmutableArray.Create(closeParen.GetLocation()));
 
-                DiagnosticHelpers.ReportToken(context, DiagnosticDescriptors.RemoveRedundantParenthesesFadeOut, openParen);
-                DiagnosticHelpers.ReportToken(context, DiagnosticDescriptors.RemoveRedundantParenthesesFadeOut, closeParen);
+                DiagnosticHelpers.ReportToken(context, DiagnosticRules.RemoveRedundantParenthesesFadeOut, openParen);
+                DiagnosticHelpers.ReportToken(context, DiagnosticRules.RemoveRedundantParenthesesFadeOut, closeParen);
             }
         }
     }

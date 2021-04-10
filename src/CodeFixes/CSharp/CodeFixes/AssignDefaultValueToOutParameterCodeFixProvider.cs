@@ -22,7 +22,7 @@ namespace Roslynator.CSharp.CodeFixes
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AssignDefaultValueToOutParameterCodeFixProvider))]
     [Shared]
-    public class AssignDefaultValueToOutParameterCodeFixProvider : BaseCodeFixProvider
+    public sealed class AssignDefaultValueToOutParameterCodeFixProvider : BaseCodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {

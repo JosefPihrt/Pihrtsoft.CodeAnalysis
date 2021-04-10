@@ -10,11 +10,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class StaticMemberInGenericTypeShouldUseTypeParameterAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class StaticMemberInGenericTypeShouldUseTypeParameterAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.StaticMemberInGenericTypeShouldUseTypeParameter); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.StaticMemberInGenericTypeShouldUseTypeParameter);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -205,7 +213,7 @@ namespace Roslynator.CSharp.Analysis
 
             DiagnosticHelpers.ReportDiagnostic(
                 context,
-                DiagnosticDescriptors.StaticMemberInGenericTypeShouldUseTypeParameter,
+                DiagnosticRules.StaticMemberInGenericTypeShouldUseTypeParameter,
                 identifier);
         }
     }

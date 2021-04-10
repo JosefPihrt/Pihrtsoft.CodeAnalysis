@@ -10,7 +10,7 @@ namespace Roslynator.Formatting.CSharp.Tests
 {
     public class RCS0041RemoveNewLineBetweenIfKeywordAndElseKeywordTests : AbstractCSharpDiagnosticVerifier<RemoveNewLineBetweenIfKeywordAndElseKeywordAnalyzer, SyntaxTriviaCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.RemoveNewLineBetweenIfKeywordAndElseKeyword;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.RemoveNewLineBetweenIfKeywordAndElseKeyword;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemoveNewLineBetweenIfKeywordAndElseKeyword)]
         public async Task Test()

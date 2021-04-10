@@ -10,7 +10,7 @@ namespace Roslynator.Formatting.CSharp.Tests
 {
     public class RCS0004AddEmptyLineBeforeClosingBraceOfDoStatementTests : AbstractCSharpDiagnosticVerifier<AddEmptyLineBeforeClosingBraceOfDoStatementAnalyzer, StatementCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddEmptyLineBeforeClosingBraceOfDoStatement;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.AddEmptyLineBeforeClosingBraceOfDoStatement;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddEmptyLineBeforeClosingBraceOfDoStatement)]
         public async Task Test()

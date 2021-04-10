@@ -11,15 +11,23 @@ using static Roslynator.DiagnosticHelpers;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class UnnecessaryInterpolatedStringAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class UnnecessaryInterpolatedStringAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                return ImmutableArray.Create(
-                    DiagnosticDescriptors.UnnecessaryInterpolatedString,
-                    DiagnosticDescriptors.UnnecessaryInterpolatedStringFadeOut);
+                if (_supportedDiagnostics.IsDefault)
+                {
+                    Immutable.InterlockedInitialize(
+                        ref _supportedDiagnostics,
+                        DiagnosticRules.UnnecessaryInterpolatedString,
+                        DiagnosticRules.UnnecessaryInterpolatedStringFadeOut);
+                }
+
+                return _supportedDiagnostics;
             }
         }
 
@@ -30,7 +38,7 @@ namespace Roslynator.CSharp.Analysis
             context.RegisterSyntaxNodeAction(
                 c =>
                 {
-                    if (DiagnosticDescriptors.UnnecessaryInterpolatedString.IsEffective(c))
+                    if (DiagnosticRules.UnnecessaryInterpolatedString.IsEffective(c))
                         AnalyzeInterpolatedStringExpression(c);
                 },
                 SyntaxKind.InterpolatedStringExpression);
@@ -57,7 +65,7 @@ namespace Roslynator.CSharp.Analysis
 
                 ReportDiagnostic(
                     context,
-                    DiagnosticDescriptors.UnnecessaryInterpolatedString,
+                    DiagnosticRules.UnnecessaryInterpolatedString,
                     Location.Create(interpolatedString.SyntaxTree, GetDollarSpan(interpolatedString)));
             }
             else
@@ -82,12 +90,12 @@ namespace Roslynator.CSharp.Analysis
                 if (IsFormattableString(context))
                     return;
 
-                ReportDiagnostic(context, DiagnosticDescriptors.UnnecessaryInterpolatedString, interpolatedString);
+                ReportDiagnostic(context, DiagnosticRules.UnnecessaryInterpolatedString, interpolatedString);
 
-                ReportToken(context, DiagnosticDescriptors.UnnecessaryInterpolatedStringFadeOut, interpolatedString.StringStartToken);
-                ReportToken(context, DiagnosticDescriptors.UnnecessaryInterpolatedStringFadeOut, interpolation.OpenBraceToken);
-                ReportToken(context, DiagnosticDescriptors.UnnecessaryInterpolatedStringFadeOut, interpolation.CloseBraceToken);
-                ReportToken(context, DiagnosticDescriptors.UnnecessaryInterpolatedStringFadeOut, interpolatedString.StringEndToken);
+                ReportToken(context, DiagnosticRules.UnnecessaryInterpolatedStringFadeOut, interpolatedString.StringStartToken);
+                ReportToken(context, DiagnosticRules.UnnecessaryInterpolatedStringFadeOut, interpolation.OpenBraceToken);
+                ReportToken(context, DiagnosticRules.UnnecessaryInterpolatedStringFadeOut, interpolation.CloseBraceToken);
+                ReportToken(context, DiagnosticRules.UnnecessaryInterpolatedStringFadeOut, interpolatedString.StringEndToken);
             }
 
             bool IsNonNullStringExpression(ExpressionSyntax expression)

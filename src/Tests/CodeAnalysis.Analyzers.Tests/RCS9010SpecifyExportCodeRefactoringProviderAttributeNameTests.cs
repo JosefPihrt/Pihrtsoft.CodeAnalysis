@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS9010SpecifyExportCodeRefactoringProviderAttributeNameTests : AbstractCSharpDiagnosticVerifier<NamedTypeSymbolAnalyzer, AttributeCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.SpecifyExportCodeRefactoringProviderAttributeName;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.SpecifyExportCodeRefactoringProviderAttributeName;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SpecifyExportCodeRefactoringProviderAttributeName)]
         public async Task Test()

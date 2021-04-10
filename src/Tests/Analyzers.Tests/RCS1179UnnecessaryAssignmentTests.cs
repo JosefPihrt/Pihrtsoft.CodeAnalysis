@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1179UnnecessaryAssignmentTests : AbstractCSharpDiagnosticVerifier<UnnecessaryAssignmentAnalyzer, UnnecessaryAssignmentCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UnnecessaryAssignment;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UnnecessaryAssignment;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UnnecessaryAssignment)]
         public async Task Test_IfStatement()

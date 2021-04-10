@@ -11,7 +11,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1213RemoveUnusedMemberDeclarationTests : AbstractCSharpDiagnosticVerifier<UnusedMemberAnalyzer, UnusedMemberCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.RemoveUnusedMemberDeclaration;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.RemoveUnusedMemberDeclaration;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemoveUnusedMemberDeclaration)]
         public async Task Test_Method()

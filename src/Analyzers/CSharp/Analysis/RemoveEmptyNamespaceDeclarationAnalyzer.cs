@@ -10,11 +10,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class RemoveEmptyNamespaceDeclarationAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class RemoveEmptyNamespaceDeclarationAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.RemoveEmptyNamespaceDeclaration); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.RemoveEmptyNamespaceDeclaration);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -46,7 +54,7 @@ namespace Roslynator.CSharp.Analysis
             if (!closeBrace.LeadingTrivia.IsEmptyOrWhitespace())
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.RemoveEmptyNamespaceDeclaration, declaration);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.RemoveEmptyNamespaceDeclaration, declaration);
         }
     }
 }

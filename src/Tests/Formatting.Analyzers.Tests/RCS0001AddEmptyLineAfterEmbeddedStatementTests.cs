@@ -10,7 +10,7 @@ namespace Roslynator.Formatting.CSharp.Tests
 {
     public class RCS0001AddEmptyLineAfterEmbeddedStatementTests : AbstractCSharpDiagnosticVerifier<AddEmptyLineAfterEmbeddedStatementAnalyzer, StatementCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddEmptyLineAfterEmbeddedStatement;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.AddEmptyLineAfterEmbeddedStatement;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddEmptyLineAfterEmbeddedStatement)]
         public async Task Test_If()

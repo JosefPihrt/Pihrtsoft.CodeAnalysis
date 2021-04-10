@@ -9,11 +9,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class ImplementExceptionConstructorsAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class ImplementExceptionConstructorsAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.ImplementExceptionConstructors); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.ImplementExceptionConstructors);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -60,7 +68,7 @@ namespace Roslynator.CSharp.Analysis
 
             var classDeclaration = (ClassDeclarationSyntax)symbol.GetSyntax(context.CancellationToken);
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.ImplementExceptionConstructors, classDeclaration.Identifier);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.ImplementExceptionConstructors, classDeclaration.Identifier);
         }
 
         private static bool IsSerializationConstructor(IMethodSymbol methodSymbol)

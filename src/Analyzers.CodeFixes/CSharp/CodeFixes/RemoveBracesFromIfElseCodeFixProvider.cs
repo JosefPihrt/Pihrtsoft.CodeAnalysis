@@ -14,7 +14,7 @@ namespace Roslynator.CSharp.CodeFixes
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(RemoveBracesFromIfElseCodeFixProvider))]
     [Shared]
-    public class RemoveBracesFromIfElseCodeFixProvider : BaseCodeFixProvider
+    public sealed class RemoveBracesFromIfElseCodeFixProvider : BaseCodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {

@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1047NonAsynchronousMethodNameShouldNotEndWithAsyncTests : AbstractCSharpDiagnosticVerifier<AsyncSuffixAnalyzer, DummyCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.NonAsynchronousMethodNameShouldNotEndWithAsync;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.NonAsynchronousMethodNameShouldNotEndWithAsync;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.NonAsynchronousMethodNameShouldNotEndWithAsync)]
         public async Task Test()

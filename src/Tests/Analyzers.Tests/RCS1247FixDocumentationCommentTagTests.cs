@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1247FixDocumentationCommentTagTests : AbstractCSharpDiagnosticVerifier<SingleLineDocumentationCommentTriviaAnalyzer, XmlNodeCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.FixDocumentationCommentTag;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.FixDocumentationCommentTag;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.FixDocumentationCommentTag)]
         public async Task Test_C_Multiline()

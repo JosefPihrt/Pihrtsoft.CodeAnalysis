@@ -11,15 +11,23 @@ using Roslynator.CSharp;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class RemoveRedundantAsyncAwaitAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class RemoveRedundantAsyncAwaitAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                return ImmutableArray.Create(
-                    DiagnosticDescriptors.RemoveRedundantAsyncAwait,
-                    DiagnosticDescriptors.RemoveRedundantAsyncAwaitFadeOut);
+                if (_supportedDiagnostics.IsDefault)
+                {
+                    Immutable.InterlockedInitialize(
+                        ref _supportedDiagnostics,
+                        DiagnosticRules.RemoveRedundantAsyncAwait,
+                        DiagnosticRules.RemoveRedundantAsyncAwaitFadeOut);
+                }
+
+                return _supportedDiagnostics;
             }
         }
 
@@ -30,7 +38,7 @@ namespace Roslynator.CSharp.Analysis
             context.RegisterSyntaxNodeAction(
                 c =>
                 {
-                    if (DiagnosticDescriptors.RemoveRedundantAsyncAwait.IsEffective(c))
+                    if (DiagnosticRules.RemoveRedundantAsyncAwait.IsEffective(c))
                         AnalyzeMethodDeclaration(c);
                 },
                 SyntaxKind.MethodDeclaration);
@@ -38,7 +46,7 @@ namespace Roslynator.CSharp.Analysis
             context.RegisterSyntaxNodeAction(
                 c =>
                 {
-                    if (DiagnosticDescriptors.RemoveRedundantAsyncAwait.IsEffective(c))
+                    if (DiagnosticRules.RemoveRedundantAsyncAwait.IsEffective(c))
                         AnalyzeLocalFunctionStatement(c);
                 },
                 SyntaxKind.LocalFunctionStatement);
@@ -46,7 +54,7 @@ namespace Roslynator.CSharp.Analysis
             context.RegisterSyntaxNodeAction(
                 c =>
                 {
-                    if (DiagnosticDescriptors.RemoveRedundantAsyncAwait.IsEffective(c))
+                    if (DiagnosticRules.RemoveRedundantAsyncAwait.IsEffective(c))
                         AnalyzeAnonymousMethodExpression(c);
                 },
                 SyntaxKind.AnonymousMethodExpression);
@@ -54,7 +62,7 @@ namespace Roslynator.CSharp.Analysis
             context.RegisterSyntaxNodeAction(
                 c =>
                 {
-                    if (DiagnosticDescriptors.RemoveRedundantAsyncAwait.IsEffective(c))
+                    if (DiagnosticRules.RemoveRedundantAsyncAwait.IsEffective(c))
                         AnalyzeLambdaExpression(c);
                 },
                 SyntaxKind.SimpleLambdaExpression);
@@ -62,7 +70,7 @@ namespace Roslynator.CSharp.Analysis
             context.RegisterSyntaxNodeAction(
                 c =>
                 {
-                    if (DiagnosticDescriptors.RemoveRedundantAsyncAwait.IsEffective(c))
+                    if (DiagnosticRules.RemoveRedundantAsyncAwait.IsEffective(c))
                         AnalyzeLambdaExpression(c);
                 },
                 SyntaxKind.ParenthesizedLambdaExpression);
@@ -146,8 +154,8 @@ namespace Roslynator.CSharp.Analysis
 
         private static void ReportDiagnostic(SyntaxNodeAnalysisContext context, SyntaxToken asyncKeyword, RemoveAsyncAwaitAnalysis analysis)
         {
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.RemoveRedundantAsyncAwait, asyncKeyword);
-            DiagnosticHelpers.ReportToken(context, DiagnosticDescriptors.RemoveRedundantAsyncAwaitFadeOut, asyncKeyword);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.RemoveRedundantAsyncAwait, asyncKeyword);
+            DiagnosticHelpers.ReportToken(context, DiagnosticRules.RemoveRedundantAsyncAwaitFadeOut, asyncKeyword);
 
             if (analysis.AwaitExpression != null)
             {
@@ -161,7 +169,7 @@ namespace Roslynator.CSharp.Analysis
 
             void ReportAwaitAndConfigureAwait(AwaitExpressionSyntax awaitExpression)
             {
-                DiagnosticHelpers.ReportToken(context, DiagnosticDescriptors.RemoveRedundantAsyncAwaitFadeOut, awaitExpression.AwaitKeyword);
+                DiagnosticHelpers.ReportToken(context, DiagnosticRules.RemoveRedundantAsyncAwaitFadeOut, awaitExpression.AwaitKeyword);
 
                 ExpressionSyntax expression = awaitExpression.Expression;
 
@@ -174,9 +182,9 @@ namespace Roslynator.CSharp.Analysis
 
                     if (string.Equals(memberAccess?.Name?.Identifier.ValueText, "ConfigureAwait", StringComparison.Ordinal))
                     {
-                        DiagnosticHelpers.ReportNode(context, DiagnosticDescriptors.RemoveRedundantAsyncAwaitFadeOut, memberAccess.Name);
-                        DiagnosticHelpers.ReportToken(context, DiagnosticDescriptors.RemoveRedundantAsyncAwaitFadeOut, memberAccess.OperatorToken);
-                        DiagnosticHelpers.ReportNode(context, DiagnosticDescriptors.RemoveRedundantAsyncAwaitFadeOut, invocation.ArgumentList);
+                        DiagnosticHelpers.ReportNode(context, DiagnosticRules.RemoveRedundantAsyncAwaitFadeOut, memberAccess.Name);
+                        DiagnosticHelpers.ReportToken(context, DiagnosticRules.RemoveRedundantAsyncAwaitFadeOut, memberAccess.OperatorToken);
+                        DiagnosticHelpers.ReportNode(context, DiagnosticRules.RemoveRedundantAsyncAwaitFadeOut, invocation.ArgumentList);
                     }
                 }
             }

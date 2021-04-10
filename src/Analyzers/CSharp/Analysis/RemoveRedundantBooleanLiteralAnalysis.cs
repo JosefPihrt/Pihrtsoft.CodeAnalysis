@@ -16,7 +16,7 @@ namespace Roslynator.CSharp.Analysis
             ExpressionSyntax left,
             ExpressionSyntax right)
         {
-            if (!DiagnosticDescriptors.RemoveRedundantBooleanLiteral.IsEffective(context))
+            if (!DiagnosticRules.RemoveRedundantBooleanLiteral.IsEffective(context))
                 return;
 
             if (binaryExpression.SpanContainsDirectives())
@@ -26,7 +26,7 @@ namespace Roslynator.CSharp.Analysis
 
             DiagnosticHelpers.ReportDiagnostic(
                 context,
-                DiagnosticDescriptors.RemoveRedundantBooleanLiteral,
+                DiagnosticRules.RemoveRedundantBooleanLiteral,
                 Location.Create(binaryExpression.SyntaxTree, span),
                 binaryExpression.ToString(span));
         }

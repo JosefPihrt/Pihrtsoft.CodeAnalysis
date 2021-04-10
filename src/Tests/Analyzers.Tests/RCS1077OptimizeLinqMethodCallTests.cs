@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1077OptimizeLinqMethodCallTests : AbstractCSharpDiagnosticVerifier<InvocationExpressionAnalyzer, OptimizeLinqMethodCallCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.OptimizeLinqMethodCall;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.OptimizeLinqMethodCall;
 
         [Theory, Trait(Traits.Analyzer, DiagnosticIdentifiers.OptimizeLinqMethodCall)]
         [InlineData("Where(_ => true).Any()", "Any(_ => true)")]

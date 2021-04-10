@@ -10,11 +10,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class RemoveUnnecessaryElseAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class RemoveUnnecessaryElseAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.RemoveUnnecessaryElse); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.RemoveUnnecessaryElse);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -34,7 +42,7 @@ namespace Roslynator.CSharp.Analysis
             if (!IsFixable(elseClause))
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.RemoveUnnecessaryElse, elseClause.ElseKeyword);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.RemoveUnnecessaryElse, elseClause.ElseKeyword);
         }
 
         public static bool IsFixable(ElseClauseSyntax elseClause)

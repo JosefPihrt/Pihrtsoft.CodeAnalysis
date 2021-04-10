@@ -13,7 +13,7 @@ namespace Roslynator.Formatting.CodeFixes.CSharp
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(BinaryExpressionCodeFixProvider))]
     [Shared]
-    public class BinaryExpressionCodeFixProvider : BaseCodeFixProvider
+    public sealed class BinaryExpressionCodeFixProvider : BaseCodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {

@@ -12,15 +12,23 @@ using Roslynator.CSharp.Syntax;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SimplifyNullCheckAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class SimplifyNullCheckAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                return ImmutableArray.Create(
-                    DiagnosticDescriptors.UseCoalesceExpressionInsteadOfConditionalExpression,
-                    DiagnosticDescriptors.UseConditionalAccessInsteadOfConditionalExpression);
+                if (_supportedDiagnostics.IsDefault)
+                {
+                    Immutable.InterlockedInitialize(
+                        ref _supportedDiagnostics,
+                        DiagnosticRules.UseCoalesceExpressionInsteadOfConditionalExpression,
+                        DiagnosticRules.UseConditionalAccessInsteadOfConditionalExpression);
+                }
+
+                return _supportedDiagnostics;
             }
         }
 
@@ -57,14 +65,14 @@ namespace Roslynator.CSharp.Analysis
 
             if (CSharpFactory.AreEquivalent(nullCheck.Expression, whenNotNull))
             {
-                if (DiagnosticDescriptors.UseCoalesceExpressionInsteadOfConditionalExpression.IsEffective(context)
+                if (DiagnosticRules.UseCoalesceExpressionInsteadOfConditionalExpression.IsEffective(context)
                     && semanticModel
                         .GetTypeSymbol(nullCheck.Expression, cancellationToken)?
                         .IsReferenceTypeOrNullableType() == true)
                 {
                     DiagnosticHelpers.ReportDiagnostic(
                         context,
-                        DiagnosticDescriptors.UseCoalesceExpressionInsteadOfConditionalExpression,
+                        DiagnosticRules.UseCoalesceExpressionInsteadOfConditionalExpression,
                         conditionalExpression);
                 }
             }
@@ -103,11 +111,11 @@ namespace Roslynator.CSharp.Analysis
                         {
                             if (memberAccessExpression == whenNotNull)
                             {
-                                if (DiagnosticDescriptors.UseCoalesceExpressionInsteadOfConditionalExpression.IsEffective(context))
+                                if (DiagnosticRules.UseCoalesceExpressionInsteadOfConditionalExpression.IsEffective(context))
                                 {
                                     DiagnosticHelpers.ReportDiagnostic(
                                         context,
-                                        DiagnosticDescriptors.UseCoalesceExpressionInsteadOfConditionalExpression,
+                                        DiagnosticRules.UseCoalesceExpressionInsteadOfConditionalExpression,
                                         conditionalExpression);
                                 }
                             }
@@ -119,7 +127,7 @@ namespace Roslynator.CSharp.Analysis
                     }
                 }
             }
-            else if (DiagnosticDescriptors.UseConditionalAccessInsteadOfConditionalExpression.IsEffective(context)
+            else if (DiagnosticRules.UseConditionalAccessInsteadOfConditionalExpression.IsEffective(context)
                 && ((CSharpCompilation)context.Compilation).LanguageVersion >= LanguageVersion.CSharp6
                 && whenNotNull.IsKind(SyntaxKind.CastExpression)
                 && whenNull.IsKind(SyntaxKind.NullLiteralExpression, SyntaxKind.DefaultLiteralExpression))
@@ -145,7 +153,7 @@ namespace Roslynator.CSharp.Analysis
                         {
                             DiagnosticHelpers.ReportDiagnostic(
                                 context,
-                                DiagnosticDescriptors.UseConditionalAccessInsteadOfConditionalExpression,
+                                DiagnosticRules.UseConditionalAccessInsteadOfConditionalExpression,
                                 conditionalExpression);
                         }
                     }
@@ -161,7 +169,7 @@ namespace Roslynator.CSharp.Analysis
             SemanticModel semanticModel,
             CancellationToken cancellationToken)
         {
-            if (DiagnosticDescriptors.UseConditionalAccessInsteadOfConditionalExpression.IsEffective(context)
+            if (DiagnosticRules.UseConditionalAccessInsteadOfConditionalExpression.IsEffective(context)
                 && ((CSharpCompilation)context.Compilation).LanguageVersion >= LanguageVersion.CSharp6)
             {
                 ITypeSymbol typeSymbol = semanticModel.GetTypeSymbol(whenNotNull, cancellationToken);
@@ -175,7 +183,7 @@ namespace Roslynator.CSharp.Analysis
                 {
                     DiagnosticHelpers.ReportDiagnostic(
                         context,
-                        DiagnosticDescriptors.UseConditionalAccessInsteadOfConditionalExpression,
+                        DiagnosticRules.UseConditionalAccessInsteadOfConditionalExpression,
                         conditionalExpressionInfo.ConditionalExpression);
                 }
             }

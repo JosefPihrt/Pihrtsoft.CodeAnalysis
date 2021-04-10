@@ -11,7 +11,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1170UseReadOnlyAutoPropertyTests : AbstractCSharpDiagnosticVerifier<MakeMemberReadOnlyAnalyzer, MemberDeclarationCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseReadOnlyAutoProperty;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UseReadOnlyAutoProperty;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseReadOnlyAutoProperty)]
         public async Task Test_InstanceProperty()

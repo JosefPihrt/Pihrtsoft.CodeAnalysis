@@ -14,11 +14,19 @@ using Roslynator.CSharp.SyntaxWalkers;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class UseExceptionFilterAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class UseExceptionFilterAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.UseExceptionFilter); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.UseExceptionFilter);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -64,7 +72,7 @@ namespace Roslynator.CSharp.Analysis
                 if (ifStatement.ContainsUnbalancedIfElseDirectives())
                     return;
 
-                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UseExceptionFilter, ifStatement.IfKeyword);
+                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UseExceptionFilter, ifStatement.IfKeyword);
             }
         }
 

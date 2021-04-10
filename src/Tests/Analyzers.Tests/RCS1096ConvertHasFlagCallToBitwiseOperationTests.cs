@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1096ConvertHasFlagCallToBitwiseOperationTests : AbstractCSharpDiagnosticVerifier<ConvertHasFlagCallToBitwiseOperationOrViceVersaAnalyzer, ConvertHasFlagCallToBitwiseOperationOrViceVersaCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.ConvertHasFlagCallToBitwiseOperationOrViceVersa;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.ConvertHasFlagCallToBitwiseOperationOrViceVersa;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.ConvertHasFlagCallToBitwiseOperationOrViceVersa)]
         public async Task Test_HasFlag()
@@ -428,7 +428,7 @@ class C
         if (options.HasFlag(StringSplitOptions.RemoveEmptyEntries)) { }
     }
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.ConvertBitwiseOperationToHasFlagCall));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.ConvertBitwiseOperationToHasFlagCall));
         }
     }
 }

@@ -11,11 +11,19 @@ using static Roslynator.CSharp.SyntaxTriviaAnalysis;
 namespace Roslynator.Formatting.CSharp
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class FixFormattingOfBinaryExpressionChainAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class FixFormattingOfBinaryExpressionChainAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.FixFormattingOfBinaryExpressionChain); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.FixFormattingOfBinaryExpressionChain);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -168,7 +176,7 @@ namespace Roslynator.Formatting.CSharp
             {
                 DiagnosticHelpers.ReportDiagnostic(
                     context,
-                    DiagnosticDescriptors.FixFormattingOfBinaryExpressionChain,
+                    DiagnosticRules.FixFormattingOfBinaryExpressionChain,
                     topBinaryExpression);
             }
         }

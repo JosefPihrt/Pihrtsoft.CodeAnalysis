@@ -11,11 +11,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class ParameterNameDiffersFromBaseAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class ParameterNameDiffersFromBaseAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.ParameterNameDiffersFromBase); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.ParameterNameDiffersFromBase);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -78,7 +86,7 @@ namespace Roslynator.CSharp.Analysis
                     {
                         DiagnosticHelpers.ReportDiagnostic(
                             context,
-                            DiagnosticDescriptors.ParameterNameDiffersFromBase,
+                            DiagnosticRules.ParameterNameDiffersFromBase,
                             parameterSyntax.Identifier,
                             name,
                             parameters2[i].Name);

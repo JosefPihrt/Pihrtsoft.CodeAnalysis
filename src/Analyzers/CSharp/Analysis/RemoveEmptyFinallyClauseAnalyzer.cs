@@ -9,15 +9,23 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class RemoveEmptyFinallyClauseAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class RemoveEmptyFinallyClauseAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                return ImmutableArray.Create(
-                    DiagnosticDescriptors.RemoveEmptyFinallyClause,
-                    DiagnosticDescriptors.RemoveEmptyFinallyClauseFadeOut);
+                if (_supportedDiagnostics.IsDefault)
+                {
+                    Immutable.InterlockedInitialize(
+                        ref _supportedDiagnostics,
+                        DiagnosticRules.RemoveEmptyFinallyClause,
+                        DiagnosticRules.RemoveEmptyFinallyClauseFadeOut);
+                }
+
+                return _supportedDiagnostics;
             }
         }
 
@@ -51,7 +59,7 @@ namespace Roslynator.CSharp.Analysis
 
             if (tryStatement.Catches.Any())
             {
-                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.RemoveEmptyFinallyClause, finallyClause);
+                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.RemoveEmptyFinallyClause, finallyClause);
             }
             else
             {
@@ -72,11 +80,11 @@ namespace Roslynator.CSharp.Analysis
                 if (!finallyClause.FinallyKeyword.LeadingTrivia.IsEmptyOrWhitespace())
                     return;
 
-                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.RemoveEmptyFinallyClause, finallyClause);
+                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.RemoveEmptyFinallyClause, finallyClause);
 
-                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.RemoveEmptyFinallyClauseFadeOut, tryStatement.TryKeyword);
-                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.RemoveEmptyFinallyClauseFadeOut, tryBlock.OpenBraceToken);
-                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.RemoveEmptyFinallyClauseFadeOut, tryBlock.CloseBraceToken);
+                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.RemoveEmptyFinallyClauseFadeOut, tryStatement.TryKeyword);
+                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.RemoveEmptyFinallyClauseFadeOut, tryBlock.OpenBraceToken);
+                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.RemoveEmptyFinallyClauseFadeOut, tryBlock.CloseBraceToken);
             }
         }
     }

@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1056AvoidUsageOfUsingAliasDirectiveTests : AbstractCSharpDiagnosticVerifier<AvoidUsageOfUsingAliasDirectiveAnalyzer, UsingDirectiveCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AvoidUsageOfUsingAliasDirective;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.AvoidUsageOfUsingAliasDirective;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AvoidUsageOfUsingAliasDirective)]
         public async Task Test()

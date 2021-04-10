@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1045RenamePrivateFieldToCamelCaseWithUnderscoreTests : AbstractCSharpDiagnosticVerifier<RenamePrivateFieldAnalyzer, RenamePrivateFieldToCamelCaseWithUnderscoreCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.RenamePrivateFieldToCamelCaseWithUnderscore;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.RenamePrivateFieldToCamelCaseWithUnderscore;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RenamePrivateFieldToCamelCaseWithUnderscore)]
         public async Task Test_Lowercase()
@@ -104,7 +104,7 @@ class C
 {
     private static readonly string f;
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.DoNotRenamePrivateStaticReadOnlyFieldToCamelCaseWithUnderscore));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.DoNotRenamePrivateStaticReadOnlyFieldToCamelCaseWithUnderscore));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RenamePrivateFieldToCamelCaseWithUnderscore)]

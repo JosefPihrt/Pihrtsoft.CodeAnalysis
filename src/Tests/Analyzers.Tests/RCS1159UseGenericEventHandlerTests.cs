@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1159UseGenericEventHandlerTests : AbstractCSharpDiagnosticVerifier<UseGenericEventHandlerAnalyzer, TypeCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseGenericEventHandler;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UseGenericEventHandler;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseGenericEventHandler)]
         public async Task Test_EventField()

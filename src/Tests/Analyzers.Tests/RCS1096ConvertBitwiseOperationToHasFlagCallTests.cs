@@ -10,11 +10,11 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1096ConvertBitwiseOperationToHasFlagCallTests : AbstractCSharpDiagnosticVerifier<ConvertHasFlagCallToBitwiseOperationOrViceVersaAnalyzer, ConvertHasFlagCallToBitwiseOperationOrViceVersaCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.ConvertHasFlagCallToBitwiseOperationOrViceVersa;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.ConvertHasFlagCallToBitwiseOperationOrViceVersa;
 
         public override CSharpTestOptions Options
         {
-            get { return base.Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.ConvertBitwiseOperationToHasFlagCall); }
+            get { return base.Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.ConvertBitwiseOperationToHasFlagCall); }
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.ConvertHasFlagCallToBitwiseOperationOrViceVersa)]

@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1154SortEnumMembersTests : AbstractCSharpDiagnosticVerifier<SortEnumMembersAnalyzer, EnumDeclarationCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.SortEnumMembers;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.SortEnumMembers;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SortEnumMembers)]
         public async Task Test()

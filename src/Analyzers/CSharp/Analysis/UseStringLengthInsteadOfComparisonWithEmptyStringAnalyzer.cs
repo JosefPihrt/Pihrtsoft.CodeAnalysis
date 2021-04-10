@@ -12,11 +12,19 @@ using Roslynator.CSharp.Syntax;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class UseStringLengthInsteadOfComparisonWithEmptyStringAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class UseStringLengthInsteadOfComparisonWithEmptyStringAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.UseStringLengthInsteadOfComparisonWithEmptyString); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.UseStringLengthInsteadOfComparisonWithEmptyString);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -49,14 +57,14 @@ namespace Roslynator.CSharp.Analysis
                 if (CSharpUtility.IsStringExpression(right, semanticModel, cancellationToken)
                     && !equalsExpression.IsInExpressionTree(semanticModel, cancellationToken))
                 {
-                    DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UseStringLengthInsteadOfComparisonWithEmptyString, equalsExpression);
+                    DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UseStringLengthInsteadOfComparisonWithEmptyString, equalsExpression);
                 }
             }
             else if (CSharpUtility.IsEmptyStringExpression(right, semanticModel, cancellationToken)
                 && CSharpUtility.IsStringExpression(left, semanticModel, cancellationToken)
                 && !equalsExpression.IsInExpressionTree(semanticModel, cancellationToken))
             {
-                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UseStringLengthInsteadOfComparisonWithEmptyString, equalsExpression);
+                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UseStringLengthInsteadOfComparisonWithEmptyString, equalsExpression);
             }
         }
     }

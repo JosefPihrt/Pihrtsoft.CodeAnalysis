@@ -11,11 +11,19 @@ using Microsoft.CodeAnalysis.Text;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class DefaultLabelShouldBeLastLabelInSwitchSectionAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class DefaultLabelShouldBeLastLabelInSwitchSectionAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.DefaultLabelShouldBeLastLabelInSwitchSection); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.DefaultLabelShouldBeLastLabelInSwitchSection);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -50,7 +58,7 @@ namespace Roslynator.CSharp.Analysis
                     {
                         DiagnosticHelpers.ReportDiagnostic(
                             context,
-                            DiagnosticDescriptors.DefaultLabelShouldBeLastLabelInSwitchSection,
+                            DiagnosticRules.DefaultLabelShouldBeLastLabelInSwitchSection,
                             label);
 
                         break;

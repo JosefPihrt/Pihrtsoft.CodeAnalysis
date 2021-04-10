@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis;
 
 namespace Roslynator.Formatting.CSharp
 {
-    public static partial class DiagnosticDescriptors
+    public static partial class DiagnosticRules
     {
         /// <summary>RCS0001</summary>
         public static readonly DiagnosticDescriptor AddEmptyLineAfterEmbeddedStatement = DiagnosticDescriptorFactory.Default.Create(

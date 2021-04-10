@@ -10,11 +10,19 @@ using Microsoft.CodeAnalysis.Text;
 namespace Roslynator.Formatting.CSharp
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class AddNewLineAfterOpeningBraceOfAccessorAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class AddNewLineAfterOpeningBraceOfAccessorAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.AddNewLineAfterOpeningBraceOfAccessor); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.AddNewLineAfterOpeningBraceOfAccessor);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -47,7 +55,7 @@ namespace Roslynator.Formatting.CSharp
 
             DiagnosticHelpers.ReportDiagnostic(
                 context,
-                DiagnosticDescriptors.AddNewLineAfterOpeningBraceOfAccessor,
+                DiagnosticRules.AddNewLineAfterOpeningBraceOfAccessor,
                 Location.Create(accessor.SyntaxTree, new TextSpan(openBrace.Span.End, 0)));
         }
     }

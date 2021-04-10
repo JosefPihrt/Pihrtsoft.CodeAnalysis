@@ -10,7 +10,7 @@ namespace Roslynator.Formatting.CSharp.Tests
 {
     public class RCS0046UseSpacesInsteadOfTabTests : AbstractCSharpDiagnosticVerifier<UseSpacesInsteadOfTabAnalyzer, ReplaceTabWithSpacesCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseSpacesInsteadOfTab;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UseSpacesInsteadOfTab;
 
         private readonly string _fourSpacesEquivalenceKey;
 

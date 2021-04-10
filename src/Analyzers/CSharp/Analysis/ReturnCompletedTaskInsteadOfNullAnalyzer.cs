@@ -13,11 +13,19 @@ using Roslynator.CSharp.SyntaxWalkers;
 namespace Roslynator.CSharp.Analysis.ReturnTaskInsteadOfNull
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class ReturnCompletedTaskInsteadOfNullAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class ReturnCompletedTaskInsteadOfNullAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.ReturnCompletedTaskInsteadOfNull); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.ReturnCompletedTaskInsteadOfNull);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -341,7 +349,7 @@ namespace Roslynator.CSharp.Analysis.ReturnTaskInsteadOfNull
         {
             DiagnosticHelpers.ReportDiagnostic(
                 context,
-                DiagnosticDescriptors.ReturnCompletedTaskInsteadOfNull,
+                DiagnosticRules.ReturnCompletedTaskInsteadOfNull,
                 expression);
         }
 

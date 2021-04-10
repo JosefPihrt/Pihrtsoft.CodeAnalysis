@@ -17,7 +17,7 @@ namespace Roslynator.CSharp.CodeFixes
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(DeclareEnumMemberWithZeroValueCodeFixProvider))]
     [Shared]
-    public class DeclareEnumMemberWithZeroValueCodeFixProvider : BaseCodeFixProvider
+    public sealed class DeclareEnumMemberWithZeroValueCodeFixProvider : BaseCodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {

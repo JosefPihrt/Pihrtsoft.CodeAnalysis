@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1215ExpressionIsAlwaysEqualToTrueOrFalseTests : AbstractCSharpDiagnosticVerifier<BinaryOperatorAnalyzer, ExpressionCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.ExpressionIsAlwaysEqualToTrueOrFalse;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.ExpressionIsAlwaysEqualToTrueOrFalse;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.ExpressionIsAlwaysEqualToTrueOrFalse)]
         public async Task Test_True()

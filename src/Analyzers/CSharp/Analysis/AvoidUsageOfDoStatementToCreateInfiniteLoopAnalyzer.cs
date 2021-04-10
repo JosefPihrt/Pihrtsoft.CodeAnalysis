@@ -10,11 +10,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class AvoidUsageOfDoStatementToCreateInfiniteLoopAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class AvoidUsageOfDoStatementToCreateInfiniteLoopAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.AvoidUsageOfDoStatementToCreateInfiniteLoop); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.AvoidUsageOfDoStatementToCreateInfiniteLoop);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -32,7 +40,7 @@ namespace Roslynator.CSharp.Analysis
             {
                 DiagnosticHelpers.ReportDiagnostic(
                     context,
-                    DiagnosticDescriptors.AvoidUsageOfDoStatementToCreateInfiniteLoop,
+                    DiagnosticRules.AvoidUsageOfDoStatementToCreateInfiniteLoop,
                     doStatement.DoKeyword);
             }
         }

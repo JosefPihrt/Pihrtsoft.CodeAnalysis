@@ -10,11 +10,19 @@ using Roslynator.CSharp.Syntax;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SimplifyConditionalExpressionAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class SimplifyConditionalExpressionAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.SimplifyConditionalExpression); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.SimplifyConditionalExpression);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -86,7 +94,7 @@ namespace Roslynator.CSharp.Analysis
 
             void ReportDiagnostic()
             {
-                DiagnosticHelpers.ReportDiagnosticIfNotSuppressed(context, DiagnosticDescriptors.SimplifyConditionalExpression, conditionalExpression);
+                DiagnosticHelpers.ReportDiagnosticIfNotSuppressed(context, DiagnosticRules.SimplifyConditionalExpression, conditionalExpression);
             }
         }
     }

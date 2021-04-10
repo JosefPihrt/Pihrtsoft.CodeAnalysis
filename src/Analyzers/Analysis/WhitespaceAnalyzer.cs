@@ -10,15 +10,23 @@ using Microsoft.CodeAnalysis.CSharp;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp, LanguageNames.VisualBasic)]
-    public class WhitespaceAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class WhitespaceAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                return ImmutableArray.Create(
-                    DiagnosticDescriptors.RemoveTrailingWhitespace,
-                    DiagnosticDescriptors.RemoveRedundantEmptyLine);
+                if (_supportedDiagnostics.IsDefault)
+                {
+                    Immutable.InterlockedInitialize(
+                        ref _supportedDiagnostics,
+                        DiagnosticRules.RemoveTrailingWhitespace,
+                        DiagnosticRules.RemoveRedundantEmptyLine);
+                }
+
+                return _supportedDiagnostics;
             }
         }
 
@@ -76,7 +84,7 @@ namespace Roslynator.CSharp.Analysis
                     {
                         DiagnosticHelpers.ReportDiagnostic(
                             context,
-                            DiagnosticDescriptors.RemoveRedundantEmptyLine,
+                            DiagnosticRules.RemoveRedundantEmptyLine,
                             Location.Create(context.Tree, emptyLines));
                     }
 
@@ -105,7 +113,7 @@ namespace Roslynator.CSharp.Analysis
 
                             DiagnosticHelpers.ReportDiagnostic(
                                 context,
-                                DiagnosticDescriptors.RemoveTrailingWhitespace,
+                                DiagnosticRules.RemoveTrailingWhitespace,
                                 Location.Create(context.Tree, whitespace));
                         }
                     }

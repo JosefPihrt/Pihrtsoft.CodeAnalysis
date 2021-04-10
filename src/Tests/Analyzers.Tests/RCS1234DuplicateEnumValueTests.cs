@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1234DuplicateEnumValueTests : AbstractCSharpDiagnosticVerifier<EnumSymbolAnalyzer, EnumMemberDeclarationCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.DuplicateEnumValue;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.DuplicateEnumValue;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.DuplicateEnumValue)]
         public async Task Test()

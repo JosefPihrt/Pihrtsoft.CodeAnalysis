@@ -10,7 +10,7 @@ namespace Roslynator.Formatting.CSharp.Tests
 {
     public class RCS0053FixFormattingOfListTests : AbstractCSharpDiagnosticVerifier<FixFormattingOfListAnalyzer, FixFormattingOfListCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.FixFormattingOfList;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.FixFormattingOfList;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.FixFormattingOfList)]
         public async Task Test_Singleline_AlignedToParenthesis()

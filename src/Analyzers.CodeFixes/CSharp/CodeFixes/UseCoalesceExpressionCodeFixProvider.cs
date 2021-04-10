@@ -22,7 +22,7 @@ namespace Roslynator.CSharp.CodeFixes
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UseCoalesceExpressionCodeFixProvider))]
     [Shared]
-    public class UseCoalesceExpressionCodeFixProvider : BaseCodeFixProvider
+    public sealed class UseCoalesceExpressionCodeFixProvider : BaseCodeFixProvider
     {
         private const string Title = "Use coalesce expression";
 

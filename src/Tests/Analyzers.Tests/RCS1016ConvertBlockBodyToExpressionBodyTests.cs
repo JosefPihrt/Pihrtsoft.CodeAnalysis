@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1016ConvertBlockBodyToExpressionBodyTests : AbstractCSharpDiagnosticVerifier<ConvertBlockBodyToExpressionBodyOrViceVersaAnalyzer, ConvertBlockBodyToExpressionBodyOrViceVersaCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.ConvertBlockBodyToExpressionBodyOrViceVersa;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.ConvertBlockBodyToExpressionBodyOrViceVersa;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.ConvertBlockBodyToExpressionBodyOrViceVersa)]
         public async Task Test_Constructor()
@@ -774,7 +774,7 @@ class C
             b"";
     }
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.ConvertExpressionBodyToBlockBodyWhenExpressionIsMultiLine));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.ConvertExpressionBodyToBlockBodyWhenExpressionIsMultiLine));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.ConvertBlockBodyToExpressionBodyOrViceVersa)]

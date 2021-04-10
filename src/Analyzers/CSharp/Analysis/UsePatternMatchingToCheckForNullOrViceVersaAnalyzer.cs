@@ -11,11 +11,19 @@ using Roslynator.CSharp.Syntax;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class UsePatternMatchingToCheckForNullOrViceVersaAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class UsePatternMatchingToCheckForNullOrViceVersaAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.UsePatternMatchingToCheckForNullOrViceVersa); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.UsePatternMatchingToCheckForNullOrViceVersa);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -66,7 +74,7 @@ namespace Roslynator.CSharp.Analysis
             {
                 DiagnosticHelpers.ReportDiagnostic(
                     context,
-                    DiagnosticDescriptors.UsePatternMatchingToCheckForNullOrViceVersa,
+                    DiagnosticRules.UsePatternMatchingToCheckForNullOrViceVersa,
                     binaryExpression,
                     "==");
             }
@@ -85,7 +93,7 @@ namespace Roslynator.CSharp.Analysis
             {
                 DiagnosticHelpers.ReportDiagnostic(
                     context,
-                    DiagnosticDescriptors.UsePatternMatchingToCheckForNullOrViceVersa,
+                    DiagnosticRules.UsePatternMatchingToCheckForNullOrViceVersa,
                     binaryExpression,
                     "!=");
             }
@@ -103,7 +111,7 @@ namespace Roslynator.CSharp.Analysis
             {
                 DiagnosticHelpers.ReportDiagnostic(
                     context,
-                    DiagnosticDescriptors.ReportOnly.UseComparisonInsteadPatternMatchingToCheckForNull,
+                    DiagnosticRules.ReportOnly.UseComparisonInsteadPatternMatchingToCheckForNull,
                     isPatternExpression);
             }
         }

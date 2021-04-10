@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1010UseVarInsteadOfExplicitTypeWhenTypeIsObviousTests : AbstractCSharpDiagnosticVerifier<UseVarInsteadOfExplicitTypeWhenTypeIsObviousAnalyzer, UseVarInsteadOfExplicitTypeCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseVarInsteadOfExplicitTypeWhenTypeIsObvious;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UseVarInsteadOfExplicitTypeWhenTypeIsObvious;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseVarInsteadOfExplicitTypeWhenTypeIsObvious)]
         public async Task Test_ObjectCreation()

@@ -11,11 +11,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class UnnecessaryUnsafeContextAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class UnnecessaryUnsafeContextAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.UnnecessaryUnsafeContext); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.UnnecessaryUnsafeContext);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -50,7 +58,7 @@ namespace Roslynator.CSharp.Analysis
             if (!ParentDeclarationsContainsUnsafeModifier(unsafeStatement))
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UnnecessaryUnsafeContext, unsafeStatement.UnsafeKeyword);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UnnecessaryUnsafeContext, unsafeStatement.UnsafeKeyword);
         }
 
         private static void AnalyzeLocalFunctionStatement(SyntaxNodeAnalysisContext context)
@@ -76,7 +84,7 @@ namespace Roslynator.CSharp.Analysis
             if (!ParentDeclarationsContainsUnsafeModifier(parent))
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UnnecessaryUnsafeContext, modifiers[index]);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UnnecessaryUnsafeContext, modifiers[index]);
         }
 
         private static void AnalyzeTypeDeclaration(SyntaxNodeAnalysisContext context)
@@ -176,7 +184,7 @@ namespace Roslynator.CSharp.Analysis
             if (!ParentTypeDeclarationsContainsUnsafeModifier(memberDeclaration))
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UnnecessaryUnsafeContext, modifiers[index]);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UnnecessaryUnsafeContext, modifiers[index]);
         }
 
         private static bool ParentDeclarationsContainsUnsafeModifier(UnsafeStatementSyntax unsafeStatement)

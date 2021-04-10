@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1202AvoidNullReferenceExceptionTests : AbstractCSharpDiagnosticVerifier<InvocationExpressionAnalyzer, AvoidNullReferenceExceptionCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AvoidNullReferenceException;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.AvoidNullReferenceException;
 
         [Theory, Trait(Traits.Analyzer, DiagnosticIdentifiers.AvoidNullReferenceException)]
         [InlineData("x.ElementAtOrDefault(1)[|.|]ToString()", "x.ElementAtOrDefault(1)?.ToString()")]

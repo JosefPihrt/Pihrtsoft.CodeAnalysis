@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1226AddParagraphToDocumentationCommentTests : AbstractCSharpDiagnosticVerifier<AddParagraphToDocumentationCommentAnalyzer, AddParagraphToDocumentationCommentCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddParagraphToDocumentationComment;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.AddParagraphToDocumentationComment;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddParagraphToDocumentationComment)]
         public async Task Test_TwoParagraphs_Summary()

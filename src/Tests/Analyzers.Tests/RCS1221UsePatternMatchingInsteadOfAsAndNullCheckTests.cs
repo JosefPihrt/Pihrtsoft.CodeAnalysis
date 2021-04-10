@@ -11,7 +11,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1221UsePatternMatchingInsteadOfAsAndNullCheckTests : AbstractCSharpDiagnosticVerifier<UsePatternMatchingInsteadOfAsAndNullCheckAnalyzer, UsePatternMatchingInsteadOfAsAndNullCheckCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UsePatternMatchingInsteadOfAsAndNullCheck;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UsePatternMatchingInsteadOfAsAndNullCheck;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UsePatternMatchingInsteadOfAsAndNullCheck)]
         public async Task Test_EqualsToNull()

@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1233UseShortCircuitingOperatorTests : AbstractCSharpDiagnosticVerifier<UseShortCircuitingOperatorAnalyzer, BinaryExpressionCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseShortCircuitingOperator;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UseShortCircuitingOperator;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseShortCircuitingOperator)]
         public async Task Test_Or()

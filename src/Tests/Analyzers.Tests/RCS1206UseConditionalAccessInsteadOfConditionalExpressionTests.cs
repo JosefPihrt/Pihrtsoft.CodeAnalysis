@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1206UseConditionalAccessInsteadOfConditionalExpressionTests : AbstractCSharpDiagnosticVerifier<SimplifyNullCheckAnalyzer, ConditionalExpressionCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseConditionalAccessInsteadOfConditionalExpression;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UseConditionalAccessInsteadOfConditionalExpression;
 
         [Theory, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseConditionalAccessInsteadOfConditionalExpression)]
         [InlineData("(x != null) ? x.ToString() : null", "x?.ToString()")]

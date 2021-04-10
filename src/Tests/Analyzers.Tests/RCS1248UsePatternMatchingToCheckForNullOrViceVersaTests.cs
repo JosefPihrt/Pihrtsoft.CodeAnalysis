@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1248UsePatternMatchingToCheckForNullOrViceVersaTests : AbstractCSharpDiagnosticVerifier<UsePatternMatchingToCheckForNullOrViceVersaAnalyzer, UsePatternMatchingToCheckForNullOrViceVersaCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UsePatternMatchingToCheckForNullOrViceVersa;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UsePatternMatchingToCheckForNullOrViceVersa;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UsePatternMatchingToCheckForNullOrViceVersa)]
         public async Task Test_EqualsToNull()
@@ -133,7 +133,7 @@ class C
         }
     }
 }
-", options: WellKnownCSharpTestOptions.Default_CSharp7.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.UseLogicalNegationAndPatternMatchingToCheckForNull));
+", options: WellKnownCSharpTestOptions.Default_CSharp7.EnableDiagnostic(AnalyzerOptionDiagnosticRules.UseLogicalNegationAndPatternMatchingToCheckForNull));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UsePatternMatchingToCheckForNullOrViceVersa)]
@@ -163,7 +163,7 @@ class C
         }
     }
 }
-", options: WellKnownCSharpTestOptions.Default_CSharp7.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.UseLogicalNegationAndPatternMatchingToCheckForNull));
+", options: WellKnownCSharpTestOptions.Default_CSharp7.EnableDiagnostic(AnalyzerOptionDiagnosticRules.UseLogicalNegationAndPatternMatchingToCheckForNull));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UsePatternMatchingToCheckForNullOrViceVersa)]
@@ -193,7 +193,7 @@ class C
         }
     }
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.UseComparisonInsteadPatternMatchingToCheckForNull));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.UseComparisonInsteadPatternMatchingToCheckForNull));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UsePatternMatchingToCheckForNullOrViceVersa)]
@@ -223,7 +223,7 @@ class C
         }
     }
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.UseComparisonInsteadPatternMatchingToCheckForNull));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.UseComparisonInsteadPatternMatchingToCheckForNull));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UsePatternMatchingToCheckForNullOrViceVersa)]

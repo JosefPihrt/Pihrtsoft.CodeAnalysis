@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1050AddArgumentListToObjectCreationOrViceVersaTests : AbstractCSharpDiagnosticVerifier<AddArgumentListToObjectCreationOrViceVersaAnalyzer, AddArgumentListToObjectCreationOrViceVersaCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddArgumentListToObjectCreationOrViceVersa;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.AddArgumentListToObjectCreationOrViceVersa;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddArgumentListToObjectCreationOrViceVersa)]
         public async Task Test_AddArgumentList()
@@ -49,7 +49,7 @@ public class C
 {
     List<string> items = new List<string> { ""a"", ""b"", ""c"" };
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.RemoveArgumentListFromObjectCreation));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.RemoveArgumentListFromObjectCreation));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddArgumentListToObjectCreationOrViceVersa)]
@@ -88,7 +88,7 @@ public class C
 {
     List<string> items = new List<string>();
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.RemoveArgumentListFromObjectCreation));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.RemoveArgumentListFromObjectCreation));
         }
     }
 }

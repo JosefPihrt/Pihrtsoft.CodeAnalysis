@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS9007UseReturnValueTests : AbstractCSharpDiagnosticVerifier<InvocationExpressionAnalyzer, InvocationExpressionCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseReturnValue;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UseReturnValue;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseReturnValue)]
         public async Task Test()

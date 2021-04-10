@@ -13,11 +13,19 @@ using Roslynator.CSharp.SyntaxWalkers;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class UseForStatementInsteadOfWhileStatementAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class UseForStatementInsteadOfWhileStatementAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.UseForStatementInsteadOfWhileStatement); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.UseForStatementInsteadOfWhileStatement);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -101,7 +109,7 @@ namespace Roslynator.CSharp.Analysis
             if (IsLocalVariableReferencedAfterWhileStatement())
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UseForStatementInsteadOfWhileStatement, whileStatement.WhileKeyword);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UseForStatementInsteadOfWhileStatement, whileStatement.WhileKeyword);
 
             bool ContainsContinueStatement()
             {

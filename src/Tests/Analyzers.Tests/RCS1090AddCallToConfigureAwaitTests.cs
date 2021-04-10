@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1090AddCallToConfigureAwaitTests : AbstractCSharpDiagnosticVerifier<AddCallToConfigureAwaitOrViceVersaAnalyzer, AwaitExpressionCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddCallToConfigureAwaitOrViceVersa;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.AddCallToConfigureAwaitOrViceVersa;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddCallToConfigureAwaitOrViceVersa)]
         public async Task Test_Task_Field()

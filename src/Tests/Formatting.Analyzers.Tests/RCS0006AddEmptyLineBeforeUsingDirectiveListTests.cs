@@ -10,7 +10,7 @@ namespace Roslynator.Formatting.CSharp.Tests
 {
     public class RCS0006AddEmptyLineBeforeUsingDirectiveListTests : AbstractCSharpDiagnosticVerifier<AddEmptyLineBeforeUsingDirectiveListAnalyzer, AddEmptyLineBeforeAndAfterUsingDirectiveListCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddEmptyLineBeforeUsingDirectiveList;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.AddEmptyLineBeforeUsingDirectiveList;
 
         public override CSharpTestOptions Options
         {

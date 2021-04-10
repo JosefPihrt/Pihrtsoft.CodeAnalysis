@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1194ImplementExceptionConstructorsTests : AbstractCSharpDiagnosticVerifier<ImplementExceptionConstructorsAnalyzer, ClassDeclarationCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.ImplementExceptionConstructors;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.ImplementExceptionConstructors;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.ImplementExceptionConstructors)]
         public async Task Test()

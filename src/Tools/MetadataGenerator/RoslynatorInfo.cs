@@ -44,9 +44,9 @@ namespace Roslynator.CodeGeneration
 
         public static async Task<RoslynatorInfo> Create(Solution solution, CancellationToken cancellationToken = default)
         {
-            AnalyzersInfo analyzersInfo = await AnalyzersInfo.Create(solution, "Analyzers", "Roslynator.CSharp.DiagnosticDescriptors", "Roslynator.CSharp.DiagnosticIdentifiers").ConfigureAwait(false);
-            AnalyzersInfo codeAnalysisAnalyzersInfo = await AnalyzersInfo.Create(solution, "CodeAnalysis.Analyzers", "Roslynator.CodeAnalysis.CSharp.DiagnosticDescriptors", "Roslynator.CodeAnalysis.CSharp.DiagnosticIdentifiers").ConfigureAwait(false);
-            AnalyzersInfo formattingAnalyzersInfo = await AnalyzersInfo.Create(solution, "Formatting.Analyzers", "Roslynator.Formatting.CSharp.DiagnosticDescriptors", "Roslynator.Formatting.CSharp.DiagnosticIdentifiers").ConfigureAwait(false);
+            AnalyzersInfo analyzersInfo = await AnalyzersInfo.Create(solution, "Analyzers", "Roslynator.CSharp.DiagnosticRules", "Roslynator.CSharp.DiagnosticIdentifiers").ConfigureAwait(false);
+            AnalyzersInfo codeAnalysisAnalyzersInfo = await AnalyzersInfo.Create(solution, "CodeAnalysis.Analyzers", "Roslynator.CodeAnalysis.CSharp.DiagnosticRules", "Roslynator.CodeAnalysis.CSharp.DiagnosticIdentifiers").ConfigureAwait(false);
+            AnalyzersInfo formattingAnalyzersInfo = await AnalyzersInfo.Create(solution, "Formatting.Analyzers", "Roslynator.Formatting.CSharp.DiagnosticRules", "Roslynator.Formatting.CSharp.DiagnosticIdentifiers").ConfigureAwait(false);
 
             Compilation refactoringsCompilation = await solution.Projects.First(f => f.Name == "Refactorings").GetCompilationAsync(cancellationToken).ConfigureAwait(false);
 

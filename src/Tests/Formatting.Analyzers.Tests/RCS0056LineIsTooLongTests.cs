@@ -10,7 +10,7 @@ namespace Roslynator.Formatting.CSharp.Tests
 {
     public class RCS0056LineIsTooLongTests : AbstractCSharpDiagnosticVerifier<LineIsTooLongAnalyzer, LineIsTooLongCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.LineIsTooLong;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.LineIsTooLong;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.LineIsTooLong)]
         public async Task Test_ExpressionBody_AddNewLineBeforeArrow()
@@ -45,7 +45,7 @@ class C
     string M(object pppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp) =>
         null;
 }
-", options: Options.EnableDiagnostic(DiagnosticDescriptors.AddNewLineBeforeExpressionBodyArrowInsteadOfAfterItOrViceVersa, AnalyzerOptionDiagnosticDescriptors.AddNewLineAfterExpressionBodyArrowInsteadOfBeforeIt));
+", options: Options.EnableDiagnostic(DiagnosticRules.AddNewLineBeforeExpressionBodyArrowInsteadOfAfterItOrViceVersa, AnalyzerOptionDiagnosticRules.AddNewLineAfterExpressionBodyArrowInsteadOfBeforeIt));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.LineIsTooLong)]
@@ -70,7 +70,7 @@ class C
     {
     }
 }
-", options: Options.EnableDiagnostic(DiagnosticDescriptors.AddNewLineBeforeExpressionBodyArrowInsteadOfAfterItOrViceVersa, AnalyzerOptionDiagnosticDescriptors.AddNewLineAfterExpressionBodyArrowInsteadOfBeforeIt));
+", options: Options.EnableDiagnostic(DiagnosticRules.AddNewLineBeforeExpressionBodyArrowInsteadOfAfterItOrViceVersa, AnalyzerOptionDiagnosticRules.AddNewLineAfterExpressionBodyArrowInsteadOfBeforeIt));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.LineIsTooLong)]
@@ -964,7 +964,7 @@ class C
 {
 [|    string Fooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo() => null;|]
 }
-", options: Options.EnableDiagnostic(DiagnosticDescriptors.AddNewLineBeforeExpressionBodyArrowInsteadOfAfterItOrViceVersa, AnalyzerOptionDiagnosticDescriptors.AddNewLineAfterExpressionBodyArrowInsteadOfBeforeIt));
+", options: Options.EnableDiagnostic(DiagnosticRules.AddNewLineBeforeExpressionBodyArrowInsteadOfAfterItOrViceVersa, AnalyzerOptionDiagnosticRules.AddNewLineAfterExpressionBodyArrowInsteadOfBeforeIt));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.LineIsTooLong)]

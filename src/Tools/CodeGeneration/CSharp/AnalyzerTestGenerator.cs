@@ -32,7 +32,7 @@ namespace Roslynator.CSharp.Analysis.Tests
     //TODO: Add tests for $Id$
     public class $ClassName$ : AbstractCSharpFixVerifier
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.$Identifier$;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.$Identifier$;
 
         public override DiagnosticAnalyzer Analyzer { get; } = new $Identifier$Analyzer();
 

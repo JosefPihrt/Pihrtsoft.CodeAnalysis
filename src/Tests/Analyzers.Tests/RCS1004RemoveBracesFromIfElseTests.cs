@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1004RemoveBracesFromIfElseTests : AbstractCSharpDiagnosticVerifier<RemoveBracesFromIfElseAnalyzer, RemoveBracesFromIfElseCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.RemoveBracesFromIfElse;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.RemoveBracesFromIfElse;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemoveBracesFromIfElse)]
         public async Task Test()

@@ -12,11 +12,19 @@ using Roslynator.CSharp;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SimplifyNullableOfTAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class SimplifyNullableOfTAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.SimplifyNullableOfT); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.SimplifyNullableOfT);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -58,7 +66,7 @@ namespace Roslynator.CSharp.Analysis
             if (!namedTypeSymbol.IsNullableType())
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.SimplifyNullableOfT, genericName);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.SimplifyNullableOfT, genericName);
         }
 
         private static void AnalyzeQualifiedName(SyntaxNodeAnalysisContext context)
@@ -92,7 +100,7 @@ namespace Roslynator.CSharp.Analysis
             if (!typeSymbol.IsNullableType())
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.SimplifyNullableOfT, qualifiedName);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.SimplifyNullableOfT, qualifiedName);
         }
 
         private static bool IsWithinNameOfExpression(

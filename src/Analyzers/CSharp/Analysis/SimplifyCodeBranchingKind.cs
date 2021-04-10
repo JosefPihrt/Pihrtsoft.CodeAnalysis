@@ -7,6 +7,7 @@ namespace Roslynator.CSharp.Analysis
         IfElseWithEmptyIf,
         IfElseInsideWhile,
         SimplifyIfInsideWhileOrDo,
-        SimpleIfContainingOnlyDo
+        SimpleIfContainingOnlyDo,
+        LastIfElseWithReturnOrContinueInsideIf,
     }
 }

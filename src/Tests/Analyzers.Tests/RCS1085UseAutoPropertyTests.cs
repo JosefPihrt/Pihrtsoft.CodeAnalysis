@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1085UseAutoPropertyTests : AbstractCSharpDiagnosticVerifier<UseAutoPropertyAnalyzer, UseAutoPropertyCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseAutoProperty;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UseAutoProperty;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseAutoProperty)]
         public async Task Test_Property()

@@ -50,7 +50,7 @@ namespace Roslynator.CSharp.Analysis
 
             DiagnosticHelpers.ReportDiagnostic(
                 context,
-                DiagnosticDescriptors.RemoveRedundantStringToCharArrayCall,
+                DiagnosticRules.RemoveRedundantStringToCharArrayCall,
                 Location.Create(invocationExpression.SyntaxTree, span));
         }
 

@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1198AvoidBoxingOfValueTypeTests2 : AbstractCSharpDiagnosticVerifier<InvocationExpressionAnalyzer, AvoidBoxingOfValueTypeCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AvoidBoxingOfValueType;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.AvoidBoxingOfValueType;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AvoidBoxingOfValueType)]
         public async Task Test_StringBuilder_Append()

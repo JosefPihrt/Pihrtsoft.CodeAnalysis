@@ -10,7 +10,7 @@ namespace Roslynator.Formatting.CSharp.Tests
 {
     public class RCS0030AddNewLineBeforeEmbeddedStatementTests : AbstractCSharpDiagnosticVerifier<AddNewLineBeforeEmbeddedStatementAnalyzer, StatementCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddNewLineBeforeEmbeddedStatement;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.AddNewLineBeforeEmbeddedStatement;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddNewLineBeforeEmbeddedStatement)]
         public async Task Test_If()

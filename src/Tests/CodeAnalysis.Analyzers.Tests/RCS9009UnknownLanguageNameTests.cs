@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS9009UnknownLanguageNameTests : AbstractCSharpDiagnosticVerifier<NamedTypeSymbolAnalyzer, AttributeArgumentCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UnknownLanguageName;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UnknownLanguageName;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UnknownLanguageName)]
         public async Task Test_DiagnosticAnalyzer()

@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1161EnumShouldDeclareExplicitValuesTests : AbstractCSharpDiagnosticVerifier<EnumShouldDeclareExplicitValuesAnalyzer, EnumDeclarationCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.EnumShouldDeclareExplicitValues;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.EnumShouldDeclareExplicitValues;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.EnumShouldDeclareExplicitValues)]
         public async Task Test_AllValues()

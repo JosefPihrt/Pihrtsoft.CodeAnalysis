@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1203UseAttributeUsageAttributeTests : AbstractCSharpDiagnosticVerifier<UseAttributeUsageAttributeAnalyzer, ClassDeclarationCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseAttributeUsageAttribute;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UseAttributeUsageAttribute;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseAttributeUsageAttribute)]
         public async Task Test()

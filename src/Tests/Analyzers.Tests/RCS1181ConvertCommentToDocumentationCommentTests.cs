@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1181ConvertCommentToDocumentationCommentTests : AbstractCSharpDiagnosticVerifier<ConvertCommentToDocumentationCommentAnalyzer, MemberDeclarationCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.ConvertCommentToDocumentationComment;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.ConvertCommentToDocumentationComment;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.ConvertCommentToDocumentationComment)]
         public async Task Test_LeadingComment()

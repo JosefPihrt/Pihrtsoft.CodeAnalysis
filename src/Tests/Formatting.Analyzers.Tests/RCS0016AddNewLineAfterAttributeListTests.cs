@@ -10,7 +10,7 @@ namespace Roslynator.Formatting.CSharp.Tests
 {
     public class RCS0016AddNewLineAfterAttributeListTests : AbstractCSharpDiagnosticVerifier<AddNewLineAfterAttributeListAnalyzer, SyntaxTokenCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddNewLineAfterAttributeList;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.AddNewLineAfterAttributeList;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddNewLineAfterAttributeList)]
         public async Task Test_Class()

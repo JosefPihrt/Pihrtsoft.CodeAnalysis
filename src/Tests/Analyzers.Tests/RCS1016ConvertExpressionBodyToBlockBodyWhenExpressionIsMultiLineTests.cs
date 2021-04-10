@@ -13,18 +13,18 @@ namespace Roslynator.CSharp.Analysis.Tests
         private CSharpTestOptions _options_ConvertExpressionBodyToBlockBodyWhenExpressionIsMultiLine;
         private CSharpTestOptions _options_ConvertExpressionBodyToBlockBodyWhenDeclarationIsMultiLine;
 
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.ConvertBlockBodyToExpressionBodyOrViceVersa;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.ConvertBlockBodyToExpressionBodyOrViceVersa;
 
         public override CSharpTestOptions Options
         {
-            get { return base.Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.ConvertExpressionBodyToBlockBodyWhenExpressionIsMultiLine); }
+            get { return base.Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.ConvertExpressionBodyToBlockBodyWhenExpressionIsMultiLine); }
         }
 
         private CSharpTestOptions Options_ConvertExpressionBodyToBlockBodyWhenExpressionIsMultiLine
-            => _options_ConvertExpressionBodyToBlockBodyWhenExpressionIsMultiLine ??= Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.ConvertExpressionBodyToBlockBodyWhenExpressionIsMultiLine);
+            => _options_ConvertExpressionBodyToBlockBodyWhenExpressionIsMultiLine ??= Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.ConvertExpressionBodyToBlockBodyWhenExpressionIsMultiLine);
 
         private CSharpTestOptions Options_ConvertExpressionBodyToBlockBodyWhenDeclarationIsMultiLine
-            => _options_ConvertExpressionBodyToBlockBodyWhenDeclarationIsMultiLine ??= Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.ConvertExpressionBodyToBlockBodyWhenDeclarationIsMultiLine);
+            => _options_ConvertExpressionBodyToBlockBodyWhenDeclarationIsMultiLine ??= Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.ConvertExpressionBodyToBlockBodyWhenDeclarationIsMultiLine);
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.ConvertBlockBodyToExpressionBodyOrViceVersa)]
         public async Task Test_Method_MultilineExpression()

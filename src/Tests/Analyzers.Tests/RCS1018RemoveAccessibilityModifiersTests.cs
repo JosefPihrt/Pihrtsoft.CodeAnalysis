@@ -10,11 +10,11 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1018RemoveAccessibilityModifiersTests : AbstractCSharpDiagnosticVerifier<AddAccessibilityModifiersOrViceVersaAnalyzer, MemberDeclarationCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddAccessibilityModifiersOrViceVersa;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.AddAccessibilityModifiersOrViceVersa;
 
         public override CSharpTestOptions Options
         {
-            get { return base.Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.RemoveAccessibilityModifiers); }
+            get { return base.Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.RemoveAccessibilityModifiers); }
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddAccessibilityModifiersOrViceVersa)]

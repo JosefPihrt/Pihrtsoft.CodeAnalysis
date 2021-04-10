@@ -11,15 +11,23 @@ using Roslynator.CSharp;
 namespace Roslynator.Formatting.CSharp
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class AddOrRemoveEmptyLineBetweenUsingDirectiveAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class AddOrRemoveEmptyLineBetweenUsingDirectiveAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                return ImmutableArray.Create(
-                    DiagnosticDescriptors.RemoveEmptyLineBetweenUsingDirectivesWithSameRootNamespace,
-                    DiagnosticDescriptors.AddEmptyLineBetweenUsingDirectivesWithDifferentRootNamespaceOrViceVersa);
+                if (_supportedDiagnostics.IsDefault)
+                {
+                    Immutable.InterlockedInitialize(
+                        ref _supportedDiagnostics,
+                        DiagnosticRules.RemoveEmptyLineBetweenUsingDirectivesWithSameRootNamespace,
+                        DiagnosticRules.AddEmptyLineBetweenUsingDirectivesWithDifferentRootNamespaceOrViceVersa);
+                }
+
+                return _supportedDiagnostics;
             }
         }
 
@@ -95,11 +103,11 @@ namespace Roslynator.Formatting.CSharp
                     {
                         DiagnosticHelpers.ReportDiagnosticIfNotSuppressed(
                             context,
-                            DiagnosticDescriptors.RemoveEmptyLineBetweenUsingDirectivesWithSameRootNamespace,
+                            DiagnosticRules.RemoveEmptyLineBetweenUsingDirectivesWithSameRootNamespace,
                             Location.Create(context.Node.SyntaxTree, leadingTrivia[0].Span.WithLength(0)));
                     }
                 }
-                else if (DiagnosticDescriptors.AddEmptyLineBetweenUsingDirectivesWithDifferentRootNamespaceOrViceVersa.IsEffective(context))
+                else if (DiagnosticRules.AddEmptyLineBetweenUsingDirectivesWithDifferentRootNamespaceOrViceVersa.IsEffective(context))
                 {
                     if (isEmptyLine)
                     {
@@ -107,7 +115,7 @@ namespace Roslynator.Formatting.CSharp
                         {
                             DiagnosticHelpers.ReportDiagnostic(
                                 context,
-                                DiagnosticDescriptors.ReportOnly.RemoveEmptyLineBetweenUsingDirectivesWithDifferentRootNamespace,
+                                DiagnosticRules.ReportOnly.RemoveEmptyLineBetweenUsingDirectivesWithDifferentRootNamespace,
                                 Location.Create(context.Node.SyntaxTree, leadingTrivia[0].Span.WithLength(0)),
                                 properties: DiagnosticProperties.AnalyzerOption_Invert);
                         }
@@ -116,7 +124,7 @@ namespace Roslynator.Formatting.CSharp
                     {
                         DiagnosticHelpers.ReportDiagnostic(
                             context,
-                            DiagnosticDescriptors.AddEmptyLineBetweenUsingDirectivesWithDifferentRootNamespaceOrViceVersa,
+                            DiagnosticRules.AddEmptyLineBetweenUsingDirectivesWithDifferentRootNamespaceOrViceVersa,
                             Location.Create(context.Node.SyntaxTree, trailingTrivia.Last().Span.WithLength(0)));
                     }
                 }

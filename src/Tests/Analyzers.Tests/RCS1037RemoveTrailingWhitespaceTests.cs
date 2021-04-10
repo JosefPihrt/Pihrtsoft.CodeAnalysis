@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1037RemoveTrailingWhitespaceTests : AbstractCSharpDiagnosticVerifier<WhitespaceAnalyzer, WhitespaceTriviaCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.RemoveTrailingWhitespace;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.RemoveTrailingWhitespace;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemoveTrailingWhitespace)]
         public async Task Test()

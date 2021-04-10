@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1102MakeClassStaticTests : AbstractCSharpDiagnosticVerifier<MakeClassStaticAnalyzer, ClassDeclarationCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.MakeClassStatic;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.MakeClassStatic;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.MakeClassStatic)]
         public async Task Test()

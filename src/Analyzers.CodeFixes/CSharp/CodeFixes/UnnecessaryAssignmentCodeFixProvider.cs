@@ -21,7 +21,7 @@ namespace Roslynator.CSharp.CodeFixes
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UnnecessaryAssignmentCodeFixProvider))]
     [Shared]
-    public class UnnecessaryAssignmentCodeFixProvider : BaseCodeFixProvider
+    public sealed class UnnecessaryAssignmentCodeFixProvider : BaseCodeFixProvider
     {
         private const string Title = "Remove unnecessary assignment";
 

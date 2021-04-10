@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1204UseEventArgsEmptyTests : AbstractCSharpDiagnosticVerifier<UseEventArgsEmptyAnalyzer, ObjectCreationExpressionCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseEventArgsEmpty;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UseEventArgsEmpty;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseEventArgsEmpty)]
         public async Task Test()

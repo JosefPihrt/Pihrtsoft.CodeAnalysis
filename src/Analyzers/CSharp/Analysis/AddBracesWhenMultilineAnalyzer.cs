@@ -11,11 +11,19 @@ using static Roslynator.CSharp.Analysis.EmbeddedStatementAnalysis;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class AddBracesWhenMultilineAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class AddBracesWhenMultilineAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.AddBracesWhenExpressionSpansOverMultipleLines); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.AddBracesWhenExpressionSpansOverMultipleLines);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -184,7 +192,7 @@ namespace Roslynator.CSharp.Analysis
         {
             DiagnosticHelpers.ReportDiagnostic(
                 context,
-                DiagnosticDescriptors.AddBracesWhenExpressionSpansOverMultipleLines,
+                DiagnosticRules.AddBracesWhenExpressionSpansOverMultipleLines,
                 embeddedStatement,
                 CSharpFacts.GetTitle(statement));
         }

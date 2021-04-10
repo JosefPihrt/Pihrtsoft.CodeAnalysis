@@ -12,11 +12,19 @@ using Roslynator.CSharp;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class RemoveRedundantDefaultSwitchSectionAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class RemoveRedundantDefaultSwitchSectionAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.RemoveRedundantDefaultSwitchSection); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.RemoveRedundantDefaultSwitchSection);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -51,7 +59,7 @@ namespace Roslynator.CSharp.Analysis
                 return;
             }
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.RemoveRedundantDefaultSwitchSection, defaultSection);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.RemoveRedundantDefaultSwitchSection, defaultSection);
         }
 
         private static bool ContainsOnlyBreakStatement(SwitchSectionSyntax switchSection)

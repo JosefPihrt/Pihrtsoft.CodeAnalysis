@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1018AddAccessibilityModifiersTests : AbstractCSharpDiagnosticVerifier<AddAccessibilityModifiersOrViceVersaAnalyzer, MemberDeclarationCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddAccessibilityModifiersOrViceVersa;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.AddAccessibilityModifiersOrViceVersa;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddAccessibilityModifiersOrViceVersa)]
         public async Task Test_NonNestedType()

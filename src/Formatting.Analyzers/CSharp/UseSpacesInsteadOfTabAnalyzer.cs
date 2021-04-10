@@ -12,11 +12,19 @@ using Roslynator.CSharp;
 namespace Roslynator.Formatting.CSharp
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class UseSpacesInsteadOfTabAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class UseSpacesInsteadOfTabAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.UseSpacesInsteadOfTab); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.UseSpacesInsteadOfTab);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -73,7 +81,7 @@ namespace Roslynator.Formatting.CSharp
                         } while (i < text.Length && text[i] == '\t');
 
                         AnalysisContext.ReportDiagnostic(
-                            DiagnosticDescriptors.UseSpacesInsteadOfTab,
+                            DiagnosticRules.UseSpacesInsteadOfTab,
                             Location.Create(AnalysisContext.Tree, new TextSpan(trivia.SpanStart + index, i - index)));
                     }
                 }

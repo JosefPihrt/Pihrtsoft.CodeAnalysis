@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis;
 
 namespace Roslynator.CodeAnalysis.CSharp
 {
-    public static partial class DiagnosticDescriptors
+    public static partial class DiagnosticRules
     {
     }
 }

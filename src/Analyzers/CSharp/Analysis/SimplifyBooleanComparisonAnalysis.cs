@@ -17,18 +17,18 @@ namespace Roslynator.CSharp.Analysis
             ExpressionSyntax right,
             bool fadeOut)
         {
-            if (!DiagnosticDescriptors.SimplifyBooleanComparison.IsEffective(context))
+            if (!DiagnosticRules.SimplifyBooleanComparison.IsEffective(context))
                 return;
 
             if (binaryExpression.SpanContainsDirectives())
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.SimplifyBooleanComparison, binaryExpression);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.SimplifyBooleanComparison, binaryExpression);
 
             if (!fadeOut)
                 return;
 
-            DiagnosticDescriptor fadeOutDescriptor = DiagnosticDescriptors.SimplifyBooleanComparisonFadeOut;
+            DiagnosticDescriptor fadeOutDescriptor = DiagnosticRules.SimplifyBooleanComparisonFadeOut;
 
             DiagnosticHelpers.ReportToken(context, fadeOutDescriptor, binaryExpression.OperatorToken);
 

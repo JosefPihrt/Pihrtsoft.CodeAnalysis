@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis;
 
 namespace Roslynator.Formatting.CSharp
 {
-    public static partial class AnalyzerOptionDiagnosticDescriptors
+    public static partial class AnalyzerOptionDiagnosticRules
     {
         /// <summary>RCS0011i</summary>
         public static readonly DiagnosticDescriptor RemoveEmptyLineBetweenSingleLineAccessors = DiagnosticDescriptorFactory.Default.Create(

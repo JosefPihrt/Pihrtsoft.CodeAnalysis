@@ -14,16 +14,24 @@ using Roslynator.CSharp.SyntaxWalkers;
 namespace Roslynator.CSharp.Analysis.UnusedParameter
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class UnusedParameterAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class UnusedParameterAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                return ImmutableArray.Create(
-                    DiagnosticDescriptors.UnusedParameter,
-                    DiagnosticDescriptors.UnusedThisParameter,
-                    DiagnosticDescriptors.UnusedTypeParameter);
+                if (_supportedDiagnostics.IsDefault)
+                {
+                    Immutable.InterlockedInitialize(
+                        ref _supportedDiagnostics,
+                        DiagnosticRules.UnusedParameter,
+                        DiagnosticRules.UnusedThisParameter,
+                        DiagnosticRules.UnusedTypeParameter);
+                }
+
+                return _supportedDiagnostics;
             }
         }
 
@@ -365,16 +373,16 @@ namespace Roslynator.CSharp.Analysis.UnusedParameter
             {
                 if (parameter.Modifiers.Contains(SyntaxKind.ThisKeyword))
                 {
-                    DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UnusedThisParameter, parameter, parameter.Identifier.ValueText);
+                    DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UnusedThisParameter, parameter, parameter.Identifier.ValueText);
                 }
                 else
                 {
-                    DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UnusedParameter, parameter, parameter.Identifier.ValueText);
+                    DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UnusedParameter, parameter, parameter.Identifier.ValueText);
                 }
             }
             else if (node is TypeParameterSyntax typeParameter)
             {
-                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UnusedTypeParameter, typeParameter, typeParameter.Identifier.ValueText);
+                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UnusedTypeParameter, typeParameter, typeParameter.Identifier.ValueText);
             }
             else
             {

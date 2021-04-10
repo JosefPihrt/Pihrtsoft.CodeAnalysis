@@ -10,7 +10,7 @@ namespace Roslynator.Formatting.CSharp.Tests
 {
     public class RCS0039RemoveNewLineBeforeBaseListTests : AbstractCSharpDiagnosticVerifier<RemoveNewLineBeforeBaseListAnalyzer, SyntaxTriviaCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.RemoveNewLineBeforeBaseList;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.RemoveNewLineBeforeBaseList;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemoveNewLineBeforeBaseList)]
         public async Task Test_Class()

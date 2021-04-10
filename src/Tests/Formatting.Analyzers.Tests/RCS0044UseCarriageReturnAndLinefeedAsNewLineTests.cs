@@ -10,7 +10,7 @@ namespace Roslynator.Formatting.CSharp.Tests
 {
     public class RCS0044UseCarriageReturnAndLinefeedAsNewLineTests : AbstractCSharpDiagnosticVerifier<UseCarriageReturnAndLinefeedAsNewLineAnalyzer, NewLineCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseCarriageReturnAndLinefeedAsNewLine;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UseCarriageReturnAndLinefeedAsNewLine;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseCarriageReturnAndLinefeedAsNewLine)]
         public async Task Test()

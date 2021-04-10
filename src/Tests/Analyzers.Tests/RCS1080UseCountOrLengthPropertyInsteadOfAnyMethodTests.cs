@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1080UseCountOrLengthPropertyInsteadOfAnyMethodTests : AbstractCSharpDiagnosticVerifier<InvocationExpressionAnalyzer, InvocationExpressionCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseCountOrLengthPropertyInsteadOfAnyMethod;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UseCountOrLengthPropertyInsteadOfAnyMethod;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseCountOrLengthPropertyInsteadOfAnyMethod)]
         public async Task Test_List()

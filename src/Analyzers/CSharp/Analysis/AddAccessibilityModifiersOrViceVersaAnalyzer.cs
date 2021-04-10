@@ -15,7 +15,7 @@ using Roslynator.CSharp;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class AddAccessibilityModifiersOrViceVersaAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class AddAccessibilityModifiersOrViceVersaAnalyzer : BaseDiagnosticAnalyzer
     {
         private static ImmutableDictionary<Accessibility, ImmutableDictionary<string, string>> _properties;
 
@@ -40,9 +40,17 @@ namespace Roslynator.CSharp.Analysis
             }
         }
 
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.AddAccessibilityModifiersOrViceVersa); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.AddAccessibilityModifiersOrViceVersa);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -184,7 +192,7 @@ namespace Roslynator.CSharp.Analysis
 
                 DiagnosticHelpers.ReportDiagnostic(
                     context,
-                    DiagnosticDescriptors.AddAccessibilityModifiersOrViceVersa,
+                    DiagnosticRules.AddAccessibilityModifiersOrViceVersa,
                     location,
                     Properties[accessibility]);
             }
@@ -201,7 +209,7 @@ namespace Roslynator.CSharp.Analysis
 
                 DiagnosticHelpers.ReportDiagnostic(
                     context,
-                    DiagnosticDescriptors.ReportOnly.RemoveAccessibilityModifiers,
+                    DiagnosticRules.ReportOnly.RemoveAccessibilityModifiers,
                     Location.Create(declaration.SyntaxTree, TextSpan.FromBounds(first.SpanStart, last.Span.End)));
             }
         }

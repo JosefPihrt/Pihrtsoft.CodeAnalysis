@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1114RemoveRedundantDelegateCreationTests : AbstractCSharpDiagnosticVerifier<RemoveRedundantDelegateCreationAnalyzer, AssignmentExpressionCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.RemoveRedundantDelegateCreation;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.RemoveRedundantDelegateCreation;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemoveRedundantDelegateCreation)]
         public async Task Test_EventHandler()

@@ -12,11 +12,19 @@ using Microsoft.CodeAnalysis.Text;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class RemoveFileWithNoCodeAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class RemoveFileWithNoCodeAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.RemoveFileWithNoCode); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.RemoveFileWithNoCode);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -44,7 +52,7 @@ namespace Roslynator.CSharp.Analysis
                 {
                     DiagnosticHelpers.ReportDiagnostic(
                         context,
-                        DiagnosticDescriptors.RemoveFileWithNoCode,
+                        DiagnosticRules.RemoveFileWithNoCode,
                         Location.Create(syntaxTree, default(TextSpan)));
                 }
             }

@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1015UseNameOfOperatorTests : AbstractCSharpDiagnosticVerifier<UseNameOfOperatorAnalyzer, UseNameOfOperatorCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseNameOfOperator;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UseNameOfOperator;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseNameOfOperator)]
         public async Task Test()

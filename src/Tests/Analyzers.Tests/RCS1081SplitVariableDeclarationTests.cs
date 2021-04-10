@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1081SplitVariableDeclarationTests : AbstractCSharpDiagnosticVerifier<SplitVariableDeclarationAnalyzer, VariableDeclarationCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.SplitVariableDeclaration;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.SplitVariableDeclaration;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SplitVariableDeclaration)]
         public async Task Test_SwitchSection()

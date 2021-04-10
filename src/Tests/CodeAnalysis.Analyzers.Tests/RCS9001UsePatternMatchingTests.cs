@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS9001UsePatternMatchingTests : AbstractCSharpDiagnosticVerifier<UsePatternMatchingAnalyzer, UsePatternMatchingCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UsePatternMatching;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UsePatternMatching;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UsePatternMatching)]
         public async Task Test_SwitchStatement()

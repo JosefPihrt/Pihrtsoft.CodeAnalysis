@@ -10,11 +10,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class AvoidUsageOfUsingAliasDirectiveAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class AvoidUsageOfUsingAliasDirectiveAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.AvoidUsageOfUsingAliasDirective); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.AvoidUsageOfUsingAliasDirective);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -41,7 +49,7 @@ namespace Roslynator.CSharp.Analysis
                 .GetSymbol(usingDirective.Name, context.CancellationToken)?
                 .IsKind(SymbolKind.Namespace, SymbolKind.NamedType) == true)
             {
-                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.AvoidUsageOfUsingAliasDirective, usingDirective);
+                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.AvoidUsageOfUsingAliasDirective, usingDirective);
             }
         }
     }

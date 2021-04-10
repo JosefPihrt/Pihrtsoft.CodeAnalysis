@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1123AddParenthesesWhenNecessaryTests : AbstractCSharpDiagnosticVerifier<AddParenthesesWhenNecessaryAnalyzer, AddParenthesesWhenNecessaryCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddParenthesesWhenNecessary;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.AddParenthesesWhenNecessary;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddParenthesesWhenNecessary)]
         public async Task Test()

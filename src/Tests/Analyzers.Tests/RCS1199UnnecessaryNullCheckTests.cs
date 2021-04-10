@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1199UnnecessaryNullCheckTests : AbstractCSharpDiagnosticVerifier<UnnecessaryNullCheckAnalyzer, BinaryExpressionCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UnnecessaryNullCheck;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UnnecessaryNullCheck;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UnnecessaryNullCheck)]
         public async Task Test_HasValue_Bool()

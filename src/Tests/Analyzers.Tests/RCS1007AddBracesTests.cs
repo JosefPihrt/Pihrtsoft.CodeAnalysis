@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1007AddBracesTests : AbstractCSharpDiagnosticVerifier<AddBracesAnalyzer, AddBracesCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddBraces;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.AddBraces;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddBraces)]
         public async Task Test_If()

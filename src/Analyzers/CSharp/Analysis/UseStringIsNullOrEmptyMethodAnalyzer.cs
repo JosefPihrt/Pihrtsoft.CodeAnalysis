@@ -13,11 +13,19 @@ using Roslynator.CSharp.Syntax;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class UseStringIsNullOrEmptyMethodAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class UseStringIsNullOrEmptyMethodAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.UseStringIsNullOrEmptyMethod); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.UseStringIsNullOrEmptyMethod);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -57,7 +65,7 @@ namespace Roslynator.CSharp.Analysis
                         context.SemanticModel,
                         context.CancellationToken))
                 {
-                    DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UseStringIsNullOrEmptyMethod, binaryExpression);
+                    DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UseStringIsNullOrEmptyMethod, binaryExpression);
                 }
             }
             else if (kind == SyntaxKind.LogicalAndExpression)
@@ -70,7 +78,7 @@ namespace Roslynator.CSharp.Analysis
                         context.SemanticModel,
                         context.CancellationToken))
                 {
-                    DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UseStringIsNullOrEmptyMethod, binaryExpression);
+                    DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UseStringIsNullOrEmptyMethod, binaryExpression);
                 }
             }
         }

@@ -10,7 +10,7 @@ namespace Roslynator.Formatting.CSharp.Tests
 {
     public class RCS0027AddNewLineBeforeBinaryOperatorInsteadOfAfterItOrViceVersaTests : AbstractCSharpDiagnosticVerifier<AddNewLineBeforeBinaryOperatorInsteadOfAfterItOrViceVersaAnalyzer, BinaryExpressionCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddNewLineBeforeBinaryOperatorInsteadOfAfterItOrViceVersa;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.AddNewLineBeforeBinaryOperatorInsteadOfAfterItOrViceVersa;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddNewLineBeforeBinaryOperatorInsteadOfAfterItOrViceVersa)]
         public async Task Test_BeforeInsteadOfAfter()
@@ -85,7 +85,7 @@ class C
         }
     }
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.AddNewLineAfterBinaryOperatorInsteadOfBeforeIt));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.AddNewLineAfterBinaryOperatorInsteadOfBeforeIt));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddNewLineBeforeBinaryOperatorInsteadOfAfterItOrViceVersa)]
@@ -149,7 +149,7 @@ class C
         }
     }
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.AddNewLineAfterBinaryOperatorInsteadOfBeforeIt));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.AddNewLineAfterBinaryOperatorInsteadOfBeforeIt));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddNewLineBeforeBinaryOperatorInsteadOfAfterItOrViceVersa)]
@@ -169,7 +169,7 @@ class C
         }
     }
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.AddNewLineAfterBinaryOperatorInsteadOfBeforeIt));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.AddNewLineAfterBinaryOperatorInsteadOfBeforeIt));
         }
     }
 }

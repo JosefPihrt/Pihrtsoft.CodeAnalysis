@@ -14,7 +14,7 @@ namespace Roslynator.CSharp.CodeFixes
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UseRegexInstanceInsteadOfStaticMethodCodeFixProvider))]
     [Shared]
-    public class UseRegexInstanceInsteadOfStaticMethodCodeFixProvider : BaseCodeFixProvider
+    public sealed class UseRegexInstanceInsteadOfStaticMethodCodeFixProvider : BaseCodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {

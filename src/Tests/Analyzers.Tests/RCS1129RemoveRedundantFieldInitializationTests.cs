@@ -11,7 +11,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1129RemoveRedundantFieldInitializationTests : AbstractCSharpDiagnosticVerifier<RemoveRedundantFieldInitializationAnalyzer, VariableDeclaratorCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.RemoveRedundantFieldInitialization;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.RemoveRedundantFieldInitialization;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemoveRedundantFieldInitialization)]
         public async Task Test_MultipleDeclarations()

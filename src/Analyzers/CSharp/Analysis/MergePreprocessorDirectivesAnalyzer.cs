@@ -10,11 +10,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class MergePreprocessorDirectivesAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class MergePreprocessorDirectivesAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.MergePreprocessorDirectives); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.MergePreprocessorDirectives);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -114,7 +122,7 @@ namespace Roslynator.CSharp.Analysis
                 return;
             }
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.MergePreprocessorDirectives, directive);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.MergePreprocessorDirectives, directive);
         }
 
         private static bool IsSuppressingThisAnalyzer(SeparatedSyntaxList<ExpressionSyntax> errorCodes)

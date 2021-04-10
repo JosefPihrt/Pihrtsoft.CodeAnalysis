@@ -12,11 +12,19 @@ using Roslynator.CSharp.Syntax;
 namespace Roslynator.CSharp.Analysis.UsePatternMatching
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class UsePatternMatchingInsteadOfIsAndCastAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class UsePatternMatchingInsteadOfIsAndCastAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.UsePatternMatchingInsteadOfIsAndCast); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.UsePatternMatchingInsteadOfIsAndCast);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -92,7 +100,7 @@ namespace Roslynator.CSharp.Analysis.UsePatternMatching
                         if (!IsFixable(right, identifierName, semanticModel, cancellationToken))
                             return;
 
-                        DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UsePatternMatchingInsteadOfIsAndCast, logicalAnd);
+                        DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UsePatternMatchingInsteadOfIsAndCast, logicalAnd);
                         break;
                     }
                 case SyntaxKind.IfStatement:
@@ -116,7 +124,7 @@ namespace Roslynator.CSharp.Analysis.UsePatternMatching
                         if (!IsFixable(statement, identifierName, semanticModel, cancellationToken))
                             return;
 
-                        DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UsePatternMatchingInsteadOfIsAndCast, ifStatement.Condition);
+                        DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UsePatternMatchingInsteadOfIsAndCast, ifStatement.Condition);
                         break;
                     }
             }

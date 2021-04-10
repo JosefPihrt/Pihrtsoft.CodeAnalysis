@@ -10,7 +10,7 @@ namespace Roslynator.Formatting.CSharp.Tests
 {
     public class RCS0007AddEmptyLineBetweenAccessorsTests : AbstractCSharpDiagnosticVerifier<AddOrRemoveEmptyLineBetweenAccessorsAnalyzer, SyntaxTriviaCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddEmptyLineBetweenAccessors;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.AddEmptyLineBetweenAccessors;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddEmptyLineBetweenAccessors)]
         public async Task Test_FirstIsMultiline()

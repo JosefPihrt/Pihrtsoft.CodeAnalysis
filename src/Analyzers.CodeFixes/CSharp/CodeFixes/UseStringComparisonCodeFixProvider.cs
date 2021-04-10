@@ -22,7 +22,7 @@ namespace Roslynator.CSharp.CodeFixes
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UseStringComparisonCodeFixProvider))]
     [Shared]
-    public class UseStringComparisonCodeFixProvider : BaseCodeFixProvider
+    public sealed class UseStringComparisonCodeFixProvider : BaseCodeFixProvider
     {
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {

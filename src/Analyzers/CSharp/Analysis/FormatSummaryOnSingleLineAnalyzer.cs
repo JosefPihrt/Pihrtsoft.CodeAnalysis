@@ -11,7 +11,7 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class FormatSummaryOnSingleLineAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class FormatSummaryOnSingleLineAnalyzer : BaseDiagnosticAnalyzer
     {
         private static readonly Regex _regex = new Regex(
             @"
@@ -35,9 +35,17 @@ namespace Roslynator.CSharp.Analysis
             ",
             RegexOptions.IgnorePatternWhitespace | RegexOptions.ExplicitCapture);
 
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.FormatDocumentationSummaryOnSingleLine); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.FormatDocumentationSummaryOnSingleLine);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -73,7 +81,7 @@ namespace Roslynator.CSharp.Analysis
                         {
                             DiagnosticHelpers.ReportDiagnostic(
                                 context,
-                                DiagnosticDescriptors.FormatDocumentationSummaryOnSingleLine,
+                                DiagnosticRules.FormatDocumentationSummaryOnSingleLine,
                                 summaryElement);
                         }
                     }

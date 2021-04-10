@@ -10,7 +10,7 @@ namespace Roslynator.Formatting.CSharp.Tests
 {
     public class RCS0051AddNewLineBetweenClosingBraceAndWhileKeywordTests : AbstractCSharpDiagnosticVerifier<AddNewLineBetweenClosingBraceAndWhileKeywordOrViceVersaAnalyzer, SyntaxTokenCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.AddNewLineBetweenClosingBraceAndWhileKeywordOrViceVersa;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.AddNewLineBetweenClosingBraceAndWhileKeywordOrViceVersa;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddNewLineBetweenClosingBraceAndWhileKeywordOrViceVersa)]
         public async Task Test_AddNewLine()
@@ -108,7 +108,7 @@ class C
         } while (x);
     }
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.RemoveNewLineBetweenClosingBraceAndWhileKeyword));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.RemoveNewLineBetweenClosingBraceAndWhileKeyword));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddNewLineBetweenClosingBraceAndWhileKeywordOrViceVersa)]
@@ -142,7 +142,7 @@ class C
         } while (x);
     }
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.RemoveNewLineBetweenClosingBraceAndWhileKeyword));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.RemoveNewLineBetweenClosingBraceAndWhileKeyword));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddNewLineBetweenClosingBraceAndWhileKeywordOrViceVersa)]
@@ -199,7 +199,7 @@ class C
         } while (x);
     }
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.RemoveNewLineBetweenClosingBraceAndWhileKeyword));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.RemoveNewLineBetweenClosingBraceAndWhileKeyword));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.AddNewLineBetweenClosingBraceAndWhileKeywordOrViceVersa)]
@@ -217,7 +217,7 @@ class C
         while (x);
     }
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.RemoveNewLineBetweenClosingBraceAndWhileKeyword));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.RemoveNewLineBetweenClosingBraceAndWhileKeyword));
         }
     }
 }

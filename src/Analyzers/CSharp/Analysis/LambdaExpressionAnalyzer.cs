@@ -9,15 +9,23 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class LambdaExpressionAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class LambdaExpressionAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                return ImmutableArray.Create(
-                    DiagnosticDescriptors.ConvertLambdaExpressionBodyToExpressionBody,
-                    DiagnosticDescriptors.ConvertLambdaExpressionBodyToExpressionBodyFadeOut);
+                if (_supportedDiagnostics.IsDefault)
+                {
+                    Immutable.InterlockedInitialize(
+                        ref _supportedDiagnostics,
+                        DiagnosticRules.ConvertLambdaExpressionBodyToExpressionBody,
+                        DiagnosticRules.ConvertLambdaExpressionBodyToExpressionBodyFadeOut);
+                }
+
+                return _supportedDiagnostics;
             }
         }
 
@@ -31,7 +39,7 @@ namespace Roslynator.CSharp.Analysis
 
         private static void AnalyzeLambdaExpression(SyntaxNodeAnalysisContext context)
         {
-            if (!DiagnosticDescriptors.ConvertLambdaExpressionBodyToExpressionBody.IsEffective(context))
+            if (!DiagnosticRules.ConvertLambdaExpressionBodyToExpressionBody.IsEffective(context))
                 return;
 
             var lambda = (LambdaExpressionSyntax)context.Node;
@@ -44,16 +52,16 @@ namespace Roslynator.CSharp.Analysis
 
             CSharpSyntaxNode body = lambda.Body;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.ConvertLambdaExpressionBodyToExpressionBody, body);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.ConvertLambdaExpressionBodyToExpressionBody, body);
 
             var block = (BlockSyntax)body;
 
-            CSharpDiagnosticHelpers.ReportBraces(context, DiagnosticDescriptors.ConvertLambdaExpressionBodyToExpressionBodyFadeOut, block);
+            CSharpDiagnosticHelpers.ReportBraces(context, DiagnosticRules.ConvertLambdaExpressionBodyToExpressionBodyFadeOut, block);
 
             StatementSyntax statement = block.Statements[0];
 
             if (statement.Kind() == SyntaxKind.ReturnStatement)
-                DiagnosticHelpers.ReportToken(context, DiagnosticDescriptors.ConvertLambdaExpressionBodyToExpressionBodyFadeOut, ((ReturnStatementSyntax)statement).ReturnKeyword);
+                DiagnosticHelpers.ReportToken(context, DiagnosticRules.ConvertLambdaExpressionBodyToExpressionBodyFadeOut, ((ReturnStatementSyntax)statement).ReturnKeyword);
         }
     }
 }

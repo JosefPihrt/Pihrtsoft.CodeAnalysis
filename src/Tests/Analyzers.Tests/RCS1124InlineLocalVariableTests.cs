@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1124InlineLocalVariableTests : AbstractCSharpDiagnosticVerifier<InlineLocalVariableAnalyzer, LocalDeclarationStatementCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.InlineLocalVariable;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.InlineLocalVariable;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.InlineLocalVariable)]
         public async Task Test_LocalDeclaration()

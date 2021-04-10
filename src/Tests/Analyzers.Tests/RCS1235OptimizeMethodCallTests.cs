@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1235OptimizeMethodCallTests : AbstractCSharpDiagnosticVerifier<InvocationExpressionAnalyzer, OptimizeMethodCallCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.OptimizeMethodCall;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.OptimizeMethodCall;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.OptimizeMethodCall)]
         public async Task Test_CallCompareOrdinalInsteadOfCompare()

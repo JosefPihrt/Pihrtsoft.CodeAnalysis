@@ -14,7 +14,7 @@ namespace Roslynator.Formatting.CodeFixes.CSharp
 {
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(ReplaceTabWithSpacesCodeFixProvider))]
     [Shared]
-    public class ReplaceTabWithSpacesCodeFixProvider : BaseCodeFixProvider
+    public sealed class ReplaceTabWithSpacesCodeFixProvider : BaseCodeFixProvider
     {
         public ReplaceTabWithSpacesCodeFixProvider()
         {

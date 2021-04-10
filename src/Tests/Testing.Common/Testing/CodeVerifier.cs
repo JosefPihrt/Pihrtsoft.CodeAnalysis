@@ -12,6 +12,7 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
+using static System.Environment;
 
 namespace Roslynator.Testing
 {
@@ -44,27 +45,27 @@ namespace Roslynator.Testing
 
         protected void Fail(string userMessage, IEnumerable<Diagnostic> diagnostics)
         {
-            string s = string.Join("\r\n", diagnostics.Select(d => d.ToString()));
+            string s = string.Join(NewLine, diagnostics.Select(d => d.ToString()));
 
             if (s.Length == 0)
-                s = "no diagnostic";
+                s = "-";
 
-            s = $"\r\n\r\nDiagnostics:\r\n{s}\r\n";
-
-            Fail(userMessage + s);
+            Fail(userMessage + $"{NewLine}{NewLine}Diagnostics:{NewLine}{s}{NewLine}");
         }
 
         protected void Fail(string userMessage, IEnumerable<CodeAction> codeActions)
         {
-            if (codeActions == null)
-                return;
+            var s = "";
 
-            string s = string.Join("\r\n", codeActions.Select(a => $"\"{a.Title}\", EquivalenceKey: {a.EquivalenceKey}"));
+            if (codeActions != null)
+                s = string.Join(NewLine, codeActions.Select(a => $"\"{a.Title}\", EquivalenceKey: {a.EquivalenceKey}"));
 
             if (s.Length == 0)
-                return;
+                s = "-";
 
-            s = $"\r\n\r\nCandidate actions:\r\n{s}\r\n";
+            Fail(userMessage + $"{NewLine}{NewLine}Candidate actions:{NewLine}{s}{NewLine}");
+        }
+
 
             Fail(userMessage + s);
         }
@@ -77,7 +78,7 @@ namespace Roslynator.Testing
             {
                 if (!options.IsAllowedCompilerDiagnostic(diagnostic))
                 {
-                    Fail($"No compiler diagnostics with severity higher than '{options.AllowedCompilerDiagnosticSeverity}' expected",
+                    Fail($"No compiler diagnostics with severity higher than '{options.AllowedCompilerDiagnosticSeverity}' expected.",
                         diagnostics.Where(d => !options.IsAllowedCompilerDiagnostic(d)));
                 }
             }

@@ -46,7 +46,7 @@ namespace Roslynator.CSharp.Analysis
 
             DiagnosticHelpers.ReportDiagnostic(
                 context,
-                DiagnosticDescriptors.UseCountOrLengthPropertyInsteadOfAnyMethod,
+                DiagnosticRules.UseCountOrLengthPropertyInsteadOfAnyMethod,
                 Location.Create(context.Node.SyntaxTree, TextSpan.FromBounds(invocationInfo.Name.SpanStart, invocationExpression.Span.End)),
                 ImmutableDictionary.CreateRange(new[] { new KeyValuePair<string, string>("PropertyName", propertyName) }),
                 propertyName);

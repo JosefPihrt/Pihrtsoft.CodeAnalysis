@@ -10,11 +10,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class AvoidChainOfAssignmentsAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class AvoidChainOfAssignmentsAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.AvoidChainOfAssignments); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.AvoidChainOfAssignments);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -32,7 +40,7 @@ namespace Roslynator.CSharp.Analysis
             if (assignment.Right is AssignmentExpressionSyntax
                 && !(assignment.Parent is AssignmentExpressionSyntax))
             {
-                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.AvoidChainOfAssignments, assignment);
+                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.AvoidChainOfAssignments, assignment);
             }
         }
 
@@ -41,7 +49,7 @@ namespace Roslynator.CSharp.Analysis
             var equalsValue = (EqualsValueClauseSyntax)context.Node;
 
             if (equalsValue.Value is AssignmentExpressionSyntax)
-                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.AvoidChainOfAssignments, equalsValue);
+                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.AvoidChainOfAssignments, equalsValue);
         }
     }
 }

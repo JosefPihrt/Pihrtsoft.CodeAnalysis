@@ -166,7 +166,7 @@ namespace Roslynator.CSharp.Analysis
 
             void ReportDiagnostic(SyntaxNode node)
             {
-                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.OptimizeStringBuilderAppendCall, node, methodSymbol.Name);
+                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.OptimizeStringBuilderAppendCall, node, methodSymbol.Name);
             }
         }
     }

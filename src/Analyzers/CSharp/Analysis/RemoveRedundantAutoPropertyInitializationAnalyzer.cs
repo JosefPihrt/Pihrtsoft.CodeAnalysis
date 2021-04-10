@@ -10,11 +10,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class RemoveRedundantAutoPropertyInitializationAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class RemoveRedundantAutoPropertyInitializationAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.RemoveRedundantAutoPropertyInitialization); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.RemoveRedundantAutoPropertyInitialization);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -52,7 +60,7 @@ namespace Roslynator.CSharp.Analysis
             if (!context.SemanticModel.IsDefaultValue(typeSymbol, value, context.CancellationToken))
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.RemoveRedundantAutoPropertyInitialization, value);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.RemoveRedundantAutoPropertyInitialization, value);
         }
     }
 }

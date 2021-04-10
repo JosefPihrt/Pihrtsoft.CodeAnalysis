@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1241ImplementNonGenericCounterpartTests : AbstractCSharpDiagnosticVerifier<NamedTypeSymbolAnalyzer, ImplementNonGenericCounterpartCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.ImplementNonGenericCounterpart;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.ImplementNonGenericCounterpart;
 
         private readonly string _explicitEquivalenceKey;
 

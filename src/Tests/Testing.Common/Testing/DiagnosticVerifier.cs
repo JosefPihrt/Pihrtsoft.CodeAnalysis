@@ -436,7 +436,7 @@ namespace Roslynator.Testing
                 }
                 else
                 {
-                    Fail($"Mismatch between number of diagnostics, expected: {expectedCount} actual: {actualCount}", actualDiagnostics);
+                    Fail($"Mismatch between number of diagnostics, expected: {expectedCount} actual: {actualCount}.", actualDiagnostics);
                 }
             }
         }

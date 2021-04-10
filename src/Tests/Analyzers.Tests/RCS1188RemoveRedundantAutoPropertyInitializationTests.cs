@@ -11,7 +11,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1188RemoveRedundantAutoPropertyInitializationTests : AbstractCSharpDiagnosticVerifier<RemoveRedundantAutoPropertyInitializationAnalyzer, PropertyDeclarationCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.RemoveRedundantAutoPropertyInitialization;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.RemoveRedundantAutoPropertyInitialization;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemoveRedundantAutoPropertyInitialization)]
         public async Task Test_Bool()

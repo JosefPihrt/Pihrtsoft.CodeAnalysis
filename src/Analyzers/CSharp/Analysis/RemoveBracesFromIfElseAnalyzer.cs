@@ -10,15 +10,23 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class RemoveBracesFromIfElseAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class RemoveBracesFromIfElseAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                return ImmutableArray.Create(
-                    DiagnosticDescriptors.RemoveBracesFromIfElse,
-                    DiagnosticDescriptors.RemoveBracesFromIfElseFadeOut);
+                if (_supportedDiagnostics.IsDefault)
+                {
+                    Immutable.InterlockedInitialize(
+                        ref _supportedDiagnostics,
+                        DiagnosticRules.RemoveBracesFromIfElse,
+                        DiagnosticRules.RemoveBracesFromIfElseFadeOut);
+                }
+
+                return _supportedDiagnostics;
             }
         }
 
@@ -29,7 +37,7 @@ namespace Roslynator.CSharp.Analysis
             context.RegisterSyntaxNodeAction(
                 c =>
                 {
-                    if (DiagnosticDescriptors.RemoveBracesFromIfElse.IsEffective(c))
+                    if (DiagnosticRules.RemoveBracesFromIfElse.IsEffective(c))
                         AnalyzeIfStatement(c);
                 },
                 SyntaxKind.IfStatement);
@@ -50,12 +58,12 @@ namespace Roslynator.CSharp.Analysis
             if (!analysis.RemoveBraces)
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.RemoveBracesFromIfElse, ifStatement);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.RemoveBracesFromIfElse, ifStatement);
 
             foreach (IfStatementOrElseClause ifOrElse in ifStatement.AsCascade())
             {
                 if (ifOrElse.Statement is BlockSyntax block)
-                    CSharpDiagnosticHelpers.ReportBraces(context, DiagnosticDescriptors.RemoveBracesFromIfElseFadeOut, block);
+                    CSharpDiagnosticHelpers.ReportBraces(context, DiagnosticRules.RemoveBracesFromIfElseFadeOut, block);
             }
         }
     }

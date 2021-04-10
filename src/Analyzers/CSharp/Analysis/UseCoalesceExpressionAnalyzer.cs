@@ -11,15 +11,23 @@ using Roslynator.CSharp.Syntax;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class UseCoalesceExpressionAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class UseCoalesceExpressionAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                return ImmutableArray.Create(
-                    DiagnosticDescriptors.UseCoalesceExpression,
-                    DiagnosticDescriptors.InlineLazyInitialization);
+                if (_supportedDiagnostics.IsDefault)
+                {
+                    Immutable.InterlockedInitialize(
+                        ref _supportedDiagnostics,
+                        DiagnosticRules.UseCoalesceExpression,
+                        DiagnosticRules.InlineLazyInitialization);
+                }
+
+                return _supportedDiagnostics;
             }
         }
 
@@ -74,7 +82,7 @@ namespace Roslynator.CSharp.Analysis
             int index = statements.IndexOf(ifStatement);
 
             if (index > 0
-                && DiagnosticDescriptors.UseCoalesceExpression.IsEffective(context))
+                && DiagnosticRules.UseCoalesceExpression.IsEffective(context))
             {
                 StatementSyntax previousStatement = statements[index - 1];
 
@@ -83,11 +91,11 @@ namespace Roslynator.CSharp.Analysis
                     && !ifStatement.GetLeadingTrivia().Any(f => f.IsDirective)
                     && CanUseCoalesceExpression(previousStatement, nullCheck.Expression))
                 {
-                    DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UseCoalesceExpression, previousStatement);
+                    DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UseCoalesceExpression, previousStatement);
                 }
             }
 
-            if (!DiagnosticDescriptors.InlineLazyInitialization.IsEffective(context))
+            if (!DiagnosticRules.InlineLazyInitialization.IsEffective(context))
                 return;
 
             if (index == statements.Count - 1)
@@ -112,7 +120,7 @@ namespace Roslynator.CSharp.Analysis
             if (nextStatement.SpanOrLeadingTriviaContainsDirectives())
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.InlineLazyInitialization, ifStatement);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.InlineLazyInitialization, ifStatement);
 
             bool IsPartOfLazyInitialization()
             {

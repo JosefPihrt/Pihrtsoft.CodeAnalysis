@@ -11,7 +11,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1118MarkLocalVariableAsConstTests : AbstractCSharpDiagnosticVerifier<LocalDeclarationStatementAnalyzer, MarkLocalVariableAsConstCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.MarkLocalVariableAsConst;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.MarkLocalVariableAsConst;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.MarkLocalVariableAsConst)]
         public async Task Test_ConstantValue()

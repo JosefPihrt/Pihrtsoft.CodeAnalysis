@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1146UseConditionalAccessTests : AbstractCSharpDiagnosticVerifier<UseConditionalAccessAnalyzer, UseConditionalAccessCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseConditionalAccess;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UseConditionalAccess;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseConditionalAccess)]
         public async Task Test_IfStatement_ReferenceType()

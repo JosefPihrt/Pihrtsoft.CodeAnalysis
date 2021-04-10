@@ -11,15 +11,23 @@ using Microsoft.CodeAnalysis.Text;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class UseUnaryOperatorInsteadOfAssignmentAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class UseUnaryOperatorInsteadOfAssignmentAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                return ImmutableArray.Create(
-                    DiagnosticDescriptors.UseUnaryOperatorInsteadOfAssignment,
-                    DiagnosticDescriptors.UseUnaryOperatorInsteadOfAssignmentFadeOut);
+                if (_supportedDiagnostics.IsDefault)
+                {
+                    Immutable.InterlockedInitialize(
+                        ref _supportedDiagnostics,
+                        DiagnosticRules.UseUnaryOperatorInsteadOfAssignment,
+                        DiagnosticRules.UseUnaryOperatorInsteadOfAssignmentFadeOut);
+                }
+
+                return _supportedDiagnostics;
             }
         }
 
@@ -30,7 +38,7 @@ namespace Roslynator.CSharp.Analysis
             context.RegisterSyntaxNodeAction(
                 c =>
                 {
-                    if (DiagnosticDescriptors.UseUnaryOperatorInsteadOfAssignment.IsEffective(c))
+                    if (DiagnosticRules.UseUnaryOperatorInsteadOfAssignment.IsEffective(c))
                         AnalyzeSimpleAssignmentExpression(c);
                 },
                 SyntaxKind.SimpleAssignmentExpression);
@@ -38,7 +46,7 @@ namespace Roslynator.CSharp.Analysis
             context.RegisterSyntaxNodeAction(
                 c =>
                 {
-                    if (DiagnosticDescriptors.UseUnaryOperatorInsteadOfAssignment.IsEffective(c))
+                    if (DiagnosticRules.UseUnaryOperatorInsteadOfAssignment.IsEffective(c))
                         AnalyzeAddAssignmentExpression(c);
                 },
                 SyntaxKind.AddAssignmentExpression);
@@ -46,7 +54,7 @@ namespace Roslynator.CSharp.Analysis
             context.RegisterSyntaxNodeAction(
                 c =>
                 {
-                    if (DiagnosticDescriptors.UseUnaryOperatorInsteadOfAssignment.IsEffective(c))
+                    if (DiagnosticRules.UseUnaryOperatorInsteadOfAssignment.IsEffective(c))
                         AnalyzeSubtractAssignmentExpression(c);
                 },
                 SyntaxKind.SubtractAssignmentExpression);
@@ -98,9 +106,9 @@ namespace Roslynator.CSharp.Analysis
 
             ReportDiagnostic(context, assignment, operatorText);
 
-            DiagnosticHelpers.ReportToken(context, DiagnosticDescriptors.UseUnaryOperatorInsteadOfAssignmentFadeOut, assignment.OperatorToken, operatorText);
-            DiagnosticHelpers.ReportNode(context, DiagnosticDescriptors.UseUnaryOperatorInsteadOfAssignmentFadeOut, binaryLeft, operatorText);
-            DiagnosticHelpers.ReportNode(context, DiagnosticDescriptors.UseUnaryOperatorInsteadOfAssignmentFadeOut, binaryRight, operatorText);
+            DiagnosticHelpers.ReportToken(context, DiagnosticRules.UseUnaryOperatorInsteadOfAssignmentFadeOut, assignment.OperatorToken, operatorText);
+            DiagnosticHelpers.ReportNode(context, DiagnosticRules.UseUnaryOperatorInsteadOfAssignmentFadeOut, binaryLeft, operatorText);
+            DiagnosticHelpers.ReportNode(context, DiagnosticRules.UseUnaryOperatorInsteadOfAssignmentFadeOut, binaryRight, operatorText);
         }
 
         private static void AnalyzeAddAssignmentExpression(SyntaxNodeAnalysisContext context)
@@ -140,15 +148,15 @@ namespace Roslynator.CSharp.Analysis
 
             SyntaxToken operatorToken = assignment.OperatorToken;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UseUnaryOperatorInsteadOfAssignmentFadeOut, Location.Create(assignment.SyntaxTree, new TextSpan(operatorToken.SpanStart, 1)), operatorText);
-            DiagnosticHelpers.ReportNode(context, DiagnosticDescriptors.UseUnaryOperatorInsteadOfAssignmentFadeOut, assignment.Right, operatorText);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UseUnaryOperatorInsteadOfAssignmentFadeOut, Location.Create(assignment.SyntaxTree, new TextSpan(operatorToken.SpanStart, 1)), operatorText);
+            DiagnosticHelpers.ReportNode(context, DiagnosticRules.UseUnaryOperatorInsteadOfAssignmentFadeOut, assignment.Right, operatorText);
         }
 
         private static void ReportDiagnostic(SyntaxNodeAnalysisContext context, AssignmentExpressionSyntax assignment, string operatorText)
         {
             DiagnosticHelpers.ReportDiagnostic(
                 context,
-                DiagnosticDescriptors.UseUnaryOperatorInsteadOfAssignment,
+                DiagnosticRules.UseUnaryOperatorInsteadOfAssignment,
                 assignment,
                 operatorText);
         }

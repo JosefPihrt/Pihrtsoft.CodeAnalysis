@@ -12,11 +12,19 @@ using Roslynator.CSharp.Syntax;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class SimplifyLogicalNegationAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class SimplifyLogicalNegationAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.SimplifyLogicalNegation); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.SimplifyLogicalNegation);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -89,7 +97,7 @@ namespace Roslynator.CSharp.Analysis
 
             void ReportDiagnostic()
             {
-                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.SimplifyLogicalNegation, logicalNot);
+                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.SimplifyLogicalNegation, logicalNot);
             }
         }
 
@@ -164,7 +172,7 @@ namespace Roslynator.CSharp.Analysis
             if (!SymbolUtility.IsLinqExtensionOfIEnumerableOfTWithPredicate(methodSymbol))
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.SimplifyLogicalNegation, parent);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.SimplifyLogicalNegation, parent);
         }
 
         internal static ExpressionSyntax GetReturnExpression(CSharpSyntaxNode node)

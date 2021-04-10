@@ -12,11 +12,19 @@ using static Roslynator.CSharp.CSharpFactory;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class UnnecessaryNullCheckAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class UnnecessaryNullCheckAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.UnnecessaryNullCheck); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.UnnecessaryNullCheck);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -128,7 +136,7 @@ namespace Roslynator.CSharp.Analysis
                     }
                 }
 
-                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UnnecessaryNullCheck, logicalAnd);
+                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UnnecessaryNullCheck, logicalAnd);
             }
         }
     }

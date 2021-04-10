@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1174RemoveRedundantAsyncAwaitTests : AbstractCSharpDiagnosticVerifier<RemoveRedundantAsyncAwaitAnalyzer, RemoveRedundantAsyncAwaitCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.RemoveRedundantAsyncAwait;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.RemoveRedundantAsyncAwait;
 
         public override CSharpTestOptions Options
         {

@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1043RemovePartialModifierFromTypeWithSinglePartTests : AbstractCSharpDiagnosticVerifier<RemovePartialModifierFromTypeWithSinglePartAnalyzer, RemovePartialModifierFromTypeWithSinglePartCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.RemovePartialModifierFromTypeWithSinglePart;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.RemovePartialModifierFromTypeWithSinglePart;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemovePartialModifierFromTypeWithSinglePart)]
         public async Task Test_Class()

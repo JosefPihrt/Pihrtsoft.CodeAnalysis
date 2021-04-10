@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1224MakeMethodExtensionMethodTests : AbstractCSharpDiagnosticVerifier<MakeMethodExtensionMethodAnalyzer, MemberDeclarationCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.MakeMethodExtensionMethod;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.MakeMethodExtensionMethod;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.MakeMethodExtensionMethod)]
         public async Task Test_Accessibility_ImplicitlyInternal()

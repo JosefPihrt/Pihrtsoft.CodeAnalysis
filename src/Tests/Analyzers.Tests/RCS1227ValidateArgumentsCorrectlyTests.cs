@@ -12,7 +12,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1227ValidateArgumentsCorrectlyTests : AbstractCSharpDiagnosticVerifier<ValidateArgumentsCorrectlyAnalyzer, ValidateArgumentsCorrectlyCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.ValidateArgumentsCorrectly;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.ValidateArgumentsCorrectly;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.ValidateArgumentsCorrectly)]
         public async Task Test()

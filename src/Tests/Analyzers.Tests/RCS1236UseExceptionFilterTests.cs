@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1236UseExceptionFilterTests : AbstractCSharpDiagnosticVerifier<UseExceptionFilterAnalyzer, IfStatementCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseExceptionFilter;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UseExceptionFilter;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseExceptionFilter)]
         public async Task Test_IfThrow()

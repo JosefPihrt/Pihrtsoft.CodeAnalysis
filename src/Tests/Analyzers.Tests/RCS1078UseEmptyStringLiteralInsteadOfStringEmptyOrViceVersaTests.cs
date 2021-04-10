@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1078UseEmptyStringLiteralInsteadOfStringEmptyOrViceVersaTests : AbstractCSharpDiagnosticVerifier<UseEmptyStringLiteralInsteadOfStringEmptyOrViceVersaAnalyzer, UseEmptyStringLiteralInsteadOfStringEmptyOrViceVersaCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.UseEmptyStringLiteralInsteadOfStringEmptyOrViceVersa;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.UseEmptyStringLiteralInsteadOfStringEmptyOrViceVersa;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseEmptyStringLiteralInsteadOfStringEmptyOrViceVersa)]
         public async Task Test_StringEmpty()
@@ -75,7 +75,7 @@ class C
         s = string.Empty;
     }
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.UseStringEmptyInsteadOfEmptyStringLiteral));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.UseStringEmptyInsteadOfEmptyStringLiteral));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseEmptyStringLiteralInsteadOfStringEmptyOrViceVersa)]
@@ -91,7 +91,7 @@ class C
         s = ""a"";
     }
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.UseStringEmptyInsteadOfEmptyStringLiteral));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.UseStringEmptyInsteadOfEmptyStringLiteral));
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseEmptyStringLiteralInsteadOfStringEmptyOrViceVersa)]
@@ -116,7 +116,7 @@ class C
         }
     }
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticDescriptors.UseStringEmptyInsteadOfEmptyStringLiteral));
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.UseStringEmptyInsteadOfEmptyStringLiteral));
         }
     }
 }

@@ -12,15 +12,23 @@ using Roslynator.CSharp.Syntax;
 namespace Roslynator.CodeAnalysis.CSharp
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class UnnecessaryConditionalAccessAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class UnnecessaryConditionalAccessAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                return ImmutableArray.Create(
-                    DiagnosticDescriptors.UnnecessaryConditionalAccess,
-                    DiagnosticDescriptors.UnnecessaryConditionalAccessFadeOut);
+                if (_supportedDiagnostics.IsDefault)
+                {
+                    Immutable.InterlockedInitialize(
+                        ref _supportedDiagnostics,
+                        DiagnosticRules.UnnecessaryConditionalAccess,
+                        DiagnosticRules.UnnecessaryConditionalAccessFadeOut);
+                }
+
+                return _supportedDiagnostics;
             }
         }
 
@@ -106,8 +114,8 @@ namespace Roslynator.CodeAnalysis.CSharp
             if (!parameters[1].Type.HasMetadataName(CSharpMetadataNames.Microsoft_CodeAnalysis_CSharp_SyntaxKind))
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UnnecessaryConditionalAccess, conditionalAccess.OperatorToken);
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UnnecessaryConditionalAccessFadeOut, binaryExpression.Right);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UnnecessaryConditionalAccess, conditionalAccess.OperatorToken);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UnnecessaryConditionalAccessFadeOut, binaryExpression.Right);
         }
     }
 }

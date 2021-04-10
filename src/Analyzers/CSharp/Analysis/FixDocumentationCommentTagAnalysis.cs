@@ -125,7 +125,7 @@ namespace Roslynator.CSharp.Analysis
                 return;
 
             if (context.Node.SyntaxTree.IsMultiLineSpan(content.FullSpan))
-                ReportDiagnostic(context, DiagnosticDescriptors.FixDocumentationCommentTag, elementInfo.Element);
+                ReportDiagnostic(context, DiagnosticRules.FixDocumentationCommentTag, elementInfo.Element);
         }
 
         private static void AnalyzeCodeElement(SyntaxNodeAnalysisContext context, XmlElementInfo elementInfo)
@@ -141,7 +141,7 @@ namespace Roslynator.CSharp.Analysis
                 return;
 
             if (context.Node.SyntaxTree.IsSingleLineSpan(content.FullSpan))
-                ReportDiagnostic(context, DiagnosticDescriptors.FixDocumentationCommentTag, elementInfo.Element);
+                ReportDiagnostic(context, DiagnosticRules.FixDocumentationCommentTag, elementInfo.Element);
         }
     }
 }

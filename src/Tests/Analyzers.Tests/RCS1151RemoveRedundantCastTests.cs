@@ -10,7 +10,7 @@ namespace Roslynator.CSharp.Analysis.Tests
 {
     public class RCS1151RemoveRedundantCastTests : AbstractCSharpDiagnosticVerifier<RemoveRedundantCastAnalyzer, RemoveRedundantCastCodeFixProvider>
     {
-        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticDescriptors.RemoveRedundantCast;
+        public override DiagnosticDescriptor Descriptor { get; } = DiagnosticRules.RemoveRedundantCast;
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemoveRedundantCast)]
         public async Task Test_CastToDerivedType()

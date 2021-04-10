@@ -10,11 +10,19 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class UseConstantInsteadOfFieldAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class UseConstantInsteadOfFieldAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.UseConstantInsteadOfField); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.UseConstantInsteadOfField);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -37,7 +45,7 @@ namespace Roslynator.CSharp.Analysis
             if (!UseConstantInsteadOfFieldAnalysis.IsFixable(fieldDeclaration, context.SemanticModel, onlyPrivate: true, cancellationToken: context.CancellationToken))
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.UseConstantInsteadOfField, fieldDeclaration);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UseConstantInsteadOfField, fieldDeclaration);
         }
     }
 }

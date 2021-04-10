@@ -12,11 +12,19 @@ using Microsoft.CodeAnalysis.Text;
 namespace Roslynator.CSharp.Analysis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class AvoidUsageOfWhileStatementToCreateInfiniteLoopAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class AvoidUsageOfWhileStatementToCreateInfiniteLoopAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.AvoidUsageOfWhileStatementToCreateInfiniteLoop); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.AvoidUsageOfWhileStatementToCreateInfiniteLoop);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -44,7 +52,7 @@ namespace Roslynator.CSharp.Analysis
                 return;
             }
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.AvoidUsageOfWhileStatementToCreateInfiniteLoop, whileStatement.WhileKeyword);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.AvoidUsageOfWhileStatementToCreateInfiniteLoop, whileStatement.WhileKeyword);
         }
     }
 }

@@ -11,11 +11,19 @@ using Roslynator.CSharp.Syntax;
 namespace Roslynator.CodeAnalysis.CSharp
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class ElementAccessExpressionAnalyzer : BaseDiagnosticAnalyzer
+    public sealed class ElementAccessExpressionAnalyzer : BaseDiagnosticAnalyzer
     {
+        private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
-            get { return ImmutableArray.Create(DiagnosticDescriptors.CallLastInsteadOfUsingElementAccess); }
+            get
+            {
+                if (_supportedDiagnostics.IsDefault)
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.CallLastInsteadOfUsingElementAccess);
+
+                return _supportedDiagnostics;
+            }
         }
 
         public override void Initialize(AnalysisContext context)
@@ -71,7 +79,7 @@ namespace Roslynator.CodeAnalysis.CSharp
                 return;
             }
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticDescriptors.CallLastInsteadOfUsingElementAccess, elementAccessExpression.ArgumentList);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.CallLastInsteadOfUsingElementAccess, elementAccessExpression.ArgumentList);
         }
     }
 }
