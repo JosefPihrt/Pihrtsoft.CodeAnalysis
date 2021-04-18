@@ -545,7 +545,7 @@ namespace Roslynator
                 context.CancellationToken);
         }
 
-        public static bool IsEffective(
+        internal static bool IsEffective(
             this DiagnosticDescriptor descriptor,
             SyntaxTree syntaxTree,
             CompilationOptions compilationOptions,
@@ -572,6 +572,32 @@ namespace Roslynator
                 Microsoft.CodeAnalysis.ReportDiagnostic.Suppress => false,
                 _ => true,
             };
+        }
+
+        internal static ReportDiagnostic GetEffectiveSeverity(
+            this DiagnosticDescriptor descriptor,
+            SyntaxTree syntaxTree,
+            CompilationOptions compilationOptions,
+            CancellationToken cancellationToken = default)
+        {
+            SyntaxTreeOptionsProvider syntaxTreeOptionsProvider = compilationOptions.SyntaxTreeOptionsProvider;
+
+            if (syntaxTreeOptionsProvider != null
+                && syntaxTreeOptionsProvider.TryGetDiagnosticValue(
+                    syntaxTree,
+                    descriptor.Id,
+                    cancellationToken,
+                    out ReportDiagnostic syntaxTreeReportDiagnostic))
+            {
+                return syntaxTreeReportDiagnostic;
+            }
+
+            if (compilationOptions.SpecificDiagnosticOptions.TryGetValue(descriptor.Id, out ReportDiagnostic reportDiagnostic))
+                return reportDiagnostic;
+
+            return (descriptor.IsEnabledByDefault)
+                ? descriptor.DefaultSeverity.ToReportDiagnostic()
+                : Microsoft.CodeAnalysis.ReportDiagnostic.Suppress;
         }
 
         internal static bool IsEffective(this DiagnosticDescriptor descriptor, Compilation compilation)

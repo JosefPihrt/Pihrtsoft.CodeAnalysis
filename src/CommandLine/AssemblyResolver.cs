@@ -53,7 +53,12 @@ namespace Roslynator.CommandLine
                     }
             }
 
-            Debug.Assert(!assemblyName.Name.StartsWith("Microsoft.") && !assemblyName.Name.StartsWith("System."), assemblyName.Name);
+            Debug.Assert(
+                (!assemblyName.Name.StartsWith("Microsoft.")
+                    || assemblyName.Name.StartsWith("Microsoft.VisualStudio.")
+                    || string.Equals(assemblyName.Name, "Microsoft.DiaSymReader", StringComparison.Ordinal))
+                    && !assemblyName.Name.StartsWith("System."),
+                assemblyName.Name);
 
             WriteLine($"Unable to resolve assembly '{args.Name}'.", ConsoleColor.DarkGray, Verbosity.Diagnostic);
 

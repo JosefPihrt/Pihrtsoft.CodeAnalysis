@@ -15,7 +15,7 @@ namespace Roslynator.Formatting.CodeFixes
     [Shared]
     public sealed class NewLineCodeFixProvider : BaseCodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds
+        public override ImmutableArray<string> FixableDiagnosticIds
         {
             get
             {
@@ -25,7 +25,7 @@ namespace Roslynator.Formatting.CodeFixes
             }
         }
 
-        public sealed override Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             Document document = context.Document;
             Diagnostic diagnostic = context.Diagnostics[0];

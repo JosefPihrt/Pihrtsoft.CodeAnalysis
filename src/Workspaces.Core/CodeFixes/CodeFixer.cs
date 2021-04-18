@@ -295,7 +295,7 @@ namespace Roslynator.CodeFixes
                         && fixersById.ContainsKey(f.Id));
 
                 return diagnostics
-                    .Where(f => Options.IsSupportedDiagnostic(f)
+                    .Where(f => f.IsEffective(Options, project.CompilationOptions)
                         && analyzersById.ContainsKey(f.Id)
                         && fixersById.ContainsKey(f.Id))
                     .Concat(fixableCompilerDiagnostics)
@@ -585,7 +585,7 @@ namespace Roslynator.CodeFixes
             ImmutableArray<Diagnostic> diagnostics = await compilation.GetAnalyzerDiagnosticsAsync(analyzers, Options.CompilationWithAnalyzersOptions, cancellationToken).ConfigureAwait(false);
 
             return diagnostics
-                .Where(f => Options.IsSupportedDiagnostic(f)
+                .Where(f => f.IsEffective(Options, compilation.Options)
                     && analyzersById.ContainsKey(f.Id))
                 .Except(except, DiagnosticDeepEqualityComparer.Instance)
                 .ToImmutableArray();

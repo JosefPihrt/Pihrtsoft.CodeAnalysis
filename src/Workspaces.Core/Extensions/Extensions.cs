@@ -403,5 +403,24 @@ namespace Roslynator
                     throw new InvalidOperationException($"Unknown value '{kind}'.");
             }
         }
+
+        public static bool IsEffective(
+            this Diagnostic diagnostic,
+            CodeAnalysisOptions codeAnalysisOptions,
+            CompilationOptions compilationOptions,
+            CancellationToken cancellationToken = default)
+        {
+            if (!codeAnalysisOptions.IsSupportedDiagnosticId(diagnostic.Id))
+                return false;
+
+            SyntaxTree tree = diagnostic.Location.SourceTree;
+
+            ReportDiagnostic reportDiagnostic = (tree != null)
+                ? diagnostic.Descriptor.GetEffectiveSeverity(tree, compilationOptions, cancellationToken)
+                : diagnostic.Descriptor.GetEffectiveSeverity(compilationOptions);
+
+            return reportDiagnostic != ReportDiagnostic.Suppress
+                && reportDiagnostic.ToDiagnosticSeverity() >= codeAnalysisOptions.SeverityLevel;
+        }
     }
 }

@@ -88,7 +88,7 @@ namespace Roslynator.Diagnostics
             WriteLine($"Done analyzing solution '{solution.FilePath}' in {stopwatch.Elapsed:mm\\:ss\\.ff}", Verbosity.Minimal);
 
             if (results.Count > 0)
-                WriteProjectAnalysisResults(results, cancellationToken);
+                WriteProjectAnalysisResults(results);
 
             return results.ToImmutableArray();
         }
@@ -105,7 +105,7 @@ namespace Roslynator.Diagnostics
 
             WriteLine($"Done analyzing project '{project.FilePath}' in {stopwatch.Elapsed:mm\\:ss\\.ff}", Verbosity.Minimal);
 
-            WriteProjectAnalysisResults(new ProjectAnalysisResult[] { result }, cancellationToken);
+            WriteProjectAnalysisResults(new ProjectAnalysisResult[] { result });
 
             return result;
         }
@@ -142,7 +142,7 @@ namespace Roslynator.Diagnostics
                 ? ImmutableArray<Diagnostic>.Empty
                 : compilation.GetDiagnostics(cancellationToken);
 
-            compilerDiagnostics = FilterDiagnostics(compilerDiagnostics, cancellationToken).ToImmutableArray();
+            compilerDiagnostics = FilterDiagnostics(compilerDiagnostics, project, cancellationToken).ToImmutableArray();
 
             ImmutableArray<Diagnostic> diagnostics = ImmutableArray<Diagnostic>.Empty;
 
@@ -174,7 +174,7 @@ namespace Roslynator.Diagnostics
 
             string projectDirectoryPath = Path.GetDirectoryName(project.FilePath);
 
-            LogHelpers.WriteDiagnostics(FilterDiagnostics(diagnostics.Where(f => f.IsAnalyzerExceptionDiagnostic()), cancellationToken).ToImmutableArray(), baseDirectoryPath: projectDirectoryPath, formatProvider: FormatProvider, indentation: "  ", verbosity: Verbosity.Detailed);
+            LogHelpers.WriteDiagnostics(FilterDiagnostics(diagnostics.Where(f => f.IsAnalyzerExceptionDiagnostic()), project, cancellationToken).ToImmutableArray(), baseDirectoryPath: projectDirectoryPath, formatProvider: FormatProvider, indentation: "  ", verbosity: Verbosity.Detailed);
 #if DEBUG
             if (ConsoleOut.Verbosity >= Verbosity.Detailed
                 && diagnostics.Any(f => f.IsAnalyzerExceptionDiagnostic()))
@@ -185,7 +185,7 @@ namespace Roslynator.Diagnostics
                     throw new OperationCanceledException();
             }
 #endif
-            diagnostics = FilterDiagnostics(diagnostics.Where(f => !f.IsAnalyzerExceptionDiagnostic()), cancellationToken).ToImmutableArray();
+            diagnostics = FilterDiagnostics(diagnostics.Where(f => !f.IsAnalyzerExceptionDiagnostic()), project, cancellationToken).ToImmutableArray();
 
             LogHelpers.WriteDiagnostics(compilerDiagnostics, baseDirectoryPath: projectDirectoryPath, formatProvider: FormatProvider, indentation: "  ", verbosity: Verbosity.Normal);
 
@@ -199,11 +199,11 @@ namespace Roslynator.Diagnostics
                 telemetry);
         }
 
-        private IEnumerable<Diagnostic> FilterDiagnostics(IEnumerable<Diagnostic> diagnostics, CancellationToken cancellationToken = default)
+        private IEnumerable<Diagnostic> FilterDiagnostics(IEnumerable<Diagnostic> diagnostics, Project project, CancellationToken cancellationToken = default)
         {
             foreach (Diagnostic diagnostic in diagnostics)
             {
-                if (Options.IsSupportedDiagnostic(diagnostic)
+                if (diagnostic.IsEffective(Options, project.CompilationOptions)
                     && (Options.ReportNotConfigurable || !diagnostic.Descriptor.CustomTags.Contains(WellKnownDiagnosticTags.NotConfigurable)))
                 {
                     if (diagnostic.Descriptor.CustomTags.Contains(WellKnownDiagnosticTags.Compiler))
@@ -226,30 +226,19 @@ namespace Roslynator.Diagnostics
             }
         }
 
-        private void WriteProjectAnalysisResults(
-            IList<ProjectAnalysisResult> results,
-            CancellationToken cancellationToken)
+        private void WriteProjectAnalysisResults(IList<ProjectAnalysisResult> results)
         {
             if (Options.LogAnalyzerExecutionTime)
                 WriteExecutionTime();
 
-            int totalCount = 0;
-
-            foreach (ProjectAnalysisResult result in results)
-            {
-                IEnumerable<Diagnostic> diagnostics = result.Diagnostics
-                    .Where(f => !f.IsAnalyzerExceptionDiagnostic())
-                    .Concat(result.CompilerDiagnostics);
-
-                totalCount += FilterDiagnostics(diagnostics, cancellationToken).Count();
-            }
+            int totalCount = results.Sum(f => f.Diagnostics.Length + f.CompilerDiagnostics.Length);
 
             if (totalCount > 0)
             {
                 WriteLine(Verbosity.Normal);
 
                 Dictionary<DiagnosticDescriptor, int> diagnosticsByDescriptor = results
-                    .SelectMany(f => FilterDiagnostics(f.Diagnostics.Concat(f.CompilerDiagnostics), cancellationToken))
+                    .SelectMany(f => f.Diagnostics.Concat(f.CompilerDiagnostics))
                     .GroupBy(f => f.Descriptor, DiagnosticDescriptorComparer.Id)
                     .ToDictionary(f => f.Key, f => f.Count());
 

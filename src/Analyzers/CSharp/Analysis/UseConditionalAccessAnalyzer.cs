@@ -295,8 +295,22 @@ namespace Roslynator.CSharp.Analysis
                         {
                             var isPatternExpression = (IsPatternExpressionSyntax)expression;
 
-                            return !(isPatternExpression.Pattern is ConstantPatternSyntax constantPattern)
-                                || !constantPattern.Expression.WalkDownParentheses().IsKind(SyntaxKind.NullLiteralExpression);
+                            PatternSyntax pattern = isPatternExpression.Pattern;
+
+                            if (pattern is ConstantPatternSyntax constantPattern)
+                            {
+                                return !constantPattern.Expression.WalkDownParentheses().IsKind(SyntaxKind.NullLiteralExpression);
+                            }
+                            else if (pattern.IsKind(SyntaxKind.NotPattern))
+                            {
+                                pattern = ((UnaryPatternSyntax)pattern).Pattern;
+
+                                // x != null && x.P is not T;
+                                if (pattern is ConstantPatternSyntax constantPattern2)
+                                    return constantPattern2.Expression.WalkDownParentheses().IsKind(SyntaxKind.NullLiteralExpression);
+                            }
+
+                            return true;
                         }
                     case SyntaxKind.SimpleMemberAccessExpression:
                     case SyntaxKind.InvocationExpression:
