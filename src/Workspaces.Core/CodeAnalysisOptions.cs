@@ -40,30 +40,11 @@ namespace Roslynator
 
         public ImmutableHashSet<string> IgnoredDiagnosticIds { get; }
 
-        internal bool IsSupportedDiagnostic(Diagnostic diagnostic)
-        {
-            return diagnostic.Severity >= SeverityLevel
-                && IsSupportedDiagnosticId(diagnostic.Id);
-        }
-
         internal bool IsSupportedDiagnosticId(string diagnosticId)
         {
             return (SupportedDiagnosticIds.Count > 0)
                 ? SupportedDiagnosticIds.Contains(diagnosticId)
                 : !IgnoredDiagnosticIds.Contains(diagnosticId);
-        }
-
-        internal ReportDiagnostic GetEffectiveSeverity(DiagnosticDescriptor descriptor, CompilationOptions compilationOptions)
-        {
-            ReportDiagnostic reportDiagnostic = descriptor.GetEffectiveSeverity(compilationOptions);
-
-            if (reportDiagnostic == ReportDiagnostic.Suppress)
-                return reportDiagnostic;
-
-            if (reportDiagnostic.ToDiagnosticSeverity() < SeverityLevel)
-                return ReportDiagnostic.Suppress;
-
-            return reportDiagnostic;
         }
     }
 }

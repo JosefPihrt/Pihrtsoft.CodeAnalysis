@@ -888,5 +888,25 @@ class C
 }
 ", options: WellKnownCSharpTestOptions.Default_CSharp5);
         }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseConditionalAccess)]
+        public async Task TestNoDiagnostic_IsNotPattern()
+        {
+            await VerifyNoDiagnosticAsync(@"
+class C
+{
+    C P { get; }
+
+    C(C p) => P = p;
+
+    void M()
+    {
+        var x = new C(null);
+
+        var y = x.P != null && x.P.P is not C;
+    }
+}
+");
+        }
     }
 }

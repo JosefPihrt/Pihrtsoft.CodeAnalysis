@@ -14,7 +14,7 @@ namespace Roslynator.CSharp.CodeFixes
     [Shared]
     public sealed class DocumentCodeFixProvider : BaseCodeFixProvider
     {
-        public sealed override ImmutableArray<string> FixableDiagnosticIds
+        public override ImmutableArray<string> FixableDiagnosticIds
         {
             get { return ImmutableArray.Create(DiagnosticIdentifiers.RemoveFileWithNoCode); }
         }
@@ -24,7 +24,7 @@ namespace Roslynator.CSharp.CodeFixes
             return null;
         }
 
-        public sealed override Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             foreach (Diagnostic diagnostic in context.Diagnostics)
             {

@@ -246,15 +246,19 @@
     <Rule Id="IDE0028" Action="Info" />
     <Rule Id="IDE0029" Action="Info" />
     <Rule Id="IDE0031" Action="Info" />
+    <Rule Id="IDE0034" Action="None" />
     <Rule Id="IDE0046" Action="None" />
     <Rule Id="IDE0046WithoutSuggestion" Action="None" />
     <Rule Id="IDE0047" Action="None" />
     <Rule Id="IDE0047WithoutSuggestion" Action="None" />
     <Rule Id="IDE0054" Action="None" />
     <Rule Id="IDE0054WithoutSuggestion" Action="None" />
+    <Rule Id="IDE0056" Action="None" />
+    <Rule Id="IDE0057" Action="None" />
     <Rule Id="IDE0063" Action="None" />
     <Rule Id="IDE0063WithoutSuggestion" Action="None" />
     <Rule Id="IDE0066WithoutSuggestion" Action="None" />
+    <Rule Id="IDE0071" Action="None" />
     <Rule Id="IDE0071WithoutSuggestion" Action="None" />
     <Rule Id="IDE0074" Action="None" />
     <Rule Id="IDE0074WithoutSuggestion" Action="None" />

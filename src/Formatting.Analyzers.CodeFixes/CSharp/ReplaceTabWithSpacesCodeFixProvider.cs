@@ -26,12 +26,12 @@ namespace Roslynator.Formatting.CodeFixes.CSharp
 
         internal string FourSpacesEquivalenceKey { get; }
 
-        public sealed override ImmutableArray<string> FixableDiagnosticIds
+        public override ImmutableArray<string> FixableDiagnosticIds
         {
             get { return ImmutableArray.Create(DiagnosticIdentifiers.UseSpacesInsteadOfTab); }
         }
 
-        public sealed override Task RegisterCodeFixesAsync(CodeFixContext context)
+        public override Task RegisterCodeFixesAsync(CodeFixContext context)
         {
             Document document = context.Document;
             Diagnostic diagnostic = context.Diagnostics[0];
