@@ -166,15 +166,15 @@ namespace Roslynator.CSharp
             customTags:         Array.Empty<string>());
 
         /// <summary>RCS1104a</summary>
-        public static readonly DiagnosticDescriptor SimplifyConditionalExpressionWhenItIncludesNegationOfCondition = DiagnosticDescriptorFactory.Default.Create(
-            id:                 AnalyzerOptionDiagnosticIdentifiers.SimplifyConditionalExpressionWhenItIncludesNegationOfCondition, 
-            title:              "Simplify conditional expression (when it includes negation of condition).", 
-            messageFormat:      "Simplify conditional expression (when it includes negation of condition).", 
+        public static readonly DiagnosticDescriptor DoNotSimplifyConditionalExpressionWhenConditionIsInverted = DiagnosticDescriptorFactory.Default.Create(
+            id:                 AnalyzerOptionDiagnosticIdentifiers.DoNotSimplifyConditionalExpressionWhenConditionIsInverted, 
+            title:              "Do not simplify conditional expression when condition is inverted.", 
+            messageFormat:      "Do not simplify conditional expression when condition is inverted.", 
             category:           DiagnosticCategories.AnalyzerOption, 
             defaultSeverity:    DiagnosticSeverity.Info, 
             isEnabledByDefault: false, 
             description:        null, 
-            helpLinkUri:        AnalyzerOptionDiagnosticIdentifiers.SimplifyConditionalExpressionWhenItIncludesNegationOfCondition, 
+            helpLinkUri:        AnalyzerOptionDiagnosticIdentifiers.DoNotSimplifyConditionalExpressionWhenConditionIsInverted, 
             customTags:         Array.Empty<string>());
 
         /// <summary>RCS1207i</summary>
@@ -199,18 +199,6 @@ namespace Roslynator.CSharp
             isEnabledByDefault: false, 
             description:        null, 
             helpLinkUri:        AnalyzerOptionDiagnosticIdentifiers.DoNotUseElementAccessWhenExpressionIsInvocation, 
-            customTags:         Array.Empty<string>());
-
-        /// <summary>RCS1248a</summary>
-        public static readonly DiagnosticDescriptor UseLogicalNegationAndPatternMatchingToCheckForNull = DiagnosticDescriptorFactory.Default.Create(
-            id:                 AnalyzerOptionDiagnosticIdentifiers.UseLogicalNegationAndPatternMatchingToCheckForNull, 
-            title:              "Use logical negation and pattern matching to check for null.", 
-            messageFormat:      "Use logical negation and pattern matching to check for null.", 
-            category:           DiagnosticCategories.AnalyzerOption, 
-            defaultSeverity:    DiagnosticSeverity.Info, 
-            isEnabledByDefault: false, 
-            description:        null, 
-            helpLinkUri:        AnalyzerOptionDiagnosticIdentifiers.UseLogicalNegationAndPatternMatchingToCheckForNull, 
             customTags:         Array.Empty<string>());
 
         /// <summary>RCS1248i</summary>

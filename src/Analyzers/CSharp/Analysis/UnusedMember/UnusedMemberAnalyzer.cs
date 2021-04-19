@@ -136,7 +136,7 @@ namespace Roslynator.CSharp.Analysis.UnusedMember
                             break;
                         }
                     case SyntaxKind.MethodDeclaration:
-                                {
+                        {
                             var declaration = (MethodDeclarationSyntax)member;
 
                             SyntaxTokenList modifiers = declaration.Modifiers;
@@ -177,7 +177,7 @@ namespace Roslynator.CSharp.Analysis.UnusedMember
                             walker.AddNode(methodName, declaration);
 
                             break;
-                                }
+                        }
                     case SyntaxKind.PropertyDeclaration:
                         {
                             var declaration = (PropertyDeclarationSyntax)member;

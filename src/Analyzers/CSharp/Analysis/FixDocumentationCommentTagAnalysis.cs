@@ -48,27 +48,6 @@ namespace Roslynator.CSharp.Analysis
                                 Analyze(context, elementInfo2);
                                 break;
                             }
-                        case XmlTag.Content:
-                        case XmlTag.Example:
-                        case XmlTag.Exception:
-                        case XmlTag.Exclude:
-                        case XmlTag.Include:
-                        case XmlTag.InheritDoc:
-                        case XmlTag.Param:
-                        case XmlTag.Permission:
-                        case XmlTag.Remarks:
-                        case XmlTag.Returns:
-                        case XmlTag.SeeAlso:
-                        case XmlTag.Summary:
-                        case XmlTag.TypeParam:
-                        case XmlTag.Value:
-                            {
-                                break;
-                            }
-                        default:
-                            {
-                                break;
-                            }
                     }
                 }
             }

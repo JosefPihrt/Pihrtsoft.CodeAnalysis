@@ -32,7 +32,7 @@ namespace Roslynator.Testing.CSharp
 
             Debug.Assert(code.Spans.Length == 0);
 
-            ExpectedTestState expected = ExpectedTestState.Parse(code.ExpectedValue);
+            var expected = ExpectedTestState.Parse(code.ExpectedValue);
 
             var state = new CompilerDiagnosticFixTestData(
                 DiagnosticId,

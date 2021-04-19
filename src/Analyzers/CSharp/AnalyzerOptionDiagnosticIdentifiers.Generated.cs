@@ -21,10 +21,9 @@ namespace Roslynator.CSharp
         public const string UseStringEmptyInsteadOfEmptyStringLiteral = "RCS1078i";
         public const string RemoveCallToConfigureAwait = "RCS1090i";
         public const string ConvertBitwiseOperationToHasFlagCall = "RCS1096i";
-        public const string SimplifyConditionalExpressionWhenItIncludesNegationOfCondition = "RCS1104a";
+        public const string DoNotSimplifyConditionalExpressionWhenConditionIsInverted = "RCS1104a";
         public const string ConvertMethodGroupToAnonymousFunction = "RCS1207i";
         public const string DoNotUseElementAccessWhenExpressionIsInvocation = "RCS1246a";
-        public const string UseLogicalNegationAndPatternMatchingToCheckForNull = "RCS1248a";
         public const string UseComparisonInsteadPatternMatchingToCheckForNull = "RCS1248i";
     }
 }

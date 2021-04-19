@@ -49,7 +49,7 @@ namespace Roslynator.Testing
 
         private static VisualBasicTestOptions CreateDefault()
         {
-            var parseOptions = VisualBasicParseOptions.Default;
+            VisualBasicParseOptions parseOptions = VisualBasicParseOptions.Default;
 
             var compilationOptions = new VisualBasicCompilationOptions(OutputKind.DynamicallyLinkedLibrary);
 

@@ -6,7 +6,6 @@ using Xunit;
 
 namespace Roslynator.CSharp.CodeFixes.Tests
 {
-
     public class CS7036ThereIsNoArgumentGivenThatCorrespondsToRequiredFormalParameter : AbstractCSharpCompilerDiagnosticFixVerifier<ObjectCreationExpressionCodeFixProvider>
     {
         public override string DiagnosticId { get; } = CompilerDiagnosticIdentifiers.ThereIsNoArgumentGivenThatCorrespondsToRequiredFormalParameter;

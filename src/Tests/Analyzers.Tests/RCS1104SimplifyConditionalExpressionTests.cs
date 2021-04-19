@@ -104,7 +104,7 @@ class C
         bool z = !x && y;
     }
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.SimplifyConditionalExpressionWhenItIncludesNegationOfCondition));
+");
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyConditionalExpression)]
@@ -130,7 +130,7 @@ class C
         bool z = !x || y;
     }
 }
-", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.SimplifyConditionalExpressionWhenItIncludesNegationOfCondition));
+");
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyConditionalExpression)]
@@ -142,8 +142,6 @@ class C
     void M(bool f, bool g, bool h)
     {
         if ((f) ? g : h) { }
-        if ((f) ? false : g) { }
-        if ((f) ? g : true) { }
 
         if ((f)
 #if DEBUG
@@ -175,7 +173,7 @@ class C
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyConditionalExpression)]
-        public async Task TestNoDiagnostic_NegationOfCondition()
+        public async Task TestNoDiagnostic_DoNotSimplifyWhenConditionIsInverted()
         {
             await VerifyNoDiagnosticAsync(@"
 class C
@@ -189,7 +187,7 @@ class C
         bool z2 = x ? y : true;
     }
 }
-");
+", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.DoNotSimplifyConditionalExpressionWhenConditionIsInverted));
         }
     }
 }
