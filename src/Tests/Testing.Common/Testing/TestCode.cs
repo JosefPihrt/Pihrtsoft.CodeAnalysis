@@ -57,9 +57,7 @@ namespace Roslynator.Testing
         {
             (string source, ImmutableArray<TextSpan> spans) = FindSpansAndRemove(value);
 
-            (string source2, ImmutableDictionary<string, ImmutableArray<TextSpan>> annotatedSpans) = FindAnnotatedSpansAndRemove(source);
-
-            ImmutableArray<TextSpan> additionalSpans = annotatedSpans.GetValueOrDefault("a");
+            (string source2, ImmutableArray<TextSpan> additionalSpans) = FindAnnotatedSpansAndRemove(source, "a");
 
             return new TestCode(source2, spans, additionalSpans);
         }
@@ -77,9 +75,7 @@ namespace Roslynator.Testing
         {
             (string source, string expected, ImmutableArray<TextSpan> spans) = FindSpansAndReplace(value, replacement1, replacement2);
 
-            (string source2, ImmutableDictionary<string, ImmutableArray<TextSpan>> annotatedSpans) = FindAnnotatedSpansAndRemove(source);
-
-            ImmutableArray<TextSpan> additionalSpans = annotatedSpans.GetValueOrDefault("a");
+            (string source2, ImmutableArray<TextSpan> additionalSpans) = FindAnnotatedSpansAndRemove(source, "a");
 
             return new TestCode(source2, expected, spans, additionalSpans);
         }

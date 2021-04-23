@@ -15,7 +15,21 @@ namespace Roslynator.Testing.Text
     {
         private static readonly Regex _annotatedSpanRegex = new Regex(@"(?s)\{\|(?<identifier>[^:]+):(?<content>.*?)\|\}");
 
-        public static (string source, ImmutableDictionary<string, ImmutableArray<TextSpan>> spans) FindAnnotatedSpansAndRemove(string text)
+        public static (string source, ImmutableArray<TextSpan> spans) FindAnnotatedSpansAndRemove(string text, string annotationIdentifier)
+        {
+            (string source, ImmutableArray<(string kind, TextSpan span)> annotations) = FindAnnotatedSpansAndRemoveImpl(text, annotationIdentifier);
+
+            return (source, ImmutableArray.CreateRange(annotations, f => f.span));
+        }
+
+        public static (string source, ImmutableArray<(string kind, TextSpan span)> annotations) FindAnnotatedSpansAndRemove(string text)
+        {
+            return FindAnnotatedSpansAndRemoveImpl(text);
+        }
+
+        private static (string source, ImmutableArray<(string kind, TextSpan span)> annotations) FindAnnotatedSpansAndRemoveImpl(
+            string text,
+            string annotationIdentifier = null)
         {
             int offset = 0;
             int lastPos = 0;
@@ -23,11 +37,11 @@ namespace Roslynator.Testing.Text
             Match match = _annotatedSpanRegex.Match(text);
 
             if (!match.Success)
-                return (text, ImmutableDictionary<string, ImmutableArray<TextSpan>>.Empty);
+                return (text, ImmutableArray<(string, TextSpan)>.Empty);
 
             StringBuilder sb = StringBuilderCache.GetInstance(text.Length);
 
-            ImmutableDictionary<string, List<TextSpan>>.Builder dic = ImmutableDictionary.CreateBuilder<string, List<TextSpan>>();
+            ImmutableArray<(string, TextSpan)>.Builder annotations = null;
 
             do
             {
@@ -37,13 +51,14 @@ namespace Roslynator.Testing.Text
                 sb.Append(content.Value);
 
                 string identifier = match.Groups["identifier"].Value;
-                if (!dic.TryGetValue(identifier, out List<TextSpan> spans))
-                {
-                    spans = new List<TextSpan>();
-                    dic[identifier] = spans;
-                }
 
-                spans.Add(new TextSpan(match.Index - offset, content.Length));
+                if (annotationIdentifier == null
+                    || string.Equals(annotationIdentifier, identifier, StringComparison.Ordinal))
+                {
+                    var span = new TextSpan(match.Index - offset, content.Length);
+
+                    (annotations ??= ImmutableArray.CreateBuilder<(string, TextSpan)>()).Add((identifier, span));
+                }
 
                 lastPos = match.Index + match.Length;
                 offset += match.Length - content.Length;
@@ -56,7 +71,7 @@ namespace Roslynator.Testing.Text
 
             return (
                 StringBuilderCache.GetStringAndFree(sb),
-                dic.ToImmutableDictionary(f => f.Key, f => f.Value.ToImmutableArray()));
+                annotations?.ToImmutableArray() ?? ImmutableArray<(string, TextSpan)>.Empty);
         }
 
         public static (string, ImmutableArray<TextSpan>) FindSpansAndRemove(string text)

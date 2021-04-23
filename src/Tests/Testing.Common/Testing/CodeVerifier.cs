@@ -184,7 +184,7 @@ namespace Roslynator.Testing
 
             Assert.Equal(expected.Source, actual);
 
-            if (!expected.Spans.IsEmpty
+            if (!expected.Annotations.IsEmpty
                 || !expected.AlwaysVerifyAnnotations.IsEmpty)
             {
                 VerifyAnnotations(expected, root, actual);
@@ -196,7 +196,7 @@ namespace Roslynator.Testing
             SyntaxNode root,
             string source)
         {
-            foreach (KeyValuePair<string, ImmutableArray<TextSpan>> kvp in expected.Spans)
+            foreach (KeyValuePair<string, ImmutableArray<TextSpan>> kvp in expected.AnnotationsByKind)
             {
                 string kind = GetAnnotationKind(kvp.Key);
                 ImmutableArray<TextSpan> spans = kvp.Value;
@@ -206,9 +206,9 @@ namespace Roslynator.Testing
 
             foreach (string kind in expected.AlwaysVerifyAnnotations)
             {
-                if (!expected.Spans.ContainsKey(kind))
+                if (!expected.AnnotationsByKind.ContainsKey(kind))
                 {
-                    ImmutableArray<TextSpan> spans = expected.Spans.GetValueOrDefault(kind, ImmutableArray<TextSpan>.Empty);
+                    ImmutableArray<TextSpan> spans = expected.AnnotationsByKind.GetValueOrDefault(kind, ImmutableArray<TextSpan>.Empty);
 
                     VerifyAnnotations(root, source, kind, spans);
                 }
