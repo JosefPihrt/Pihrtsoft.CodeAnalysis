@@ -13,7 +13,7 @@ namespace Roslynator.Testing.CSharp.Xunit
         where TFixProvider : CodeFixProvider, new()
     {
         /// <summary>
-        /// Initializes a new instance of <see cref="CSharpDiagnosticVerifier"/>.
+        /// Initializes a new instance of <see cref="XunitDiagnosticVerifier{TAnalyzer, TFixProvider}"/>.
         /// </summary>
         protected XunitDiagnosticVerifier() : base(XunitAssert.Instance)
         {

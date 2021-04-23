@@ -1031,10 +1031,10 @@ catch (Exception ex)
       </Sample>
     </Samples>
     <Options>
-      <Option Identifier="DoNotRenamePrivateStaticReadOnlyFieldToCamelCaseWithUnderscore">
-        <Title>Do not rename private static read-only field to camel case with underscore.</Title>
+      <Option Identifier="DoNotRenamePrivateStaticFieldToCamelCaseWithUnderscore">
+        <Title>Do not rename private static field to camel case with underscore.</Title>
         <Id>a</Id>
-        <OptionKey>suppress_private_static_readonly_field</OptionKey>
+        <OptionKey>suppress_when_field_is_static</OptionKey>
         <Kind>Disable</Kind>
         <Samples>
           <Sample>

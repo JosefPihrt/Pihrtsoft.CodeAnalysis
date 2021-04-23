@@ -15,7 +15,7 @@ namespace Roslynator.CSharp
         public const string ConvertExpressionBodyToBlockBody = "RCS1016i";
         public const string RemoveAccessibilityModifiers = "RCS1018i";
         public const string RemoveEmptyLineBetweenClosingBraceAndSwitchSection = "RCS1036a";
-        public const string DoNotRenamePrivateStaticReadOnlyFieldToCamelCaseWithUnderscore = "RCS1045a";
+        public const string DoNotRenamePrivateStaticFieldToCamelCaseWithUnderscore = "RCS1045a";
         public const string RemoveArgumentListFromObjectCreation = "RCS1050i";
         public const string RemoveParenthesesFromConditionOfConditionalExpressionWhenExpressionIsSingleToken = "RCS1051a";
         public const string UseStringEmptyInsteadOfEmptyStringLiteral = "RCS1078i";

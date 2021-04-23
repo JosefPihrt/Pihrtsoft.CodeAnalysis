@@ -331,7 +331,7 @@ List<object> items = new List<object>();
 
 #### Change 'var' to explicit type \(RR0023\)
 
-* **Syntax**: variable declaration, foreach statetement
+* **Syntax**: variable declaration, foreach statement
 * **Span**: type
 ![Change 'var' to explicit type](../../images/refactorings/ChangeVarToExplicitType.png)
 
@@ -346,10 +346,10 @@ List<object> items = new List<object>();
 * **Span**: parameter identifier
 ![Check parameter for null](../../images/refactorings/CheckParameterForNull.png)
 
-#### Collapse to initalizer \(RR0026\)
+#### Collapse to initializer \(RR0026\)
 
 * **Syntax**: object creation followed with assignment\(s\)
-![Collapse to initalizer](../../images/refactorings/CollapseToInitializer.png)
+![Collapse to initializer](../../images/refactorings/CollapseToInitializer.png)
 
 #### Comment out member \(RR0027\)
 
@@ -1191,7 +1191,7 @@ class C<T> : IEnumerable<T>
 #### Initialize field from constructor \(RR0197\)
 
 * **Syntax**: field declaration
-* **Span**: idenifier
+* **Span**: identifier
 
 #### Before
 

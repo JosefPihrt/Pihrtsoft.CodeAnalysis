@@ -94,15 +94,15 @@ namespace Roslynator.CSharp
             customTags:         Array.Empty<string>());
 
         /// <summary>RCS1045a</summary>
-        public static readonly DiagnosticDescriptor DoNotRenamePrivateStaticReadOnlyFieldToCamelCaseWithUnderscore = DiagnosticDescriptorFactory.Default.Create(
-            id:                 AnalyzerOptionDiagnosticIdentifiers.DoNotRenamePrivateStaticReadOnlyFieldToCamelCaseWithUnderscore, 
-            title:              "Do not rename private static read-only field to camel case with underscore.", 
-            messageFormat:      "Do not rename private static read-only field to camel case with underscore.", 
+        public static readonly DiagnosticDescriptor DoNotRenamePrivateStaticFieldToCamelCaseWithUnderscore = DiagnosticDescriptorFactory.Default.Create(
+            id:                 AnalyzerOptionDiagnosticIdentifiers.DoNotRenamePrivateStaticFieldToCamelCaseWithUnderscore, 
+            title:              "Do not rename private static field to camel case with underscore.", 
+            messageFormat:      "Do not rename private static field to camel case with underscore.", 
             category:           DiagnosticCategories.AnalyzerOption, 
             defaultSeverity:    DiagnosticSeverity.Info, 
             isEnabledByDefault: false, 
             description:        null, 
-            helpLinkUri:        AnalyzerOptionDiagnosticIdentifiers.DoNotRenamePrivateStaticReadOnlyFieldToCamelCaseWithUnderscore, 
+            helpLinkUri:        AnalyzerOptionDiagnosticIdentifiers.DoNotRenamePrivateStaticFieldToCamelCaseWithUnderscore, 
             customTags:         Array.Empty<string>());
 
         /// <summary>RCS1050i</summary>

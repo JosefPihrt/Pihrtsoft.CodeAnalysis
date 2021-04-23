@@ -203,9 +203,6 @@ namespace Roslynator.CodeGeneration.Markdown
                 CreateAppliesTo(appliesTo),
                 CreateSeeAlso(
                     analyzer.Links.Select(f => CreateLink(f)),
-                    (analyzer.Options.Count > 0 || analyzer.Kind != AnalyzerOptionKind.None)
-                        ? Link("Analyzer Options", "../AnalyzerOptions.md")
-                        : null,
                     Link("How to Suppress a Diagnostic", "../HowToConfigureAnalyzers.md#how-to-suppress-a-diagnostic")));
 
             document.AddFootnote();
