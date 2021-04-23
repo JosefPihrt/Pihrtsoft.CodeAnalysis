@@ -66,10 +66,6 @@ namespace Roslynator.Testing
             Fail(userMessage + $"{NewLine}{NewLine}Candidate actions:{NewLine}{s}{NewLine}");
         }
 
-
-            Fail(userMessage + s);
-        }
-
         internal void VerifyCompilerDiagnostics(
             ImmutableArray<Diagnostic> diagnostics,
             TestOptions options)
