@@ -38,12 +38,12 @@ namespace Roslynator.Testing
 
         internal IAssert Assert { get; }
 
-        protected void Fail(string userMessage)
+        internal void Fail(string userMessage)
         {
             Assert.True(false, userMessage);
         }
 
-        protected void Fail(string userMessage, IEnumerable<Diagnostic> diagnostics)
+        internal void Fail(string userMessage, IEnumerable<Diagnostic> diagnostics)
         {
             string s = string.Join(NewLine, diagnostics.Select(d => d.ToString()));
 
@@ -53,7 +53,7 @@ namespace Roslynator.Testing
             Fail(userMessage + $"{NewLine}{NewLine}Diagnostics:{NewLine}{s}{NewLine}");
         }
 
-        protected void Fail(string userMessage, IEnumerable<CodeAction> codeActions)
+        internal void Fail(string userMessage, IEnumerable<CodeAction> codeActions)
         {
             var s = "";
 
