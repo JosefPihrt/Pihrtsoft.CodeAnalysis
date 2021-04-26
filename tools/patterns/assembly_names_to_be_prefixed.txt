@@ -1,0 +1,20 @@
+(?x)
+(?<=
+  assembly:\ InternalsVisibleTo\("
+)
+_?
+(?=
+  Roslynator\.
+  (
+    Core
+  |
+    CSharp(\.Workspaces)?
+  |
+    VisualBasic(\.Workspaces)?
+  |
+    Workspaces\.Core
+  |
+    Documentation
+  )
+  ,
+)

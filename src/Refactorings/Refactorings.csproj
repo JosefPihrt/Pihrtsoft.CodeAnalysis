@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>3.1.0.1</Version>
+    <Version>3.2.0.0</Version>
     <AssemblyName>Roslynator.CSharp.Refactorings</AssemblyName>
     <RootNamespace>Roslynator.CSharp.Refactorings</RootNamespace>
   </PropertyGroup>

@@ -16,7 +16,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="xunit" Version="2.4.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\Refactorings\Refactorings.csproj" />
     <ProjectReference Include="..\Testing.CSharp.Xunit\Testing.CSharp.Xunit.csproj" />
   </ItemGroup>
+
 </Project>

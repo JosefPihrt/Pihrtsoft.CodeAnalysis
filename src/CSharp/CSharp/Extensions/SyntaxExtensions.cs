@@ -3239,10 +3239,21 @@ namespace Roslynator.CSharp
                     case SyntaxKind.NotEqualsExpression:
                     case SyntaxKind.Argument:
                     case SyntaxKind.ArgumentList:
-                    case SyntaxKind.SimpleAssignmentExpression:
                     case SyntaxKind.LogicalNotExpression:
                     case SyntaxKind.Interpolation:
                     case SyntaxKind.InterpolatedStringExpression:
+                    case SyntaxKind.AddAssignmentExpression:
+                    case SyntaxKind.AndAssignmentExpression:
+                    case SyntaxKind.CoalesceAssignmentExpression:
+                    case SyntaxKind.DivideAssignmentExpression:
+                    case SyntaxKind.ExclusiveOrAssignmentExpression:
+                    case SyntaxKind.LeftShiftAssignmentExpression:
+                    case SyntaxKind.ModuloAssignmentExpression:
+                    case SyntaxKind.MultiplyAssignmentExpression:
+                    case SyntaxKind.OrAssignmentExpression:
+                    case SyntaxKind.RightShiftAssignmentExpression:
+                    case SyntaxKind.SimpleAssignmentExpression:
+                    case SyntaxKind.SubtractAssignmentExpression:
                         {
                             break;
                         }

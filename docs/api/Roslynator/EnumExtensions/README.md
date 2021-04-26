@@ -17,5 +17,5 @@ public static class EnumExtensions
 
 | Method | Summary |
 | ------ | ------- |
-| [IsMoreRestrictiveThan(Accessibility, Accessibility)](IsMoreRestrictiveThan/README.md) | Returns true if the accessibility if more restrictrive than the other accessibility\. |
+| [IsMoreRestrictiveThan(Accessibility, Accessibility)](IsMoreRestrictiveThan/README.md) | Returns true if the accessibility if more restrictive than the other accessibility\. |
 

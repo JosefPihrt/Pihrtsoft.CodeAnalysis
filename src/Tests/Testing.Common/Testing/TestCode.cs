@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Josef Pihrt. All rights reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
@@ -20,8 +21,12 @@ namespace Roslynator.Testing
 
         internal TestCode(string value, string expectedValue, ImmutableArray<TextSpan> spans, ImmutableArray<TextSpan> additionalSpans)
         {
-            Value = value;
+            Value = value ?? throw new ArgumentNullException(nameof(value));
             ExpectedValue = expectedValue;
+
+            if (spans.Length == 0)
+                throw new ArgumentException("'spans' cannot be empty.", nameof(spans));
+
             Spans = spans;
             AdditionalSpans = (additionalSpans.IsDefault) ? ImmutableArray<TextSpan>.Empty : additionalSpans;
         }
@@ -55,10 +60,12 @@ namespace Roslynator.Testing
         /// <param name="value"></param>
         public static TestCode Parse(string value)
         {
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
+
             (string source, ImmutableArray<TextSpan> spans) = FindSpansAndRemove(value);
 
             (string source2, ImmutableArray<TextSpan> additionalSpans) = FindAnnotatedSpansAndRemove(source, "a");
-
             return new TestCode(source2, spans, additionalSpans);
         }
 
@@ -73,6 +80,11 @@ namespace Roslynator.Testing
             string replacement1,
             string replacement2 = null)
         {
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
+
+            if (replacement1 == null)
+                throw new ArgumentNullException(nameof(replacement1));
             (string source, string expected, ImmutableArray<TextSpan> spans) = FindSpansAndReplace(value, replacement1, replacement2);
 
             (string source2, ImmutableArray<TextSpan> additionalSpans) = FindAnnotatedSpansAndRemove(source, "a");

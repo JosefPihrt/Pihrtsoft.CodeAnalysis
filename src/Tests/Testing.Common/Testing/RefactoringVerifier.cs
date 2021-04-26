@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
@@ -35,6 +36,12 @@ namespace Roslynator.Testing
             TestOptions options = null,
             CancellationToken cancellationToken = default)
         {
+            if (data == null)
+                throw new ArgumentNullException(nameof(data));
+
+            if (expected == null)
+                throw new ArgumentNullException(nameof(expected));
+
             if (data.Spans.IsEmpty)
                 Fail("Span on which a refactoring should be invoked was not found.");
 
@@ -93,6 +100,9 @@ namespace Roslynator.Testing
                     VerifyNoNewCompilerDiagnostics(compilerDiagnostics, newCompilerDiagnostics, options);
 
                     await VerifyExpectedDocument(expected, document, cancellationToken);
+
+                    if (expectedDocuments.Any())
+                        await VerifyAdditionalDocumentsAsync(document.Project, expectedDocuments, cancellationToken);
                 }
             }
         }
@@ -108,6 +118,9 @@ namespace Roslynator.Testing
             TestOptions options = null,
             CancellationToken cancellationToken = default)
         {
+            if (data == null)
+                throw new ArgumentNullException(nameof(data));
+
             if (data.Spans.IsEmpty)
                 Fail("Span on which a refactoring should be invoked was not found.");
 
@@ -119,7 +132,7 @@ namespace Roslynator.Testing
 
             using (Workspace workspace = new AdhocWorkspace())
             {
-                (Document document, ImmutableArray<ExpectedDocument> expectedDocuments) = CreateDocument(workspace.CurrentSolution, data.Source, data.AdditionalFiles, options);
+                (Document document, ImmutableArray<ExpectedDocument> _) = CreateDocument(workspace.CurrentSolution, data.Source, data.AdditionalFiles, options);
 
                 SemanticModel semanticModel = await document.GetSemanticModelAsync(cancellationToken);
 

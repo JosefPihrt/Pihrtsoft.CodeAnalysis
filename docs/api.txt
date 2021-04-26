@@ -1,7 +1,10 @@
-﻿assembly Roslynator.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=926ea54d246a765e
-assembly Roslynator.CSharp, Version=2.0.0.0, Culture=neutral, PublicKeyToken=926ea54d246a765e
-assembly Roslynator.CSharp.Workspaces, Version=2.0.0.0, Culture=neutral, PublicKeyToken=926ea54d246a765e
-assembly Roslynator.Workspaces.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=926ea54d246a765e
+﻿assembly Roslynator.Core, Version=2.1.0.0, Culture=neutral, PublicKeyToken=926ea54d246a765e
+assembly Roslynator.CSharp, Version=2.1.0.0, Culture=neutral, PublicKeyToken=926ea54d246a765e
+assembly Roslynator.CSharp.Workspaces, Version=2.1.0.0, Culture=neutral, PublicKeyToken=926ea54d246a765e
+assembly Roslynator.Testing.Common, Version=1.0.0.0, Culture=neutral, PublicKeyToken=926ea54d246a765e
+assembly Roslynator.Testing.CSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=926ea54d246a765e
+assembly Roslynator.Testing.CSharp.Xunit, Version=1.0.0.0, Culture=neutral, PublicKeyToken=926ea54d246a765e
+assembly Roslynator.Workspaces.Core, Version=2.1.0.0, Culture=neutral, PublicKeyToken=926ea54d246a765e
 
 namespace Roslynator
 
@@ -522,6 +525,7 @@ namespace Roslynator.CSharp
     public static SyntaxTrivia NewLine();
     public static BinaryExpressionSyntax NotEqualsExpression(ExpressionSyntax left, ExpressionSyntax right);
     public static BinaryExpressionSyntax NotEqualsExpression(ExpressionSyntax left, SyntaxToken operatorToken, ExpressionSyntax right);
+    public static UnaryPatternSyntax NotPattern(PatternSyntax pattern);
     public static LiteralExpressionSyntax NullLiteralExpression();
     public static LiteralExpressionSyntax NumericLiteralExpression(int value);
     public static LiteralExpressionSyntax NumericLiteralExpression(uint value);
@@ -1231,13 +1235,14 @@ namespace Roslynator.CSharp
     ComparisonToNull = EqualsToNull | NotEqualsToNull,
     IsNull = 4,
     NotIsNull = 8,
-    IsPattern = IsNull | NotIsNull,
     NotHasValue = 16,
     CheckingNull = EqualsToNull | IsNull | NotHasValue,
     HasValue = 32,
-    CheckingNotNull = NotEqualsToNull | NotIsNull | HasValue,
     HasValueProperty = NotHasValue | HasValue,
-    All = ComparisonToNull | IsPattern | HasValueProperty,
+    IsNotNull = 64,
+    IsPattern = IsNull | NotIsNull | IsNotNull,
+    CheckingNotNull = NotEqualsToNull | NotIsNull | HasValue | IsNotNull,
+    All = CheckingNull | CheckingNotNull,
 
   [Flags]
   public enum PreprocessorDirectiveFilter
@@ -1591,6 +1596,165 @@ namespace Roslynator.CSharp.Syntax
     public SyntaxKind Kind { get; }
     public string LocalName { get; }
     public bool Success { get; }
+
+namespace Roslynator.Testing
+
+  public abstract class CodeVerifier
+
+    protected abstract TestOptions CommonOptions { get; }
+    public TestOptions Options { get; }
+
+  public sealed class CompilerDiagnosticFixTestData
+
+    public CompilerDiagnosticFixTestData(string diagnosticId, string source, IEnumerable<AdditionalFile> additionalFiles = null, string equivalenceKey = null);
+
+    public ImmutableArray<AdditionalFile> AdditionalFiles { get; }
+    public string DiagnosticId { get; }
+    public string EquivalenceKey { get; }
+    public string Source { get; }
+
+    public CompilerDiagnosticFixTestData Update(string diagnosticId, string source, IEnumerable<AdditionalFile> additionalFiles, string equivalenceKey);
+
+  public abstract class CompilerDiagnosticFixVerifier<TFixProvider> : CodeVerifier where TFixProvider : CodeFixProvider, new()
+
+    public Task VerifyFixAsync(CompilerDiagnosticFixTestData data, ExpectedTestState expected, TestOptions options = null, CancellationToken cancellationToken = default);
+    public Task VerifyNoFixAsync(CompilerDiagnosticFixTestData data, TestOptions options = null, CancellationToken cancellationToken = default);
+
+  public sealed class DiagnosticTestData
+
+    public DiagnosticTestData(DiagnosticDescriptor descriptor, string source, IEnumerable<TextSpan> spans, IEnumerable<TextSpan> additionalSpans = null, IEnumerable<AdditionalFile> additionalFiles = null, string diagnosticMessage = null, IFormatProvider formatProvider = null, string equivalenceKey = null, bool alwaysVerifyAdditionalLocations = false);
+
+    public ImmutableArray<AdditionalFile> AdditionalFiles { get; }
+    public ImmutableArray<TextSpan> AdditionalSpans { get; }
+    public bool AlwaysVerifyAdditionalLocations { get; }
+    public DiagnosticDescriptor Descriptor { get; }
+    public string DiagnosticMessage { get; }
+    public string EquivalenceKey { get; }
+    public IFormatProvider FormatProvider { get; }
+    public string Source { get; }
+    public ImmutableArray<TextSpan> Spans { get; }
+
+    public DiagnosticTestData Update(DiagnosticDescriptor descriptor, string source, IEnumerable<TextSpan> spans, IEnumerable<TextSpan> additionalSpans, IEnumerable<AdditionalFile> additionalFiles, string diagnosticMessage, IFormatProvider formatProvider, string equivalenceKey, bool alwaysVerifyAdditionalLocations);
+
+  public abstract class DiagnosticVerifier<TAnalyzer, TFixProvider> : CodeVerifier where TAnalyzer : DiagnosticAnalyzer, new() where TFixProvider : CodeFixProvider, new()
+
+    public Task VerifyDiagnosticAndFixAsync(DiagnosticTestData data, ExpectedTestState expected, TestOptions options = null, CancellationToken cancellationToken = default);
+    public Task VerifyDiagnosticAndNoFixAsync(DiagnosticTestData data, TestOptions options = null, CancellationToken cancellationToken = default);
+    public Task VerifyDiagnosticAsync(DiagnosticTestData data, TestOptions options = null, CancellationToken cancellationToken = default);
+    public Task VerifyNoDiagnosticAsync(DiagnosticTestData data, TestOptions options = null, CancellationToken cancellationToken = default);
+
+  public sealed class ExpectedTestState
+
+    public ExpectedTestState(string source, string codeActionTitle = null, IEnumerable<(string, TextSpan)> annotations = null, IEnumerable<string> alwaysVerifyAnnotations = null);
+
+    public ImmutableArray<string> AlwaysVerifyAnnotations { get; }
+    public ImmutableArray<(string kind, TextSpan span)> Annotations { get; }
+    public string CodeActionTitle { get; }
+    public string Source { get; }
+
+  public sealed class RefactoringTestData
+
+    public RefactoringTestData(string source, IEnumerable<TextSpan> spans, IEnumerable<AdditionalFile> additionalFiles = null, string equivalenceKey = null);
+
+    public ImmutableArray<AdditionalFile> AdditionalFiles { get; }
+    public string EquivalenceKey { get; }
+    public string Source { get; }
+    public ImmutableArray<TextSpan> Spans { get; private set; }
+
+    public RefactoringTestData Update(string source, IEnumerable<TextSpan> spans, IEnumerable<AdditionalFile> additionalFiles, string equivalenceKey);
+
+  public abstract class RefactoringVerifier<TRefactoringProvider> : CodeVerifier where TRefactoringProvider : CodeRefactoringProvider, new()
+
+    public Task VerifyNoRefactoringAsync(RefactoringTestData data, TestOptions options = null, CancellationToken cancellationToken = default);
+    public Task VerifyRefactoringAsync(RefactoringTestData data, ExpectedTestState expected, TestOptions options = null, CancellationToken cancellationToken = default);
+
+  public abstract class TestOptions
+
+    public ImmutableArray<string> AllowedCompilerDiagnosticIds { get; protected set; }
+    public DiagnosticSeverity AllowedCompilerDiagnosticSeverity { get; protected set; }
+    protected abstract CompilationOptions CommonCompilationOptions { get; }
+    protected abstract ParseOptions CommonParseOptions { get; }
+    public CompilationOptions CompilationOptions { get; }
+    public abstract string Language { get; }
+    public ImmutableArray<MetadataReference> MetadataReferences { get; protected set; }
+    public ParseOptions ParseOptions { get; }
+
+    protected abstract TestOptions CommonWithAllowedCompilerDiagnosticIds(IEnumerable<string> values);
+    protected abstract TestOptions CommonWithAllowedCompilerDiagnosticSeverity(DiagnosticSeverity value);
+    protected abstract TestOptions CommonWithMetadataReferences(IEnumerable<MetadataReference> values);
+    public TestOptions WithAllowedCompilerDiagnosticIds(IEnumerable<string> values);
+    public TestOptions WithAllowedCompilerDiagnosticSeverity(DiagnosticSeverity value);
+    public TestOptions WithMetadataReferences(IEnumerable<MetadataReference> values);
+
+  public readonly struct AdditionalFile
+
+    public AdditionalFile(string source, string expectedSource = null);
+
+    public string ExpectedSource { get; }
+    public string Source { get; }
+
+  public readonly struct TestCode
+
+    public ImmutableArray<TextSpan> AdditionalSpans { get; }
+    public string ExpectedValue { get; }
+    public ImmutableArray<TextSpan> Spans { get; }
+    public string Value { get; }
+
+    public static TestCode Parse(string value);
+    public static TestCode Parse(string value, string replacement1, string replacement2 = null);
+
+namespace Roslynator.Testing.CSharp
+
+  public abstract class CSharpCompilerDiagnosticFixVerifier<TFixProvider> : CompilerDiagnosticFixVerifier<TFixProvider> where TFixProvider : CodeFixProvider, new()
+
+    protected override TestOptions CommonOptions { get; }
+    public virtual CSharpTestOptions Options { get; }
+
+  public abstract class CSharpDiagnosticVerifier<TAnalyzer, TFixProvider> : DiagnosticVerifier<TAnalyzer, TFixProvider> where TAnalyzer : DiagnosticAnalyzer, new() where TFixProvider : CodeFixProvider, new()
+
+    protected override TestOptions CommonOptions { get; }
+    public virtual CSharpTestOptions Options { get; }
+
+  public abstract class CSharpRefactoringVerifier<TRefactoringProvider> : RefactoringVerifier<TRefactoringProvider> where TRefactoringProvider : CodeRefactoringProvider, new()
+
+    protected override TestOptions CommonOptions { get; }
+    public virtual CSharpTestOptions Options { get; }
+
+  public sealed class CSharpTestOptions : TestOptions
+
+    public CSharpTestOptions(CSharpCompilationOptions compilationOptions = null, CSharpParseOptions parseOptions = null, IEnumerable<MetadataReference> metadataReferences = null, IEnumerable<string> allowedCompilerDiagnosticIds = null, DiagnosticSeverity allowedCompilerDiagnosticSeverity = Info);
+
+    protected override CompilationOptions CommonCompilationOptions { get; }
+    protected override ParseOptions CommonParseOptions { get; }
+    public CSharpCompilationOptions CompilationOptions { get; private set; }
+    public static CSharpTestOptions Default { get; }
+    public override string Language { get; }
+    public CSharpParseOptions ParseOptions { get; private set; }
+
+    public CSharpTestOptions AddAllowedCompilerDiagnosticId(string diagnosticId);
+    public CSharpTestOptions AddAllowedCompilerDiagnosticIds(IEnumerable<string> diagnosticIds);
+    protected override TestOptions CommonWithAllowedCompilerDiagnosticIds(IEnumerable<string> values);
+    protected override TestOptions CommonWithAllowedCompilerDiagnosticSeverity(DiagnosticSeverity value);
+    protected override TestOptions CommonWithMetadataReferences(IEnumerable<MetadataReference> values);
+    public CSharpTestOptions WithAllowedCompilerDiagnosticIds(IEnumerable<string> values);
+    public CSharpTestOptions WithAllowedCompilerDiagnosticSeverity(DiagnosticSeverity value);
+    public CSharpTestOptions WithCompilationOptions(CSharpCompilationOptions compilationOptions);
+    public CSharpTestOptions WithMetadataReferences(IEnumerable<MetadataReference> values);
+    public CSharpTestOptions WithParseOptions(CSharpParseOptions parseOptions);
+
+namespace Roslynator.Testing.CSharp.Xunit
+
+  public abstract class XunitCompilerDiagnosticFixVerifier<TFixProvider> : CSharpCompilerDiagnosticFixVerifier<TFixProvider> where TFixProvider : CodeFixProvider, new()
+
+    protected XunitCompilerDiagnosticFixVerifier();
+
+  public abstract class XunitDiagnosticVerifier<TAnalyzer, TFixProvider> : CSharpDiagnosticVerifier<TAnalyzer, TFixProvider> where TAnalyzer : DiagnosticAnalyzer, new() where TFixProvider : CodeFixProvider, new()
+
+    protected XunitDiagnosticVerifier();
+
+  public abstract class XunitRefactoringVerifier<TRefactoringProvider> : CSharpRefactoringVerifier<TRefactoringProvider> where TRefactoringProvider : CodeRefactoringProvider, new()
+
+    protected XunitRefactoringVerifier();
 
 namespace Roslynator.Text
 

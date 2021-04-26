@@ -172,15 +172,18 @@ namespace Roslynator
                 descriptors = descriptors.Where(predicate);
 
             foreach (IGrouping<DiagnosticDescriptor, DiagnosticDescriptor> grouping in descriptors
-                .OrderBy(f => f.Id)
-                .GroupBy(f => f, DiagnosticDescriptorComparer.IdPrefix))
+                .GroupBy(f => f, DiagnosticDescriptorComparer.IdPrefix)
+                .OrderBy(f => f.Key, DiagnosticDescriptorComparer.IdPrefix))
             {
                 int count = grouping.Count();
                 string prefix = DiagnosticIdPrefix.GetPrefix(grouping.Key.Id);
 
-                Write($"  {count} supported {((count == 1) ? "diagnostic" : "diagnostics")} with prefix '{prefix}'", color, verbosity);
+                Write($"  {count} supported {((count == 1) ? "diagnostic" : "diagnostics")} with ", color, verbosity);
+                Write((string.IsNullOrEmpty(prefix)) ? "no prefix" : $"prefix '{prefix}'", color, verbosity);
 
-                using (IEnumerator<DiagnosticDescriptor> en = grouping.GetEnumerator())
+                using (IEnumerator<DiagnosticDescriptor> en = grouping
+                    .OrderBy(f => f.Id)
+                    .GetEnumerator())
                 {
                     if (en.MoveNext())
                     {
@@ -221,15 +224,18 @@ namespace Roslynator
                 .SelectMany(f => f.FixableDiagnosticIds)
                 .Distinct()
                 .Where(f => options.IsSupportedDiagnosticId(f))
-                .OrderBy(f => f)
-                .GroupBy(f => f, DiagnosticIdComparer.Prefix))
+                .GroupBy(f => f, DiagnosticIdComparer.Prefix)
+                .OrderBy(f => f.Key, DiagnosticIdComparer.Prefix))
             {
                 int count = grouping.Count();
                 string prefix = DiagnosticIdPrefix.GetPrefix(grouping.Key);
 
-                Write($"  {count} fixable {((count == 1) ? "diagnostic" : "diagnostics")} with prefix '{prefix}'", color, verbosity);
+                Write($"  {count} fixable {((count == 1) ? "diagnostic" : "diagnostics")} with ", color, verbosity);
+                Write((string.IsNullOrEmpty(prefix)) ? "no prefix" : $"prefix '{prefix}'", color, verbosity);
 
-                using (IEnumerator<string> en = grouping.GetEnumerator())
+                using (IEnumerator<string> en = grouping
+                    .OrderBy(f => f)
+                    .GetEnumerator())
                 {
                     if (en.MoveNext())
                     {

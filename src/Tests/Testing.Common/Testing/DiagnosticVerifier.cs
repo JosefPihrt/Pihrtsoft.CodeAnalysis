@@ -36,6 +36,9 @@ namespace Roslynator.Testing
             TestOptions options = null,
             CancellationToken cancellationToken = default)
         {
+            if (data == null)
+                throw new ArgumentNullException(nameof(data));
+
             cancellationToken.ThrowIfCancellationRequested();
 
             options ??= Options;
@@ -70,6 +73,9 @@ namespace Roslynator.Testing
                 {
                     VerifyDiagnostics(data, analyzer, expectedDiagnostics, diagnostics, cancellationToken);
                 }
+
+                if (expectedDocuments.Any())
+                    await VerifyAdditionalDocumentsAsync(document.Project, expectedDocuments, cancellationToken);
             }
 
             static IEnumerable<Diagnostic> FilterDiagnostics(
@@ -105,6 +111,9 @@ namespace Roslynator.Testing
             TestOptions options = null,
             CancellationToken cancellationToken = default)
         {
+            if (data == null)
+                throw new ArgumentNullException(nameof(data));
+
             cancellationToken.ThrowIfCancellationRequested();
 
             options ??= Options;
@@ -113,7 +122,7 @@ namespace Roslynator.Testing
 
             using (Workspace workspace = new AdhocWorkspace())
             {
-                (Document document, ImmutableArray<ExpectedDocument> expectedDocuments) = CreateDocument(workspace.CurrentSolution, data.Source, data.AdditionalFiles, options, data.Descriptor);
+                (Document document, ImmutableArray<ExpectedDocument> _) = CreateDocument(workspace.CurrentSolution, data.Source, data.AdditionalFiles, options, data.Descriptor);
 
                 SyntaxTree tree = await document.GetSyntaxTreeAsync();
 
@@ -176,6 +185,12 @@ namespace Roslynator.Testing
             TestOptions options = null,
             CancellationToken cancellationToken = default)
         {
+            if (data == null)
+                throw new ArgumentNullException(nameof(data));
+
+            if (expected == null)
+                throw new ArgumentNullException(nameof(expected));
+
             cancellationToken.ThrowIfCancellationRequested();
 
             options ??= Options;
@@ -315,6 +330,9 @@ namespace Roslynator.Testing
             TestOptions options = null,
             CancellationToken cancellationToken = default)
         {
+            if (data == null)
+                throw new ArgumentNullException(nameof(data));
+
             cancellationToken.ThrowIfCancellationRequested();
 
             options ??= Options;
@@ -327,7 +345,7 @@ namespace Roslynator.Testing
 
             using (Workspace workspace = new AdhocWorkspace())
             {
-                (Document document, ImmutableArray<ExpectedDocument> expectedDocuments) = CreateDocument(workspace.CurrentSolution, data.Source, data.AdditionalFiles, options, data.Descriptor);
+                (Document document, ImmutableArray<ExpectedDocument> _) = CreateDocument(workspace.CurrentSolution, data.Source, data.AdditionalFiles, options, data.Descriptor);
 
                 Compilation compilation = await document.Project.GetCompilationAsync(cancellationToken);
 

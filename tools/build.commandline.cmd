@@ -3,6 +3,10 @@
 set _programFiles=%ProgramFiles(x86)%
 if not defined _programFiles set _programFiles=%ProgramFiles%
 
+orang delete "../src" -a d -n "bin,obj" l li e -i "packages,node_modules" l li e ne -t n --content-only -y su s
+
+orang replace "../src" -n "AssemblyInfo.cs" e -c "patterns/assembly_names_to_be_prefixed.txt" f -r "_"
+
 dotnet restore --force "..\src\CommandLine.sln"
 
 rd /S /Q "..\src\CommandLine\bin\Release\publish"
@@ -21,6 +25,8 @@ if errorlevel 1 (
 del /Q "..\src\CommandLine\bin\Release\Roslynator.CommandLine.*.nupkg"
 
 dotnet pack -c Release --no-build -v normal /p:RoslynatorCommandLine=true "..\src\CommandLine\CommandLine.csproj"
+
+orang replace "../src" -n "AssemblyInfo.cs" e -c "patterns/assembly_names_to_be_prefixed.txt" f -r ""
 
 set _outDir=..\out\Release
 md "%_outDir%"

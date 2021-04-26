@@ -7,7 +7,7 @@
 **Assembly**: Roslynator\.CSharp\.dll
 
 \
-Returns a section that contains default label, or null if the specified swtich statement does not contains section with default label\.
+Returns a section that contains default label, or null if the specified switch statement does not contains section with default label\.
 
 ```csharp
 public static Microsoft.CodeAnalysis.CSharp.Syntax.SwitchSectionSyntax DefaultSection(this Microsoft.CodeAnalysis.CSharp.Syntax.SwitchStatementSyntax switchStatement)

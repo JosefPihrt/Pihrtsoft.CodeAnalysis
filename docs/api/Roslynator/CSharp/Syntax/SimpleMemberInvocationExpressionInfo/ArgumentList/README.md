@@ -7,7 +7,7 @@
 **Assembly**: Roslynator\.CSharp\.dll
 
 \
-The argumet list\.
+The argument list\.
 
 ```csharp
 public Microsoft.CodeAnalysis.CSharp.Syntax.ArgumentListSyntax ArgumentList { get; }

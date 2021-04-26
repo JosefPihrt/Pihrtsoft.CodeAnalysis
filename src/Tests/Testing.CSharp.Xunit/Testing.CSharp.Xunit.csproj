@@ -2,24 +2,43 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>1.0.0.0</Version>
+    <AssemblyName>Roslynator.Testing.CSharp.Xunit</AssemblyName>
+    <RootNamespace>Roslynator.Testing.CSharp.Xunit</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <Deterministic>true</Deterministic>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsNotAsErrors>1591</WarningsNotAsErrors>
+    <DocumentationFile>bin\$(Configuration)\netstandard2.0\Roslynator.Testing.CSharp.Xunit.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup>
-    <AssemblyName>Roslynator.Testing.Xunit</AssemblyName>
-    <RootNamespace>Roslynator.Testing</RootNamespace>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <IsPackable>false</IsPackable>
+    <PackageId>Roslynator.Testing.CSharp.Xunit</PackageId>
+    <PackageVersion>1.0.0-rc</PackageVersion>
     <Company></Company>
-    <Description></Description>
+    <Description>Testing framework for Roslyn analyzers, refactorings and code fixes.</Description>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/JosefPihrt/Roslynator</PackageProjectUrl>
+    <PackageIcon>icon.png</PackageIcon>
+    <PackageReleaseNotes></PackageReleaseNotes>
+    <PackageTags>Roslyn;CodeAnalysis;Test;UnitTest</PackageTags>
+    <RepositoryUrl>https://github.com/JosefPihrt/Roslynator.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="xunit" Version="2.4.1" />
+    <PackageReference Include="xunit.assert" Version="2.4.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Testing.CSharp\Testing.CSharp.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\images\icon.png" Pack="true" PackagePath="\" Visible="false" />
+  </ItemGroup>
+
 </Project>

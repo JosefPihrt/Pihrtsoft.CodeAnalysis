@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>2.0.0.1</Version>
-    <AssemblyName>Roslynator.CSharp</AssemblyName>
+    <Version>2.1.0.0</Version>
+    <AssemblyName>$(RoslynatorDllPrefix)Roslynator.CSharp</AssemblyName>
     <RootNamespace>Roslynator</RootNamespace>
     <CodeAnalysisRuleSet>..\api.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
@@ -17,7 +17,7 @@
 
   <PropertyGroup>
     <PackageId>Roslynator.CSharp</PackageId>
-    <PackageVersion>2.0.0</PackageVersion>
+    <PackageVersion>2.1.0</PackageVersion>
     <Company></Company>
     <Description>This library extends functionality of package Microsoft.CodeAnalysis.CSharp
 

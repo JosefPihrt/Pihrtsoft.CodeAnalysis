@@ -33,14 +33,14 @@ namespace Roslynator.Testing.CSharp
 
             var expected = ExpectedTestState.Parse(expectedSource);
 
-            var state = new RefactoringTestData(
+            var data = new RefactoringTestData(
                 code.Value,
                 code.Spans.OrderByDescending(f => f.Start).ToImmutableArray(),
                 AdditionalFile.CreateRange(additionalFiles),
                 equivalenceKey: equivalenceKey);
 
             await VerifyRefactoringAsync(
-                state,
+                data,
                 expected,
                 options,
                 cancellationToken: cancellationToken);
@@ -61,14 +61,14 @@ namespace Roslynator.Testing.CSharp
 
             var expected = ExpectedTestState.Parse(code.ExpectedValue);
 
-            var state = new RefactoringTestData(
+            var data = new RefactoringTestData(
                 code.Value,
                 code.Spans.OrderByDescending(f => f.Start).ToImmutableArray(),
                 AdditionalFile.CreateRange(additionalFiles),
                 equivalenceKey: equivalenceKey);
 
             await VerifyRefactoringAsync(
-                state,
+                data,
                 expected,
                 options,
                 cancellationToken: cancellationToken);
@@ -82,13 +82,13 @@ namespace Roslynator.Testing.CSharp
         {
             var code = TestCode.Parse(source);
 
-            var state = new RefactoringTestData(
+            var data = new RefactoringTestData(
                 code.Value,
                 code.Spans,
                 equivalenceKey: equivalenceKey);
 
             await VerifyNoRefactoringAsync(
-                state,
+                data,
                 options,
                 cancellationToken: cancellationToken);
         }

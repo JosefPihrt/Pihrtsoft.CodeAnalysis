@@ -202,7 +202,7 @@
 | RCS1244 | [Simplify 'default' expression](../../docs/analyzers/RCS1244.md) | Simplification | Hidden |
 | RCS1246 | [Use element access](../../docs/analyzers/RCS1246.md) | Usage | Info |
 | RCS1247 | [Fix documentation comment tag](../../docs/analyzers/RCS1247.md) | Readability | Info |
-| RCS1248 | [Use 'is null' pattern instead of comparison (or vice versa)](../../docs/analyzers/RCS1248.md) | Style | None |
+| RCS1248 | [Use pattern matching to check for null (or vice versa)](../../docs/analyzers/RCS1248.md) | Style | None |
 
 
 *\(Generated with [DotMarkdown](http://github.com/JosefPihrt/DotMarkdown)\)*
