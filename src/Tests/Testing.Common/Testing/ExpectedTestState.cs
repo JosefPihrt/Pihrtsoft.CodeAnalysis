@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Linq;
+using System.Threading;
 using Microsoft.CodeAnalysis.Text;
 using Roslynator.Testing.Text;
 
@@ -15,22 +17,24 @@ namespace Roslynator.Testing
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
     public sealed class ExpectedTestState
     {
+        private ImmutableDictionary<string, ImmutableArray<TextSpan>> _annotationsByKind;
+
         /// <summary>
         /// Initializes a new instance of <see cref="ExpectedTestState"/>.
         /// </summary>
         /// <param name="source"></param>
-        /// <param name="spans"></param>
         /// <param name="codeActionTitle"></param>
+        /// <param name="annotations"></param>
         /// <param name="alwaysVerifyAnnotations"></param>
         public ExpectedTestState(
             string source,
-            IEnumerable<KeyValuePair<string, ImmutableArray<TextSpan>>> spans = null,
             string codeActionTitle = null,
+            IEnumerable<(string, TextSpan)> annotations = null,
             IEnumerable<string> alwaysVerifyAnnotations = null)
         {
             Source = source ?? throw new ArgumentNullException(nameof(source));
-            Spans = spans?.ToImmutableDictionary() ?? ImmutableDictionary<string, ImmutableArray<TextSpan>>.Empty;
             CodeActionTitle = codeActionTitle;
+            Annotations = annotations?.ToImmutableArray() ?? ImmutableArray<(string, TextSpan)>.Empty;
             AlwaysVerifyAnnotations = alwaysVerifyAnnotations?.ToImmutableArray() ?? ImmutableArray<string>.Empty;
         }
 
@@ -40,14 +44,14 @@ namespace Roslynator.Testing
         public string Source { get; }
 
         /// <summary>
-        /// Gets expected text spans grouped by annotations.
-        /// </summary>
-        public ImmutableDictionary<string, ImmutableArray<TextSpan>> Spans { get; }
-
-        /// <summary>
         /// Gets expected code action's title.
         /// </summary>
         public string CodeActionTitle { get; }
+
+        /// <summary>
+        /// Gets expected annotations.
+        /// </summary>
+        public ImmutableArray<(string kind, TextSpan span)> Annotations { get; }
 
         /// <summary>
         /// Gets annotations that should be always verified.
@@ -57,11 +61,27 @@ namespace Roslynator.Testing
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private string DebuggerDisplay => Source;
 
+        internal ImmutableDictionary<string, ImmutableArray<TextSpan>> AnnotationsByKind
+        {
+            get
+            {
+                if (_annotationsByKind == null)
+                {
+                    Interlocked.CompareExchange(
+                        ref _annotationsByKind,
+                        Annotations.GroupBy(f => f.kind).ToImmutableDictionary(f => f.Key, f => f.Select(f => f.span).ToImmutableArray()),
+                        null);
+                }
+
+                return _annotationsByKind;
+            }
+        }
+
         internal static ExpectedTestState Parse(string text)
         {
-            (string source, ImmutableDictionary<string, ImmutableArray<TextSpan>> spans) = TextProcessor.FindAnnotatedSpansAndRemove(text);
+            (string source, ImmutableArray<(string, TextSpan)> annotations) = TextProcessor.FindAnnotatedSpansAndRemove(text);
 
-            return new ExpectedTestState(source, spans);
+            return new ExpectedTestState(source, annotations: annotations);
         }
     }
 }

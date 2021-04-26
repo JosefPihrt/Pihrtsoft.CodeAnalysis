@@ -49,13 +49,10 @@ namespace Roslynator.CSharp.Analysis
             context.RegisterSyntaxNodeAction(
                 c =>
                 {
-                    if (!AnalyzerOptions.UseComparisonInsteadPatternMatchingToCheckForNull.IsEnabled(c))
+                    if (!AnalyzerOptions.UseComparisonInsteadPatternMatchingToCheckForNull.IsEnabled(c)
+                        && ((CSharpCompilation)c.Compilation).LanguageVersion >= LanguageVersion.CSharp9)
                     {
-                        if (AnalyzerOptions.UseLogicalNegationAndPatternMatchingToCheckForNull.IsEnabled(c)
-                            || ((CSharpCompilation)c.Compilation).LanguageVersion >= LanguageVersion.CSharp9)
-                        {
-                            AnalyzeNotEqualsExpression(c);
-                        }
+                        AnalyzeNotEqualsExpression(c);
                     }
                 },
                 SyntaxKind.NotEqualsExpression);

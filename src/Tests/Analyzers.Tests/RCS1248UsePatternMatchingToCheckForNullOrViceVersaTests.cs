@@ -107,66 +107,6 @@ class C
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UsePatternMatchingToCheckForNullOrViceVersa)]
-        public async Task Test_NotEqualsToNull_CSharp7()
-        {
-            await VerifyDiagnosticAndFixAsync(@"
-class C
-{
-    void M()
-    {
-        string s = null;
-
-        if ([|s != null|])
-        {
-        }
-    }
-}
-", @"
-class C
-{
-    void M()
-    {
-        string s = null;
-
-        if (!(s is null))
-        {
-        }
-    }
-}
-", options: WellKnownCSharpTestOptions.Default_CSharp7.EnableDiagnostic(AnalyzerOptionDiagnosticRules.UseLogicalNegationAndPatternMatchingToCheckForNull));
-        }
-
-        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UsePatternMatchingToCheckForNullOrViceVersa)]
-        public async Task Test_NotEqualsToNull2_CSharp7()
-        {
-            await VerifyDiagnosticAndFixAsync(@"
-class C
-{
-    void M()
-    {
-        string s = null;
-
-        if ([|null != (s)|])
-        {
-        }
-    }
-}
-", @"
-class C
-{
-    void M()
-    {
-        string s = null;
-
-        if (!((s) is null))
-        {
-        }
-    }
-}
-", options: WellKnownCSharpTestOptions.Default_CSharp7.EnableDiagnostic(AnalyzerOptionDiagnosticRules.UseLogicalNegationAndPatternMatchingToCheckForNull));
-        }
-
-        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UsePatternMatchingToCheckForNullOrViceVersa)]
         public async Task Test_IsNull()
         {
             await VerifyDiagnosticAndFixAsync(@"

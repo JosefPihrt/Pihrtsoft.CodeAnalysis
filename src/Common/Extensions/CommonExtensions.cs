@@ -67,10 +67,9 @@ namespace Roslynator
                 .AnalyzerConfigOptionsProvider
                 .GetOptions(syntaxTree)
                 .TryGetValue(analyzerOption.OptionKey, out string value)
-                && bool.TryParse(value, out bool enabled)
-                && enabled)
+                && bool.TryParse(value, out bool result))
             {
-                return true;
+                return result;
             }
 
             if (analyzerOption.Descriptor != null

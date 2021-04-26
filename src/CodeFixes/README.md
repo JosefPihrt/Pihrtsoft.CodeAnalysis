@@ -14,9 +14,7 @@
 | [CS0101](../../docs/cs/CS0101.md) | The namespace 'namespace' already contains a definition for 'type'\. |
 | [CS0102](../../docs/cs/CS0102.md) | The type 'type name' already contains a definition for 'identifier'\. |
 | [CS0103](../../docs/cs/CS0103.md) | The name 'identifier' does not exist in the current context\. |
-| [CS0106](../../docs/cs/CS0106.md) | The modifier 'modifier' is not valid for this item\. |
 | [CS0107](../../docs/cs/CS0107.md) | More than one protection modifier\. |
-| [CS0108](../../docs/cs/CS0108.md) | 'member1' hides inherited member 'member2'\. Use the new keyword if hiding was intended\. |
 | [CS0109](../../docs/cs/CS0109.md) | The member 'member' does not hide an inherited member\. The new keyword is not required\. |
 | [CS0112](../../docs/cs/CS0112.md) | A static member 'function' cannot be marked as override, virtual or abstract\. |
 | [CS0114](../../docs/cs/CS0114.md) | 'function1' hides inherited member 'function2'\. To make the current method override that implementation, add the override keyword\. Otherwise add the new keyword\. |
@@ -75,7 +73,6 @@
 | [CS0508](../../docs/cs/CS0508.md) | 'type1': return type must be 'type2' to match overridden member 'member name'\. |
 | [CS0513](../../docs/cs/CS0513.md) | 'function' is abstract but it is contained in nonabstract class 'class'\. |
 | [CS0515](../../docs/cs/CS0515.md) | 'function': access modifiers are not allowed on static constructors\. |
-| [CS0524](../../docs/cs/CS0524.md) | 'identifier': interfaces cannot declare types\. |
 | [CS0525](../../docs/cs/CS0525.md) | Interfaces cannot contain fields\. |
 | [CS0527](../../docs/cs/CS0527.md) | Type 'type' in interface list is not an interface\. |
 | [CS0531](../../docs/cs/CS0531.md) | 'member': interface members cannot have a definition\. |
@@ -111,7 +108,6 @@
 | [CS0815](../../docs/cs/CS0815.md) | Cannot assign 'expression' to an implicitly typed local\. |
 | [CS0819](../../docs/cs/CS0819.md) | Implicitly typed locals cannot have multiple declarators\. |
 | [CS0822](../../docs/cs/CS0822.md) | Implicitly typed locals cannot be const\. |
-| [CS1002](../../docs/cs/CS1002.md) | ; expected\. |
 | [CS1003](../../docs/cs/CS1003.md) | Syntax error, 'char' expected\. |
 | [CS1004](../../docs/cs/CS1004.md) | Duplicate 'modifier' modifier\. |
 | [CS1012](../../docs/cs/CS1012.md) | Too many characters in character literal\. |
@@ -163,11 +159,13 @@
 | [CS3016](../../docs/cs/CS3016.md) | Arrays as attribute arguments is not CLS\-compliant\. |
 | [CS3024](../../docs/cs/CS3024.md) | Constraint type 'type' is not CLS\-compliant\. |
 | [CS3027](../../docs/cs/CS3027.md) | 'type\_1' is not CLS\-compliant because base interface 'type\_2' is not CLS\-compliant\. |
+| [CS7036](../../docs/cs/CS7036.md) | There is no argument given that corresponds to the required formal parameter 'parameter' of 'member'\. |
 | [CS8050](../../docs/cs/CS8050.md) | Only auto\-implemented properties can have initializers\. |
 | [CS8070](../../docs/cs/CS8070.md) | Control cannot fall out of switch from final case label \('default'\)\. |
 | [CS8112](../../docs/cs/CS8112.md) | 'function' is a local function and must therefore always have a body\. |
 | [CS8139](../../docs/cs/CS8139.md) | Cannot change tuple element names when overriding inherited member\. |
 | [CS8340](../../docs/cs/CS8340.md) | Instance fields of read\-only structs must be read\-only\. |
+| [CS8632](../../docs/cs/CS8632.md) | The annotation for nullable reference types should only be used in code within a '\#nullable' annotations context\. |
 
 
 *\(Generated with [DotMarkdown](http://github.com/JosefPihrt/DotMarkdown)\)*

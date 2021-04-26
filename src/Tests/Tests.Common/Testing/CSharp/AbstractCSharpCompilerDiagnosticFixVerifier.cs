@@ -32,16 +32,16 @@ namespace Roslynator.Testing.CSharp
 
             Debug.Assert(code.Spans.Length == 0);
 
-            ExpectedTestState expected = ExpectedTestState.Parse(code.ExpectedValue);
+            var expected = ExpectedTestState.Parse(code.ExpectedValue);
 
-            var state = new CompilerDiagnosticFixTestState(
+            var data = new CompilerDiagnosticFixTestData(
                 DiagnosticId,
                 code.Value,
                 AdditionalFile.CreateRange(additionalFiles),
                 equivalenceKey: equivalenceKey);
 
             await VerifyFixAsync(
-                state,
+                data,
                 expected,
                 options: options,
                 cancellationToken: cancellationToken);
@@ -57,14 +57,14 @@ namespace Roslynator.Testing.CSharp
         {
             var expected = ExpectedTestState.Parse(expectedSource);
 
-            var state = new CompilerDiagnosticFixTestState(
+            var data = new CompilerDiagnosticFixTestData(
                 DiagnosticId,
                 source,
                 AdditionalFile.CreateRange(additionalFiles),
                 equivalenceKey: equivalenceKey);
 
             await VerifyFixAsync(
-                state,
+                data,
                 expected,
                 options,
                 cancellationToken);
@@ -77,14 +77,14 @@ namespace Roslynator.Testing.CSharp
             TestOptions options = null,
             CancellationToken cancellationToken = default)
         {
-            var state = new CompilerDiagnosticFixTestState(
+            var data = new CompilerDiagnosticFixTestData(
                 DiagnosticId,
                 source,
                 additionalFiles: AdditionalFile.CreateRange(additionalFiles),
                 equivalenceKey: equivalenceKey);
 
             await VerifyNoFixAsync(
-                state,
+                data,
                 options,
                 cancellationToken);
         }

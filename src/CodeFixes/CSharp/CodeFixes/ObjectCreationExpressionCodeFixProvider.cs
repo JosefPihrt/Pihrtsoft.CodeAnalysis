@@ -114,7 +114,7 @@ namespace Roslynator.CSharp.CodeFixes
                                 {
                                     InitializerExpressionSyntax newInitializer = initializer.RemoveNodes(expressions, SyntaxRefactorings.DefaultRemoveOptions);
 
-                                    if (newInitializer.Expressions.Count == 0
+                                    if (!newInitializer.Expressions.Any()
                                         && newInitializer
                                             .DescendantTrivia(TextSpan.FromBounds(newInitializer.OpenBraceToken.SpanStart, newInitializer.CloseBraceToken.SpanStart))
                                             .All(f => f.IsWhitespaceOrEndOfLineTrivia()))

@@ -6,7 +6,7 @@ if not defined _programFiles set _programFiles=%ProgramFiles%
 set _msbuildPath="%_programFiles%\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\MSBuild"
 set _properties=Configuration=Release,Deterministic=true,TreatWarningsAsErrors=true,WarningsNotAsErrors=1591
 set _outDir=..\out\Release
-set _version=3.1.0
+set _version=3.2.0
 
 orang delete "..\src" -a d -n "bin,obj" l li e -i "packages,node_modules" l li e ne -t n --content-only -y su s
 
@@ -110,6 +110,9 @@ del /Q "..\src\Core\bin\Release\Roslynator.Core.*.nupkg"
 del /Q "..\src\Workspaces.Core\bin\Release\Roslynator.Workspaces.Core.*.nupkg"
 del /Q "..\src\CSharp\bin\Release\Roslynator.CSharp.*.nupkg"
 del /Q "..\src\CSharp.Workspaces\bin\Release\Roslynator.CSharp.Workspaces.*.nupkg"
+del /Q "..\src\Tests\Testing.Common\bin\Release\Roslynator.Testing.Common.*.nupkg"
+del /Q "..\src\Tests\Testing.CSharp\bin\Release\Roslynator.Testing.CSharp.*.nupkg"
+del /Q "..\src\Tests\Testing.CSharp.Xunit\bin\Release\Roslynator.Testing.CSharp.Xunit.*.nupkg"
 
 dotnet pack -c Release --no-build -v normal "..\src\Analyzers.CodeFixes\Analyzers.CodeFixes.csproj"
 dotnet pack -c Release --no-build -v normal "..\src\CodeAnalysis.Analyzers.CodeFixes\CodeAnalysis.Analyzers.CodeFixes.csproj"
@@ -118,6 +121,9 @@ dotnet pack -c Release --no-build -v normal "..\src\Core\Core.csproj"
 dotnet pack -c Release --no-build -v normal "..\src\Workspaces.Core\Workspaces.Core.csproj"
 dotnet pack -c Release --no-build -v normal "..\src\CSharp\CSharp.csproj"
 dotnet pack -c Release --no-build -v normal "..\src\CSharp.Workspaces\CSharp.Workspaces.csproj"
+dotnet pack -c Release --no-build -v normal "..\src\Tests\Testing.Common\Testing.Common.csproj"
+dotnet pack -c Release --no-build -v normal "..\src\Tests\Testing.CSharp\Testing.CSharp.csproj"
+dotnet pack -c Release --no-build -v normal "..\src\Tests\Testing.CSharp.Xunit\Testing.CSharp.Xunit.csproj"
 
 del /Q "..\src\VisualStudio\bin\Release\Roslynator.VisualStudio.*.vsix"
 ren    "..\src\VisualStudio\bin\Release\Roslynator.VisualStudio.vsix" "Roslynator.VisualStudio.%_version%.vsix"
@@ -135,6 +141,9 @@ copy "..\src\Core\bin\Release\Roslynator.Core.*.nupkg" "%_outDir%"
 copy "..\src\Workspaces.Core\bin\Release\Roslynator.Workspaces.Core.*.nupkg" "%_outDir%"
 copy "..\src\CSharp\bin\Release\Roslynator.CSharp.*.nupkg" "%_outDir%"
 copy "..\src\CSharp.Workspaces\bin\Release\Roslynator.CSharp.Workspaces.*.nupkg" "%_outDir%"
+copy "..\src\Tests\Testing.Common\bin\Release\Roslynator.Testing.Common.*.nupkg" "%_outDir%"
+copy "..\src\Tests\Testing.CSharp\bin\Release\Roslynator.Testing.CSharp.*.nupkg" "%_outDir%"
+copy "..\src\Tests\Testing.CSharp.Xunit\bin\Release\Roslynator.Testing.CSharp.Xunit.*.nupkg" "%_outDir%"
 
 echo OK
 pause

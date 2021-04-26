@@ -32,7 +32,7 @@ namespace Roslynator.Testing.CSharp
 
             Debug.Assert(code.Spans.Length > 0);
 
-            var state = new DiagnosticTestState(
+            var data = new DiagnosticTestData(
                 Descriptor,
                 code.Value,
                 code.Spans,
@@ -40,7 +40,7 @@ namespace Roslynator.Testing.CSharp
                 additionalFiles: AdditionalFile.CreateRange(additionalFiles));
 
             await VerifyDiagnosticAsync(
-                state,
+                data,
                 options: options,
                 cancellationToken: cancellationToken);
         }
@@ -56,7 +56,7 @@ namespace Roslynator.Testing.CSharp
 
             Debug.Assert(code.Spans.Length > 0);
 
-            var state = new DiagnosticTestState(
+            var data = new DiagnosticTestData(
                 Descriptor,
                 source,
                 code.Spans,
@@ -64,7 +64,7 @@ namespace Roslynator.Testing.CSharp
                 additionalFiles: AdditionalFile.CreateRange(additionalFiles));
 
             await VerifyDiagnosticAsync(
-                state,
+                data,
                 options: options,
                 cancellationToken: cancellationToken);
         }
@@ -76,14 +76,14 @@ namespace Roslynator.Testing.CSharp
             TestOptions options = null,
             CancellationToken cancellationToken = default)
         {
-            var state = new DiagnosticTestState(
+            var data = new DiagnosticTestData(
                 Descriptor,
                 source,
                 ImmutableArray.Create(span),
                 additionalFiles: AdditionalFile.CreateRange(additionalFiles));
 
             await VerifyDiagnosticAsync(
-                state,
+                data,
                 options: options,
                 cancellationToken: cancellationToken);
         }
@@ -95,14 +95,14 @@ namespace Roslynator.Testing.CSharp
             TestOptions options = null,
             CancellationToken cancellationToken = default)
         {
-            var state = new DiagnosticTestState(
+            var data = new DiagnosticTestData(
                 Descriptor,
                 source,
                 spans,
                 additionalFiles: AdditionalFile.CreateRange(additionalFiles));
 
             await VerifyDiagnosticAsync(
-                state,
+                data,
                 options: options,
                 cancellationToken: cancellationToken);
         }
@@ -118,7 +118,7 @@ namespace Roslynator.Testing.CSharp
 
             Debug.Assert(code.Spans.Length == 0);
 
-            var state = new DiagnosticTestState(
+            var data = new DiagnosticTestData(
                 Descriptor,
                 code.Value,
                 code.Spans,
@@ -126,7 +126,7 @@ namespace Roslynator.Testing.CSharp
                 AdditionalFile.CreateRange(additionalFiles));
 
             await VerifyNoDiagnosticAsync(
-                state,
+                data,
                 options: options,
                 cancellationToken);
         }
@@ -137,14 +137,14 @@ namespace Roslynator.Testing.CSharp
             TestOptions options = null,
             CancellationToken cancellationToken = default)
         {
-            var state = new DiagnosticTestState(
+            var data = new DiagnosticTestData(
                 Descriptor,
                 source,
                 spans: null,
                 additionalFiles: AdditionalFile.CreateRange(additionalFiles));
 
             await VerifyNoDiagnosticAsync(
-                state,
+                data,
                 options: options,
                 cancellationToken);
         }
@@ -163,7 +163,7 @@ namespace Roslynator.Testing.CSharp
 
             var expected = ExpectedTestState.Parse(expectedSource);
 
-            var state = new DiagnosticTestState(
+            var data = new DiagnosticTestData(
                 Descriptor,
                 code.Value,
                 code.Spans,
@@ -171,7 +171,7 @@ namespace Roslynator.Testing.CSharp
                 additionalFiles: AdditionalFile.CreateRange(additionalFiles),
                 equivalenceKey: equivalenceKey);
 
-            await VerifyDiagnosticAndFixAsync(state, expected, options, cancellationToken);
+            await VerifyDiagnosticAndFixAsync(data, expected, options, cancellationToken);
         }
 
         public async Task VerifyDiagnosticAndNoFixAsync(
@@ -185,7 +185,7 @@ namespace Roslynator.Testing.CSharp
 
             Debug.Assert(code.Spans.Length > 0);
 
-            var state = new DiagnosticTestState(
+            var data = new DiagnosticTestData(
                 Descriptor,
                 code.Value,
                 code.Spans,
@@ -193,7 +193,7 @@ namespace Roslynator.Testing.CSharp
                 additionalFiles: AdditionalFile.CreateRange(additionalFiles),
                 equivalenceKey: equivalenceKey);
 
-            await VerifyDiagnosticAndNoFixAsync(state, options, cancellationToken);
+            await VerifyDiagnosticAndNoFixAsync(data, options, cancellationToken);
         }
 
         public async Task VerifyDiagnosticAndFixAsync(
@@ -211,7 +211,7 @@ namespace Roslynator.Testing.CSharp
 
             var expected = ExpectedTestState.Parse(code.ExpectedValue);
 
-            var state = new DiagnosticTestState(
+            var data = new DiagnosticTestData(
                 Descriptor,
                 code.Value,
                 code.Spans,
@@ -219,7 +219,7 @@ namespace Roslynator.Testing.CSharp
                 AdditionalFile.CreateRange(additionalFiles),
                 equivalenceKey: equivalenceKey);
 
-            await VerifyDiagnosticAndFixAsync(state, expected, options, cancellationToken);
+            await VerifyDiagnosticAndFixAsync(data, expected, options, cancellationToken);
         }
     }
 }

@@ -32,7 +32,7 @@
 | RR0023 | [Change 'var' to explicit type](../../docs/refactorings/RR0023.md) | &#x2713; |
 | RR0024 | [Check expression for null](../../docs/refactorings/RR0024.md) | &#x2713; |
 | RR0025 | [Check parameter for null](../../docs/refactorings/RR0025.md) | &#x2713; |
-| RR0026 | [Collapse to initalizer](../../docs/refactorings/RR0026.md) | &#x2713; |
+| RR0026 | [Collapse to initializer](../../docs/refactorings/RR0026.md) | &#x2713; |
 | RR0027 | [Comment out member](../../docs/refactorings/RR0027.md) | &#x2713; |
 | RR0028 | [Comment out statement](../../docs/refactorings/RR0028.md) | &#x2713; |
 | RR0171 | [Convert "" to string.Empty](../../docs/refactorings/RR0171.md) | \- |

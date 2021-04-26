@@ -1031,10 +1031,10 @@ catch (Exception ex)
       </Sample>
     </Samples>
     <Options>
-      <Option Identifier="DoNotRenamePrivateStaticReadOnlyFieldToCamelCaseWithUnderscore">
-        <Title>Do not rename private static read-only field to camel case with underscore.</Title>
+      <Option Identifier="DoNotRenamePrivateStaticFieldToCamelCaseWithUnderscore">
+        <Title>Do not rename private static field to camel case with underscore.</Title>
         <Id>a</Id>
-        <OptionKey>suppress_private_static_readonly_field</OptionKey>
+        <OptionKey>suppress_when_field_is_static</OptionKey>
         <Kind>Disable</Kind>
         <Samples>
           <Sample>
@@ -2369,19 +2369,17 @@ else
       </Sample>
     </Samples>
     <Options>
-      <Option Identifier="SimplifyConditionalExpressionWhenItIncludesNegationOfCondition">
-        <Title>Simplify conditional expression (when it includes negation of condition).</Title>
+      <Option Identifier="DoNotSimplifyConditionalExpressionWhenConditionIsInverted">
+        <Title>Do not simplify conditional expression when condition is inverted.</Title>
         <Id>a</Id>
-        <OptionKey>enable_negation_of_condition</OptionKey>
-        <Kind>Enable</Kind>
+        <OptionKey>suppress_when_condition_is_inverted</OptionKey>
+        <Kind>Disable</Kind>
         <Samples>
           <Sample>
             <Before><![CDATA[bool x = y ? false : z;]]></Before>
-            <After><![CDATA[bool x = !y && z;]]></After>
           </Sample>
           <Sample>
             <Before><![CDATA[bool x = y ? z : true;]]></Before>
-            <After><![CDATA[bool x = !y || z;]]></After>
           </Sample>
         </Samples>
       </Option>
@@ -5197,7 +5195,7 @@ while (x) // [|Id|]
     M();
     i++;
 }]]></Before>
-        <After><![CDATA[for (int i = 0; f; i++)
+        <After><![CDATA[for (int i = 0; x; i++)
 {
     M();
 }]]></After>
@@ -5582,18 +5580,6 @@ void M()
       </Sample>
     </Samples>
     <Options>
-      <Option Identifier="UseLogicalNegationAndPatternMatchingToCheckForNull">
-        <Id>a</Id>
-        <Title>Use logical negation and pattern matching to check for null.</Title>
-        <OptionKey>use_logical_negation</OptionKey>
-        <Kind>Enable</Kind>
-        <Samples>
-          <Sample>
-            <Before><![CDATA[x != null]]></Before>
-            <After><![CDATA[!(x is null)]]></After>
-          </Sample>
-        </Samples>
-      </Option>
       <Option Identifier="UseComparisonInsteadPatternMatchingToCheckForNull">
         <Id>i</Id>
         <Title>Use comparison instead of pattern matching to check for null.</Title>

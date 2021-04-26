@@ -280,7 +280,7 @@ namespace Roslynator.Formatting.CodeFixes.LineIsTooLong
                 {
                     List<TextChange> textChanges2 = GetFixListChanges(
                         genericInfo.Node,
-                        constraintClauses.First().WhereKeyword.GetPreviousToken(),
+                        constraintClauses[0].WhereKeyword.GetPreviousToken(),
                         constraintClauses,
                         ListFixMode.Wrap,
                         cancellationToken);

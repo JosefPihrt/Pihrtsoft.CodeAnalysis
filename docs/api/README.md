@@ -7,20 +7,39 @@
 * [Roslynator](Roslynator/README.md)
 * [Roslynator.CSharp](Roslynator/CSharp/README.md)
 * [Roslynator.CSharp.Syntax](Roslynator/CSharp/Syntax/README.md)
+* [Roslynator.Testing](Roslynator/Testing/README.md)
+* [Roslynator.Testing.CSharp](Roslynator/Testing/CSharp/README.md)
+* [Roslynator.Testing.CSharp.Xunit](Roslynator/Testing/CSharp/Xunit/README.md)
 * [Roslynator.Text](Roslynator/Text/README.md)
 
 ## Class Hierarchy
 
 * &ensp; \([Object](https://docs.microsoft.com/en-us/dotnet/api/system.object)\)<a id="class-hierarchy-System_Object"></a>
+* &ensp; [&bull;](#class-hierarchy-System_Object "Object") &ensp; [CodeVerifier](Roslynator/Testing/CodeVerifier/README.md)<a id="class-hierarchy-Roslynator_Testing_CodeVerifier"></a>
+* &ensp; [&bull;](#class-hierarchy-System_Object "Object") &ensp; [&bull;](#class-hierarchy-Roslynator_Testing_CodeVerifier "CodeVerifier") &ensp; [CompilerDiagnosticFixVerifier\<TFixProvider>](Roslynator/Testing/CompilerDiagnosticFixVerifier-1/README.md)<a id="class-hierarchy-Roslynator_Testing_CompilerDiagnosticFixVerifier_1"></a>
+* &ensp; [&bull;](#class-hierarchy-System_Object "Object") &ensp; [&bull;](#class-hierarchy-Roslynator_Testing_CodeVerifier "CodeVerifier") &ensp; [&bull;](#class-hierarchy-Roslynator_Testing_CompilerDiagnosticFixVerifier_1 "CompilerDiagnosticFixVerifier<TFixProvider>") &ensp; [CSharpCompilerDiagnosticFixVerifier\<TFixProvider>](Roslynator/Testing/CSharp/CSharpCompilerDiagnosticFixVerifier-1/README.md)<a id="class-hierarchy-Roslynator_Testing_CSharp_CSharpCompilerDiagnosticFixVerifier_1"></a>
+* &ensp; [&bull;](#class-hierarchy-System_Object "Object") &ensp; [&bull;](#class-hierarchy-Roslynator_Testing_CodeVerifier "CodeVerifier") &ensp; [&bull;](#class-hierarchy-Roslynator_Testing_CompilerDiagnosticFixVerifier_1 "CompilerDiagnosticFixVerifier<TFixProvider>") &ensp; [&bull;](#class-hierarchy-Roslynator_Testing_CSharp_CSharpCompilerDiagnosticFixVerifier_1 "CSharpCompilerDiagnosticFixVerifier<TFixProvider>") &ensp; [XunitCompilerDiagnosticFixVerifier\<TFixProvider>](Roslynator/Testing/CSharp/Xunit/XunitCompilerDiagnosticFixVerifier-1/README.md)<a id="class-hierarchy-Roslynator_Testing_CSharp_Xunit_XunitCompilerDiagnosticFixVerifier_1"></a>
+* &ensp; [&bull;](#class-hierarchy-System_Object "Object") &ensp; [&bull;](#class-hierarchy-Roslynator_Testing_CodeVerifier "CodeVerifier") &ensp; [DiagnosticVerifier\<TAnalyzer, TFixProvider>](Roslynator/Testing/DiagnosticVerifier-2/README.md)<a id="class-hierarchy-Roslynator_Testing_DiagnosticVerifier_2"></a>
+* &ensp; [&bull;](#class-hierarchy-System_Object "Object") &ensp; [&bull;](#class-hierarchy-Roslynator_Testing_CodeVerifier "CodeVerifier") &ensp; [&bull;](#class-hierarchy-Roslynator_Testing_DiagnosticVerifier_2 "DiagnosticVerifier<TAnalyzer, TFixProvider>") &ensp; [CSharpDiagnosticVerifier\<TAnalyzer, TFixProvider>](Roslynator/Testing/CSharp/CSharpDiagnosticVerifier-2/README.md)<a id="class-hierarchy-Roslynator_Testing_CSharp_CSharpDiagnosticVerifier_2"></a>
+* &ensp; [&bull;](#class-hierarchy-System_Object "Object") &ensp; [&bull;](#class-hierarchy-Roslynator_Testing_CodeVerifier "CodeVerifier") &ensp; [&bull;](#class-hierarchy-Roslynator_Testing_DiagnosticVerifier_2 "DiagnosticVerifier<TAnalyzer, TFixProvider>") &ensp; [&bull;](#class-hierarchy-Roslynator_Testing_CSharp_CSharpDiagnosticVerifier_2 "CSharpDiagnosticVerifier<TAnalyzer, TFixProvider>") &ensp; [XunitDiagnosticVerifier\<TAnalyzer, TFixProvider>](Roslynator/Testing/CSharp/Xunit/XunitDiagnosticVerifier-2/README.md)<a id="class-hierarchy-Roslynator_Testing_CSharp_Xunit_XunitDiagnosticVerifier_2"></a>
+* &ensp; [&bull;](#class-hierarchy-System_Object "Object") &ensp; [&bull;](#class-hierarchy-Roslynator_Testing_CodeVerifier "CodeVerifier") &ensp; [RefactoringVerifier\<TRefactoringProvider>](Roslynator/Testing/RefactoringVerifier-1/README.md)<a id="class-hierarchy-Roslynator_Testing_RefactoringVerifier_1"></a>
+* &ensp; [&bull;](#class-hierarchy-System_Object "Object") &ensp; [&bull;](#class-hierarchy-Roslynator_Testing_CodeVerifier "CodeVerifier") &ensp; [&bull;](#class-hierarchy-Roslynator_Testing_RefactoringVerifier_1 "RefactoringVerifier<TRefactoringProvider>") &ensp; [CSharpRefactoringVerifier\<TRefactoringProvider>](Roslynator/Testing/CSharp/CSharpRefactoringVerifier-1/README.md)<a id="class-hierarchy-Roslynator_Testing_CSharp_CSharpRefactoringVerifier_1"></a>
+* &ensp; [&bull;](#class-hierarchy-System_Object "Object") &ensp; [&bull;](#class-hierarchy-Roslynator_Testing_CodeVerifier "CodeVerifier") &ensp; [&bull;](#class-hierarchy-Roslynator_Testing_RefactoringVerifier_1 "RefactoringVerifier<TRefactoringProvider>") &ensp; [&bull;](#class-hierarchy-Roslynator_Testing_CSharp_CSharpRefactoringVerifier_1 "CSharpRefactoringVerifier<TRefactoringProvider>") &ensp; [XunitRefactoringVerifier\<TRefactoringProvider>](Roslynator/Testing/CSharp/Xunit/XunitRefactoringVerifier-1/README.md)<a id="class-hierarchy-Roslynator_Testing_CSharp_Xunit_XunitRefactoringVerifier_1"></a>
+* &ensp; [&bull;](#class-hierarchy-System_Object "Object") &ensp; [CompilerDiagnosticFixTestData](Roslynator/Testing/CompilerDiagnosticFixTestData/README.md)<a id="class-hierarchy-Roslynator_Testing_CompilerDiagnosticFixTestData"></a>
+* &ensp; [&bull;](#class-hierarchy-System_Object "Object") &ensp; [DiagnosticTestData](Roslynator/Testing/DiagnosticTestData/README.md)<a id="class-hierarchy-Roslynator_Testing_DiagnosticTestData"></a>
 * &ensp; [&bull;](#class-hierarchy-System_Object "Object") &ensp; \([EqualityComparer\<T>](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.equalitycomparer-1)\)<a id="class-hierarchy-System_Collections_Generic_EqualityComparer_1"></a>
 * &ensp; [&bull;](#class-hierarchy-System_Object "Object") &ensp; [&bull;](#class-hierarchy-System_Collections_Generic_EqualityComparer_1 "EqualityComparer<T>") &ensp; [MetadataNameEqualityComparer\<TSymbol>](Roslynator/MetadataNameEqualityComparer-1/README.md)<a id="class-hierarchy-Roslynator_MetadataNameEqualityComparer_1"></a>
+* &ensp; [&bull;](#class-hierarchy-System_Object "Object") &ensp; [ExpectedTestState](Roslynator/Testing/ExpectedTestState/README.md)<a id="class-hierarchy-Roslynator_Testing_ExpectedTestState"></a>
 * &ensp; [&bull;](#class-hierarchy-System_Object "Object") &ensp; [ModifierList\<TNode>](Roslynator/CSharp/ModifierList-1/README.md)<a id="class-hierarchy-Roslynator_CSharp_ModifierList_1"></a>
 * &ensp; [&bull;](#class-hierarchy-System_Object "Object") &ensp; [NameGenerator](Roslynator/NameGenerator/README.md)<a id="class-hierarchy-Roslynator_NameGenerator"></a>
+* &ensp; [&bull;](#class-hierarchy-System_Object "Object") &ensp; [RefactoringTestData](Roslynator/Testing/RefactoringTestData/README.md)<a id="class-hierarchy-Roslynator_Testing_RefactoringTestData"></a>
 * &ensp; [&bull;](#class-hierarchy-System_Object "Object") &ensp; [SeparatedSyntaxListSelection\<TNode>](Roslynator/SeparatedSyntaxListSelection-1/README.md)<a id="class-hierarchy-Roslynator_SeparatedSyntaxListSelection_1"></a>
 * &ensp; [&bull;](#class-hierarchy-System_Object "Object") &ensp; [SyntaxListSelection\<TNode>](Roslynator/SyntaxListSelection-1/README.md)<a id="class-hierarchy-Roslynator_SyntaxListSelection_1"></a>
 * &ensp; [&bull;](#class-hierarchy-System_Object "Object") &ensp; [&bull;](#class-hierarchy-Roslynator_SyntaxListSelection_1 "SyntaxListSelection<TNode>") &ensp; [MemberDeclarationListSelection](Roslynator/CSharp/MemberDeclarationListSelection/README.md)<a id="class-hierarchy-Roslynator_CSharp_MemberDeclarationListSelection"></a>
 * &ensp; [&bull;](#class-hierarchy-System_Object "Object") &ensp; [&bull;](#class-hierarchy-Roslynator_SyntaxListSelection_1 "SyntaxListSelection<TNode>") &ensp; [StatementListSelection](Roslynator/CSharp/StatementListSelection/README.md)<a id="class-hierarchy-Roslynator_CSharp_StatementListSelection"></a>
 * &ensp; [&bull;](#class-hierarchy-System_Object "Object") &ensp; [SyntaxNodeTextBuilder](Roslynator/Text/SyntaxNodeTextBuilder/README.md)<a id="class-hierarchy-Roslynator_Text_SyntaxNodeTextBuilder"></a>
+* &ensp; [&bull;](#class-hierarchy-System_Object "Object") &ensp; [TestOptions](Roslynator/Testing/TestOptions/README.md)<a id="class-hierarchy-Roslynator_Testing_TestOptions"></a>
+* &ensp; [&bull;](#class-hierarchy-System_Object "Object") &ensp; [&bull;](#class-hierarchy-Roslynator_Testing_TestOptions "TestOptions") &ensp; [CSharpTestOptions](Roslynator/Testing/CSharp/CSharpTestOptions/README.md)<a id="class-hierarchy-Roslynator_Testing_CSharp_CSharpTestOptions"></a>
 * &ensp; [&bull;](#class-hierarchy-System_Object "Object") &ensp; [TextLineCollectionSelection](Roslynator/Text/TextLineCollectionSelection/README.md)<a id="class-hierarchy-Roslynator_Text_TextLineCollectionSelection"></a>
 
 ## [Roslynator](Roslynator/README.md) Namespace
@@ -122,6 +141,42 @@
 * [StringLiteralExpressionInfo](Roslynator/CSharp/Syntax/StringLiteralExpressionInfo/README.md)
 * [UsingDirectiveListInfo](Roslynator/CSharp/Syntax/UsingDirectiveListInfo/README.md)
 * [XmlElementInfo](Roslynator/CSharp/Syntax/XmlElementInfo/README.md)
+
+## [Roslynator.Testing](Roslynator/Testing/README.md) Namespace
+
+### Classes
+
+* [CodeVerifier](Roslynator/Testing/CodeVerifier/README.md)
+* [CompilerDiagnosticFixTestData](Roslynator/Testing/CompilerDiagnosticFixTestData/README.md)
+* [CompilerDiagnosticFixVerifier\<TFixProvider>](Roslynator/Testing/CompilerDiagnosticFixVerifier-1/README.md)
+* [DiagnosticTestData](Roslynator/Testing/DiagnosticTestData/README.md)
+* [DiagnosticVerifier\<TAnalyzer, TFixProvider>](Roslynator/Testing/DiagnosticVerifier-2/README.md)
+* [ExpectedTestState](Roslynator/Testing/ExpectedTestState/README.md)
+* [RefactoringTestData](Roslynator/Testing/RefactoringTestData/README.md)
+* [RefactoringVerifier\<TRefactoringProvider>](Roslynator/Testing/RefactoringVerifier-1/README.md)
+* [TestOptions](Roslynator/Testing/TestOptions/README.md)
+
+### Structs
+
+* [AdditionalFile](Roslynator/Testing/AdditionalFile/README.md)
+* [TestCode](Roslynator/Testing/TestCode/README.md)
+
+## [Roslynator.Testing.CSharp](Roslynator/Testing/CSharp/README.md) Namespace
+
+### Classes
+
+* [CSharpCompilerDiagnosticFixVerifier\<TFixProvider>](Roslynator/Testing/CSharp/CSharpCompilerDiagnosticFixVerifier-1/README.md)
+* [CSharpDiagnosticVerifier\<TAnalyzer, TFixProvider>](Roslynator/Testing/CSharp/CSharpDiagnosticVerifier-2/README.md)
+* [CSharpRefactoringVerifier\<TRefactoringProvider>](Roslynator/Testing/CSharp/CSharpRefactoringVerifier-1/README.md)
+* [CSharpTestOptions](Roslynator/Testing/CSharp/CSharpTestOptions/README.md)
+
+## [Roslynator.Testing.CSharp.Xunit](Roslynator/Testing/CSharp/Xunit/README.md) Namespace
+
+### Classes
+
+* [XunitCompilerDiagnosticFixVerifier\<TFixProvider>](Roslynator/Testing/CSharp/Xunit/XunitCompilerDiagnosticFixVerifier-1/README.md)
+* [XunitDiagnosticVerifier\<TAnalyzer, TFixProvider>](Roslynator/Testing/CSharp/Xunit/XunitDiagnosticVerifier-2/README.md)
+* [XunitRefactoringVerifier\<TRefactoringProvider>](Roslynator/Testing/CSharp/Xunit/XunitRefactoringVerifier-1/README.md)
 
 ## [Roslynator.Text](Roslynator/Text/README.md) Namespace
 

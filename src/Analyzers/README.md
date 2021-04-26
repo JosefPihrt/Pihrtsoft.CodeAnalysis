@@ -54,7 +54,7 @@
 | RCS1061 | [Merge 'if' with nested 'if'](../../docs/analyzers/RCS1061.md) | Simplification | Hidden |
 | RCS1063 | [Avoid usage of do statement to create an infinite loop](../../docs/analyzers/RCS1063.md) | Style | Info |
 | RCS1064 | [Avoid usage of for statement to create an infinite loop](../../docs/analyzers/RCS1064.md) | Style | None |
-| RCS1065 | [Avoid usage of while statement to create an inifinite loop](../../docs/analyzers/RCS1065.md) | Style | None |
+| RCS1065 | [Avoid usage of while statement to create an infinite loop](../../docs/analyzers/RCS1065.md) | Style | None |
 | RCS1066 | [Remove empty 'finally' clause](../../docs/analyzers/RCS1066.md) | Redundancy | Hidden |
 | RCS1068 | [Simplify logical negation](../../docs/analyzers/RCS1068.md) | Simplification | Info |
 | RCS1069 | [Remove unnecessary case label](../../docs/analyzers/RCS1069.md) | Redundancy | Hidden |
@@ -85,7 +85,7 @@
 | RCS1102 | [Make class static](../../docs/analyzers/RCS1102.md) | Design | Warning |
 | RCS1103 | [Convert 'if' to assignment](../../docs/analyzers/RCS1103.md) | Simplification | Info |
 | RCS1104 | [Simplify conditional expression](../../docs/analyzers/RCS1104.md) | Simplification | Info |
-| RCS1105 | [Unncessary interpolation](../../docs/analyzers/RCS1105.md) | Simplification | Info |
+| RCS1105 | [Unnecessary interpolation](../../docs/analyzers/RCS1105.md) | Simplification | Info |
 | RCS1106 | [Remove empty destructor](../../docs/analyzers/RCS1106.md) | Redundancy | Info |
 | RCS1107 | [Remove redundant 'ToCharArray' call](../../docs/analyzers/RCS1107.md) | Redundancy | Info |
 | RCS1108 | [Add 'static' modifier to all partial class declarations](../../docs/analyzers/RCS1108.md) | Readability | Info |
@@ -99,7 +99,7 @@
 | RCS1124 | [Inline local variable](../../docs/analyzers/RCS1124.md) | Simplification | Hidden |
 | RCS1126 | [Add braces to if-else](../../docs/analyzers/RCS1126.md) | Style | None |
 | RCS1128 | [Use coalesce expression](../../docs/analyzers/RCS1128.md) | Simplification | Info |
-| RCS1129 | [Remove redundant field initalization](../../docs/analyzers/RCS1129.md) | Redundancy | Hidden |
+| RCS1129 | [Remove redundant field initialization](../../docs/analyzers/RCS1129.md) | Redundancy | Hidden |
 | RCS1130 | [Bitwise operation on enum without Flags attribute](../../docs/analyzers/RCS1130.md) | General | Info |
 | RCS1132 | [Remove redundant overriding member](../../docs/analyzers/RCS1132.md) | Redundancy | Info |
 | RCS1133 | [Remove redundant Dispose/Close call](../../docs/analyzers/RCS1133.md) | Redundancy | Hidden |
@@ -155,7 +155,7 @@
 | RCS1196 | [Call extension method as instance method](../../docs/analyzers/RCS1196.md) | Style | Info |
 | RCS1197 | [Optimize StringBuilder.Append/AppendLine call](../../docs/analyzers/RCS1197.md) | Performance | Info |
 | RCS1198 | [Avoid unnecessary boxing of value type](../../docs/analyzers/RCS1198.md) | Performance | None |
-| RCS1199 | [Unncessary null check](../../docs/analyzers/RCS1199.md) | Redundancy | Info |
+| RCS1199 | [Unnecessary null check](../../docs/analyzers/RCS1199.md) | Redundancy | Info |
 | RCS1200 | [Call 'Enumerable.ThenBy' instead of 'Enumerable.OrderBy'](../../docs/analyzers/RCS1200.md) | Usage | Info |
 | RCS1201 | [Use method chaining](../../docs/analyzers/RCS1201.md) | Simplification | Hidden |
 | RCS1202 | [Avoid NullReferenceException](../../docs/analyzers/RCS1202.md) | Usage | Info |
@@ -202,7 +202,7 @@
 | RCS1244 | [Simplify 'default' expression](../../docs/analyzers/RCS1244.md) | Simplification | Hidden |
 | RCS1246 | [Use element access](../../docs/analyzers/RCS1246.md) | Usage | Info |
 | RCS1247 | [Fix documentation comment tag](../../docs/analyzers/RCS1247.md) | Readability | Info |
-| RCS1248 | [Use 'is null' pattern instead of comparison (or vice versa)](../../docs/analyzers/RCS1248.md) | Style | None |
+| RCS1248 | [Use pattern matching to check for null (or vice versa)](../../docs/analyzers/RCS1248.md) | Style | None |
 
 
 *\(Generated with [DotMarkdown](http://github.com/JosefPihrt/DotMarkdown)\)*

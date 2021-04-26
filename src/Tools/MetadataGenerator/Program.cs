@@ -165,16 +165,7 @@ namespace Roslynator.CodeGeneration
             void WriteAnalyzerMarkdowns(IEnumerable<AnalyzerMetadata> analyzers, IEnumerable<(string title, string url)> appliesTo = null)
             {
                 foreach (AnalyzerMetadata analyzer in analyzers)
-                {
                     WriteAnalyzerMarkdown(analyzer, appliesTo);
-                }
-
-                foreach (AnalyzerMetadata analyzer in analyzers
-                    .SelectMany(a => a.OptionAnalyzers)
-                    .Where(a => a.Id != null))
-                {
-                    WriteAnalyzerMarkdown(analyzer, appliesTo);
-                }
             }
 
             void WriteAnalyzerMarkdown(AnalyzerMetadata analyzer, IEnumerable<(string title, string url)> appliesTo = null)
@@ -183,15 +174,6 @@ namespace Roslynator.CodeGeneration
                     $@"..\docs\analyzers\{analyzer.Id}.md",
                     MarkdownGenerator.CreateAnalyzerMarkdown(analyzer, appliesTo),
                     fileMustExists: false);
-
-                foreach (AnalyzerMetadata optionAnalyzer in analyzer.OptionAnalyzers
-                    .Where(f => f.Id != null))
-                {
-                    WriteAllText(
-                        $@"..\docs\analyzers\{optionAnalyzer.Id}.md",
-                        MarkdownGenerator.CreateAnalyzerMarkdown(optionAnalyzer),
-                        fileMustExists: false);
-                }
             }
 
             void DeleteInvalidAnalyzerMarkdowns()
@@ -201,9 +183,7 @@ namespace Roslynator.CodeGeneration
                     .Concat(formattingAnalyzers)
                     .ToArray();
 
-                IEnumerable<string> allIds = allAnalyzers
-                    .Concat(allAnalyzers.SelectMany(f => f.OptionAnalyzers))
-                    .Select(f => f.Id);
+                IEnumerable<string> allIds = allAnalyzers.Select(f => f.Id);
 
                 string directoryPath = GetPath(@"..\docs\analyzers");
 

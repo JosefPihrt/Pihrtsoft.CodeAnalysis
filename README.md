@@ -68,6 +68,12 @@ Although Roslynator products are free of charge, any [donation](https://www.payp
 * Roslynator CLI is also distributed as .NET Core Global Tool [Roslynator.DotNet.Cli](https://www.nuget.org/packages/Roslynator.DotNet.Cli). &ensp;[![NuGet](https://img.shields.io/nuget/v/Roslynator.DotNet.Cli.svg)](https://www.nuget.org/packages/Roslynator.DotNet.Cli)
 * See [documentation](docs/cli/README.md).
 
+## Roslynator Testing Framework
+
+* Roslynator Testing Framework can be used for unit testing of analyzers, refactorings and code fixes.
+* Framework is distributed as NuGet [package](https://www.nuget.org/packages/Roslynator.Testing.CSharp.Xunit). &ensp;[![NuGet](https://img.shields.io/nuget/v/Roslynator.Testing.CSharp.Xunit.svg)](https://www.nuget.org/packages/Roslynator.Testing.CSharp.Xunit)
+* Extensive usage of the framework can be found [here](src/Tests)
+
 ## Documentation
 
 * [Analyzers vs. Refactorings](docs/AnalyzersVsRefactorings.md)

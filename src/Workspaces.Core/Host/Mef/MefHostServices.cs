@@ -7,6 +7,7 @@ using System.Composition;
 using System.Composition.Hosting;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 
@@ -82,8 +83,10 @@ namespace Roslynator.Host.Mef
                 Version assemblyVersion = assemblyName.Version;
                 string publicKeyToken = assemblyName.GetPublicKeyToken().Aggregate("", (s, b) => s + b.ToString("x2"));
 
-                yield return $"Roslynator.CSharp.Workspaces, Version={assemblyVersion}, Culture=neutral, PublicKeyToken={publicKeyToken}";
-                yield return $"Roslynator.VisualBasic.Workspaces, Version={assemblyVersion}, Culture=neutral, PublicKeyToken={publicKeyToken}";
+                string prefix = Regex.Match(assemblyName.Name, @"\A.*Roslynator(?=\..*\z)", RegexOptions.RightToLeft).Value;
+
+                yield return $"{prefix}.CSharp.Workspaces, Version={assemblyVersion}, Culture=neutral, PublicKeyToken={publicKeyToken}";
+                yield return $"{prefix}.VisualBasic.Workspaces, Version={assemblyVersion}, Culture=neutral, PublicKeyToken={publicKeyToken}";
             }
         }
 

@@ -304,7 +304,7 @@ namespace Roslynator.CSharp
             }
 
             return (commentsToRemove != null)
-                ? node.ReplaceTrivia(commentsToRemove, (f, _) => EmptyWhitespace())
+                ? node.ReplaceTrivia(commentsToRemove, (_, __) => EmptyWhitespace())
                 : node;
 
             void AddTrivia(SyntaxTrivia trivia)

@@ -9,4 +9,8 @@
     <Copyright>Copyright (c) 2017-2021 Josef Pihrt</Copyright>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(RoslynatorDotNetCli)' == true OR '$(RoslynatorCommandLine)' == true">
+    <RoslynatorDllPrefix>_</RoslynatorDllPrefix>
+  </PropertyGroup>
+
 </Project>

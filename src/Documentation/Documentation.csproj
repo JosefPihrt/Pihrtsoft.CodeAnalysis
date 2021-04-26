@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>0.1.2.0</Version>
-    <AssemblyName>Roslynator.Documentation</AssemblyName>
+    <Version>0.1.3.0</Version>
+    <AssemblyName>$(RoslynatorDllPrefix)Roslynator.Documentation</AssemblyName>
     <RootNamespace>Roslynator.Documentation</RootNamespace>
   </PropertyGroup>
 

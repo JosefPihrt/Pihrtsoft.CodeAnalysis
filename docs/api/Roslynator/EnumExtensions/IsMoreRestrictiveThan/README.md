@@ -7,7 +7,7 @@
 **Assembly**: Roslynator\.Core\.dll
 
 \
-Returns true if the accessibility if more restrictrive than the other accessibility\.
+Returns true if the accessibility if more restrictive than the other accessibility\.
 
 ```csharp
 public static bool IsMoreRestrictiveThan(this Microsoft.CodeAnalysis.Accessibility accessibility, Microsoft.CodeAnalysis.Accessibility other)

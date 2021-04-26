@@ -23,7 +23,7 @@ namespace Roslynator.Testing
     {
         internal CodeVerifier(IAssert assert)
         {
-            Assert = assert;
+            Assert = assert ?? throw new ArgumentNullException(nameof(assert));
         }
 
         /// <summary>
@@ -38,12 +38,12 @@ namespace Roslynator.Testing
 
         internal IAssert Assert { get; }
 
-        protected void Fail(string userMessage)
+        internal void Fail(string userMessage)
         {
             Assert.True(false, userMessage);
         }
 
-        protected void Fail(string userMessage, IEnumerable<Diagnostic> diagnostics)
+        internal void Fail(string userMessage, IEnumerable<Diagnostic> diagnostics)
         {
             string s = string.Join(NewLine, diagnostics.Select(d => d.ToString()));
 
@@ -53,7 +53,7 @@ namespace Roslynator.Testing
             Fail(userMessage + $"{NewLine}{NewLine}Diagnostics:{NewLine}{s}{NewLine}");
         }
 
-        protected void Fail(string userMessage, IEnumerable<CodeAction> codeActions)
+        internal void Fail(string userMessage, IEnumerable<CodeAction> codeActions)
         {
             var s = "";
 
@@ -184,7 +184,7 @@ namespace Roslynator.Testing
 
             Assert.Equal(expected.Source, actual);
 
-            if (!expected.Spans.IsEmpty
+            if (!expected.Annotations.IsEmpty
                 || !expected.AlwaysVerifyAnnotations.IsEmpty)
             {
                 VerifyAnnotations(expected, root, actual);
@@ -196,7 +196,7 @@ namespace Roslynator.Testing
             SyntaxNode root,
             string source)
         {
-            foreach (KeyValuePair<string, ImmutableArray<TextSpan>> kvp in expected.Spans)
+            foreach (KeyValuePair<string, ImmutableArray<TextSpan>> kvp in expected.AnnotationsByKind)
             {
                 string kind = GetAnnotationKind(kvp.Key);
                 ImmutableArray<TextSpan> spans = kvp.Value;
@@ -206,9 +206,9 @@ namespace Roslynator.Testing
 
             foreach (string kind in expected.AlwaysVerifyAnnotations)
             {
-                if (!expected.Spans.ContainsKey(kind))
+                if (!expected.AnnotationsByKind.ContainsKey(kind))
                 {
-                    ImmutableArray<TextSpan> spans = expected.Spans.GetValueOrDefault(kind, ImmutableArray<TextSpan>.Empty);
+                    ImmutableArray<TextSpan> spans = expected.AnnotationsByKind.GetValueOrDefault(kind, ImmutableArray<TextSpan>.Empty);
 
                     VerifyAnnotations(root, source, kind, spans);
                 }
@@ -312,7 +312,12 @@ namespace Roslynator.Testing
                 for (int i = 0; i < additionalFiles.Length; i++)
                 {
                     Document additionalDocument = project.AddDocument(AppendNumberToFileName(options.DocumentName, i + 2), SourceText.From(additionalFiles[i].Source));
-                    expectedDocuments.Add(new ExpectedDocument(additionalDocument.Id, additionalFiles[i].ExpectedSource));
+
+                    string expectedSource = additionalFiles[i].ExpectedSource;
+
+                    if (expectedSource != null)
+                        expectedDocuments.Add(new ExpectedDocument(additionalDocument.Id, expectedSource));
+
                     project = additionalDocument.Project;
                 }
 

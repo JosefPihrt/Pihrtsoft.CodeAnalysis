@@ -28,14 +28,17 @@ namespace Roslynator.Testing
         /// <summary>
         /// Verifies that specified source will produce specified diagnostic(s).
         /// </summary>
-        /// <param name="state"></param>
+        /// <param name="data"></param>
         /// <param name="options"></param>
         /// <param name="cancellationToken"></param>
         public async Task VerifyDiagnosticAsync(
-            DiagnosticTestState state,
+            DiagnosticTestData data,
             TestOptions options = null,
             CancellationToken cancellationToken = default)
         {
+            if (data == null)
+                throw new ArgumentNullException(nameof(data));
+
             cancellationToken.ThrowIfCancellationRequested();
 
             options ??= Options;
@@ -45,11 +48,11 @@ namespace Roslynator.Testing
 
             using (Workspace workspace = new AdhocWorkspace())
             {
-                (Document document, ImmutableArray<ExpectedDocument> expectedDocuments) = CreateDocument(workspace.CurrentSolution, state.Source, state.AdditionalFiles, options, state.Descriptor);
+                (Document document, ImmutableArray<ExpectedDocument> expectedDocuments) = CreateDocument(workspace.CurrentSolution, data.Source, data.AdditionalFiles, options, data.Descriptor);
 
                 SyntaxTree tree = await document.GetSyntaxTreeAsync();
 
-                ImmutableArray<Diagnostic> expectedDiagnostics = state.GetDiagnostics(tree);
+                ImmutableArray<Diagnostic> expectedDiagnostics = data.GetDiagnostics(tree);
 
                 VerifySupportedDiagnostics(analyzer, expectedDiagnostics);
 
@@ -64,12 +67,15 @@ namespace Roslynator.Testing
                 if (diagnostics.Length > 0
                     && supportedDiagnostics.Length > 1)
                 {
-                    VerifyDiagnostics(state, analyzer, expectedDiagnostics, FilterDiagnostics(diagnostics, expectedDiagnostics), cancellationToken);
+                    VerifyDiagnostics(data, analyzer, expectedDiagnostics, FilterDiagnostics(diagnostics, expectedDiagnostics), cancellationToken);
                 }
                 else
                 {
-                    VerifyDiagnostics(state, analyzer, expectedDiagnostics, diagnostics, cancellationToken);
+                    VerifyDiagnostics(data, analyzer, expectedDiagnostics, diagnostics, cancellationToken);
                 }
+
+                if (expectedDocuments.Any())
+                    await VerifyAdditionalDocumentsAsync(document.Project, expectedDocuments, cancellationToken);
             }
 
             static IEnumerable<Diagnostic> FilterDiagnostics(
@@ -97,14 +103,17 @@ namespace Roslynator.Testing
         /// <summary>
         /// Verifies that specified source will not produce specified diagnostic.
         /// </summary>
-        /// <param name="state"></param>
+        /// <param name="data"></param>
         /// <param name="options"></param>
         /// <param name="cancellationToken"></param>
         public async Task VerifyNoDiagnosticAsync(
-            DiagnosticTestState state,
+            DiagnosticTestData data,
             TestOptions options = null,
             CancellationToken cancellationToken = default)
         {
+            if (data == null)
+                throw new ArgumentNullException(nameof(data));
+
             cancellationToken.ThrowIfCancellationRequested();
 
             options ??= Options;
@@ -113,11 +122,11 @@ namespace Roslynator.Testing
 
             using (Workspace workspace = new AdhocWorkspace())
             {
-                (Document document, ImmutableArray<ExpectedDocument> expectedDocuments) = CreateDocument(workspace.CurrentSolution, state.Source, state.AdditionalFiles, options, state.Descriptor);
+                (Document document, ImmutableArray<ExpectedDocument> _) = CreateDocument(workspace.CurrentSolution, data.Source, data.AdditionalFiles, options, data.Descriptor);
 
                 SyntaxTree tree = await document.GetSyntaxTreeAsync();
 
-                ImmutableArray<Diagnostic> expectedDiagnostics = state.GetDiagnostics(tree);
+                ImmutableArray<Diagnostic> expectedDiagnostics = data.GetDiagnostics(tree);
 
                 VerifySupportedDiagnostics(analyzer, expectedDiagnostics);
 
@@ -130,7 +139,7 @@ namespace Roslynator.Testing
                 ImmutableArray<Diagnostic> actualDiagnostics = await GetAnalyzerDiagnosticsAsync(compilation, analyzer, DiagnosticComparer.SpanStart, cancellationToken);
 
                 actualDiagnostics = actualDiagnostics
-                    .Where(diagnostic => string.Equals(diagnostic.Id, state.Descriptor.Id))
+                    .Where(diagnostic => string.Equals(diagnostic.Id, data.Descriptor.Id))
                     .ToImmutableArray();
 
                 if (!actualDiagnostics.IsEmpty)
@@ -141,41 +150,47 @@ namespace Roslynator.Testing
         /// <summary>
         /// Verifies that specified source will produce specified diagnostic and that the diagnostic will be fixed.
         /// </summary>
-        /// <param name="state"></param>
+        /// <param name="data"></param>
         /// <param name="expected"></param>
         /// <param name="options"></param>
         /// <param name="cancellationToken"></param>
         public async Task VerifyDiagnosticAndFixAsync(
-            DiagnosticTestState state,
+            DiagnosticTestData data,
             ExpectedTestState expected,
             TestOptions options = null,
             CancellationToken cancellationToken = default)
         {
-            await VerifyDiagnosticAsync(state, options, cancellationToken);
-            await VerifyFixAsync(state, expected, options, cancellationToken);
+            await VerifyDiagnosticAsync(data, options, cancellationToken);
+            await VerifyFixAsync(data, expected, options, cancellationToken);
         }
 
         /// <summary>
         /// Verifies that specified source will produce specified diagnostic and that the diagnostic will not be fixed.
         /// </summary>
-        /// <param name="state"></param>
+        /// <param name="data"></param>
         /// <param name="options"></param>
         /// <param name="cancellationToken"></param>
         public async Task VerifyDiagnosticAndNoFixAsync(
-            DiagnosticTestState state,
+            DiagnosticTestData data,
             TestOptions options = null,
             CancellationToken cancellationToken = default)
         {
-            await VerifyDiagnosticAsync(state, options, cancellationToken);
-            await VerifyNoFixAsync(state, options, cancellationToken);
+            await VerifyDiagnosticAsync(data, options, cancellationToken);
+            await VerifyNoFixAsync(data, options, cancellationToken);
         }
 
         private async Task VerifyFixAsync(
-            DiagnosticTestState state,
+            DiagnosticTestData data,
             ExpectedTestState expected,
             TestOptions options = null,
             CancellationToken cancellationToken = default)
         {
+            if (data == null)
+                throw new ArgumentNullException(nameof(data));
+
+            if (expected == null)
+                throw new ArgumentNullException(nameof(expected));
+
             cancellationToken.ThrowIfCancellationRequested();
 
             options ??= Options;
@@ -187,13 +202,13 @@ namespace Roslynator.Testing
 
             using (Workspace workspace = new AdhocWorkspace())
             {
-                (Document document, ImmutableArray<ExpectedDocument> expectedDocuments) = CreateDocument(workspace.CurrentSolution, state.Source, state.AdditionalFiles, options, state.Descriptor);
+                (Document document, ImmutableArray<ExpectedDocument> expectedDocuments) = CreateDocument(workspace.CurrentSolution, data.Source, data.AdditionalFiles, options, data.Descriptor);
 
                 Project project = document.Project;
 
                 SyntaxTree tree = await document.GetSyntaxTreeAsync();
 
-                ImmutableArray<Diagnostic> expectedDiagnostics = state.GetDiagnostics(tree);
+                ImmutableArray<Diagnostic> expectedDiagnostics = data.GetDiagnostics(tree);
 
                 foreach (Diagnostic diagnostic in expectedDiagnostics)
                     VerifyFixableDiagnostics(fixProvider, diagnostic.Id);
@@ -255,7 +270,7 @@ namespace Roslynator.Testing
                     if (diagnostic == null)
                     {
                         if (!fixRegistered)
-                            Fail($"No diagnostic with ID '{state.Descriptor.Id}' found.", diagnostics);
+                            Fail($"No diagnostic with ID '{data.Descriptor.Id}' found.", diagnostics);
 
                         break;
                     }
@@ -268,8 +283,8 @@ namespace Roslynator.Testing
                         diagnostic,
                         (a, d) =>
                         {
-                            if ((state.EquivalenceKey == null
-                                || string.Equals(state.EquivalenceKey, a.EquivalenceKey, StringComparison.Ordinal))
+                            if ((data.EquivalenceKey == null
+                                || string.Equals(data.EquivalenceKey, a.EquivalenceKey, StringComparison.Ordinal))
                                 && d.Contains(diagnostic))
                             {
                                 if (action != null)
@@ -311,10 +326,13 @@ namespace Roslynator.Testing
         }
 
         private async Task VerifyNoFixAsync(
-            DiagnosticTestState state,
+            DiagnosticTestData data,
             TestOptions options = null,
             CancellationToken cancellationToken = default)
         {
+            if (data == null)
+                throw new ArgumentNullException(nameof(data));
+
             cancellationToken.ThrowIfCancellationRequested();
 
             options ??= Options;
@@ -327,13 +345,13 @@ namespace Roslynator.Testing
 
             using (Workspace workspace = new AdhocWorkspace())
             {
-                (Document document, ImmutableArray<ExpectedDocument> expectedDocuments) = CreateDocument(workspace.CurrentSolution, state.Source, state.AdditionalFiles, options, state.Descriptor);
+                (Document document, ImmutableArray<ExpectedDocument> _) = CreateDocument(workspace.CurrentSolution, data.Source, data.AdditionalFiles, options, data.Descriptor);
 
                 Compilation compilation = await document.Project.GetCompilationAsync(cancellationToken);
 
                 SyntaxTree tree = await document.GetSyntaxTreeAsync();
 
-                ImmutableArray<Diagnostic> expectedDiagnostics = state.GetDiagnostics(tree);
+                ImmutableArray<Diagnostic> expectedDiagnostics = data.GetDiagnostics(tree);
 
                 VerifySupportedDiagnostics(analyzer, expectedDiagnostics);
 
@@ -355,8 +373,8 @@ namespace Roslynator.Testing
                             diagnostic,
                             (a, d) =>
                             {
-                                if ((state.EquivalenceKey == null
-                                    || string.Equals(a.EquivalenceKey, state.EquivalenceKey, StringComparison.Ordinal))
+                                if ((data.EquivalenceKey == null
+                                    || string.Equals(a.EquivalenceKey, data.EquivalenceKey, StringComparison.Ordinal))
                                     && d.Contains(diagnostic))
                                 {
                                     Fail("No code fix expected.");
@@ -371,7 +389,7 @@ namespace Roslynator.Testing
         }
 
         private void VerifyDiagnostics(
-            DiagnosticTestState state,
+            DiagnosticTestData data,
             TAnalyzer analyzer,
             IEnumerable<Diagnostic> expectedDiagnostics,
             IEnumerable<Diagnostic> actualDiagnostics,
@@ -403,9 +421,9 @@ namespace Roslynator.Testing
                         VerifyDiagnostic(
                             expectedDiagnostic,
                             actualEnumerator.Current,
-                            state.DiagnosticMessage,
-                            state.FormatProvider,
-                            verifyAdditionalLocations: state.AlwaysVerifyAdditionalLocations || !state.AdditionalSpans.IsEmpty);
+                            data.DiagnosticMessage,
+                            data.FormatProvider,
+                            verifyAdditionalLocations: data.AlwaysVerifyAdditionalLocations || !data.AdditionalSpans.IsEmpty);
                     }
                     else
                     {

@@ -174,6 +174,7 @@ public static class CSharpFactory
 | [NewLine()](NewLine/README.md) | |
 | [NotEqualsExpression(ExpressionSyntax, ExpressionSyntax)](NotEqualsExpression/README.md#Roslynator_CSharp_CSharpFactory_NotEqualsExpression_Microsoft_CodeAnalysis_CSharp_Syntax_ExpressionSyntax_Microsoft_CodeAnalysis_CSharp_Syntax_ExpressionSyntax_) | |
 | [NotEqualsExpression(ExpressionSyntax, SyntaxToken, ExpressionSyntax)](NotEqualsExpression/README.md#Roslynator_CSharp_CSharpFactory_NotEqualsExpression_Microsoft_CodeAnalysis_CSharp_Syntax_ExpressionSyntax_Microsoft_CodeAnalysis_SyntaxToken_Microsoft_CodeAnalysis_CSharp_Syntax_ExpressionSyntax_) | |
+| [NotPattern(PatternSyntax)](NotPattern/README.md) | |
 | [NullLiteralExpression()](NullLiteralExpression/README.md) | |
 | [NumericLiteralExpression(Decimal)](NumericLiteralExpression/README.md#Roslynator_CSharp_CSharpFactory_NumericLiteralExpression_System_Decimal_) | |
 | [NumericLiteralExpression(Double)](NumericLiteralExpression/README.md#Roslynator_CSharp_CSharpFactory_NumericLiteralExpression_System_Double_) | |

@@ -89,26 +89,15 @@ namespace Roslynator.CSharp.CodeFixes
                 nullLiteral = binaryExpression.Left.WithLeadingTrivia(expression.GetLeadingTrivia());
             }
 
-            bool useIsNotNull = !AnalyzerOptions.UseLogicalNegationAndPatternMatchingToCheckForNull.IsEnabled(document, binaryExpression);
-
             PatternSyntax pattern = ConstantPattern(nullLiteral);
 
-            if (binaryExpression.IsKind(SyntaxKind.NotEqualsExpression)
-                && useIsNotNull)
-            {
+            if (binaryExpression.IsKind(SyntaxKind.NotEqualsExpression))
                 pattern = NotPattern(pattern);
-            }
 
             ExpressionSyntax newExpression = IsPatternExpression(
                 expression,
                 Token(binaryExpression.OperatorToken.LeadingTrivia, SyntaxKind.IsKeyword, binaryExpression.OperatorToken.TrailingTrivia),
                 pattern);
-
-            if (binaryExpression.IsKind(SyntaxKind.NotEqualsExpression)
-                && !useIsNotNull)
-            {
-                newExpression = LogicalNotExpression(ParenthesizedExpression(newExpression.WithoutTrivia()));
-            }
 
             newExpression = newExpression
                 .WithTriviaFrom(binaryExpression)

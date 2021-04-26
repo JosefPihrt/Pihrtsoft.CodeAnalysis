@@ -4,7 +4,7 @@
   "displayName": "Roslynator",
   "description": "A collection of 500+ analyzers, refactorings and fixes for C#, powered by Roslyn.",
   "icon": "images/icon.png",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "author": "Josef Pihrt",
   "license": "SEE LICENSE IN LICENSE.TXT",
   "homepage": "https://github.com/josefpihrt/roslynator",

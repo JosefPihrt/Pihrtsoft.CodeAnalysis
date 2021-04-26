@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "..\Core\Core.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testing.Common", "Testing.Common\Testing.Common.csproj", "{0DFBCFDC-E1DA-4447-B317-C3CD3ECD63C2}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Testing.CSharp.Xunit", "Testing.CSharp.Xunit\Testing.CSharp.Xunit.csproj", "{AD1C3E62-672B-405A-9D90-4CB89CF58112}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,10 @@ Global
 		{0DFBCFDC-E1DA-4447-B317-C3CD3ECD63C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0DFBCFDC-E1DA-4447-B317-C3CD3ECD63C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0DFBCFDC-E1DA-4447-B317-C3CD3ECD63C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD1C3E62-672B-405A-9D90-4CB89CF58112}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD1C3E62-672B-405A-9D90-4CB89CF58112}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD1C3E62-672B-405A-9D90-4CB89CF58112}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD1C3E62-672B-405A-9D90-4CB89CF58112}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

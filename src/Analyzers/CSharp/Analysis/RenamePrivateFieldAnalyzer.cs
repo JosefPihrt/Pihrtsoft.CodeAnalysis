@@ -40,8 +40,7 @@ namespace Roslynator.CSharp.Analysis
                 && !IsValidIdentifier(fieldSymbol.Name))
             {
                 if (!fieldSymbol.IsStatic
-                    || !fieldSymbol.IsReadOnly
-                    || !AnalyzerOptions.DoNotRenamePrivateStaticReadOnlyFieldToCamelCaseWithUnderscore.IsEnabled(context))
+                    || !AnalyzerOptions.DoNotRenamePrivateStaticFieldToCamelCaseWithUnderscore.IsEnabled(context))
                 {
                     DiagnosticHelpers.ReportDiagnostic(
                         context,

@@ -4,5 +4,5 @@
 
 | Extension Method | Summary |
 | ---------------- | ------- |
-| [IsMoreRestrictiveThan(Accessibility, Accessibility)](../../../Roslynator/EnumExtensions/IsMoreRestrictiveThan/README.md) | Returns true if the accessibility if more restrictrive than the other accessibility\. |
+| [IsMoreRestrictiveThan(Accessibility, Accessibility)](../../../Roslynator/EnumExtensions/IsMoreRestrictiveThan/README.md) | Returns true if the accessibility if more restrictive than the other accessibility\. |
 

@@ -608,7 +608,7 @@ namespace Roslynator.CSharp
             isEnabledByDefault: true, 
             "CS0139");
 
-        /// <summary>RCF0080 (fixes CS0029, CS0127, CS0201, CS0266, CS1997)</summary>
+        /// <summary>RCF0080 (fixes CS0029, CS0127, CS0201, CS0246, CS0266, CS1997)</summary>
         public static readonly CodeFixDescriptor ChangeMemberTypeAccordingToReturnExpression = new CodeFixDescriptor(
             id:                 CodeFixIdentifiers.ChangeMemberTypeAccordingToReturnExpression, 
             title:              "Change member type according to return expression", 
@@ -616,6 +616,7 @@ namespace Roslynator.CSharp
             "CS0029", 
             "CS0127", 
             "CS0201", 
+            "CS0246", 
             "CS0266", 
             "CS1997");
 

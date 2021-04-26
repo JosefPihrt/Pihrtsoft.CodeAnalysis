@@ -21,7 +21,7 @@ public readonly struct SimpleMemberInvocationExpressionInfo
 
 | Property | Summary |
 | -------- | ------- |
-| [ArgumentList](ArgumentList/README.md) | The argumet list\. |
+| [ArgumentList](ArgumentList/README.md) | The argument list\. |
 | [Arguments](Arguments/README.md) | The list of the arguments\. |
 | [Expression](Expression/README.md) | The expression that contains the member being invoked\. |
 | [InvocationExpression](InvocationExpression/README.md) | The invocation expression\. |
