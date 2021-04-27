@@ -72,7 +72,10 @@ Although Roslynator products are free of charge, any [donation](https://www.payp
 
 * Roslynator Testing Framework can be used for unit testing of analyzers, refactorings and code fixes.
 * Framework is distributed as NuGet [package](https://www.nuget.org/packages/Roslynator.Testing.CSharp.Xunit). &ensp;[![NuGet](https://img.shields.io/nuget/v/Roslynator.Testing.CSharp.Xunit.svg)](https://www.nuget.org/packages/Roslynator.Testing.CSharp.Xunit)
-* Extensive usage of the framework can be found [here](src/Tests)
+* Learn how to use the framework from actual usages in Roslynator repo:
+  * Tests of analyzers are [here](src/Tests/Analyzers.Tests), [here](src/Tests/CodeAnalysis.Analyzers.Tests) and [here](src/Tests/Formatting.Analyzers.Tests)
+  * Tests of refactorings are [here](src/Tests/Refactorings.Tests)
+  * Tests of fixes of compiler diagnostics are [here](src/Tests/CodeFixes.Tests)
 
 ## Documentation
 

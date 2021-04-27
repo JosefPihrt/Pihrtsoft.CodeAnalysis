@@ -75,7 +75,7 @@ namespace Roslynator.CSharp.Analysis
 
             ExpressionSyntax right = assignmentInfo.Right;
 
-            if (!CanBeReplacedWithCompoundAssignment(right.Kind()))
+            if (!CanBeReplacedWithCompoundAssignment(right))
                 return;
 
             BinaryExpressionInfo binaryInfo = SyntaxInfo.BinaryExpressionInfo((BinaryExpressionSyntax)right);
@@ -91,9 +91,9 @@ namespace Roslynator.CSharp.Analysis
             DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.UseCompoundAssignment, assignmentExpression, GetCompoundAssignmentOperatorText(binaryExpression));
             DiagnosticHelpers.ReportNode(context, DiagnosticRules.UseCompoundAssignmentFadeOut, binaryExpression.Left);
 
-            bool CanBeReplacedWithCompoundAssignment(SyntaxKind kind)
+            bool CanBeReplacedWithCompoundAssignment(ExpressionSyntax expression)
             {
-                switch (kind)
+                switch (expression.Kind())
                 {
                     case SyntaxKind.AddExpression:
                     case SyntaxKind.SubtractExpression:
@@ -106,11 +106,13 @@ namespace Roslynator.CSharp.Analysis
                     case SyntaxKind.LeftShiftExpression:
                     case SyntaxKind.RightShiftExpression:
                         return true;
+
                     case SyntaxKind.CoalesceExpression:
-                        return ((CSharpCompilation)context.Compilation).LanguageVersion >= LanguageVersion.CSharp8;
-                    default:
-                        return false;
+                        return ((CSharpCompilation)context.Compilation).LanguageVersion >= LanguageVersion.CSharp8
+                            && !((BinaryExpressionSyntax)expression).Right.IsKind(SyntaxKind.ThrowExpression);
                 }
+
+                return false;
             }
         }
 

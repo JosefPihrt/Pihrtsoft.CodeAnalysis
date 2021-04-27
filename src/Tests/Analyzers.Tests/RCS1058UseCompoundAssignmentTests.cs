@@ -173,5 +173,23 @@ class C
 }
 ", options: WellKnownCSharpTestOptions.Default_CSharp7_3);
         }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UseCompoundAssignment)]
+        public async Task TestNoDiagnostic_ThrowExpression()
+        {
+            await VerifyNoDiagnosticAsync(@"
+using System;
+
+class C
+{
+    void M()
+    {
+        string x = null;
+
+        x = x ?? throw new Exception();
+    }
+}
+");
+        }
     }
 }
