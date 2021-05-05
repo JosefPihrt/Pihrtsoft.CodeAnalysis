@@ -183,7 +183,12 @@ namespace Roslynator.Spelling
                     Debug.Assert(diagnostic.Id == SpellingAnalyzer.DiagnosticId, diagnostic.Id);
 
                     if (diagnostic.Id != SpellingAnalyzer.DiagnosticId)
+                    {
+                        if (diagnostic.IsAnalyzerExceptionDiagnostic())
+                            LogHelpers.WriteDiagnostic(diagnostic, baseDirectoryPath: Path.GetDirectoryName(project.FilePath), formatProvider: FormatProvider, indentation: "  ", verbosity: Verbosity.Detailed);
+
                         continue;
+                    }
 
                     SpellingDiagnostic spellingDiagnostic = service.CreateSpellingDiagnostic(diagnostic);
 
@@ -391,9 +396,21 @@ namespace Roslynator.Spelling
 
                 if (symbol == null)
                 {
-                    Debug.Fail(identifier.ToString());
+                    // 8925 - C# tuple element
+                    Debug.Assert(identifier.Parent.RawKind == 8925, identifier.ToString());
 
-                    WriteLine($"    Cannot find symbol for '{identifier.ValueText}'", ConsoleColor.Yellow, Verbosity.Detailed);
+                    if (ShouldWrite(Verbosity.Detailed))
+                    {
+                        string message = $"    Cannot find symbol for '{identifier.ValueText}'";
+
+                        string locationText = GetLocationText(identifier.GetLocation(), project);
+
+                        if (locationText != null)
+                            message += $" at {locationText}";
+
+                        WriteLine(message, ConsoleColor.Yellow, Verbosity.Detailed);
+                    }
+
                     continue;
                 }
 
@@ -634,6 +651,23 @@ namespace Roslynator.Spelling
         private void AddIgnoredValue(SpellingDiagnostic diagnostic)
         {
             SpellingData = SpellingData.AddIgnoredValue(diagnostic.Value);
+        }
+
+        private string GetLocationText(Location location, Project project)
+        {
+            if (location.Kind == LocationKind.SourceFile
+                || location.Kind == LocationKind.XmlFile
+                || location.Kind == LocationKind.ExternalFile)
+            {
+                FileLinePositionSpan span = location.GetMappedLineSpan();
+
+                if (span.IsValid)
+                {
+                    return $"{PathUtilities.TrimStart(span.Path, Path.GetDirectoryName(project.FilePath))}({span.StartLinePosition.Line + 1},{span.StartLinePosition.Character + 1})";
+                }
+            }
+
+            return null;
         }
     }
 }

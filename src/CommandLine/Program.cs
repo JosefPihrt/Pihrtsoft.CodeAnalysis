@@ -358,31 +358,13 @@ namespace Roslynator.CommandLine
             if (!options.TryGetProjectFilter(out ProjectFilter projectFilter))
                 return ExitCodes.Error;
 
-            string assemblyPath = typeof(SpellcheckCommandLineOptions).Assembly.Location;
-
-            IEnumerable<string> wordListPaths = Enumerable.Empty<string>();
-            IEnumerable<string> fixListPaths = Enumerable.Empty<string>();
-
-            if (!string.IsNullOrEmpty(assemblyPath))
-            {
-                wordListPaths = Directory.EnumerateFiles(
-                    Path.Combine(Path.GetDirectoryName(assemblyPath), "Spelling", "words"),
-                    "*.txt",
-                    SearchOption.AllDirectories);
-
-                fixListPaths = Directory.EnumerateFiles(
-                    Path.Combine(Path.GetDirectoryName(assemblyPath), "Spelling", "fixes"),
-                    "*.txt",
-                    SearchOption.AllDirectories);
-            }
-
             if (!TryEnsureFullPath(options.Output, out string outputPath))
                 return ExitCodes.Error;
 
-            if (!TryEnsureFullPath(options.Words, out ImmutableArray<string> wordListPaths2))
+            if (!TryEnsureFullPath(options.Words, out ImmutableArray<string> wordListPaths))
                 return ExitCodes.Error;
 
-            if (!TryEnsureFullPath(options.Fixes, out ImmutableArray<string> fixListPaths2))
+            if (!TryEnsureFullPath(options.Fixes, out ImmutableArray<string> fixListPaths))
                 return ExitCodes.Error;
 
             string newWordsPath = null;
@@ -400,26 +382,16 @@ namespace Roslynator.CommandLine
             {
                 return ExitCodes.Error;
             }
-#if DEBUG
-            foreach (string filePath in Directory.EnumerateFiles(@"..\..\..\Spelling", "*.txt", SearchOption.AllDirectories))
-            {
-                WordList.Normalize(filePath);
-            }
-#endif
-            WordListLoaderResult loaderResult = WordListLoader.Load(wordListPaths.Concat(wordListPaths2));
 
-            FixList fixes = FixList.Load(fixListPaths.Concat(fixListPaths2));
+            WordListLoaderResult loaderResult = WordListLoader.Load(wordListPaths);
+
+            FixList fixes = FixList.Load(fixListPaths);
 
             var data = new SpellingData(loaderResult.List, loaderResult.CaseSensitiveList, fixes);
 
             var command = new SpellcheckCommand(options, projectFilter, data, visibility, scopeFilter, newWordsPath, newFixesPath, outputPath);
 
-            IEnumerable<string> properties = options.Properties;
-#if DEBUG
-            Console.WriteLine("Processing word lists");
-            WordListHelpers.ProcessWordLists();
-#endif
-            CommandResult result = await command.ExecuteAsync(options.Path, options.MSBuildPath, properties);
+            CommandResult result = await command.ExecuteAsync(options.Path, options.MSBuildPath, options.Properties);
 
             return GetExitCode(result);
         }

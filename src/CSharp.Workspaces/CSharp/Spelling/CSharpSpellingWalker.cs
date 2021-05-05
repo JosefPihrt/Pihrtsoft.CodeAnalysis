@@ -104,6 +104,8 @@ namespace Roslynator.CSharp.Spelling
                 return;
             }
 
+            Debug.Assert(_stack.Count > 0);
+
             SyntaxNode containingNode = _stack.Peek();
 
             switch (containingNode.Kind())
@@ -131,6 +133,13 @@ namespace Roslynator.CSharp.Spelling
                 case SyntaxKind.PropertyDeclaration:
                     {
                         if (ShouldVisit(SpellingScopeFilter.ReturnType))
+                            base.VisitTupleType(node);
+
+                        break;
+                    }
+                case SyntaxKind.Parameter:
+                    {
+                        if (ShouldVisit(SpellingScopeFilter.Parameter))
                             base.VisitTupleType(node);
 
                         break;
@@ -401,7 +410,9 @@ namespace Roslynator.CSharp.Spelling
             if (ShouldVisit(SpellingScopeFilter.Parameter))
                 AnalyzeIdentifier(node.Identifier);
 
+            _stack.Push(node);
             base.VisitParameter(node);
+            _stack.Pop();
         }
 
         public override void VisitForEachStatement(ForEachStatementSyntax node)
