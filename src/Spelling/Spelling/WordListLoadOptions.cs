@@ -8,6 +8,6 @@ namespace Roslynator.Spelling
     public enum WordListLoadOptions
     {
         None = 0,
-        CaseSensitive = 1,
+        IgnoreCase = 1,
     }
 }

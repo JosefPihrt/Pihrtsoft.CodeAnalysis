@@ -352,6 +352,11 @@ namespace Roslynator.CommandLine
             if (!TryParseOptionValueAsEnumFlags(options.Scope, ParameterNames.Scope, out SpellingScopeFilter scopeFilter, SpellingScopeFilter.All))
                 return ExitCodes.Error;
 
+            if (!TryParseOptionValueAsEnumFlags(options.IgnoredScope, ParameterNames.IgnoredScope, out SpellingScopeFilter ignoredScopeFilter, SpellingScopeFilter.None))
+                return ExitCodes.Error;
+
+            scopeFilter &= ~ignoredScopeFilter;
+
             if (!TryParseOptionValueAsEnum(options.Visibility, ParameterNames.Visibility, out Visibility visibility))
                 return ExitCodes.Error;
 
@@ -383,7 +388,7 @@ namespace Roslynator.CommandLine
                 return ExitCodes.Error;
             }
 
-            WordListLoaderResult loaderResult = WordListLoader.Load(wordListPaths);
+            WordListLoaderResult loaderResult = WordListLoader.Load(wordListPaths, (options.IgnoreCase) ? WordListLoadOptions.IgnoreCase : WordListLoadOptions.None);
 
             FixList fixes = FixList.Load(fixListPaths);
 

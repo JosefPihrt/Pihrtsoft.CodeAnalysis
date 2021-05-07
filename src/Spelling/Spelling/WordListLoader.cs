@@ -21,7 +21,7 @@ namespace Roslynator.Spelling
             List<string> caseSensitiveWords = null;
             List<WordSequence> caseSensitiveSequences = null;
 
-            if ((options & WordListLoadOptions.CaseSensitive) != 0)
+            if ((options & WordListLoadOptions.IgnoreCase) == 0)
             {
                 caseSensitiveWords = new List<string>();
                 caseSensitiveSequences = new List<WordSequence>();
@@ -64,7 +64,7 @@ namespace Roslynator.Spelling
             List<string> caseSensitiveWords = null;
             List<WordSequence> caseSensitiveSequences = null;
 
-            if ((options & WordListLoadOptions.CaseSensitive) != 0)
+            if ((options & WordListLoadOptions.IgnoreCase) == 0)
             {
                 caseSensitiveWords = new List<string>();
                 caseSensitiveSequences = new List<WordSequence>();
@@ -74,7 +74,7 @@ namespace Roslynator.Spelling
 
             return new WordListLoaderResult(
                 new WordList(words, sequences),
-                ((options & WordListLoadOptions.CaseSensitive) != 0)
+                ((options & WordListLoadOptions.IgnoreCase) == 0)
                     ? new WordList(caseSensitiveWords, caseSensitiveSequences)
                     : WordList.CaseSensitive);
         }

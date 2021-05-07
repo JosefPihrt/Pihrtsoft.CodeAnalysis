@@ -12,6 +12,7 @@ namespace Roslynator.CommandLine
         public const string IgnoredParts = "ignored-parts";
         public const string IgnoredProjects = "ignored-projects";
         public const string IgnoredRootParts = "ignored-root-parts";
+        public const string IgnoredScope = "ignored-scope";
         public const string IgnoredTypeParts = "ignored-type-parts";
         public const string IncludeContainingNamespace = "include-containing-namespace";
         public const string IncludeSystemNamespace = "include-system-namespace";

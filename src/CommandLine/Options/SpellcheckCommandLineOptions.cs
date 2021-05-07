@@ -6,7 +6,7 @@ using CommandLine;
 namespace Roslynator.CommandLine
 {
     [Verb("spellcheck", HelpText = "Searches the specified project or solution for possible misspellings or typos.")]
-    public class SpellcheckCommandLineOptions : MSBuildCommandLineOptions
+    public sealed class SpellcheckCommandLineOptions : MSBuildCommandLineOptions
     {
         [Option(
             longName: "culture",
@@ -27,9 +27,20 @@ namespace Roslynator.CommandLine
         public IEnumerable<string> Fixes { get; set; } = null!;
 
         [Option(
+            longName: ParameterNames.IgnoredScope,
+            HelpText = "",
+            MetaValue = "<SCOPE>")]
+        public IEnumerable<string> IgnoredScope { get; set; }
+
+        [Option(
             longName: "include-generated-code",
             HelpText = "Indicates whether generated code should be formatted.")]
         public bool IncludeGeneratedCode { get; set; }
+
+        [Option(
+            longName: "ignore-case",
+            HelpText = "")]
+        public bool IgnoreCase { get; set; }
 
         [Option(
             longName: "interactive",
@@ -37,9 +48,10 @@ namespace Roslynator.CommandLine
         public bool Interactive { get; set; }
 
         [Option(
-            longName: "output",
-            HelpText = "")]
-        public string Output { get; set; }
+            longName: "new-fixes",
+            HelpText = "",
+            MetaValue = "<PATH>")]
+        public string NewFixes { get; set; }
 
         [Option(
             longName: "new-words",
@@ -48,10 +60,9 @@ namespace Roslynator.CommandLine
         public string NewWords { get; set; }
 
         [Option(
-            longName: "new-fixes",
-            HelpText = "",
-            MetaValue = "<PATH>")]
-        public string NewFixes { get; set; }
+            longName: "output",
+            HelpText = "")]
+        public string Output { get; set; }
 
         [Option(
             longName: ParameterNames.Scope,
