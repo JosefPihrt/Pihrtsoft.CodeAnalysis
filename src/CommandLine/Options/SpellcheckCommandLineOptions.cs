@@ -34,7 +34,7 @@ namespace Roslynator.CommandLine
 
         [Option(
             longName: "include-generated-code",
-            HelpText = "Indicates whether generated code should be formatted.")]
+            HelpText = "Indicates whether generated code should be spellchecked.")]
         public bool IncludeGeneratedCode { get; set; }
 
         [Option(
@@ -46,6 +46,12 @@ namespace Roslynator.CommandLine
             longName: "interactive",
             HelpText = "")]
         public bool Interactive { get; set; }
+
+        [Option(
+            longName: "min-word-length",
+            Default = 3,
+            HelpText = "")]
+        public int MinWordLength { get; set; }
 
         [Option(
             longName: "new-fixes",

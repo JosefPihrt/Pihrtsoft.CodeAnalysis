@@ -163,7 +163,7 @@ namespace Roslynator.Spelling
             }
         }
 
-        private static FixList Create(Dictionary<string, HashSet<string>> dic)
+        internal static FixList Create(Dictionary<string, HashSet<string>> dic)
         {
             ImmutableDictionary<string, ImmutableHashSet<SpellingFix>> items = dic.ToImmutableDictionary(
                 f => f.Key,

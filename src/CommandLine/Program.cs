@@ -388,11 +388,12 @@ namespace Roslynator.CommandLine
                 return ExitCodes.Error;
             }
 
-            WordListLoaderResult loaderResult = WordListLoader.Load(wordListPaths, (options.IgnoreCase) ? WordListLoadOptions.IgnoreCase : WordListLoadOptions.None);
+            WordListLoaderResult loaderResult = WordListLoader.Load(
+                wordListPaths,
+                options.MinWordLength,
+                (options.IgnoreCase) ? WordListLoadOptions.IgnoreCase : WordListLoadOptions.None);
 
-            FixList fixes = FixList.Load(fixListPaths);
-
-            var data = new SpellingData(loaderResult.List, loaderResult.CaseSensitiveList, fixes);
+            var data = new SpellingData(loaderResult.List, loaderResult.CaseSensitiveList, loaderResult.FixList);
 
             var command = new SpellcheckCommand(options, projectFilter, data, visibility, scopeFilter, newWordsPath, newFixesPath, outputPath);
 

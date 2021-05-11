@@ -4,14 +4,17 @@ namespace Roslynator.Spelling
 {
     public readonly struct WordListLoaderResult
     {
-        internal WordListLoaderResult(WordList list, WordList caseSensitiveList)
+        internal WordListLoaderResult(WordList list, WordList caseSensitiveList, FixList fixList)
         {
             List = list;
             CaseSensitiveList = caseSensitiveList;
+            FixList = fixList;
         }
 
         public WordList List { get; }
 
         public WordList CaseSensitiveList { get; }
+
+        public FixList FixList { get; }
     }
 }

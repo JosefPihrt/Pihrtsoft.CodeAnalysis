@@ -13,10 +13,14 @@ namespace Roslynator.Spelling
     {
         private static readonly Regex _splitRegex = new Regex(" +");
 
-        public static WordListLoaderResult Load(IEnumerable<string> paths, WordListLoadOptions options = WordListLoadOptions.None)
+        public static WordListLoaderResult Load(
+            IEnumerable<string> paths,
+            int minWordLength = -1,
+            WordListLoadOptions options = WordListLoadOptions.None)
         {
             var words = new List<string>();
             var sequences = new List<WordSequence>();
+            var fixes = new Dictionary<string, HashSet<string>>();
 
             List<string> caseSensitiveWords = null;
             List<WordSequence> caseSensitiveSequences = null;
@@ -29,10 +33,13 @@ namespace Roslynator.Spelling
 
             foreach (string filePath in GetFiles())
             {
-                LoadFile(filePath, ref words, ref sequences, ref caseSensitiveWords, ref caseSensitiveSequences);
+                LoadFile(filePath, minWordLength, ref words, ref sequences, ref caseSensitiveWords, ref caseSensitiveSequences, ref fixes);
             }
 
-            return new WordListLoaderResult(new WordList(words, sequences), new WordList(caseSensitiveWords, caseSensitiveSequences));
+            return new WordListLoaderResult(
+                new WordList(words, sequences),
+                new WordList(caseSensitiveWords, caseSensitiveSequences),
+                FixList.Create(fixes));
 
             IEnumerable<string> GetFiles()
             {
@@ -56,10 +63,14 @@ namespace Roslynator.Spelling
             }
         }
 
-        public static WordListLoaderResult LoadFile(string path, WordListLoadOptions options = WordListLoadOptions.None)
+        public static WordListLoaderResult LoadFile(
+            string path,
+            int minWordLength = -1,
+            WordListLoadOptions options = WordListLoadOptions.None)
         {
             var words = new List<string>();
             var sequences = new List<WordSequence>();
+            var fixes = new Dictionary<string, HashSet<string>>();
 
             List<string> caseSensitiveWords = null;
             List<WordSequence> caseSensitiveSequences = null;
@@ -70,50 +81,131 @@ namespace Roslynator.Spelling
                 caseSensitiveSequences = new List<WordSequence>();
             }
 
-            LoadFile(path, ref words, ref sequences, ref caseSensitiveWords, ref caseSensitiveSequences);
+            LoadFile(path, minWordLength, ref words, ref sequences, ref caseSensitiveWords, ref caseSensitiveSequences, ref fixes);
 
             return new WordListLoaderResult(
                 new WordList(words, sequences),
                 ((options & WordListLoadOptions.IgnoreCase) == 0)
                     ? new WordList(caseSensitiveWords, caseSensitiveSequences)
-                    : WordList.CaseSensitive);
+                    : WordList.CaseSensitive,
+                FixList.Create(fixes));
         }
 
         private static void LoadFile(
             string path,
+            int minWordLength,
             ref List<string> words,
             ref List<WordSequence> sequences,
             ref List<string> caseSensitiveWords,
-            ref List<WordSequence> caseSensitiveSequences)
+            ref List<WordSequence> caseSensitiveSequences,
+            ref Dictionary<string, HashSet<string>> fixes)
         {
             foreach (string line in File.ReadLines(path))
             {
-                int startIndex = line.IndexOf('#');
+                int i = 0;
+                int startIndex = 0;
+                int endIndex = line.Length;
+                int separatorIndex = -1;
+                int whitespaceIndex = -1;
 
-                string[] s = _splitRegex.Split((startIndex >= 0) ? line.Remove(startIndex) : line);
-
-                if (s.Length > 0)
+                while (i < line.Length
+                    && char.IsWhiteSpace(line[i]))
                 {
-                    if (s.Length == 1)
+                    startIndex++;
+                    i++;
+                }
+
+                while (i < line.Length)
+                {
+                    char ch = line[i];
+
+                    if (ch == '#')
                     {
-                        if (caseSensitiveWords != null
-                            && !IsLower(line))
+                        endIndex = i;
+                        break;
+                    }
+                    else if (separatorIndex == -1)
+                    {
+                        if (ch == '=')
                         {
-                            caseSensitiveWords.Add(s[0]);
+                            separatorIndex = i;
+                        }
+                        else if (whitespaceIndex == -1
+                            && char.IsWhiteSpace(ch))
+                        {
+                            whitespaceIndex = i;
+                        }
+                    }
+
+                    i++;
+                }
+
+                int j = endIndex - 1;
+
+                while (j >= startIndex
+                    && char.IsWhiteSpace(line[j]))
+                {
+                    endIndex--;
+                    j--;
+                }
+
+                if (separatorIndex >= 0)
+                {
+                    string key = line.Substring(startIndex, separatorIndex - startIndex);
+
+                    if (key.Length >= minWordLength)
+                    {
+                        startIndex = separatorIndex + 1;
+
+                        string value = line.Substring(startIndex, endIndex - startIndex);
+
+                        if (fixes.TryGetValue(key, out HashSet<string> fixes2))
+                        {
+                            Debug.Assert(!fixes2.Contains(value), $"Fix list already contains {key}={value}");
+
+                            fixes2.Add(value);
                         }
                         else
                         {
-                            words.Add(s[0]);
+                            fixes[key] = new HashSet<string>(WordList.DefaultComparer) { value };
                         }
                     }
-                    else if (caseSensitiveSequences != null
-                        && !IsLower(line))
+                }
+                else
+                {
+                    string value = line.Substring(startIndex, endIndex - startIndex);
+
+                    if (whitespaceIndex >= 0
+                        && whitespaceIndex < endIndex)
                     {
-                        caseSensitiveSequences.Add(new WordSequence(s.ToImmutableArray()));
+                        string[] s = _splitRegex.Split(value);
+
+                        Debug.Assert(s.Length > 1, s.Length.ToString());
+
+                        if (s.Length > 0)
+                        {
+                            if (caseSensitiveSequences != null
+                                && !IsLower(value))
+                            {
+                                caseSensitiveSequences.Add(new WordSequence(s.ToImmutableArray()));
+                            }
+                            else
+                            {
+                                sequences.Add(new WordSequence(s.ToImmutableArray()));
+                            }
+                        }
                     }
-                    else
+                    else if (value.Length >= minWordLength)
                     {
-                        sequences.Add(new WordSequence(s.ToImmutableArray()));
+                        if (caseSensitiveWords != null
+                            && !IsLower(value))
+                        {
+                            caseSensitiveWords.Add(value);
+                        }
+                        else
+                        {
+                            words.Add(value);
+                        }
                     }
                 }
             }
