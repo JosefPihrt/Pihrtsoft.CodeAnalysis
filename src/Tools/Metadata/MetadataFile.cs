@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -20,11 +19,6 @@ namespace Roslynator.Metadata
         private static string NormalizeNewLine(this string value)
         {
             return (value != null) ? _lfWithoutCr.Replace(value, "\r\n") : null;
-        }
-
-        public static ImmutableArray<AnalyzerMetadata> ReadAllAnalyzers(string filePath)
-        {
-            return ImmutableArray.CreateRange(ReadAnalyzers(filePath));
         }
 
         public static IEnumerable<AnalyzerMetadata> ReadAnalyzers(string filePath)
@@ -70,11 +64,6 @@ namespace Roslynator.Metadata
                     kind: AnalyzerOptionKind.None,
                     parent: null);
             }
-        }
-
-        public static ImmutableArray<RefactoringMetadata> ReadAllRefactorings(string filePath)
-        {
-            return ImmutableArray.CreateRange(ReadRefactorings(filePath));
         }
 
         public static IEnumerable<RefactoringMetadata> ReadRefactorings(string filePath)
@@ -173,11 +162,6 @@ namespace Roslynator.Metadata
                 isObsolete: isObsolete);
         }
 
-        public static ImmutableArray<CodeFixMetadata> ReadAllCodeFixes(string filePath)
-        {
-            return ImmutableArray.CreateRange(ReadCodeFixes(filePath));
-        }
-
         public static IEnumerable<CodeFixMetadata> ReadCodeFixes(string filePath)
         {
             XDocument doc = XDocument.Load(filePath);
@@ -194,11 +178,6 @@ namespace Roslynator.Metadata
                         .Elements("Id")
                         .Select(f => f.Value));
             }
-        }
-
-        public static ImmutableArray<CompilerDiagnosticMetadata> ReadAllCompilerDiagnostics(string filePath)
-        {
-            return ImmutableArray.CreateRange(ReadCompilerDiagnostics(filePath));
         }
 
         public static IEnumerable<CompilerDiagnosticMetadata> ReadCompilerDiagnostics(string filePath)

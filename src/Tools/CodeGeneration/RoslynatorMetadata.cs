@@ -76,7 +76,7 @@ namespace Roslynator.CodeGeneration
             get
             {
                 if (_codeFixes.IsDefault)
-                    _codeFixes = MetadataFile.ReadAllCodeFixes(GetPath(@"CodeFixes\CodeFixes.xml"));
+                    _codeFixes = MetadataFile.ReadCodeFixes(GetPath(@"CodeFixes\CodeFixes.xml")).ToImmutableArray();
 
                 return _codeFixes;
             }
@@ -87,7 +87,7 @@ namespace Roslynator.CodeGeneration
             get
             {
                 if (_compilerDiagnostics.IsDefault)
-                    _compilerDiagnostics = MetadataFile.ReadAllCompilerDiagnostics(GetPath(@"CodeFixes\Diagnostics.xml"));
+                    _compilerDiagnostics = MetadataFile.ReadCompilerDiagnostics(GetPath(@"CodeFixes\Diagnostics.xml")).ToImmutableArray();
 
                 return _compilerDiagnostics;
             }
@@ -109,9 +109,12 @@ namespace Roslynator.CodeGeneration
             IEnumerable<RefactoringMetadata> refactorings = Directory
                 .EnumerateFiles(directoryPath, "Refactorings.*.xml", SearchOption.TopDirectoryOnly)
                 .Where(filePath => Path.GetFileName(filePath) != "Refactorings.Template.xml")
-                .SelectMany(filePath => MetadataFile.ReadAllRefactorings(filePath));
+                .SelectMany(filePath => MetadataFile.ReadRefactorings(filePath));
 
-            return MetadataFile.ReadAllRefactorings(Path.Combine(directoryPath, "Refactorings.xml")).AddRange(refactorings);
+            return MetadataFile
+                .ReadRefactorings(Path.Combine(directoryPath, "Refactorings.xml"))
+                .Concat(refactorings)
+                .ToImmutableArray();
         }
 
         private string GetPath(string path)
