@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Josef Pihrt. All rights reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System.Collections.Immutable;
-using System.Diagnostics;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Roslynator.Spelling
@@ -26,6 +24,26 @@ namespace Roslynator.Spelling
 )",
             RegexOptions.ExplicitCapture | RegexOptions.IgnorePatternWhitespace);
 
+        private const string _splitCasePattern = @"
+    (?<=
+        \p{Lu}
+    )
+    (?=
+        \p{Lu}\p{Ll}
+    )
+|
+    (?<=
+        \p{Ll}
+    )
+    (?=
+        \p{Lu}
+    )
+";
+
+        private static readonly Regex _splitIdentifierRegex = new Regex(
+            @"\P{L}+|" + _splitCasePattern,
+            RegexOptions.IgnorePatternWhitespace);
+
         private static readonly Regex _urlRegex = new Regex(
             @"\bhttps?://[^\s]+(?=\s|\z)", RegexOptions.IgnoreCase);
 
@@ -33,15 +51,20 @@ namespace Roslynator.Spelling
 
         public SpellingData Data { get; }
 
+        public Regex WordRegex { get; }
+
         public SpellcheckerOptions Options { get; }
 
         public Spellchecker(
             SpellingData data,
-            SpellcheckerOptions options)
+            Regex wordRegex = null,
+            SpellcheckerOptions options = null)
         {
             Data = data;
-            Options = options;
-            _splitRegex = SplitUtility.GetSplitRegex(Options.SplitMode);
+            WordRegex = wordRegex ?? _wordRegex;
+            Options = options ?? SpellcheckerOptions.Default;
+
+            _splitRegex = new Regex("-|" + _splitCasePattern, RegexOptions.IgnorePatternWhitespace);
         }
 
         public ImmutableArray<SpellingMatch> AnalyzeText(string value)
@@ -75,7 +98,7 @@ namespace Roslynator.Spelling
             int sequenceEndIndex = -1;
 
             for (
-                Match match = _wordRegex.Match(value, startIndex, length);
+                Match match = WordRegex.Match(value, startIndex, length);
                 match.Success;
                 match = match.NextMatch())
             {
@@ -128,7 +151,7 @@ namespace Roslynator.Spelling
 
             ImmutableArray<SpellingMatch>.Builder builder = null;
 
-            AnalyzeSplit(SplitUtility.SplitIdentifierRegex, value, 0, prefixLength, ref builder);
+            AnalyzeSplit(_splitIdentifierRegex, value, 0, prefixLength, ref builder);
 
             return builder?.ToImmutableArray() ?? ImmutableArray<SpellingMatch>.Empty;
         }
@@ -195,8 +218,6 @@ namespace Roslynator.Spelling
 
         private bool IsMatch(string value)
         {
-            Debug.Assert(value.All(f => char.IsLetter(f) || f == '\''), value);
-
             if (value.Length < Options.MinWordLength)
                 return false;
 

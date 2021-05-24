@@ -27,10 +27,6 @@ namespace Roslynator.Spelling
             _splitCasePattern,
             RegexOptions.IgnorePatternWhitespace);
 
-        public static readonly Regex SplitIdentifierRegex = new Regex(
-            @"\P{L}+|" + _splitCasePattern,
-            RegexOptions.IgnorePatternWhitespace);
-
         private static readonly Regex _splitHyphenRegex = new Regex("-");
 
         private static readonly Regex _splitCaseAndHyphenRegex = new Regex(

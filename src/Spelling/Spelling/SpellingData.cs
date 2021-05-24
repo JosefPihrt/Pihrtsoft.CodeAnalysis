@@ -102,20 +102,18 @@ namespace Roslynator.Spelling
 
         public WordSequenceMatch GetSequenceMatch(string value, int startIndex, int length, Match match)
         {
-            WordSequenceMatch sequenceMatch = default;
-
             if (CaseSensitiveWords.Sequences.TryGetValue(match.Value, out ImmutableArray<WordSequence> sequences))
             {
-                sequenceMatch = GetSequenceMatch(value, startIndex, length, match, sequences, Words.Comparer);
+                WordSequenceMatch sequenceMatch = GetSequenceMatch(value, startIndex, length, match, sequences, Words.Comparison);
 
-                if (sequenceMatch.IsDefault
-                    && Words.Sequences.TryGetValue(match.Value, out sequences))
-                {
-                    sequenceMatch = GetSequenceMatch(value, startIndex, length, match, sequences, Words.Comparer);
-                }
+                if (!sequenceMatch.IsDefault)
+                    return sequenceMatch;
             }
 
-            return sequenceMatch;
+            if (Words.Sequences.TryGetValue(match.Value, out sequences))
+                return GetSequenceMatch(value, startIndex, length, match, sequences, Words.Comparison);
+
+            return default;
         }
 
         private WordSequenceMatch GetSequenceMatch(
@@ -124,70 +122,75 @@ namespace Roslynator.Spelling
             int length,
             Match match,
             ImmutableArray<WordSequence> sequences,
-            StringComparer comparer)
+            StringComparison comparison)
         {
             List<WordSequence> sequenceList = sequences.ToList();
-            int endIndex = startIndex + length - 1;
-            int sequenceIndex = 1;
-            //int sequenceEndIndex = -1;
-            int i = match.Index + match.Length - 1;
+            int endIndex = startIndex + length;
+            int i = match.Index + match.Length;
 
             WordSequenceMatch sequenceMatch = default;
 
-            while (true)
+            int whitespaceCount = 0;
+
+            while (i < endIndex
+                && char.IsWhiteSpace(value[i]))
             {
-                int j = i;
+                i++;
+                whitespaceCount++;
+            }
 
-                while (i < endIndex
-                    && char.IsWhiteSpace(value[i + 1]))
+            if (whitespaceCount == 0)
+                return default;
+
+            int secondWordIndex = i;
+
+            for (int j = sequenceList.Count - 1; j >= 0; j--)
+            {
+                i = secondWordIndex;
+
+                WordSequence sequence = sequenceList[j];
+
+                for (int k = 1; k < sequence.Count; k++)
                 {
-                    i++;
-                }
+                    string word = sequence.Words[k];
 
-                if (j == i)
-                    return default;
-
-                j = i;
-
-                while (i < endIndex
-                    && char.IsLetter(value[i + 1]))
-                {
-                    i++;
-                }
-
-                if (j == i)
-                    return default;
-
-                string word = value.Substring(j + 1, i - j);
-
-                for (int k = sequenceList.Count - 1; k >= 0; k--)
-                {
-                    WordSequence sequence = sequenceList[k];
-
-                    if (comparer.Equals(word, sequence.Words[sequenceIndex]))
+                    if (string.Compare(value, i, word, 0, word.Length, comparison) == 0)
                     {
-                        if (sequence.Words.Length - 1 == sequenceIndex)
+                        if (sequence.Words.Length - 1 == k)
                         {
+                            i += word.Length;
+
                             if (i == endIndex
-                                || !char.IsLetter(value[i + 1]))
+                                || !char.IsLetter(value[i]))
                             {
                                 if (sequenceMatch.EndIndex < i)
-                                    sequenceMatch = new WordSequenceMatch(sequence, match.Index, i - match.Index + 1);
+                                    sequenceMatch = new WordSequenceMatch(sequence, match.Index, i - match.Index);
                             }
 
-                            sequenceList.RemoveAt(k);
+                            break;
+                        }
+                        else
+                        {
+                            i += word.Length;
+
+                            whitespaceCount = 0;
+
+                            while (i < endIndex
+                                && char.IsWhiteSpace(value[i]))
+                            {
+                                i++;
+                                whitespaceCount++;
+                            }
+
+                            if (whitespaceCount == 0)
+                                break;
                         }
                     }
                     else
                     {
-                        sequenceList.RemoveAt(k);
+                        break;
                     }
                 }
-
-                if (sequenceList.Count == 0)
-                    break;
-
-                sequenceIndex++;
             }
 
             return sequenceMatch;

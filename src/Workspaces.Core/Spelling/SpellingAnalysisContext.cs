@@ -34,7 +34,7 @@ namespace Roslynator.Spelling
 
             _reportDiagnostic = reportDiagnostic;
 
-            _spellchecker = new Spellchecker(spellingData, new SpellcheckerOptions(options.SplitMode, options.MinWordLength));
+            _spellchecker = new Spellchecker(spellingData, options: new SpellcheckerOptions(options.SplitMode, options.MinWordLength));
         }
 
         public void AnalyzeText(string value, TextSpan textSpan, SyntaxTree syntaxTree)

@@ -160,7 +160,12 @@ namespace Roslynator.Spelling
                 .OrderBy(f => f, StringComparer.InvariantCulture)
                 .ToList();
 
-            File.WriteAllText(path, string.Join(Environment.NewLine, values), Encoding.UTF8);
+            string content = string.Join(Environment.NewLine, values);
+
+            if (!string.IsNullOrEmpty(content))
+                content += Environment.NewLine;
+
+            File.WriteAllText(path, content, Encoding.UTF8);
         }
     }
 }
