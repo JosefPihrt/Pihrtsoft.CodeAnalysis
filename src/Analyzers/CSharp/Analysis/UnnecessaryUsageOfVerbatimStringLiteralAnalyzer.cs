@@ -105,10 +105,15 @@ namespace Roslynator.CSharp.Analysis
                 }
             }
 
+            int start = node.SpanStart;
+
+            if (interpolatedString.StringStartToken.ValueText.StartsWith("$"))
+                start++;
+
             DiagnosticHelpers.ReportDiagnostic(
                 context,
                 DiagnosticRules.UnnecessaryUsageOfVerbatimStringLiteral,
-                Location.Create(node.SyntaxTree, new TextSpan(node.SpanStart + 1, 1)));
+                Location.Create(node.SyntaxTree, new TextSpan(start, 1)));
         }
 
         private static bool ContainsQuoteOrBackslashOrCarriageReturnOrLinefeed(

@@ -2,6 +2,7 @@
 
 using System.Collections.Immutable;
 using System.Composition;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeActions;
@@ -9,7 +10,6 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Roslynator.CodeFixes;
-using Roslynator.CSharp.Refactorings;
 
 namespace Roslynator.CSharp.CodeFixes
 {
@@ -31,29 +31,30 @@ namespace Roslynator.CSharp.CodeFixes
             if (!TryFindFirstAncestorOrSelf(root, context.Span, out SyntaxNode node, predicate: f => f.IsKind(SyntaxKind.StringLiteralExpression, SyntaxKind.InterpolatedStringExpression)))
                 return;
 
-            switch (node.Kind())
+            CodeAction codeAction = CodeAction.Create(
+                Title,
+                ct => RefactorAsync(context.Document, node, ct),
+                GetEquivalenceKey(DiagnosticIdentifiers.UnnecessaryUsageOfVerbatimStringLiteral));
+
+            context.RegisterCodeFix(codeAction, context.Diagnostics[0]);
+        }
+
+        private static Task<Document> RefactorAsync(
+            Document document,
+            SyntaxNode node,
+            CancellationToken cancellationToken)
+        {
+            int start = node.SpanStart;
+
+            if (node is InterpolatedStringExpressionSyntax interpolatedString
+                && interpolatedString.StringStartToken.ValueText.StartsWith("$"))
             {
-                case SyntaxKind.StringLiteralExpression:
-                    {
-                        CodeAction codeAction = CodeAction.Create(
-                            Title,
-                            cancellationToken => UseRegularStringLiteralInsteadOfVerbatimStringLiteralRefactoring.RefactorAsync(context.Document, (LiteralExpressionSyntax)node, cancellationToken),
-                            GetEquivalenceKey(DiagnosticIdentifiers.UnnecessaryUsageOfVerbatimStringLiteral));
-
-                        context.RegisterCodeFix(codeAction, context.Diagnostics);
-                        break;
-                    }
-                case SyntaxKind.InterpolatedStringExpression:
-                    {
-                        CodeAction codeAction = CodeAction.Create(
-                            Title,
-                            cancellationToken => UseRegularStringLiteralInsteadOfVerbatimStringLiteralRefactoring.RefactorAsync(context.Document, (InterpolatedStringExpressionSyntax)node, cancellationToken),
-                            GetEquivalenceKey(DiagnosticIdentifiers.UnnecessaryUsageOfVerbatimStringLiteral));
-
-                        context.RegisterCodeFix(codeAction, context.Diagnostics);
-                        break;
-                    }
+                start++;
             }
+
+            ExpressionSyntax newNode = SyntaxFactory.ParseExpression(node.ToFullString().Remove(start - node.FullSpan.Start, 1));
+
+            return document.ReplaceNodeAsync(node, newNode, cancellationToken);
         }
     }
 }

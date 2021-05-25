@@ -79,6 +79,28 @@ class C
         }
 
         [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UnnecessaryUsageOfVerbatimStringLiteral)]
+        public async Task Test_EmptyInterpolatedString_AmpersandIsFirst()
+        {
+            await VerifyDiagnosticAndFixAsync(@"
+class C
+{
+    void M()
+    {
+        string s = [|@|]$"""";
+    }
+}
+", @"
+class C
+{
+    void M()
+    {
+        string s = $"""";
+    }
+}
+");
+        }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.UnnecessaryUsageOfVerbatimStringLiteral)]
         public async Task Test_NonEmptyInterpolatedString()
         {
             await VerifyDiagnosticAndFixAsync(@"

@@ -189,5 +189,26 @@ class C
 }
 ", options: Options.EnableDiagnostic(AnalyzerOptionDiagnosticRules.DoNotSimplifyConditionalExpressionWhenConditionIsInverted));
         }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.SimplifyConditionalExpression)]
+        public async Task TestNoDiagnostic_ThrowExpression()
+        {
+            await VerifyNoDiagnosticAsync(@"
+using System;
+
+class C
+{
+    void M()
+    {
+        bool x = false, y = false;
+
+        y = x ? throw new Exception() : true;
+        y = x ? true : throw new Exception();
+        y = x ? throw new Exception() : false;
+        y = x ? false : throw new Exception();
+    }
+}
+");
+        }
     }
 }
