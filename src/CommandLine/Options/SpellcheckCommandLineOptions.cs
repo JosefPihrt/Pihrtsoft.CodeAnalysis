@@ -54,23 +54,6 @@ namespace Roslynator.CommandLine
         public int MinWordLength { get; set; }
 
         [Option(
-            longName: "new-fixes",
-            HelpText = "",
-            MetaValue = "<PATH>")]
-        public string NewFixes { get; set; }
-
-        [Option(
-            longName: "new-words",
-            HelpText = "",
-            MetaValue = "<PATH>")]
-        public string NewWords { get; set; }
-
-        [Option(
-            longName: "output",
-            HelpText = "")]
-        public string Output { get; set; }
-
-        [Option(
             longName: ParameterNames.Scope,
             HelpText = "",
             MetaValue = "<SCOPE>")]
@@ -85,6 +68,7 @@ namespace Roslynator.CommandLine
 
         [Option(
             longName: "words",
+            Required = true,
             HelpText = "",
             MetaValue = "<PATH>")]
         public IEnumerable<string> Words { get; set; } = null!;

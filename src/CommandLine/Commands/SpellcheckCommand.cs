@@ -23,20 +23,12 @@ namespace Roslynator.CommandLine
             in ProjectFilter projectFilter,
             SpellingData spellingData,
             Visibility visibility,
-            SpellingScopeFilter scopeFilter,
-            string newWordsPath = null,
-            string newFixesPath = null,
-            string outputPath = null) : base(projectFilter)
+            SpellingScopeFilter scopeFilter) : base(projectFilter)
         {
             Options = options;
             SpellingData = spellingData;
             Visibility = visibility;
             ScopeFilter = scopeFilter;
-            NewWordsPath = newWordsPath;
-            NewFixesPath = newFixesPath;
-            OutputPath = outputPath;
-
-            OriginalFixes = spellingData.Fixes;
         }
 
         public SpellcheckCommandLineOptions Options { get; }
@@ -47,13 +39,7 @@ namespace Roslynator.CommandLine
 
         public SpellingScopeFilter ScopeFilter { get; }
 
-        private string NewWordsPath { get; }
-
-        private string NewFixesPath { get; }
-
         public string OutputPath { get; }
-
-        private FixList OriginalFixes { get; }
 
         public override async Task<CommandResult> ExecuteAsync(ProjectOrSolution projectOrSolution, CancellationToken cancellationToken = default)
         {
@@ -117,14 +103,7 @@ namespace Roslynator.CommandLine
                 await spellingFixer.FixSolutionAsync(f => projectFilter.IsMatch(f), cancellationToken);
             }
 
-            SaveNewValues(
-                spellingFixer.SpellingData,
-                OriginalFixes,
-                spellingFixer.NewWords,
-                NewWordsPath,
-                NewFixesPath,
-                OutputPath,
-                cancellationToken);
+            WriteSummary(spellingFixer);
 
             return CommandResult.Success;
 
@@ -143,6 +122,112 @@ namespace Roslynator.CommandLine
             WriteLine("Spellchecking was canceled.", Verbosity.Minimal);
         }
 
+        private void WriteSummary(SpellingFixer fixer)
+        {
+            if (!ShouldWrite(Verbosity.Normal))
+                return;
+
+            List<NewWord> newWords = fixer.NewWords.Distinct(NewWordComparer.Instance).ToList();
+
+            if (newWords.Count == 0)
+                return;
+
+            var isFirst = true;
+            bool isDetailed = ShouldWrite(Verbosity.Detailed);
+            StringComparer comparer = StringComparer.InvariantCulture;
+
+            foreach (IGrouping<string, NewWord> grouping in newWords
+                .GroupBy(f => f.Value, comparer)
+                .OrderBy(f => f.Key, comparer))
+            {
+                if (isFirst)
+                {
+                    WriteLine(Verbosity.Normal);
+                    WriteLine("Unknown words:", Verbosity.Normal);
+                    isFirst = false;
+                }
+
+                Write(grouping.Key, Verbosity.Normal);
+
+                var isFix = false;
+
+                if (fixer.SpellingData.Fixes.TryGetValue(grouping.Key, out ImmutableHashSet<SpellingFix> possibleFixes))
+                {
+                    SpellingFix fix = possibleFixes.SingleOrDefault(
+                        f => (TextUtility.GetTextCasing(f.Value) != TextCasing.Undefined
+                            || string.Equals(grouping.Key, f.Value, StringComparison.OrdinalIgnoreCase)),
+                        shouldThrow: false);
+
+                    if (!fix.IsDefault)
+                    {
+                        Write("=", ConsoleColor.Gray, Verbosity.Normal);
+
+                        WriteLine(
+                            TextUtility.SetTextCasing(fix.Value, TextUtility.GetTextCasing(grouping.Key)),
+                            ConsoleColor.Cyan,
+                            Verbosity.Normal);
+
+                        isFix = true;
+                    }
+                }
+
+                if (!isFix)
+                    WriteLine(Verbosity.Normal);
+
+                if (isDetailed)
+                {
+                    foreach (IGrouping<string, NewWord> grouping2 in grouping
+                        .GroupBy(f => f.FilePath)
+                        .OrderBy(f => f.Key, comparer))
+                    {
+                        Write("  ", Verbosity.Detailed);
+                        WriteLine(grouping2.Key, Verbosity.Detailed);
+
+                        foreach (NewWord newWord in grouping2.OrderBy(f => f.LineNumber))
+                        {
+                            Write("    ", Verbosity.Detailed);
+                            Write(newWord.LineNumber.ToString(), ConsoleColor.Cyan, Verbosity.Detailed);
+                            Write(" ", Verbosity.Detailed);
+
+                            string line = newWord.Line;
+                            string value = newWord.Value;
+                            int lineCharIndex = newWord.LineSpan.StartLinePosition.Character;
+                            int endIndex = lineCharIndex + value.Length;
+
+                            Write(line.Substring(0, lineCharIndex), Verbosity.Detailed);
+                            Out?.Write(">>>", Verbosity.Detailed);
+                            Write(line.Substring(lineCharIndex, value.Length), ConsoleColor.Cyan, Verbosity.Detailed);
+                            Out?.Write("<<<", Verbosity.Detailed);
+                            WriteLine(line.Substring(endIndex, line.Length - endIndex), Verbosity.Detailed);
+                        }
+                    }
+                }
+            }
+
+            if (ShouldWrite(Verbosity.Detailed))
+            {
+                isFirst = true;
+
+                foreach (string containingValue in newWords
+                    .Select(f => f.ContainingValue)
+                    .Where(f => f != null)
+                    .Select(f => f!)
+                    .Distinct()
+                    .OrderBy(f => f))
+                {
+                    if (isFirst)
+                    {
+                        WriteLine(Verbosity.Normal);
+                        WriteLine("Words containing unknown words:", Verbosity.Normal);
+                        isFirst = false;
+                    }
+
+                    WriteLine(containingValue, Verbosity.Normal);
+                }
+            }
+        }
+
+#if DEBUG
         public void SaveNewValues(
             SpellingData spellingData,
             FixList originalFixList,
@@ -274,5 +359,6 @@ namespace Roslynator.CommandLine
                 }
             }
         }
+#endif
     }
 }

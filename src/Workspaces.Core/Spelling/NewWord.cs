@@ -30,6 +30,8 @@ namespace Roslynator.Spelling
 
         public string FilePath => LineSpan.Path;
 
+        public int LineNumber => LineSpan.StartLine() + 1;
+
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private string DebuggerDisplay => $"{Value}  {LineSpan}";
     }

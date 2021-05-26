@@ -363,30 +363,11 @@ namespace Roslynator.CommandLine
             if (!options.TryGetProjectFilter(out ProjectFilter projectFilter))
                 return ExitCodes.Error;
 
-            if (!TryEnsureFullPath(options.Output, out string outputPath))
-                return ExitCodes.Error;
-
             if (!TryEnsureFullPath(options.Words, out ImmutableArray<string> wordListPaths))
                 return ExitCodes.Error;
 
             if (!TryEnsureFullPath(options.Fixes, out ImmutableArray<string> fixListPaths))
                 return ExitCodes.Error;
-
-            string newWordsPath = null;
-
-            if (options.NewWords != null
-                && !TryEnsureFullPath(options.NewWords, out newWordsPath))
-            {
-                return ExitCodes.Error;
-            }
-
-            string newFixesPath = null;
-
-            if (options.NewFixes != null
-                && !TryEnsureFullPath(options.NewFixes, out newFixesPath))
-            {
-                return ExitCodes.Error;
-            }
 
             WordListLoaderResult loaderResult = WordListLoader.Load(
                 wordListPaths,
@@ -395,7 +376,7 @@ namespace Roslynator.CommandLine
 
             var data = new SpellingData(loaderResult.List, loaderResult.CaseSensitiveList, loaderResult.FixList);
 
-            var command = new SpellcheckCommand(options, projectFilter, data, visibility, scopeFilter, newWordsPath, newFixesPath, outputPath);
+            var command = new SpellcheckCommand(options, projectFilter, data, visibility, scopeFilter);
 
             CommandResult result = await command.ExecuteAsync(options.Path, options.MSBuildPath, options.Properties);
 
