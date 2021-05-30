@@ -111,24 +111,11 @@ namespace Roslynator.CommandLine
                     (MigrateCommandLineOptions options) => Migrate(options),
                     _ => ExitCodes.Error);
             }
-            catch (Exception ex)
+            catch (Exception ex) when (ex is AggregateException
+                || ex is FileNotFoundException
+                || ex is InvalidOperationException)
             {
-                if (ex is AggregateException aggregateException)
-                {
-                    foreach (Exception innerException in aggregateException.InnerExceptions)
-                    {
-                        WriteError(innerException);
-                    }
-                }
-                else if (ex is FileNotFoundException
-                    || ex is InvalidOperationException)
-                {
-                    WriteError(ex);
-                }
-                else
-                {
-                    throw;
-                }
+                WriteError(ex);
             }
             finally
             {

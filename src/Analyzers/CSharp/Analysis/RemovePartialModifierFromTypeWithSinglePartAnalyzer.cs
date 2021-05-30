@@ -13,6 +13,7 @@ namespace Roslynator.CSharp.Analysis
     public sealed class RemovePartialModifierFromTypeWithSinglePartAnalyzer : BaseDiagnosticAnalyzer
     {
         private static ImmutableArray<DiagnosticDescriptor> _supportedDiagnostics;
+        private static readonly MetadataName _componentBaseName = MetadataName.Parse("Microsoft.AspNetCore.Components.ComponentBase");
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
@@ -57,6 +58,9 @@ namespace Roslynator.CSharp.Analysis
             INamedTypeSymbol symbol = context.SemanticModel.GetDeclaredSymbol(typeDeclaration, context.CancellationToken);
 
             if (symbol?.DeclaringSyntaxReferences.SingleOrDefault(shouldThrow: false) == null)
+                return;
+
+            if (symbol.InheritsFrom(_componentBaseName))
                 return;
 
             foreach (MemberDeclarationSyntax member in typeDeclaration.Members)

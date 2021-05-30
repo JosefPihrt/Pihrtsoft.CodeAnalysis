@@ -322,9 +322,26 @@ namespace Roslynator
             Verbosity verbosity = Verbosity.Quiet)
         {
             WriteLine(exception.Message, color, verbosity);
+
+            if (exception is AggregateException aggregateException)
+                WriteInnerExceptions(aggregateException, "");
 #if DEBUG
             WriteLine(exception.ToString());
 #endif
+            void WriteInnerExceptions(AggregateException aggregateException, string indent)
+            {
+                indent += "  ";
+
+                foreach (Exception innerException in aggregateException.InnerExceptions)
+                {
+                    WriteLine(indent + "Inner exception: " + innerException.Message, color, verbosity);
+
+                    if (innerException is AggregateException aggregateException2)
+                        WriteInnerExceptions(aggregateException2, indent);
+                }
+
+                indent = indent.Substring(2);
+            }
         }
 
         public static bool ShouldWrite(Verbosity verbosity)

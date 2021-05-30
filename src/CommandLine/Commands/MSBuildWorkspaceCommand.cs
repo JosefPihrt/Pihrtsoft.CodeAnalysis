@@ -207,7 +207,9 @@ namespace Roslynator.CommandLine
 
         private static bool TryGetSingleInstance(out VisualStudioInstance instance)
         {
-            using (IEnumerator<VisualStudioInstance> en = MSBuildLocator.QueryVisualStudioInstances().GetEnumerator())
+            using (IEnumerator<VisualStudioInstance> en = MSBuildLocator.QueryVisualStudioInstances()
+                .Distinct(VisualStudioInstanceComparer.MSBuildPath)
+                .GetEnumerator())
             {
                 if (!en.MoveNext())
                 {

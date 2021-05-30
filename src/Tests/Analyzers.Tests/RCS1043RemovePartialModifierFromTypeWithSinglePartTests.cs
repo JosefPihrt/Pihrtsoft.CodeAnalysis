@@ -213,5 +213,22 @@ public struct FooStruct
 }
 ");
         }
+
+        [Fact, Trait(Traits.Analyzer, DiagnosticIdentifiers.RemovePartialModifierFromTypeWithSinglePart)]
+        public async Task TestNoDiagnostic_InheritsFromAspNetCoreComponentBase()
+        {
+            await VerifyNoDiagnosticAsync(@"
+partial class Foo : Microsoft.AspNetCore.Components.ComponentBase
+{
+}
+
+namespace Microsoft.AspNetCore.Components
+{
+    class ComponentBase
+    {
+    }
+}
+");
+        }
     }
 }
