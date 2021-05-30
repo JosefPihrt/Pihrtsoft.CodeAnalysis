@@ -1,10 +1,14 @@
 ﻿// Copyright (c) Josef Pihrt. All rights reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Roslynator.Spelling
 {
@@ -16,48 +20,111 @@ namespace Roslynator.Spelling
         public static WordListLoaderResult Load(
             IEnumerable<string> paths,
             int minWordLength = -1,
-            WordListLoadOptions options = WordListLoadOptions.None)
+            WordListLoadOptions options = WordListLoadOptions.None,
+            CancellationToken cancellationToken = default)
         {
-            var words = new List<string>();
-            var sequences = new List<WordSequence>();
-            var fixes = new Dictionary<string, HashSet<string>>();
+            LoadState state = LoadState.Create(options);
+
+            foreach (string filePath in GetFiles(paths))
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+
+                LoadFile(filePath, minWordLength, state);
+            }
+
+            Dictionary<string, HashSet<string>> fixes = state.Fixes;
+
+            foreach (string word in state.Words)
+                fixes.Remove(word);
+
+            if (state.CaseSensitiveWords != null)
+            {
+                foreach (string word in state.CaseSensitiveWords)
+                    fixes.Remove(word);
+            }
+
+            return new WordListLoaderResult(
+                new WordList(state.Words, state.Sequences),
+                new WordList(state.CaseSensitiveWords, state.CaseSensitiveSequences),
+                FixList.Create(fixes));
+        }
+
+        internal static WordListLoaderResult LoadParallel(
+            IEnumerable<string> paths,
+            int minWordLength = -1,
+            WordListLoadOptions options = WordListLoadOptions.None,
+            CancellationToken cancellationToken = default)
+        {
+            var states = new ConcurrentBag<LoadState>();
+
+            var parallelOptions = new ParallelOptions() { CancellationToken = cancellationToken };
+
+            Parallel.ForEach(
+                GetFiles(paths),
+                parallelOptions,
+                path =>
+                {
+                    LoadState state = LoadState.Create(options);
+                    LoadFile(path, minWordLength, state);
+                    states.Add(state);
+                });
+
+            bool isCaseSensitive = (options & WordListLoadOptions.IgnoreCase) == 0;
+
+            var words = new List<string>(states.Sum(f => f.Words.Count));
 
             List<string> caseSensitiveWords = null;
             List<WordSequence> caseSensitiveSequences = null;
 
-            if ((options & WordListLoadOptions.IgnoreCase) == 0)
+            if (isCaseSensitive)
             {
-                caseSensitiveWords = new List<string>();
-                caseSensitiveSequences = new List<WordSequence>();
+                caseSensitiveWords = new List<string>(states.Sum(f => f.CaseSensitiveWords!.Count));
+                caseSensitiveSequences = states.SelectMany(f => f.CaseSensitiveSequences).ToList();
             }
 
-            foreach (string filePath in GetFiles())
+            Dictionary<string, HashSet<string>> fixes = states.SelectMany(f => f.Fixes).ToDictionary(f => f.Key, f => f.Value);
+            List<WordSequence> sequences = states.SelectMany(f => f.Sequences).ToList();
+
+            foreach (LoadState state in states)
             {
-                LoadFile(filePath, minWordLength, ref words, ref sequences, ref caseSensitiveWords, ref caseSensitiveSequences, ref fixes);
+                foreach (string word in state.Words)
+                {
+                    fixes.Remove(word);
+                    words.Add(word);
+                }
+
+                if (isCaseSensitive)
+                {
+                    foreach (string word in state.CaseSensitiveWords!)
+                    {
+                        fixes.Remove(word);
+                        caseSensitiveWords!.Add(word);
+                    }
+                }
             }
 
             return new WordListLoaderResult(
                 new WordList(words, sequences),
                 new WordList(caseSensitiveWords, caseSensitiveSequences),
                 FixList.Create(fixes));
+        }
 
-            IEnumerable<string> GetFiles()
+        private static IEnumerable<string> GetFiles(IEnumerable<string> paths)
+        {
+            foreach (string path in paths)
             {
-                foreach (string path in paths)
+                if (File.Exists(path))
                 {
-                    if (File.Exists(path))
+                    yield return path;
+                }
+                else if (Directory.Exists(path))
+                {
+                    foreach (string filePath in Directory.EnumerateFiles(
+                        path,
+                        "*.*",
+                        SearchOption.AllDirectories))
                     {
-                        yield return path;
-                    }
-                    else if (Directory.Exists(path))
-                    {
-                        foreach (string filePath in Directory.EnumerateFiles(
-                            path,
-                            "*.*",
-                            SearchOption.AllDirectories))
-                        {
-                            yield return filePath;
-                        }
+                        yield return filePath;
                     }
                 }
             }
@@ -68,38 +135,29 @@ namespace Roslynator.Spelling
             int minWordLength = -1,
             WordListLoadOptions options = WordListLoadOptions.None)
         {
-            var words = new List<string>();
-            var sequences = new List<WordSequence>();
-            var fixes = new Dictionary<string, HashSet<string>>();
+            LoadState state = LoadState.Create(options);
 
-            List<string> caseSensitiveWords = null;
-            List<WordSequence> caseSensitiveSequences = null;
-
-            if ((options & WordListLoadOptions.IgnoreCase) == 0)
-            {
-                caseSensitiveWords = new List<string>();
-                caseSensitiveSequences = new List<WordSequence>();
-            }
-
-            LoadFile(path, minWordLength, ref words, ref sequences, ref caseSensitiveWords, ref caseSensitiveSequences, ref fixes);
+            LoadFile(path, minWordLength, state);
 
             return new WordListLoaderResult(
-                new WordList(words, sequences),
+                new WordList(state.Words, state.Sequences),
                 ((options & WordListLoadOptions.IgnoreCase) == 0)
-                    ? new WordList(caseSensitiveWords, caseSensitiveSequences)
+                    ? new WordList(state.CaseSensitiveWords, state.CaseSensitiveSequences)
                     : WordList.CaseSensitive,
-                FixList.Create(fixes));
+                FixList.Create(state.Fixes));
         }
 
         private static void LoadFile(
             string path,
             int minWordLength,
-            ref List<string> words,
-            ref List<WordSequence> sequences,
-            ref List<string> caseSensitiveWords,
-            ref List<WordSequence> caseSensitiveSequences,
-            ref Dictionary<string, HashSet<string>> fixes)
+            LoadState state)
         {
+            List<string> words = state.Words;
+            List<WordSequence> sequences = state.Sequences;
+            List<string> caseSensitiveWords = state.CaseSensitiveWords;
+            List<WordSequence> caseSensitiveSequences = state.CaseSensitiveSequences;
+            Dictionary<string, HashSet<string>> fixes = state.Fixes;
+
             foreach (string line in File.ReadLines(path))
             {
                 int i = 0;
@@ -215,11 +273,59 @@ namespace Roslynator.Spelling
         {
             foreach (char ch in value)
             {
-                if (!char.IsLower(ch))
+                if (!char.IsLower(ch)
+                    && !char.IsWhiteSpace(ch))
+                {
                     return false;
+                }
             }
 
             return true;
+        }
+
+        private class LoadState
+        {
+            private LoadState(
+                List<string> words,
+                List<string> caseSensitiveWords,
+                List<WordSequence> sequences,
+                List<WordSequence> caseSensitiveSequences,
+                Dictionary<string, HashSet<string>> fixes)
+            {
+                Words = words;
+                CaseSensitiveWords = caseSensitiveWords;
+                Sequences = sequences;
+                CaseSensitiveSequences = caseSensitiveSequences;
+                Fixes = fixes;
+            }
+
+            public static LoadState Create(WordListLoadOptions options)
+            {
+                var words = new List<string>();
+                var sequences = new List<WordSequence>();
+                var fixes = new Dictionary<string, HashSet<string>>();
+
+                List<string> caseSensitiveWords = null;
+                List<WordSequence> caseSensitiveSequences = null;
+
+                if ((options & WordListLoadOptions.IgnoreCase) == 0)
+                {
+                    caseSensitiveWords = new List<string>();
+                    caseSensitiveSequences = new List<WordSequence>();
+                }
+
+                return new LoadState(words, caseSensitiveWords, sequences, caseSensitiveSequences, fixes);
+            }
+
+            public List<string> Words { get; }
+
+            public List<string> CaseSensitiveWords { get; }
+
+            public List<WordSequence> Sequences { get; }
+
+            public List<WordSequence> CaseSensitiveSequences { get; }
+
+            public Dictionary<string, HashSet<string>> Fixes { get; }
         }
     }
 }
