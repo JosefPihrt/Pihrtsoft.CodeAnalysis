@@ -43,6 +43,12 @@ namespace Roslynator.Spelling
                     fixes.Remove(word);
             }
 
+            foreach (HashSet<string> values in fixes.Values)
+            {
+                foreach (string value in values)
+                    fixes.Remove(value);
+            }
+
             return new WordListLoaderResult(
                 new WordList(state.Words, state.Sequences),
                 new WordList(state.CaseSensitiveWords, state.CaseSensitiveSequences),
@@ -101,6 +107,12 @@ namespace Roslynator.Spelling
                         caseSensitiveWords!.Add(word);
                     }
                 }
+            }
+
+            foreach (HashSet<string> values in fixes.Values)
+            {
+                foreach (string value in values)
+                    fixes.Remove(value);
             }
 
             return new WordListLoaderResult(
@@ -184,7 +196,7 @@ namespace Roslynator.Spelling
                     }
                     else if (separatorIndex == -1)
                     {
-                        if (ch == '=')
+                        if (ch == ':')
                         {
                             separatorIndex = i;
                         }
@@ -215,7 +227,15 @@ namespace Roslynator.Spelling
                     {
                         startIndex = separatorIndex + 1;
 
+                        while (startIndex < endIndex
+                            && char.IsWhiteSpace(line[startIndex]))
+                        {
+                            startIndex++;
+                        }
+
                         string value = line.Substring(startIndex, endIndex - startIndex);
+
+                        Debug.Assert(value.Length > 0);
 
                         if (fixes.TryGetValue(key, out HashSet<string> fixes2))
                         {
