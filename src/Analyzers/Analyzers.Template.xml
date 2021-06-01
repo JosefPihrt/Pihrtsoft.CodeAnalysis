@@ -22,8 +22,8 @@
       <Option Identifier="">
         <Title></Title>
         <Id></Id>
-        <Name></Name>
-        <FullName></FullName>
+        <OptionKey></OptionKey>
+        <OptionValue></OptionValue>
         <Kind></Kind>
         <IsEnabledByDefault>false</IsEnabledByDefault>
         <SupportsFadeOut>false</SupportsFadeOut>

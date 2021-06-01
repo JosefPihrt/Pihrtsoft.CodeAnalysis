@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -133,13 +134,16 @@ namespace Roslynator.CodeGeneration.Markdown
 
         private static IEnumerable<MElement> GetAnalyzerSamples(AnalyzerMetadata analyzer)
         {
-            IReadOnlyList<SampleMetadata> samples = analyzer.Samples;
+            return GetAnalyzerSamples(analyzer.Samples, analyzer.Kind);
+        }
 
+        private static IEnumerable<MElement> GetAnalyzerSamples(IReadOnlyList<SampleMetadata> samples, AnalyzerOptionKind kind)
+        {
             if (samples.Count > 0)
             {
                 yield return Heading2((samples.Count == 1) ? "Example" : "Examples");
 
-                string beforeHeading = (analyzer.Kind == AnalyzerOptionKind.Disable)
+                string beforeHeading = (kind == AnalyzerOptionKind.Disable)
                     ? "Code"
                     : "Code with Diagnostic";
 
@@ -196,7 +200,7 @@ namespace Roslynator.CodeGeneration.Markdown
                     TableRow("Category", analyzer.Category),
                     TableRow("Severity", (analyzer.IsEnabledByDefault) ? analyzer.DefaultSeverity : "None"),
                     (!string.IsNullOrEmpty(analyzer.MinLanguageVersion)) ? TableRow("Minimal Language Version", analyzer.MinLanguageVersion) : null),
-                CreateSummary(),
+                CreateSummary(analyzer.Summary),
                 GetAnalyzerSamples(analyzer),
                 CreateOptions(analyzer),
                 CreateRemarks(analyzer.Remarks),
@@ -208,25 +212,30 @@ namespace Roslynator.CodeGeneration.Markdown
             document.AddFootnote();
 
             return document.ToString(format);
+        }
 
-            IEnumerable<MElement> CreateSummary()
-            {
-                if (string.IsNullOrEmpty(analyzer.Summary)
-                    && analyzer.Parent != null)
-                {
-                    yield return Inline(
-                        "This option modifies behavior of analyzer ",
-                        Link(analyzer.Parent.Id, analyzer.Parent.Id + ".md"),
-                        ". It requires ",
-                        Link(analyzer.Parent.Id, analyzer.Parent.Id + ".md"),
-                        " to be enabled.");
-                }
-                else
-                {
-                    foreach (MElement element in MarkdownGenerator.CreateSummary(analyzer.Summary))
-                        yield return element;
-                }
-            }
+        public static string CreateAnalyzerOptionMarkdown(AnalyzerOptionMetadata option)
+        {
+            string id = option.ParentId + option.Id;
+
+            string optionKey = option.OptionKey;
+
+            if (!optionKey.StartsWith("roslynator."))
+                optionKey = $"roslynator.{option.ParentId}." + optionKey;
+
+            string optionValue = option.OptionValue ?? "true";
+
+            MDocument document = Document(
+                Heading1($"[deprecated] {id}: {option.Title.TrimEnd('.')}"),
+                Bold($"Option {id} is obsolete, use EditorConfig option instead:"),
+                FencedCodeBlock($"{optionKey} = {optionValue}"),
+                GetAnalyzerSamples(option.Samples, option.Kind));
+
+            document.AddFootnote();
+
+            var format = new MarkdownFormat(tableOptions: MarkdownFormat.Default.TableOptions | TableOptions.FormatContent);
+
+            return document.ToString(format);
         }
 
         private static IEnumerable<MElement> CreateAppliesTo(IEnumerable<(string title, string url)> appliesTo)

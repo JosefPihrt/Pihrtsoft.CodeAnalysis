@@ -174,6 +174,15 @@ namespace Roslynator.CodeGeneration
                     $@"..\docs\analyzers\{analyzer.Id}.md",
                     MarkdownGenerator.CreateAnalyzerMarkdown(analyzer, appliesTo),
                     fileMustExists: false);
+
+                foreach (AnalyzerOptionMetadata option in analyzer.Options
+                    .Where(f => f.Id != null))
+                {
+                    WriteAllText(
+                        $@"..\docs\analyzers\{option.ParentId}{option.Id}.md",
+                        MarkdownGenerator.CreateAnalyzerOptionMarkdown(option),
+                        fileMustExists: false);
+                }
             }
 
             void DeleteInvalidAnalyzerMarkdowns()
@@ -183,7 +192,9 @@ namespace Roslynator.CodeGeneration
                     .Concat(formattingAnalyzers)
                     .ToArray();
 
-                IEnumerable<string> allIds = allAnalyzers.Select(f => f.Id);
+                IEnumerable<string> allIds = allAnalyzers
+                    .Concat(allAnalyzers.SelectMany(f => f.OptionAnalyzers))
+                    .Select(f => f.Id);
 
                 string directoryPath = GetPath(@"..\docs\analyzers");
 
