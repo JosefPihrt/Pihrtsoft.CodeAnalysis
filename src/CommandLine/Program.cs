@@ -353,13 +353,10 @@ namespace Roslynator.CommandLine
             if (!TryEnsureFullPath(options.Words, out ImmutableArray<string> wordListPaths))
                 return ExitCodes.Error;
 
-            if (!TryEnsureFullPath(options.Fixes, out ImmutableArray<string> fixListPaths))
-                return ExitCodes.Error;
-
             WordListLoaderResult loaderResult = WordListLoader.Load(
                 wordListPaths,
                 options.MinWordLength,
-                (options.IgnoreCase) ? WordListLoadOptions.IgnoreCase : WordListLoadOptions.None);
+                (options.CaseSensitive) ? WordListLoadOptions.None : WordListLoadOptions.IgnoreCase);
 
             var data = new SpellingData(loaderResult.List, loaderResult.CaseSensitiveList, loaderResult.FixList);
 

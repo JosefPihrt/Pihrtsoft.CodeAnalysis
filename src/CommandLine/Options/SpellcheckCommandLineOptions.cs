@@ -9,6 +9,11 @@ namespace Roslynator.CommandLine
     public sealed class SpellcheckCommandLineOptions : MSBuildCommandLineOptions
     {
         [Option(
+            longName: "case-sensitive",
+            HelpText = "Specifies case-sensitive matching.")]
+        public bool CaseSensitive { get; set; }
+
+        [Option(
             longName: "culture",
             HelpText = "Defines culture that should be used to display diagnostic message.",
             MetaValue = "<CULTURE_ID>")]
@@ -21,12 +26,6 @@ namespace Roslynator.CommandLine
         public bool DryRun { get; set; }
 
         [Option(
-            longName: "fixes",
-            HelpText = "",
-            MetaValue = "<PATH>")]
-        public IEnumerable<string> Fixes { get; set; } = null!;
-
-        [Option(
             longName: ParameterNames.IgnoredScope,
             HelpText = "",
             MetaValue = "<SCOPE>")]
@@ -36,11 +35,6 @@ namespace Roslynator.CommandLine
             longName: "include-generated-code",
             HelpText = "Indicates whether generated code should be spellchecked.")]
         public bool IncludeGeneratedCode { get; set; }
-
-        [Option(
-            longName: "ignore-case",
-            HelpText = "")]
-        public bool IgnoreCase { get; set; }
 
         [Option(
             longName: "interactive",
