@@ -73,6 +73,7 @@ namespace Roslynator.CSharp.Analysis
                     context,
                     DiagnosticRules.UsePatternMatchingToCheckForNullOrViceVersa,
                     binaryExpression,
+                    AnalyzerOptions.UseComparisonInsteadPatternMatchingToCheckForNull,
                     "==");
             }
         }
@@ -92,6 +93,7 @@ namespace Roslynator.CSharp.Analysis
                     context,
                     DiagnosticRules.UsePatternMatchingToCheckForNullOrViceVersa,
                     binaryExpression,
+                    AnalyzerOptions.UseComparisonInsteadPatternMatchingToCheckForNull,
                     "!=");
             }
         }
@@ -109,7 +111,8 @@ namespace Roslynator.CSharp.Analysis
                 DiagnosticHelpers.ReportDiagnostic(
                     context,
                     DiagnosticRules.ReportOnly.UseComparisonInsteadPatternMatchingToCheckForNull,
-                    isPatternExpression);
+                    isPatternExpression,
+                    AnalyzerOptions.UseComparisonInsteadPatternMatchingToCheckForNull);
             }
         }
     }

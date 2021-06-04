@@ -38,12 +38,6 @@ namespace Roslynator
                     .SpecificDiagnosticOptions
                     .TryGetValue(analyzerOption.Descriptor.Id, out ReportDiagnostic reportDiagnostic))
             {
-                context.ReportDiagnostic(
-                    CommonDiagnosticRules.AnalyzerOptionIsObsolete,
-                    Location.None,
-                    analyzerOption.Descriptor.Id,
-                    analyzerOption.OptionKey);
-
                 switch (reportDiagnostic)
                 {
                     case ReportDiagnostic.Default:
@@ -80,12 +74,6 @@ namespace Roslynator
                     .SpecificDiagnosticOptions
                     .TryGetValue(analyzerOption.Descriptor.Id, out ReportDiagnostic reportDiagnostic))
             {
-                context.ReportDiagnostic(
-                    CommonDiagnosticRules.AnalyzerOptionIsObsolete,
-                    Location.None,
-                    analyzerOption.Descriptor.Id,
-                    analyzerOption.OptionKey);
-
                 switch (reportDiagnostic)
                 {
                     case ReportDiagnostic.Default:

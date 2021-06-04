@@ -139,7 +139,7 @@ namespace Roslynator.CSharp.Analysis
                         SwitchSectionSyntax section = sections[i];
 
                         if (prevSection.Statements.LastOrDefault() is BlockSyntax block)
-                            Analyze(context, block.CloseBraceToken, section);
+                            Analyze(context, block.CloseBraceToken, section, AnalyzerOptions.RemoveEmptyLineBetweenClosingBraceAndSwitchSection);
 
                         prevSection = section;
                     }
@@ -306,7 +306,8 @@ namespace Roslynator.CSharp.Analysis
         private static void Analyze(
             SyntaxNodeAnalysisContext context,
             SyntaxToken token,
-            SyntaxNode node)
+            SyntaxNode node,
+            AnalyzerOptionDescriptor obsoleteAnalyzerOption = default)
         {
             SyntaxTriviaList trailingTrivia = token.TrailingTrivia;
             SyntaxTriviaList leadingTrivia = node.GetLeadingTrivia();
@@ -342,10 +343,21 @@ namespace Roslynator.CSharp.Analysis
             if (!leadingTrivia.IsEmptyOrWhitespace())
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(
-                context,
-                DiagnosticRules.RemoveRedundantEmptyLine,
-                Location.Create(token.SyntaxTree, TextSpan.FromBounds(node.FullSpan.Start, trivia.Span.End)));
+            if (obsoleteAnalyzerOption.IsDefault())
+            {
+                DiagnosticHelpers.ReportDiagnostic(
+                    context,
+                    DiagnosticRules.RemoveRedundantEmptyLine,
+                    Location.Create(token.SyntaxTree, TextSpan.FromBounds(node.FullSpan.Start, trivia.Span.End)));
+            }
+            else
+            {
+                DiagnosticHelpers.ReportDiagnostic(
+                    context,
+                    DiagnosticRules.RemoveRedundantEmptyLine,
+                    Location.Create(token.SyntaxTree, TextSpan.FromBounds(node.FullSpan.Start, trivia.Span.End)),
+                    obsoleteAnalyzerOption);
+            }
         }
 
         private static void AnalyzeDeclaration(

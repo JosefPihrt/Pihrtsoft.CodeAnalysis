@@ -194,7 +194,8 @@ namespace Roslynator.CSharp.Analysis
                     context,
                     DiagnosticRules.AddAccessibilityModifiersOrViceVersa,
                     location,
-                    Properties[accessibility]);
+                    Properties[accessibility],
+                    AnalyzerOptions.RemoveAccessibilityModifiers);
             }
             else if (AnalyzerOptions.RemoveAccessibilityModifiers.IsEnabled(context)
                 && !declaration.IsKind(SyntaxKind.OperatorDeclaration, SyntaxKind.ConversionOperatorDeclaration))
@@ -207,10 +208,13 @@ namespace Roslynator.CSharp.Analysis
                 SyntaxToken first = modifiers.First(f => SyntaxFacts.IsAccessibilityModifier(f.Kind()));
                 SyntaxToken last = modifiers.Last(f => SyntaxFacts.IsAccessibilityModifier(f.Kind()));
 
+                Location location = Location.Create(declaration.SyntaxTree, TextSpan.FromBounds(first.SpanStart, last.Span.End));
+
                 DiagnosticHelpers.ReportDiagnostic(
                     context,
                     DiagnosticRules.ReportOnly.RemoveAccessibilityModifiers,
-                    Location.Create(declaration.SyntaxTree, TextSpan.FromBounds(first.SpanStart, last.Span.End)));
+                    location,
+                    AnalyzerOptions.RemoveAccessibilityModifiers);
             }
         }
 

@@ -53,7 +53,8 @@ namespace Roslynator.CSharp.Analysis
                     DiagnosticHelpers.ReportDiagnostic(
                         context,
                         DiagnosticRules.AddArgumentListToObjectCreationOrViceVersa,
-                        Location.Create(objectCreationExpression.SyntaxTree, span));
+                        Location.Create(objectCreationExpression.SyntaxTree, span),
+                        AnalyzerOptions.RemoveArgumentListFromObjectCreation);
                 }
             }
             else if (!argumentList.Arguments.Any()
@@ -70,7 +71,8 @@ namespace Roslynator.CSharp.Analysis
                     DiagnosticHelpers.ReportDiagnostic(
                         context,
                         DiagnosticRules.ReportOnly.RemoveArgumentListFromObjectCreation,
-                        argumentList);
+                        argumentList,
+                        AnalyzerOptions.RemoveArgumentListFromObjectCreation);
                 }
             }
         }

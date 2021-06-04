@@ -21,5 +21,12 @@ namespace Roslynator
         public DiagnosticDescriptor Parent { get; }
 
         public string OptionKey { get; }
+
+        public bool IsDefault()
+        {
+            return Descriptor == null
+                && Parent == null
+                && OptionKey == null;
+        }
     }
 }

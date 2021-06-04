@@ -62,7 +62,7 @@ namespace Roslynator.CSharp.Analysis
             if (!SymbolUtility.IsAwaitable(typeSymbol))
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.AddCallToConfigureAwaitOrViceVersa, awaitExpression.Expression);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.AddCallToConfigureAwaitOrViceVersa, awaitExpression.Expression, AnalyzerOptions.RemoveCallToConfigureAwait);
         }
 
         private static void RemoveCallToConfigureAwait(SyntaxNodeAnalysisContext context)
@@ -90,12 +90,15 @@ namespace Roslynator.CSharp.Analysis
                     {
                         if (typeSymbol.ContainingNamespace.HasMetadataName(MetadataNames.System_Runtime_CompilerServices))
                         {
+                            Location location = Location.Create(
+                                awaitExpression.SyntaxTree,
+                                TextSpan.FromBounds(invocationInfo.OperatorToken.SpanStart, expression.Span.End));
+
                             DiagnosticHelpers.ReportDiagnostic(
                                 context,
                                 DiagnosticRules.ReportOnly.RemoveCallToConfigureAwait,
-                                Location.Create(
-                                    awaitExpression.SyntaxTree,
-                                    TextSpan.FromBounds(invocationInfo.OperatorToken.SpanStart, expression.Span.End)));
+                                location,
+                                AnalyzerOptions.RemoveCallToConfigureAwait);
                         }
 
                         break;

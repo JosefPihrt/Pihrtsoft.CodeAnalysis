@@ -45,7 +45,8 @@ namespace Roslynator.CSharp.Analysis
                     DiagnosticHelpers.ReportDiagnostic(
                         context,
                         DiagnosticRules.RenamePrivateFieldToCamelCaseWithUnderscore,
-                        fieldSymbol.Locations[0]);
+                        fieldSymbol.Locations[0],
+                        AnalyzerOptions.DoNotRenamePrivateStaticFieldToCamelCaseWithUnderscore);
                 }
             }
         }

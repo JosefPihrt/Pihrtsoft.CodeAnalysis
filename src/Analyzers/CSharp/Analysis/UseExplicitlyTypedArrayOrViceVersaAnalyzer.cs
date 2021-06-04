@@ -95,10 +95,15 @@ namespace Roslynator.CSharp.Analysis
             if (!arrayTypeSymbol.ElementType.SupportsExplicitDeclaration())
                 return;
 
+            Location location = Location.Create(expression.SyntaxTree, TextSpan.FromBounds(expression.NewKeyword.SpanStart, expression.CloseBracketToken.Span.End));
+
             DiagnosticHelpers.ReportDiagnostic(
                 context,
                 DiagnosticRules.UseExplicitlyTypedArrayOrViceVersa,
-                Location.Create(expression.SyntaxTree, TextSpan.FromBounds(expression.NewKeyword.SpanStart, expression.CloseBracketToken.Span.End)));
+                location);
+
+            DiagnosticHelpers.ReportObsolete(context, location, AnalyzerOptions.UseImplicitlyTypedArray);
+            DiagnosticHelpers.ReportObsolete(context, location, AnalyzerOptions.UseImplicitlyTypedArrayWhenTypeIsObvious);
         }
 
         private static void AnalyzeArrayCreationExpression(SyntaxNodeAnalysisContext context)
@@ -134,10 +139,15 @@ namespace Roslynator.CSharp.Analysis
                 elementType.SpanStart,
                 ((rankSpecifiers.Count > 1) ? rankSpecifiers.LastButOne() : (SyntaxNode)elementType).Span.End);
 
+            Location location = Location.Create(arrayCreation.SyntaxTree, textSpan);
+
             DiagnosticHelpers.ReportDiagnostic(
                 context,
                 DiagnosticRules.ReportOnly.UseImplicitlyTypedArray,
-                Location.Create(arrayCreation.SyntaxTree, textSpan));
+                location);
+
+            DiagnosticHelpers.ReportObsolete(context, location, AnalyzerOptions.UseImplicitlyTypedArray);
+            DiagnosticHelpers.ReportObsolete(context, location, AnalyzerOptions.UseImplicitlyTypedArrayWhenTypeIsObvious);
         }
     }
 }

@@ -52,7 +52,8 @@ namespace Roslynator.Formatting.CSharp
                 {
                     context.ReportDiagnostic(
                         DiagnosticRules.AddNewLineBetweenClosingBraceAndWhileKeywordOrViceVersa,
-                        Location.Create(doStatement.SyntaxTree, new TextSpan(statement.FullSpan.End, 0)));
+                        Location.Create(doStatement.SyntaxTree, new TextSpan(statement.FullSpan.End, 0)),
+                        AnalyzerOptions.RemoveNewLineBetweenClosingBraceAndWhileKeyword);
                 }
             }
             else if (SyntaxTriviaAnalysis.IsOptionalWhitespaceThenEndOfLineTrivia(trailingTrivia))
@@ -63,7 +64,8 @@ namespace Roslynator.Formatting.CSharp
                     context.ReportDiagnostic(
                         DiagnosticRules.ReportOnly.RemoveNewLineBetweenClosingBraceAndWhileKeyword,
                         Location.Create(doStatement.SyntaxTree, new TextSpan(trailingTrivia.Last().SpanStart, 0)),
-                        properties: DiagnosticProperties.AnalyzerOption_Invert);
+                        properties: DiagnosticProperties.AnalyzerOption_Invert,
+                        AnalyzerOptions.RemoveNewLineBetweenClosingBraceAndWhileKeyword);
                 }
             }
         }

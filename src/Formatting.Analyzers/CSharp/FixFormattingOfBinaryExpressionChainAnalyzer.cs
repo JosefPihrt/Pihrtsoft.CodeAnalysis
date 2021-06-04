@@ -177,7 +177,8 @@ namespace Roslynator.Formatting.CSharp
                 DiagnosticHelpers.ReportDiagnostic(
                     context,
                     DiagnosticRules.FixFormattingOfBinaryExpressionChain,
-                    topBinaryExpression);
+                    topBinaryExpression,
+                    AnalyzerOptions.AddNewLineAfterBinaryOperatorInsteadOfBeforeIt);
             }
         }
     }

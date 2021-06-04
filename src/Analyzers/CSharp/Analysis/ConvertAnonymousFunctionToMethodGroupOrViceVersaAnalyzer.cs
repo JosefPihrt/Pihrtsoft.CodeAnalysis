@@ -145,7 +145,7 @@ namespace Roslynator.CSharp.Analysis
                 return;
             }
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.ConvertAnonymousFunctionToMethodGroupOrViceVersa, lambda);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.ConvertAnonymousFunctionToMethodGroupOrViceVersa, lambda, AnalyzerOptions.ConvertMethodGroupToAnonymousFunction);
 
             FadeOut(context, parameter, null, lambda.Body as BlockSyntax, argumentList, lambda.ArrowToken, memberAccessExpression);
         }
@@ -247,7 +247,7 @@ namespace Roslynator.CSharp.Analysis
                 return;
             }
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.ConvertAnonymousFunctionToMethodGroupOrViceVersa, lambda);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.ConvertAnonymousFunctionToMethodGroupOrViceVersa, lambda, AnalyzerOptions.ConvertMethodGroupToAnonymousFunction);
 
             FadeOut(context, null, parameterList, lambda.Body as BlockSyntax, argumentList, lambda.ArrowToken, memberAccessExpression);
         }
@@ -352,7 +352,7 @@ namespace Roslynator.CSharp.Analysis
                 return;
             }
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.ConvertAnonymousFunctionToMethodGroupOrViceVersa, anonymousMethod);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.ConvertAnonymousFunctionToMethodGroupOrViceVersa, anonymousMethod, AnalyzerOptions.ConvertMethodGroupToAnonymousFunction);
 
             FadeOut(context, null, parameterList, anonymousMethod.Block, argumentList, anonymousMethod.DelegateKeyword, memberAccessExpression);
         }
@@ -606,7 +606,7 @@ namespace Roslynator.CSharp.Analysis
             if (methodSymbol == null)
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.ReportOnly.ConvertMethodGroupToAnonymousFunction, expression);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.ReportOnly.ConvertMethodGroupToAnonymousFunction, expression, AnalyzerOptions.ConvertMethodGroupToAnonymousFunction);
         }
 
         private static void AnalyzeEqualsValueClause(SyntaxNodeAnalysisContext context)
@@ -629,7 +629,7 @@ namespace Roslynator.CSharp.Analysis
             if (methodSymbol == null)
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.ReportOnly.ConvertMethodGroupToAnonymousFunction, expression);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.ReportOnly.ConvertMethodGroupToAnonymousFunction, expression, AnalyzerOptions.ConvertMethodGroupToAnonymousFunction);
         }
 
         private static void AnalyzeAssignment(SyntaxNodeAnalysisContext context)
@@ -652,7 +652,7 @@ namespace Roslynator.CSharp.Analysis
             if (methodSymbol == null)
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.ReportOnly.ConvertMethodGroupToAnonymousFunction, expression);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.ReportOnly.ConvertMethodGroupToAnonymousFunction, expression, AnalyzerOptions.ConvertMethodGroupToAnonymousFunction);
         }
 
         private static void AnalyzeReturnStatement(SyntaxNodeAnalysisContext context)
@@ -675,7 +675,7 @@ namespace Roslynator.CSharp.Analysis
             if (methodSymbol == null)
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.ReportOnly.ConvertMethodGroupToAnonymousFunction, expression);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.ReportOnly.ConvertMethodGroupToAnonymousFunction, expression, AnalyzerOptions.ConvertMethodGroupToAnonymousFunction);
         }
 
         private static void AnalyzeYieldReturnStatement(SyntaxNodeAnalysisContext context)
@@ -698,7 +698,7 @@ namespace Roslynator.CSharp.Analysis
             if (methodSymbol == null)
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.ReportOnly.ConvertMethodGroupToAnonymousFunction, expression);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.ReportOnly.ConvertMethodGroupToAnonymousFunction, expression, AnalyzerOptions.ConvertMethodGroupToAnonymousFunction);
         }
 
         private static void AnalyzeArrowExpressionClause(SyntaxNodeAnalysisContext context)
@@ -721,7 +721,7 @@ namespace Roslynator.CSharp.Analysis
             if (methodSymbol == null)
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.ReportOnly.ConvertMethodGroupToAnonymousFunction, expression);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.ReportOnly.ConvertMethodGroupToAnonymousFunction, expression, AnalyzerOptions.ConvertMethodGroupToAnonymousFunction);
         }
 
         //TODO: test
@@ -745,7 +745,7 @@ namespace Roslynator.CSharp.Analysis
             if (methodSymbol == null)
                 return;
 
-            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.ReportOnly.ConvertMethodGroupToAnonymousFunction, expression);
+            DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.ReportOnly.ConvertMethodGroupToAnonymousFunction, expression, AnalyzerOptions.ConvertMethodGroupToAnonymousFunction);
         }
 
         private static void AnalyzeArrayInitializer(SyntaxNodeAnalysisContext context)
@@ -767,7 +767,7 @@ namespace Roslynator.CSharp.Analysis
                     IMethodSymbol methodSymbol = context.SemanticModel.GetMethodSymbol(expression2, context.CancellationToken);
 
                     if (methodSymbol != null)
-                        DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.ReportOnly.ConvertMethodGroupToAnonymousFunction, expression2);
+                        DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.ReportOnly.ConvertMethodGroupToAnonymousFunction, expression2, AnalyzerOptions.ConvertMethodGroupToAnonymousFunction);
                 }
             }
         }
