@@ -25,7 +25,8 @@ namespace Roslynator.Formatting.CSharp
                     Immutable.InterlockedInitialize(
                         ref _supportedDiagnostics,
                         DiagnosticRules.AddEmptyLineBetweenAccessors,
-                        DiagnosticRules.AddEmptyLineBetweenSingleLineAccessorsOrViceVersa);
+                        DiagnosticRules.AddEmptyLineBetweenSingleLineAccessorsOrViceVersa,
+                        CommonDiagnosticRules.AnalyzerOptionIsObsolete);
                 }
 
                 return _supportedDiagnostics;

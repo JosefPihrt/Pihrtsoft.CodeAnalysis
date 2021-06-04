@@ -13,11 +13,7 @@ namespace Roslynator
             this AnalyzerOptionDescriptor analyzerOption,
             SyntaxNodeAnalysisContext context)
         {
-            return IsEnabled(
-                analyzerOption,
-                context.Node.SyntaxTree,
-                context.Compilation.Options,
-                context.Options);
+            return IsEnabled(analyzerOption, context, checkParent: false).Value;
         }
 
         public static bool? IsEnabled(
@@ -25,23 +21,87 @@ namespace Roslynator
             SyntaxNodeAnalysisContext context,
             bool checkParent)
         {
-            return IsEnabled(
-                analyzerOption,
-                context.Node.SyntaxTree,
-                context.Compilation.Options,
-                context.Options,
-                checkParent);
+            if (checkParent && !analyzerOption.Parent.IsEffective(context.Node.SyntaxTree, context.Compilation.Options))
+                return null;
+
+            if (context.Options
+                .AnalyzerConfigOptionsProvider
+                .GetOptions(context.Node.SyntaxTree)
+                .TryGetValue(analyzerOption.OptionKey, out string value)
+                && bool.TryParse(value, out bool result))
+            {
+                return result;
+            }
+
+            if (analyzerOption.Descriptor != null
+                && context.Compilation.Options
+                    .SpecificDiagnosticOptions
+                    .TryGetValue(analyzerOption.Descriptor.Id, out ReportDiagnostic reportDiagnostic))
+            {
+                context.ReportDiagnostic(
+                    CommonDiagnosticRules.AnalyzerOptionIsObsolete,
+                    Location.None,
+                    analyzerOption.Descriptor.Id,
+                    analyzerOption.OptionKey);
+
+                switch (reportDiagnostic)
+                {
+                    case ReportDiagnostic.Default:
+                    case ReportDiagnostic.Suppress:
+                        return false;
+                    case ReportDiagnostic.Error:
+                    case ReportDiagnostic.Warn:
+                    case ReportDiagnostic.Info:
+                    case ReportDiagnostic.Hidden:
+                        return true;
+                    default:
+                        throw new InvalidOperationException();
+                }
+            }
+
+            return false;
         }
 
         public static bool IsEnabled(
             this AnalyzerOptionDescriptor analyzerOption,
             SymbolAnalysisContext context)
         {
-            return IsEnabled(
-                analyzerOption,
-                context.Symbol.Locations[0].SourceTree,
-                context.Compilation.Options,
-                context.Options);
+            if (context.Options
+                .AnalyzerConfigOptionsProvider
+                .GetOptions(context.Symbol.Locations[0].SourceTree)
+                .TryGetValue(analyzerOption.OptionKey, out string value)
+                && bool.TryParse(value, out bool result))
+            {
+                return result;
+            }
+
+            if (analyzerOption.Descriptor != null
+                && context.Compilation.Options
+                    .SpecificDiagnosticOptions
+                    .TryGetValue(analyzerOption.Descriptor.Id, out ReportDiagnostic reportDiagnostic))
+            {
+                context.ReportDiagnostic(
+                    CommonDiagnosticRules.AnalyzerOptionIsObsolete,
+                    Location.None,
+                    analyzerOption.Descriptor.Id,
+                    analyzerOption.OptionKey);
+
+                switch (reportDiagnostic)
+                {
+                    case ReportDiagnostic.Default:
+                    case ReportDiagnostic.Suppress:
+                        return false;
+                    case ReportDiagnostic.Error:
+                    case ReportDiagnostic.Warn:
+                    case ReportDiagnostic.Info:
+                    case ReportDiagnostic.Hidden:
+                        return true;
+                    default:
+                        throw new InvalidOperationException();
+                }
+            }
+
+            return false;
         }
 
         public static bool? IsEnabled(

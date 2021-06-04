@@ -20,7 +20,7 @@ namespace Roslynator.CSharp.Analysis
             get
             {
                 if (_supportedDiagnostics.IsDefault)
-                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.UsePatternMatchingToCheckForNullOrViceVersa);
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.UsePatternMatchingToCheckForNullOrViceVersa, CommonDiagnosticRules.AnalyzerOptionIsObsolete);
 
                 return _supportedDiagnostics;
             }

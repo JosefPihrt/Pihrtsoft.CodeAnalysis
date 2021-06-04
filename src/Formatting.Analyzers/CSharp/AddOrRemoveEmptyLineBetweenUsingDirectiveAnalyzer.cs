@@ -24,7 +24,8 @@ namespace Roslynator.Formatting.CSharp
                     Immutable.InterlockedInitialize(
                         ref _supportedDiagnostics,
                         DiagnosticRules.RemoveEmptyLineBetweenUsingDirectivesWithSameRootNamespace,
-                        DiagnosticRules.AddEmptyLineBetweenUsingDirectivesWithDifferentRootNamespaceOrViceVersa);
+                        DiagnosticRules.AddEmptyLineBetweenUsingDirectivesWithDifferentRootNamespaceOrViceVersa,
+                        CommonDiagnosticRules.AnalyzerOptionIsObsolete);
                 }
 
                 return _supportedDiagnostics;

@@ -25,7 +25,8 @@ namespace Roslynator.CSharp.Analysis
                     Immutable.InterlockedInitialize(
                         ref _supportedDiagnostics,
                         DiagnosticRules.ConvertAnonymousFunctionToMethodGroupOrViceVersa,
-                        DiagnosticRules.ConvertAnonymousFunctionToMethodGroupOrViceVersaFadeOut);
+                        DiagnosticRules.ConvertAnonymousFunctionToMethodGroupOrViceVersaFadeOut,
+                        CommonDiagnosticRules.AnalyzerOptionIsObsolete);
                 }
 
                 return _supportedDiagnostics;
