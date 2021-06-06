@@ -18,11 +18,6 @@ namespace Roslynator.CommandLine
 
         public static void ProcessWordLists()
         {
-            foreach (string filePath in Directory.EnumerateFiles(_wordListDirPath, "*.txt", SearchOption.AllDirectories))
-            {
-                WordList.Normalize(filePath);
-            }
-
             _ = WordListLoader.LoadFile(_wordListDirPath + @"\ignore.txt");
             WordList abbreviations = WordListLoader.LoadFile(_wordListDirPath + @"\abbreviations.txt").List;
             WordList acronyms = WordListLoader.LoadFile(_wordListDirPath + @"\acronyms.txt").List;
