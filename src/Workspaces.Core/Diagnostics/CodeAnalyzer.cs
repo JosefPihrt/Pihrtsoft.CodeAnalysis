@@ -151,7 +151,7 @@ namespace Roslynator.Diagnostics
             if (analyzers.Any())
             {
                 var compilationWithAnalyzersOptions = new CompilationWithAnalyzersOptions(
-                    options: default(AnalyzerOptions),
+                    options: project.AnalyzerOptions,
                     onAnalyzerException: default(Action<Exception, DiagnosticAnalyzer, Diagnostic>),
                     concurrentAnalysis: Options.ConcurrentAnalysis,
                     logAnalyzerExecutionTime: Options.LogAnalyzerExecutionTime,

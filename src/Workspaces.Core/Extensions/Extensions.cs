@@ -252,17 +252,6 @@ namespace Roslynator
             return codeFixProvider.GetFixAllProvider()?.GetSupportedFixAllScopes().Contains(fixAllScope) == true;
         }
 
-        public static Task<ImmutableArray<Diagnostic>> GetAnalyzerDiagnosticsAsync(
-            this Compilation compilation,
-            ImmutableArray<DiagnosticAnalyzer> analyzers,
-            CompilationWithAnalyzersOptions analysisOptions,
-            CancellationToken cancellationToken = default)
-        {
-            var compilationWithAnalyzers = new CompilationWithAnalyzers(compilation, analyzers, analysisOptions);
-
-            return compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync(cancellationToken);
-        }
-
         public static void Add(this AnalyzerTelemetryInfo telemetryInfo, AnalyzerTelemetryInfo telemetryInfoToAdd)
         {
             telemetryInfo.CodeBlockActionsCount += telemetryInfoToAdd.CodeBlockActionsCount;
