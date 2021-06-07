@@ -3,12 +3,10 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using CommandLine;
 using Microsoft.CodeAnalysis;
@@ -19,6 +17,7 @@ using Roslynator.CSharp;
 using Roslynator.Diagnostics;
 using Roslynator.Documentation;
 using Roslynator.FindSymbols;
+using Roslynator.Spelling;
 using static Roslynator.CommandLine.ParseHelpers;
 using static Roslynator.Logger;
 
@@ -53,6 +52,7 @@ namespace Roslynator.CommandLine
                     AnalyzeCommandLineOptions,
                     ListSymbolsCommandLineOptions,
                     FormatCommandLineOptions,
+                    SpellcheckCommandLineOptions,
                     PhysicalLinesOfCodeCommandLineOptions,
                     LogicalLinesOfCodeCommandLineOptions,
                     GenerateDocCommandLineOptions,
@@ -103,6 +103,7 @@ namespace Roslynator.CommandLine
                     (AnalyzeCommandLineOptions options) => AnalyzeAsync(options).Result,
                     (ListSymbolsCommandLineOptions options) => ListSymbolsAsync(options).Result,
                     (FormatCommandLineOptions options) => FormatAsync(options).Result,
+                    (SpellcheckCommandLineOptions options) => SpellcheckAsync(options).Result,
                     (PhysicalLinesOfCodeCommandLineOptions options) => PhysicalLinesOfCodeAsync(options).Result,
                     (LogicalLinesOfCodeCommandLineOptions options) => LogicalLinesOrCodeAsync(options).Result,
                     (GenerateDocCommandLineOptions options) => GenerateDocAsync(options).Result,
@@ -329,6 +330,39 @@ namespace Roslynator.CommandLine
             IEnumerable<string> properties = options.Properties;
 
             CommandResult result = await command.ExecuteAsync(options.Path, options.MSBuildPath, properties);
+
+            return GetExitCode(result);
+        }
+
+        private static async Task<int> SpellcheckAsync(SpellcheckCommandLineOptions options)
+        {
+            if (!TryParseOptionValueAsEnumFlags(options.Scope, ParameterNames.Scope, out SpellingScopeFilter scopeFilter, SpellingScopeFilter.All))
+                return ExitCodes.Error;
+
+            if (!TryParseOptionValueAsEnumFlags(options.IgnoredScope, ParameterNames.IgnoredScope, out SpellingScopeFilter ignoredScopeFilter, SpellingScopeFilter.None))
+                return ExitCodes.Error;
+
+            scopeFilter &= ~ignoredScopeFilter;
+
+            if (!TryParseOptionValueAsEnum(options.Visibility, ParameterNames.Visibility, out Visibility visibility))
+                return ExitCodes.Error;
+
+            if (!options.TryGetProjectFilter(out ProjectFilter projectFilter))
+                return ExitCodes.Error;
+
+            if (!TryEnsureFullPath(options.Words, out ImmutableArray<string> wordListPaths))
+                return ExitCodes.Error;
+
+            WordListLoaderResult loaderResult = WordListLoader.Load(
+                wordListPaths,
+                options.MinWordLength,
+                (options.CaseSensitive) ? WordListLoadOptions.None : WordListLoadOptions.IgnoreCase);
+
+            var data = new SpellingData(loaderResult.List, loaderResult.CaseSensitiveList, loaderResult.FixList);
+
+            var command = new SpellcheckCommand(options, projectFilter, data, visibility, scopeFilter);
+
+            CommandResult result = await command.ExecuteAsync(options.Path, options.MSBuildPath, options.Properties);
 
             return GetExitCode(result);
         }

@@ -29,7 +29,7 @@ namespace Roslynator
                         {
                             sb.Append(PathUtilities.TrimStart(span.Path, baseDirectoryPath));
 
-                            LinePosition linePosition = span.Span.Start;
+                            LinePosition linePosition = span.StartLinePosition;
 
                             sb.Append('(');
                             sb.Append(linePosition.Line + 1);

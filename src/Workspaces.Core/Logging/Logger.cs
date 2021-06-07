@@ -16,6 +16,15 @@ namespace Roslynator
             Out?.Write(value);
         }
 
+        public static void Write(char value, int repeatCount)
+        {
+            for (int i = 0; i < repeatCount; i++)
+            {
+                ConsoleOut.Write(value);
+                Out?.Write(value);
+            }
+        }
+
         public static void Write(char value, int repeatCount, Verbosity verbosity)
         {
             for (int i = 0; i < repeatCount; i++)

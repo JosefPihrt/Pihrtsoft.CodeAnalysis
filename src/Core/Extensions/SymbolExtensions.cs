@@ -1799,7 +1799,7 @@ namespace Roslynator
         }
 
         /// <summary>
-        /// Returns true if the type is equal or inherits from a type wit the specified name.
+        /// Returns true if the type is equal or inherits from a type with the specified name.
         /// </summary>
         /// <param name="type"></param>
         /// <param name="baseTypeName"></param>

@@ -11,6 +11,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
 using Roslynator.CodeFixes;
+using Roslynator.Spelling;
 using static Roslynator.Logger;
 
 namespace Roslynator
@@ -62,6 +63,46 @@ namespace Roslynator
                         WriteLine($"and {remainingCount} more diagnostics", verbosity);
                     }
                 }
+            }
+        }
+
+        public static void WriteSpellingDiagnostic(
+            SpellingDiagnostic diagnostic,
+            SpellingFixerOptions options,
+            SourceText sourceText,
+            string baseDirectoryPath,
+            string indentation,
+            Verbosity verbosity)
+        {
+            WriteDiagnostic(diagnostic.Diagnostic, baseDirectoryPath, default(IFormatProvider), indentation, verbosity);
+
+            TextSpan span = diagnostic.Span;
+            TextLineCollection lines = sourceText.Lines;
+            int lineIndex = lines.IndexOf(span.Start);
+            TextLine line = lines[lineIndex];
+
+            int start = Math.Max(0, lineIndex - options.CodeContext);
+
+            for (int i = start; i < lineIndex; i++)
+                WriteTextLine(i);
+
+            int index = span.Start - line.Span.Start;
+            string text = line.ToString();
+
+            Write(indentation, verbosity);
+            Write(text.Substring(0, index), ConsoleColor.DarkGray, verbosity);
+            Write(diagnostic.Value, ConsoleColor.Cyan, verbosity);
+            WriteLine(text.Substring(index + diagnostic.Length), ConsoleColor.DarkGray, verbosity);
+
+            int max = Math.Min(lines.Count - 1, lineIndex + options.CodeContext);
+
+            for (int i = lineIndex + 1; i <= max; i++)
+                WriteTextLine(i);
+
+            void WriteTextLine(int i)
+            {
+                Write(indentation, verbosity);
+                WriteLine(lines[i].ToString(), ConsoleColor.DarkGray, verbosity);
             }
         }
 

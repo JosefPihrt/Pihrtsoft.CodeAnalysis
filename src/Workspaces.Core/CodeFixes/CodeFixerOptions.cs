@@ -7,15 +7,12 @@ using System.IO;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Roslynator.CodeFixes
 {
     internal class CodeFixerOptions : CodeAnalysisOptions
     {
         private ImmutableArray<string> _fileBannerLines;
-
-        private CompilationWithAnalyzersOptions _compilationWithAnalyzersOptions;
 
         public static CodeFixerOptions Default { get; } = new CodeFixerOptions();
 
@@ -121,18 +118,5 @@ namespace Roslynator.CodeFixes
         public ImmutableDictionary<string, string> DiagnosticFixerMap { get; }
 
         public FixAllScope FixAllScope { get; }
-
-        internal CompilationWithAnalyzersOptions CompilationWithAnalyzersOptions
-        {
-            get
-            {
-                return _compilationWithAnalyzersOptions ??= new CompilationWithAnalyzersOptions(
-                    options: default(AnalyzerOptions),
-                    onAnalyzerException: default(Action<Exception, DiagnosticAnalyzer, Diagnostic>),
-                    concurrentAnalysis: ConcurrentAnalysis,
-                    logAnalyzerExecutionTime: false,
-                    reportSuppressedDiagnostics: false);
-            }
-        }
     }
 }

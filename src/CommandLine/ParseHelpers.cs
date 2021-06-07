@@ -276,7 +276,7 @@ namespace Roslynator.CommandLine
             return true;
         }
 
-        private static bool TryEnsureFullPath(IEnumerable<string> paths, out ImmutableArray<string> fullPaths)
+        public static bool TryEnsureFullPath(IEnumerable<string> paths, out ImmutableArray<string> fullPaths)
         {
             ImmutableArray<string>.Builder builder = ImmutableArray.CreateBuilder<string>();
 
@@ -295,7 +295,7 @@ namespace Roslynator.CommandLine
             return true;
         }
 
-        private static bool TryEnsureFullPath(string path, out string result)
+        public static bool TryEnsureFullPath(string path, out string result)
         {
             try
             {

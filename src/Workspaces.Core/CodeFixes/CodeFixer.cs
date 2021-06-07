@@ -110,7 +110,9 @@ namespace Roslynator.CodeFixes
 
             ProjectFixResult fixResult = await FixProjectAsync(project, analyzers, fixers, cancellationToken).ConfigureAwait(false);
 
-            Compilation compilation = await CurrentSolution.GetProject(project.Id).GetCompilationAsync(cancellationToken).ConfigureAwait(false);
+            project = CurrentSolution.GetProject(project.Id);
+
+            Compilation compilation = await project.GetCompilationAsync(cancellationToken).ConfigureAwait(false);
 
             Dictionary<string, ImmutableArray<CodeFixProvider>> fixersById = fixers
                 .SelectMany(f => f.FixableDiagnosticIds.Select(id => (id, fixer: f)))
@@ -121,6 +123,7 @@ namespace Roslynator.CodeFixes
                 analyzers,
                 fixResult.FixedDiagnostics,
                 compilation,
+                project.AnalyzerOptions,
                 f => !fixersById.ContainsKey(f.id),
                 cancellationToken)
                 .ConfigureAwait(false);
@@ -129,6 +132,7 @@ namespace Roslynator.CodeFixes
                 analyzers,
                 fixResult.FixedDiagnostics.Concat(unfixableDiagnostics),
                 compilation,
+                project.AnalyzerOptions,
                 f => fixersById.ContainsKey(f.id),
                 cancellationToken)
                 .ConfigureAwait(false);
@@ -222,7 +226,7 @@ namespace Roslynator.CodeFixes
 
                 if (analyzers.Any())
                 {
-                    diagnostics = await compilation.GetAnalyzerDiagnosticsAsync(analyzers, Options.CompilationWithAnalyzersOptions, cancellationToken).ConfigureAwait(false);
+                    diagnostics = await GetAnalyzerDiagnosticsAsync(compilation, analyzers, project.AnalyzerOptions, cancellationToken).ConfigureAwait(false);
                     LogHelpers.WriteAnalyzerExceptionDiagnostics(diagnostics);
                 }
 
@@ -351,7 +355,7 @@ namespace Roslynator.CodeFixes
                 }
                 else
                 {
-                    diagnostics = await compilation.GetAnalyzerDiagnosticsAsync(analyzers, Options.CompilationWithAnalyzersOptions, cancellationToken).ConfigureAwait(false);
+                    diagnostics = await GetAnalyzerDiagnosticsAsync(compilation, analyzers, project.AnalyzerOptions, cancellationToken).ConfigureAwait(false);
                 }
 
                 diagnostics = diagnostics
@@ -565,6 +569,7 @@ namespace Roslynator.CodeFixes
             ImmutableArray<DiagnosticAnalyzer> analyzers,
             IEnumerable<Diagnostic> except,
             Compilation compilation,
+            AnalyzerOptions analyzerOptions,
             Func<(string id, DiagnosticAnalyzer analyzer), bool> predicate,
             CancellationToken cancellationToken)
         {
@@ -582,7 +587,7 @@ namespace Roslynator.CodeFixes
             if (!analyzers.Any())
                 return ImmutableArray<Diagnostic>.Empty;
 
-            ImmutableArray<Diagnostic> diagnostics = await compilation.GetAnalyzerDiagnosticsAsync(analyzers, Options.CompilationWithAnalyzersOptions, cancellationToken).ConfigureAwait(false);
+            ImmutableArray<Diagnostic> diagnostics = await GetAnalyzerDiagnosticsAsync(compilation, analyzers, analyzerOptions, cancellationToken).ConfigureAwait(false);
 
             return diagnostics
                 .Where(f => f.IsEffective(Options, compilation.Options)
@@ -667,6 +672,24 @@ namespace Roslynator.CodeFixes
             }
 
             return formattedDocuments;
+        }
+
+        private Task<ImmutableArray<Diagnostic>> GetAnalyzerDiagnosticsAsync(
+            Compilation compilation,
+            ImmutableArray<DiagnosticAnalyzer> analyzers,
+            AnalyzerOptions analyzerOptions,
+            CancellationToken cancellationToken = default)
+        {
+            var compilationWithAnalyzersOptions = new CompilationWithAnalyzersOptions(
+                analyzerOptions,
+                onAnalyzerException: default(Action<Exception, DiagnosticAnalyzer, Diagnostic>),
+                concurrentAnalysis: Options.ConcurrentAnalysis,
+                logAnalyzerExecutionTime: false,
+                reportSuppressedDiagnostics: false);
+
+            var compilationWithAnalyzers = new CompilationWithAnalyzers(compilation, analyzers, compilationWithAnalyzersOptions);
+
+            return compilationWithAnalyzers.GetAnalyzerDiagnosticsAsync(cancellationToken);
         }
     }
 }
