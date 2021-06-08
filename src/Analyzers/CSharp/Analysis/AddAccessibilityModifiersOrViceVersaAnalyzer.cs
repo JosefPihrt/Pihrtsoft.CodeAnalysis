@@ -47,7 +47,7 @@ namespace Roslynator.CSharp.Analysis
             get
             {
                 if (_supportedDiagnostics.IsDefault)
-                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.AddAccessibilityModifiersOrViceVersa, CommonDiagnosticRules.AnalyzerOptionIsObsolete);
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.AddAccessibilityModifiersOrViceVersa, CommonDiagnosticRules.AnalyzerIsObsolete);
 
                 return _supportedDiagnostics;
             }

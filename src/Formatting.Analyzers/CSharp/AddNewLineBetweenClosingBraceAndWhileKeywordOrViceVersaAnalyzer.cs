@@ -20,7 +20,7 @@ namespace Roslynator.Formatting.CSharp
             get
             {
                 if (_supportedDiagnostics.IsDefault)
-                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.AddNewLineBetweenClosingBraceAndWhileKeywordOrViceVersa, CommonDiagnosticRules.AnalyzerOptionIsObsolete);
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.AddNewLineBetweenClosingBraceAndWhileKeywordOrViceVersa, CommonDiagnosticRules.AnalyzerIsObsolete);
 
                 return _supportedDiagnostics;
             }

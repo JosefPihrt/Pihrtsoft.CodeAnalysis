@@ -16,7 +16,7 @@ namespace Roslynator.CSharp.Analysis
             get
             {
                 if (_supportedDiagnostics.IsDefault)
-                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.RenamePrivateFieldToCamelCaseWithUnderscore, CommonDiagnosticRules.AnalyzerOptionIsObsolete);
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.RenamePrivateFieldToCamelCaseWithUnderscore, CommonDiagnosticRules.AnalyzerIsObsolete);
 
                 return _supportedDiagnostics;
             }

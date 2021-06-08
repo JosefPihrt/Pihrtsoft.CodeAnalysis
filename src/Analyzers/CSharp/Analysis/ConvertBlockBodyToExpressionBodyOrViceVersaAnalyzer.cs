@@ -25,7 +25,7 @@ namespace Roslynator.CSharp.Analysis
                         ref _supportedDiagnostics,
                         DiagnosticRules.ConvertBlockBodyToExpressionBodyOrViceVersa,
                         DiagnosticRules.ConvertBlockBodyToExpressionBodyOrViceVersaFadeOut,
-                        CommonDiagnosticRules.AnalyzerOptionIsObsolete);
+                        CommonDiagnosticRules.AnalyzerIsObsolete);
                 }
 
                 return _supportedDiagnostics;

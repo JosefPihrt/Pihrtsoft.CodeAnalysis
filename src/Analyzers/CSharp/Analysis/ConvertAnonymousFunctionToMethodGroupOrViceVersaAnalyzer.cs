@@ -26,7 +26,7 @@ namespace Roslynator.CSharp.Analysis
                         ref _supportedDiagnostics,
                         DiagnosticRules.ConvertAnonymousFunctionToMethodGroupOrViceVersa,
                         DiagnosticRules.ConvertAnonymousFunctionToMethodGroupOrViceVersaFadeOut,
-                        CommonDiagnosticRules.AnalyzerOptionIsObsolete);
+                        CommonDiagnosticRules.AnalyzerIsObsolete);
                 }
 
                 return _supportedDiagnostics;

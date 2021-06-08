@@ -25,7 +25,7 @@ namespace Roslynator.Formatting.CSharp
                         ref _supportedDiagnostics,
                         DiagnosticRules.RemoveEmptyLineBetweenUsingDirectivesWithSameRootNamespace,
                         DiagnosticRules.AddEmptyLineBetweenUsingDirectivesWithDifferentRootNamespaceOrViceVersa,
-                        CommonDiagnosticRules.AnalyzerOptionIsObsolete);
+                        CommonDiagnosticRules.AnalyzerIsObsolete);
                 }
 
                 return _supportedDiagnostics;

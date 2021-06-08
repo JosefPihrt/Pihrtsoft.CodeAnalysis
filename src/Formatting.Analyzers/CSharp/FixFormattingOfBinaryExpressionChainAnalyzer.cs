@@ -20,7 +20,7 @@ namespace Roslynator.Formatting.CSharp
             get
             {
                 if (_supportedDiagnostics.IsDefault)
-                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.FixFormattingOfBinaryExpressionChain, CommonDiagnosticRules.AnalyzerOptionIsObsolete);
+                    Immutable.InterlockedInitialize(ref _supportedDiagnostics, DiagnosticRules.FixFormattingOfBinaryExpressionChain, CommonDiagnosticRules.AnalyzerIsObsolete);
 
                 return _supportedDiagnostics;
             }

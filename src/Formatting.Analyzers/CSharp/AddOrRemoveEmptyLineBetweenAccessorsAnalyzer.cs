@@ -26,7 +26,7 @@ namespace Roslynator.Formatting.CSharp
                         ref _supportedDiagnostics,
                         DiagnosticRules.AddEmptyLineBetweenAccessors,
                         DiagnosticRules.AddEmptyLineBetweenSingleLineAccessorsOrViceVersa,
-                        CommonDiagnosticRules.AnalyzerOptionIsObsolete);
+                        CommonDiagnosticRules.AnalyzerIsObsolete);
                 }
 
                 return _supportedDiagnostics;
