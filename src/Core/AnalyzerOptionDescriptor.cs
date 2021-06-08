@@ -22,11 +22,14 @@ namespace Roslynator
 
         public string OptionKey { get; }
 
-        public bool IsDefault()
+        public bool IsDefault
         {
-            return Descriptor == null
-                && Parent == null
-                && OptionKey == null;
+            get
+            {
+                return Descriptor == null
+                    && Parent == null
+                    && OptionKey == null;
+            }
         }
     }
 }

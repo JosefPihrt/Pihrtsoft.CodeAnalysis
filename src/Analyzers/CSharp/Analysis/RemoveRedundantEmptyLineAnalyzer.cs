@@ -343,20 +343,15 @@ namespace Roslynator.CSharp.Analysis
             if (!leadingTrivia.IsEmptyOrWhitespace())
                 return;
 
-            if (obsoleteAnalyzerOption.IsDefault())
+            Location location = Location.Create(token.SyntaxTree, TextSpan.FromBounds(node.FullSpan.Start, trivia.Span.End));
+
+            if (obsoleteAnalyzerOption.IsDefault)
             {
-                DiagnosticHelpers.ReportDiagnostic(
-                    context,
-                    DiagnosticRules.RemoveRedundantEmptyLine,
-                    Location.Create(token.SyntaxTree, TextSpan.FromBounds(node.FullSpan.Start, trivia.Span.End)));
+                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.RemoveRedundantEmptyLine, location);
             }
             else
             {
-                DiagnosticHelpers.ReportDiagnostic(
-                    context,
-                    DiagnosticRules.RemoveRedundantEmptyLine,
-                    Location.Create(token.SyntaxTree, TextSpan.FromBounds(node.FullSpan.Start, trivia.Span.End)),
-                    obsoleteAnalyzerOption);
+                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.RemoveRedundantEmptyLine, location, obsoleteAnalyzerOption);
             }
         }
 
