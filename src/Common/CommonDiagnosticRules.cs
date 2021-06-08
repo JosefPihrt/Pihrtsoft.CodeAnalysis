@@ -8,15 +8,14 @@ namespace Roslynator
 {
     internal static class CommonDiagnosticRules
     {
-        public static readonly DiagnosticDescriptor AnalyzerOptionIsObsolete = new DiagnosticDescriptor(
-            id: "RCS8001",
-            title: "Analyzer option is obsolete.",
-            messageFormat: "Analyzer option '{0}' is obsolete. Use EditorConfig option '{1} = true' instead.",
+        public static readonly DiagnosticDescriptor AnalyzerIsObsolete = new DiagnosticDescriptor(
+            id: CommonDiagnosticIdentifiers.AnalyzerIsObsolete,
+            title: "Analyzer is obsolete.",
+            messageFormat: "Analyzer {0} is obsolete.{1}",
             category: DiagnosticCategories.Usage,
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: null,
-            helpLinkUri: null,
-            customTags:  new string[] { WellKnownDiagnosticTags.NotConfigurable });
+            helpLinkUri: null);
     }
 }

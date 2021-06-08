@@ -332,14 +332,10 @@ namespace Roslynator
             if (analyzerOption.Descriptor != null
                 && context.Compilation.Options
                     .SpecificDiagnosticOptions
-                    .TryGetValue(analyzerOption.Descriptor.Id, out ReportDiagnostic _))
+                    .TryGetValue(analyzerOption.Descriptor.Id, out ReportDiagnostic reportDiagnostic)
+                && reportDiagnostic != Microsoft.CodeAnalysis.ReportDiagnostic.Suppress)
             {
-                ReportDiagnostic(
-                    context,
-                    CommonDiagnosticRules.AnalyzerOptionIsObsolete,
-                    location,
-                    analyzerOption.Descriptor.Id,
-                    analyzerOption.OptionKey);
+                ReportDiagnostic(context, CreateObsoleteDiagnostic(analyzerOption, location));
             }
         }
 
@@ -351,15 +347,20 @@ namespace Roslynator
             if (analyzerOption.Descriptor != null
                 && context.Compilation.Options
                     .SpecificDiagnosticOptions
-                    .TryGetValue(analyzerOption.Descriptor.Id, out ReportDiagnostic _))
+                    .TryGetValue(analyzerOption.Descriptor.Id, out ReportDiagnostic reportDiagnostic)
+                && reportDiagnostic != Microsoft.CodeAnalysis.ReportDiagnostic.Suppress)
             {
-                ReportDiagnostic(
-                    context,
-                    CommonDiagnosticRules.AnalyzerOptionIsObsolete,
-                    location,
-                    analyzerOption.Descriptor.Id,
-                    analyzerOption.OptionKey);
+                ReportDiagnostic(context, CreateObsoleteDiagnostic(analyzerOption, location));
             }
+        }
+
+        private static Diagnostic CreateObsoleteDiagnostic(AnalyzerOptionDescriptor analyzerOption, Location location)
+        {
+            return Diagnostic.Create(
+                descriptor: CommonDiagnosticRules.AnalyzerIsObsolete,
+                location: location,
+                $"option '{analyzerOption.Descriptor.Id}'",
+                $" Use EditorConfig option '{analyzerOption.OptionKey} = true' instead.");
         }
 
         public static void ReportToken(SyntaxNodeAnalysisContext context, DiagnosticDescriptor descriptor, SyntaxToken token, params object[] messageArgs)
