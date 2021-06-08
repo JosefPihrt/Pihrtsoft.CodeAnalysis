@@ -141,7 +141,7 @@ namespace Roslynator
         #endregion SymbolAnalysisContext
 
         #region SyntaxNodeAnalysisContext
-        public static void ReportDiagnosticIfNotSuppressed(
+        public static void ReportDiagnosticIfEffective(
             SyntaxNodeAnalysisContext context,
             DiagnosticDescriptor descriptor,
             SyntaxNode node,
@@ -151,7 +151,7 @@ namespace Roslynator
                 ReportDiagnostic(context, descriptor, node, messageArgs);
         }
 
-        public static void ReportDiagnosticIfNotSuppressed(
+        public static void ReportDiagnosticIfEffective(
             SyntaxNodeAnalysisContext context,
             DiagnosticDescriptor descriptor,
             Location location,

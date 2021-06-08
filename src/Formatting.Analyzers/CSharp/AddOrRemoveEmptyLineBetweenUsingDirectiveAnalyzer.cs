@@ -102,7 +102,7 @@ namespace Roslynator.Formatting.CSharp
                 {
                     if (isEmptyLine)
                     {
-                        DiagnosticHelpers.ReportDiagnosticIfNotSuppressed(
+                        DiagnosticHelpers.ReportDiagnosticIfEffective(
                             context,
                             DiagnosticRules.RemoveEmptyLineBetweenUsingDirectivesWithSameRootNamespace,
                             Location.Create(context.Node.SyntaxTree, leadingTrivia[0].Span.WithLength(0)));

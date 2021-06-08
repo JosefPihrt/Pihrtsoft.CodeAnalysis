@@ -100,7 +100,7 @@ namespace Roslynator.CSharp.Analysis
 
             void ReportDiagnostic()
             {
-                DiagnosticHelpers.ReportDiagnosticIfNotSuppressed(context, DiagnosticRules.SimplifyConditionalExpression, conditionalExpression);
+                DiagnosticHelpers.ReportDiagnostic(context, DiagnosticRules.SimplifyConditionalExpression, conditionalExpression);
             }
         }
     }

@@ -100,7 +100,7 @@ namespace Roslynator.CSharp.Analysis
                         case XmlTag.Summary:
                             {
                                 if (info.IsContentEmptyOrWhitespace)
-                                    ReportDiagnosticIfNotSuppressed(context, DiagnosticRules.AddSummaryToDocumentationComment, info.Element);
+                                    ReportDiagnosticIfEffective(context, DiagnosticRules.AddSummaryToDocumentationComment, info.Element);
 
                                 containsSummaryElement = true;
 
@@ -170,7 +170,7 @@ namespace Roslynator.CSharp.Analysis
             if (!containsSummaryElement
                 && !containsContentElement)
             {
-                ReportDiagnosticIfNotSuppressed(context, DiagnosticRules.AddSummaryElementToDocumentationComment, documentationComment);
+                ReportDiagnosticIfEffective(context, DiagnosticRules.AddSummaryElementToDocumentationComment, documentationComment);
             }
 
             SyntaxNode parent = documentationComment.ParentTrivia.Token.Parent;
@@ -327,7 +327,7 @@ namespace Roslynator.CSharp.Analysis
                 }
                 else if (index < firstIndex)
                 {
-                    ReportDiagnosticIfNotSuppressed(context, DiagnosticRules.OrderElementsInDocumentationComment, firstElement);
+                    ReportDiagnosticIfEffective(context, DiagnosticRules.OrderElementsInDocumentationComment, firstElement);
                     return;
                 }
                 else

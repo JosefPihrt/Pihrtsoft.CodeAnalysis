@@ -10,7 +10,7 @@ using Roslynator.CSharp;
 
 namespace Roslynator.Formatting.CSharp
 {
-    //TODO: sloučit s AccessorListAnalyzer
+    //TODO: merge with AccessorListAnalyzer
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class AddOrRemoveEmptyLineBetweenAccessorsAnalyzer : BaseDiagnosticAnalyzer
     {
@@ -99,7 +99,7 @@ namespace Roslynator.Formatting.CSharp
             }
             else if (!isEmptyLine)
             {
-                DiagnosticHelpers.ReportDiagnosticIfNotSuppressed(
+                DiagnosticHelpers.ReportDiagnosticIfEffective(
                     context,
                     DiagnosticRules.AddEmptyLineBetweenAccessors,
                     Location.Create(context.Node.SyntaxTree, trailingTrivia.Last().Span.WithLength(0)));
