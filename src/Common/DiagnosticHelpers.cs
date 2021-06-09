@@ -72,12 +72,7 @@ namespace Roslynator
             AnalyzerOptionDescriptor obsoleteAnalyzerOption,
             params object[] messageArgs)
         {
-            ReportDiagnostic(
-                context,
-                Diagnostic.Create(
-                    descriptor: descriptor,
-                    location: location,
-                    messageArgs: messageArgs));
+            ReportDiagnostic(context, descriptor, location, messageArgs);
 
             ReportObsolete(context, location, obsoleteAnalyzerOption);
         }
@@ -185,9 +180,8 @@ namespace Roslynator
                 context: context,
                 descriptor: descriptor,
                 location: node.GetLocation(),
+                obsoleteAnalyzerOption,
                 messageArgs: messageArgs);
-
-            ReportObsolete(context, node.GetLocation(), obsoleteAnalyzerOption);
         }
 
         public static void ReportDiagnostic(
@@ -237,12 +231,7 @@ namespace Roslynator
             AnalyzerOptionDescriptor obsoleteAnalyzerOption,
             params object[] messageArgs)
         {
-            ReportDiagnostic(
-                context,
-                Diagnostic.Create(
-                    descriptor: descriptor,
-                    location: location,
-                    messageArgs: messageArgs));
+            ReportDiagnostic(context, descriptor, location, messageArgs);
 
             ReportObsolete(context, location, obsoleteAnalyzerOption);
         }
@@ -287,13 +276,7 @@ namespace Roslynator
             AnalyzerOptionDescriptor obsoleteAnalyzerOption,
             params object[] messageArgs)
         {
-            ReportDiagnostic(
-                context,
-                Diagnostic.Create(
-                    descriptor: descriptor,
-                    location: location,
-                    properties: properties,
-                    messageArgs: messageArgs));
+            ReportDiagnostic(context, descriptor, location, properties, messageArgs);
 
             ReportObsolete(context, location, obsoleteAnalyzerOption);
         }
@@ -321,7 +304,8 @@ namespace Roslynator
             SyntaxNode node,
             AnalyzerOptionDescriptor analyzerOption)
         {
-            ReportObsolete(context, node.GetLocation(), analyzerOption);
+            if (analyzerOption.Descriptor?.IsEffective(context.Compilation) == true)
+                ReportDiagnostic(context, CreateObsoleteDiagnostic(analyzerOption, node.GetLocation()));
         }
 
         public static void ReportObsolete(
@@ -329,14 +313,8 @@ namespace Roslynator
             Location location,
             AnalyzerOptionDescriptor analyzerOption)
         {
-            if (analyzerOption.Descriptor != null
-                && context.Compilation.Options
-                    .SpecificDiagnosticOptions
-                    .TryGetValue(analyzerOption.Descriptor.Id, out ReportDiagnostic reportDiagnostic)
-                && reportDiagnostic != Microsoft.CodeAnalysis.ReportDiagnostic.Suppress)
-            {
+            if (analyzerOption.Descriptor?.IsEffective(context.Compilation) == true)
                 ReportDiagnostic(context, CreateObsoleteDiagnostic(analyzerOption, location));
-            }
         }
 
         private static void ReportObsolete(
@@ -344,14 +322,8 @@ namespace Roslynator
             Location location,
             AnalyzerOptionDescriptor analyzerOption)
         {
-            if (analyzerOption.Descriptor != null
-                && context.Compilation.Options
-                    .SpecificDiagnosticOptions
-                    .TryGetValue(analyzerOption.Descriptor.Id, out ReportDiagnostic reportDiagnostic)
-                && reportDiagnostic != Microsoft.CodeAnalysis.ReportDiagnostic.Suppress)
-            {
+            if (analyzerOption.Descriptor?.IsEffective(context.Compilation) == true)
                 ReportDiagnostic(context, CreateObsoleteDiagnostic(analyzerOption, location));
-            }
         }
 
         private static Diagnostic CreateObsoleteDiagnostic(AnalyzerOptionDescriptor analyzerOption, Location location)
