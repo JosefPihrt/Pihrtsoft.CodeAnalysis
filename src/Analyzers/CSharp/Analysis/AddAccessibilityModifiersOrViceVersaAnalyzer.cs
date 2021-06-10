@@ -208,12 +208,10 @@ namespace Roslynator.CSharp.Analysis
                 SyntaxToken first = modifiers.First(f => SyntaxFacts.IsAccessibilityModifier(f.Kind()));
                 SyntaxToken last = modifiers.Last(f => SyntaxFacts.IsAccessibilityModifier(f.Kind()));
 
-                Location location = Location.Create(declaration.SyntaxTree, TextSpan.FromBounds(first.SpanStart, last.Span.End));
-
                 DiagnosticHelpers.ReportDiagnostic(
                     context,
                     DiagnosticRules.ReportOnly.RemoveAccessibilityModifiers,
-                    location,
+                    Location.Create(declaration.SyntaxTree, TextSpan.FromBounds(first.SpanStart, last.Span.End)),
                     AnalyzerOptions.RemoveAccessibilityModifiers);
             }
         }

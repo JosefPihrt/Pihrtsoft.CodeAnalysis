@@ -180,9 +180,9 @@ namespace Roslynator.Spelling
 
                 foreach (Diagnostic diagnostic in diagnostics)
                 {
-                    Debug.Assert(diagnostic.Id == SpellingAnalyzer.DiagnosticId, diagnostic.Id);
+                    Debug.Assert(diagnostic.Id == CommonDiagnosticIdentifiers.PossibleMisspellingOrTypo, diagnostic.Id);
 
-                    if (diagnostic.Id != SpellingAnalyzer.DiagnosticId)
+                    if (diagnostic.Id != CommonDiagnosticIdentifiers.PossibleMisspellingOrTypo)
                     {
                         if (diagnostic.IsAnalyzerExceptionDiagnostic())
                             LogHelpers.WriteDiagnostic(diagnostic, baseDirectoryPath: Path.GetDirectoryName(project.FilePath), formatProvider: FormatProvider, indentation: "  ", verbosity: Verbosity.Detailed);

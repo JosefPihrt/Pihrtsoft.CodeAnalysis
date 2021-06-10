@@ -1,5 +1,6 @@
 ﻿// Copyright (c) Josef Pihrt. All rights reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
+using System;
 using Microsoft.CodeAnalysis;
 
 #pragma warning disable RS2008 // Enable analyzer release tracking
@@ -16,6 +17,7 @@ namespace Roslynator
             defaultSeverity: DiagnosticSeverity.Warning,
             isEnabledByDefault: true,
             description: null,
-            helpLinkUri: null);
+            helpLinkUri: DiagnosticDescriptorUtility.GetHelpLinkUri(CommonDiagnosticIdentifiers.AnalyzerIsObsolete),
+            customTags: Array.Empty<string>());
     }
 }

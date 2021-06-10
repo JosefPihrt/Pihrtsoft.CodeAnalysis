@@ -470,7 +470,7 @@ namespace Roslynator
         [Conditional("DEBUG")]
         private static void VerifyDiagnostic(Diagnostic diagnostic)
         {
-            Debug.Assert(Regex.IsMatch(diagnostic.Id, @"\ARCS[0-9]{4}(FadeOut)?\z"), $"Invalid diagnostic id '{diagnostic.Id}'.");
+            Debug.Assert(Regex.IsMatch(diagnostic.Id, @"\AR(C|O)S[0-9]{4}(FadeOut)?\z"), $"Invalid diagnostic id '{diagnostic.Id}'.");
         }
 
         internal static bool IsAnyEffective(SyntaxNodeAnalysisContext context, ImmutableArray<DiagnosticDescriptor> descriptors)

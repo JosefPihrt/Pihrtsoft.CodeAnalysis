@@ -7,7 +7,6 @@ namespace Roslynator
     internal class DiagnosticDescriptorFactory
     {
         private const string IdSuffix = "FadeOut";
-        private const string HelpLinkUriRoot = "http://pihrt.net/roslynator/analyzer?id=";
 
         public static DiagnosticDescriptorFactory Default { get; } = new DiagnosticDescriptorFactory(AnalyzerRules.Default);
 
@@ -37,7 +36,7 @@ namespace Roslynator
                 defaultSeverity: Rules.GetDiagnosticSeverityOrDefault(id, defaultSeverity),
                 isEnabledByDefault: Rules.IsDiagnosticEnabledOrDefault(id, isEnabledByDefault),
                 description: description,
-                helpLinkUri: HelpLinkUriRoot + helpLinkUri,
+                helpLinkUri: DiagnosticDescriptorUtility.GetHelpLinkUri(helpLinkUri),
                 customTags: customTags);
         }
 

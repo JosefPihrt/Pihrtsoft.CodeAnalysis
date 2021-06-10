@@ -12,18 +12,16 @@ namespace Roslynator.Spelling
 {
     internal sealed class SpellingAnalyzer
     {
-        public const string DiagnosticId = "RCS8000";
-
         [SuppressMessage("MicrosoftCodeAnalysisReleaseTracking", "RS2008:Enable analyzer release tracking")]
         public static readonly DiagnosticDescriptor DiagnosticDescriptor = new DiagnosticDescriptor(
-            id: DiagnosticId,
+            id: CommonDiagnosticIdentifiers.PossibleMisspellingOrTypo,
             title: "Possible misspelling or typo.",
             messageFormat: "Possible misspelling or typo in '{0}'.",
             category: "Spelling",
             defaultSeverity: DiagnosticSeverity.Info,
             isEnabledByDefault: true,
             description: null,
-            helpLinkUri: null,
+            helpLinkUri: DiagnosticDescriptorUtility.GetHelpLinkUri(CommonDiagnosticIdentifiers.PossibleMisspellingOrTypo),
             customTags: Array.Empty<string>());
 
         public static async Task<ImmutableArray<Diagnostic>> AnalyzeSpellingAsync(

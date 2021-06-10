@@ -90,14 +90,12 @@ namespace Roslynator.CSharp.Analysis
                     {
                         if (typeSymbol.ContainingNamespace.HasMetadataName(MetadataNames.System_Runtime_CompilerServices))
                         {
-                            Location location = Location.Create(
-                                awaitExpression.SyntaxTree,
-                                TextSpan.FromBounds(invocationInfo.OperatorToken.SpanStart, expression.Span.End));
-
                             DiagnosticHelpers.ReportDiagnostic(
                                 context,
                                 DiagnosticRules.ReportOnly.RemoveCallToConfigureAwait,
-                                location,
+                                Location.Create(
+                                    awaitExpression.SyntaxTree,
+                                    TextSpan.FromBounds(invocationInfo.OperatorToken.SpanStart, expression.Span.End)),
                                 AnalyzerOptions.RemoveCallToConfigureAwait);
                         }
 
