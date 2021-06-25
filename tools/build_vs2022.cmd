@@ -29,11 +29,13 @@ if errorlevel 1 (
  exit
 )
 
-del /Q "..\src\VisualStudio\bin\Release\Roslynator.VisualStudio.2022.*.vsix"
-ren    "..\src\VisualStudio\bin\Release\Roslynator.VisualStudio.2002.vsix" "Roslynator.VisualStudio.2022.%_version%.vsix"
+set _vsixPath=..\src\VisualStudio.2022\bin\Release\Roslynator.VisualStudio.
+
+del /Q "%_vsixPath%*.vsix"
+ren    "%_vsixPath%vsix" "Roslynator.VisualStudio.2022.%_version%.vsix"
 md "%_outDir%"
 del /Q "%_outDir%\*"
-copy "..\src\VisualStudio\bin\Release\Roslynator.VisualStudio.2022.%_version%.vsix" "%_outDir%"
+copy "%_vsixPath%%_version%.vsix" "%_outDir%"
 
 echo OK
 pause
