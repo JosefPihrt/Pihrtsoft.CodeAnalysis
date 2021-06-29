@@ -37,7 +37,7 @@ roslynator fix <PROJECT|SOLUTION>
 
 **`PROJECT|SOLUTION`**
 
-The project or solution to fix.
+Path to one or more project/solution files.
 
 ### Optional Options
 
@@ -133,6 +133,10 @@ Defines minimally required severity for a diagnostic. Default value is `info`.
 **`-v|--verbosity`** `{q[uiet]|m[inimal]|n[ormal]|d[etailed]|diag[nostic]}`
 
 Defines the amount of information to display in the log.
+
+## Redirected/Piped Input
+
+Redirected/piped input will be used as a list of project/solution paths separated with newlines.
 
 ## See Also
 

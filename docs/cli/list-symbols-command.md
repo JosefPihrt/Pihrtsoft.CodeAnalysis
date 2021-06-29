@@ -34,7 +34,7 @@ roslynator list-symbols <PROJECT|SOLUTION>
 
 **`PROJECT|SOLUTION`**
 
-The project or solution to analyze.
+Path to one or more project/solution files.
 
 ### Optional Options
 
@@ -113,6 +113,10 @@ Defines a visibility of a type or a member. Default value is `public`.
 **`[--wrap-list]`**
 
 Specifies syntax lists that should be wrapped. Allowed values are attributes, parameters, base-types and constraints.
+
+## Redirected/Piped Input
+
+Redirected/piped input will be used as a list of project/solution paths separated with newlines.
 
 ## See Also
 

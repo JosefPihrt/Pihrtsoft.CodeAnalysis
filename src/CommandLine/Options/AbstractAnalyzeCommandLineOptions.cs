@@ -10,7 +10,7 @@ namespace Roslynator.CommandLine
     {
         [Value(
             index: 0,
-            HelpText = "The project or solution file.",
+            HelpText = "Path to one or more project/solution files.",
             MetaValue = "<PROJECT|SOLUTION>")]
         public IEnumerable<string> Paths { get; set; }
 

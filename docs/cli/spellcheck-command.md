@@ -31,7 +31,7 @@ roslynator spellcheck <PROJECT|SOLUTION>
 
 **`PROJECT|SOLUTION`**
 
-The project or solution to analyze.
+Path to one or more project/solution files.
 
 ### Required Options
 
@@ -100,6 +100,10 @@ Defines the amount of information to display in the log.
 **`--visibility`** <VISIBILITY>
 
 Defines a  maximal visibility of a symbol to be fixable. Allowed values are `public`, `internal` or `private`. Default value is `public`.
+
+## Redirected/Piped Input
+
+Redirected/piped input will be used as a list of project/solution paths separated with newlines.
 
 ## How to Suppress Spellchecking
 

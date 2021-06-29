@@ -32,7 +32,7 @@ roslynator analyze <PROJECT|SOLUTION>
 
 **`PROJECT|SOLUTION`**
 
-The project or solution to analyze.
+Path to one or more project/solution files.
 
 ### Optional Options
 
@@ -106,6 +106,10 @@ Defines diagnostics that should be reported.
 **`-v|--verbosity`** `{q[uiet]|m[inimal]|n[ormal]|d[etailed]|diag[nostic]}`
 
 Defines the amount of information to display in the log.
+
+## Redirected/Piped Input
+
+Redirected/piped input will be used as a list of project/solution paths separated with newlines.
 
 ## See Also
 
