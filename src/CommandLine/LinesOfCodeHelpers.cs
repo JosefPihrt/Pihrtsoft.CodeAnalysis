@@ -13,12 +13,8 @@ using static Roslynator.Logger;
 
 namespace Roslynator.CommandLine
 {
-    internal abstract class AbstractLinesOfCodeCommand : MSBuildWorkspaceCommand
+    internal static class LinesOfCodeHelpers
     {
-        protected AbstractLinesOfCodeCommand(in ProjectFilter projectFilter) : base(projectFilter)
-        {
-        }
-
         public static ImmutableDictionary<ProjectId, CodeMetricsInfo> CountLinesInParallel(
             IEnumerable<Project> projects,
             LinesOfCodeKind kind,

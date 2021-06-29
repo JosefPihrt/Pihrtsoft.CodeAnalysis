@@ -10,6 +10,12 @@ namespace Roslynator.CommandLine
 #endif
     public class ListReferencesCommandLineOptions : MSBuildCommandLineOptions
     {
+        [Value(
+            index: 0,
+            HelpText = "The project or solution file.",
+            MetaValue = "<PROJECT|SOLUTION>")]
+        public IEnumerable<string> Paths { get; set; }
+
         [Option(
             longName: "display",
             HelpText = "Defines how the assembly is displayed. Allowed values are path (default), file-name, file-name-without-extension or assembly-name.")]

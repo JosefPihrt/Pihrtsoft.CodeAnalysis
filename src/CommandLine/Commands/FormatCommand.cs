@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Diagnostics;
 using System.IO;
@@ -16,7 +17,7 @@ using static Roslynator.Logger;
 
 namespace Roslynator.CommandLine
 {
-    internal class FormatCommand : MSBuildWorkspaceCommand
+    internal class FormatCommand : MSBuildWorkspaceCommand<FormatCommandResult>
     {
         public FormatCommand(FormatCommandLineOptions options, in ProjectFilter projectFilter) : base(projectFilter)
         {
@@ -25,7 +26,7 @@ namespace Roslynator.CommandLine
 
         public FormatCommandLineOptions Options { get; }
 
-        public override async Task<CommandResult> ExecuteAsync(ProjectOrSolution projectOrSolution, CancellationToken cancellationToken = default)
+        public override async Task<FormatCommandResult> ExecuteAsync(ProjectOrSolution projectOrSolution, CancellationToken cancellationToken = default)
         {
             ImmutableArray<DocumentId> formattedDocuments;
 
@@ -46,7 +47,7 @@ namespace Roslynator.CommandLine
                 formattedDocuments = await FormatSolutionAsync(solution, options, cancellationToken);
             }
 
-            return (formattedDocuments.Length > 0) ? CommandResult.Success : CommandResult.NotSuccess;
+            return new FormatCommandResult((formattedDocuments.Length > 0) ? CommandStatus.Success : CommandStatus.NotSuccess, formattedDocuments.Length);
         }
 
         private async Task<ImmutableArray<DocumentId>> FormatSolutionAsync(Solution solution, CodeFormatterOptions options, CancellationToken cancellationToken)
@@ -140,10 +141,20 @@ namespace Roslynator.CommandLine
                 }
             }
 
-            WriteLine(Verbosity.Minimal);
-            WriteLine($"{formattedDocuments.Length} {((formattedDocuments.Length == 1) ? "document" : "documents")} formatted", ConsoleColor.Green, Verbosity.Minimal);
+            WriteSummary(formattedDocuments.Length);
 
             return formattedDocuments;
+        }
+
+        protected override void ProcessResults(IEnumerable<FormatCommandResult> results)
+        {
+            WriteSummary(results.Sum(f => f.Count));
+        }
+
+        private static void WriteSummary(int count)
+        {
+            WriteLine(Verbosity.Minimal);
+            WriteLine($"{count} {((count == 1) ? "document" : "documents")} formatted", ConsoleColor.Green, Verbosity.Minimal);
         }
 
         protected override void OperationCanceled(OperationCanceledException ex)

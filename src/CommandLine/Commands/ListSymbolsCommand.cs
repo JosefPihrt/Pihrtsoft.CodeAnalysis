@@ -23,7 +23,7 @@ using static Roslynator.Logger;
 
 namespace Roslynator.CommandLine
 {
-    internal class ListSymbolsCommand : MSBuildWorkspaceCommand
+    internal class ListSymbolsCommand : MSBuildWorkspaceCommand<BaseCommandResult>
     {
         public ListSymbolsCommand(
             ListSymbolsCommandLineOptions options,
@@ -50,7 +50,7 @@ namespace Roslynator.CommandLine
 
         public SymbolDefinitionPartFilter IgnoredParts { get; }
 
-        public override async Task<CommandResult> ExecuteAsync(ProjectOrSolution projectOrSolution, CancellationToken cancellationToken = default)
+        public override async Task<BaseCommandResult> ExecuteAsync(ProjectOrSolution projectOrSolution, CancellationToken cancellationToken = default)
         {
             AssemblyResolver.Register();
 
@@ -82,7 +82,7 @@ namespace Roslynator.CommandLine
                 if (hierarchyRoot == null)
                 {
                     WriteLine($"Cannot find type '{Options.HierarchyRoot}'", Verbosity.Quiet);
-                    return CommandResult.Fail;
+                    return BaseCommandResult.Fail;
                 }
             }
 
@@ -97,7 +97,7 @@ namespace Roslynator.CommandLine
                 if (externalAssembly == null)
                 {
                     WriteLine($"Cannot find external assembly '{reference}'", Verbosity.Quiet);
-                    return CommandResult.Fail;
+                    return BaseCommandResult.Fail;
                 }
 
                 (externalAssemblies ??= new HashSet<IAssemblySymbol>()).Add(externalAssembly);
@@ -212,7 +212,7 @@ namespace Roslynator.CommandLine
                 WriteSummary(assemblies, SymbolFilterOptions, Verbosity.Normal);
 #endif
 
-            return (assemblies.Any()) ? CommandResult.Success : CommandResult.NotSuccess;
+            return (assemblies.Any()) ? BaseCommandResult.Success : BaseCommandResult.NotSuccess;
         }
 
 #if DEBUG

@@ -8,6 +8,12 @@ namespace Roslynator.CommandLine
 {
     public abstract class AbstractAnalyzeCommandLineOptions : MSBuildCommandLineOptions
     {
+        [Value(
+            index: 0,
+            HelpText = "The project or solution file.",
+            MetaValue = "<PROJECT|SOLUTION>")]
+        public IEnumerable<string> Paths { get; set; }
+
         [Option(
             shortName: OptionShortNames.AnalyzerAssemblies,
             longName: "analyzer-assemblies",

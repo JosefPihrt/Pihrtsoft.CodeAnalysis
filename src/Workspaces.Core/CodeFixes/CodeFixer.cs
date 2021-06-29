@@ -95,8 +95,6 @@ namespace Roslynator.CodeFixes
 
             WriteLine($"Done fixing solution '{CurrentSolution.FilePath}' in {stopwatch.Elapsed:mm\\:ss\\.ff}", Verbosity.Minimal);
 
-            LogHelpers.WriteProjectFixResults(results, Options, FormatProvider);
-
             return results.ToImmutableArray();
         }
 
@@ -154,8 +152,8 @@ namespace Roslynator.CodeFixes
                 unfixableDiagnostics: unfixableDiagnostics,
                 analyzers: fixResult.Analyzers,
                 fixers: fixResult.Fixers,
-                numberOfFormattedDocuments: formattedDocuments.Length,
-                numberOfAddedFileBanners: numberOfAddedFileBanners);
+                numberOfFormattedDocuments: (Options.FileBannerLines.Any()) ? formattedDocuments.Length : -1,
+                numberOfAddedFileBanners: (Options.Format) ? numberOfAddedFileBanners : -1);
 
             LogHelpers.WriteFixSummary(
                 result.FixedDiagnostics,

@@ -52,7 +52,7 @@ namespace Roslynator.CommandLine
 
         public bool DryRun { get; }
 
-        public CommandResult Execute()
+        public CommandStatus Execute()
         {
             var cts = new CancellationTokenSource();
             Console.CancelKeyPress += (sender, e) =>
@@ -85,25 +85,25 @@ namespace Roslynator.CommandLine
                 }
             }
 
-            return CommandResult.Canceled;
+            return CommandStatus.Canceled;
         }
 
-        private CommandResult Execute(CancellationToken cancellationToken)
+        private CommandStatus Execute(CancellationToken cancellationToken)
         {
-            var result = CommandResult.NotSuccess;
+            var status = CommandStatus.NotSuccess;
 
             foreach (string path in Paths)
             {
-                CommandResult result2 = ExecutePath(path, cancellationToken);
+                CommandStatus status2 = ExecutePath(path, cancellationToken);
 
-                if (result != CommandResult.Success)
-                    result = result2;
+                if (status != CommandStatus.Success)
+                    status = status2;
             }
 
-            return result;
+            return status;
         }
 
-        private CommandResult ExecutePath(string path, CancellationToken cancellationToken)
+        private CommandStatus ExecutePath(string path, CancellationToken cancellationToken)
         {
             if (Directory.Exists(path))
             {
@@ -118,13 +118,13 @@ namespace Roslynator.CommandLine
             else
             {
                 WriteLine($"File or directory not found: '{path}'", Colors.Message_Warning, Verbosity.Minimal);
-                return CommandResult.NotSuccess;
+                return CommandStatus.NotSuccess;
             }
         }
 
-        private CommandResult ExecuteDirectory(string directoryPath, CancellationToken cancellationToken)
+        private CommandStatus ExecuteDirectory(string directoryPath, CancellationToken cancellationToken)
         {
-            var result = CommandResult.NotSuccess;
+            var status = CommandStatus.NotSuccess;
 
 #if NETCOREAPP3_1
             var enumerationOptions = new EnumerationOptions() { IgnoreInaccessible = true, RecurseSubdirectories = true };
@@ -136,18 +136,18 @@ namespace Roslynator.CommandLine
 
             foreach (string filePath in files)
             {
-                CommandResult result2 = ExecuteFile(filePath);
+                CommandStatus status2 = ExecuteFile(filePath);
 
-                if (result != CommandResult.Success)
-                    result = result2;
+                if (status != CommandStatus.Success)
+                    status = status2;
 
                 cancellationToken.ThrowIfCancellationRequested();
             }
 
-            return result;
+            return status;
         }
 
-        private CommandResult ExecuteFile(string path)
+        private CommandStatus ExecuteFile(string path)
         {
             string extension = Path.GetExtension(path);
 
@@ -175,10 +175,10 @@ namespace Roslynator.CommandLine
             }
 
             WriteLine(path, Verbosity.Diagnostic);
-            return CommandResult.NotSuccess;
+            return CommandStatus.NotSuccess;
         }
 
-        private CommandResult ExecuteProject(string path)
+        private CommandStatus ExecuteProject(string path)
         {
             XDocument document;
             try
@@ -189,7 +189,7 @@ namespace Roslynator.CommandLine
             {
                 WriteLine($"Cannot load '{path}'", Colors.Message_Warning, Verbosity.Minimal);
                 WriteError(ex, verbosity: Verbosity.Minimal);
-                return CommandResult.NotSuccess;
+                return CommandStatus.NotSuccess;
             }
 
             XElement root = document.Root;
@@ -203,11 +203,11 @@ namespace Roslynator.CommandLine
             {
                 WriteLine($"Project does not support migration: '{path}'", Colors.Message_Warning, Verbosity.Detailed);
 
-                return CommandResult.NotSuccess;
+                return CommandStatus.NotSuccess;
             }
         }
 
-        private CommandResult ExecuteProject(string path, XDocument document)
+        private CommandStatus ExecuteProject(string path, XDocument document)
         {
             List<LogMessage> messages = null;
 
@@ -308,15 +308,15 @@ namespace Roslynator.CommandLine
                         document.Save(xmlWriter);
                 }
 
-                return CommandResult.Success;
+                return CommandStatus.Success;
             }
             else
             {
-                return CommandResult.NotSuccess;
+                return CommandStatus.NotSuccess;
             }
         }
 
-        private CommandResult ExecuteRuleSet(string path)
+        private CommandStatus ExecuteRuleSet(string path)
         {
             XDocument document;
             try
@@ -327,7 +327,7 @@ namespace Roslynator.CommandLine
             {
                 WriteLine($"Cannot load '{path}'", Colors.Message_Warning, Verbosity.Minimal);
                 WriteError(ex, verbosity: Verbosity.Minimal);
-                return CommandResult.NotSuccess;
+                return CommandStatus.NotSuccess;
             }
 
             WriteLine($"Analyze '{path}'", Verbosity.Detailed);
@@ -337,7 +337,7 @@ namespace Roslynator.CommandLine
             IEnumerable<XElement> rules = document.Root.Elements("Rules");
 
             if (!rules.Any())
-                return CommandResult.NotSuccess;
+                return CommandStatus.NotSuccess;
 
             foreach (XElement element in rules.Elements("Rule"))
             {
@@ -411,13 +411,13 @@ namespace Roslynator.CommandLine
                     }
                 }
 
-                return CommandResult.Success;
+                return CommandStatus.Success;
             }
 
-            return CommandResult.NotSuccess;
+            return CommandStatus.NotSuccess;
         }
 
-        private CommandResult ExecuteEditorConfig(string path)
+        private CommandStatus ExecuteEditorConfig(string path)
         {
             string content;
             Encoding encoding = null;
@@ -430,7 +430,7 @@ namespace Roslynator.CommandLine
             {
                 WriteLine($"Cannot load '{path}'", Verbosity.Minimal);
                 WriteError(ex, verbosity: Verbosity.Minimal);
-                return CommandResult.NotSuccess;
+                return CommandStatus.NotSuccess;
             }
 
             WriteLine($"Analyze '{path}'", Verbosity.Detailed);
@@ -498,14 +498,14 @@ namespace Roslynator.CommandLine
                     {
                         WriteLine($"Cannot save '{path}'", Colors.Message_Warning, Verbosity.Minimal);
                         WriteError(ex, verbosity: Verbosity.Minimal);
-                        return CommandResult.NotSuccess;
+                        return CommandStatus.NotSuccess;
                     }
                 }
 
-                return CommandResult.Success;
+                return CommandStatus.Success;
             }
 
-            return CommandResult.NotSuccess;
+            return CommandStatus.NotSuccess;
         }
 
         private static void WriteXmlError(XElement element, string message)

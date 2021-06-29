@@ -16,7 +16,7 @@ using static Roslynator.Logger;
 
 namespace Roslynator.CommandLine
 {
-    internal class SpellcheckCommand : MSBuildWorkspaceCommand
+    internal class SpellcheckCommand : MSBuildWorkspaceCommand<SpellcheckCommandResult>
     {
         public SpellcheckCommand(
             SpellcheckCommandLineOptions options,
@@ -33,7 +33,7 @@ namespace Roslynator.CommandLine
 
         public SpellcheckCommandLineOptions Options { get; }
 
-        public SpellingData SpellingData { get; }
+        public SpellingData SpellingData { get; private set; }
 
         public Visibility Visibility { get; }
 
@@ -41,7 +41,7 @@ namespace Roslynator.CommandLine
 
         public string OutputPath { get; }
 
-        public override async Task<CommandResult> ExecuteAsync(ProjectOrSolution projectOrSolution, CancellationToken cancellationToken = default)
+        public override async Task<SpellcheckCommandResult> ExecuteAsync(ProjectOrSolution projectOrSolution, CancellationToken cancellationToken = default)
         {
             AssemblyResolver.Register();
 
@@ -67,7 +67,7 @@ namespace Roslynator.CommandLine
             return await FixAsync(projectOrSolution, options, projectFilter, culture, cancellationToken);
         }
 
-        internal async Task<CommandResult> FixAsync(
+        private async Task<SpellcheckCommandResult> FixAsync(
             ProjectOrSolution projectOrSolution,
             SpellingFixerOptions options,
             ProjectFilter projectFilter,
@@ -104,9 +104,11 @@ namespace Roslynator.CommandLine
                 results = await spellingFixer.FixSolutionAsync(f => projectFilter.IsMatch(f), cancellationToken);
             }
 
-            WriteSummary(results, spellingFixer);
+            SpellingData = spellingFixer.SpellingData;
 
-            return CommandResult.Success;
+            WriteSummary(results);
+
+            return new SpellcheckCommandResult(CommandStatus.Success, results);
 
             SpellingFixer GetSpellingFixer(Solution solution)
             {
@@ -123,7 +125,7 @@ namespace Roslynator.CommandLine
             WriteLine("Spellchecking was canceled.", Verbosity.Minimal);
         }
 
-        private void WriteSummary(ImmutableArray<SpellingFixResult> results, SpellingFixer fixer)
+        private void WriteSummary(ImmutableArray<SpellingFixResult> results)
         {
             if (!ShouldWrite(Verbosity.Normal))
                 return;
@@ -171,7 +173,7 @@ namespace Roslynator.CommandLine
 
                 var isFix = false;
 
-                if (fixer.SpellingData.Fixes.TryGetValue(grouping.Key, out ImmutableHashSet<SpellingFix> possibleFixes))
+                if (SpellingData.Fixes.TryGetValue(grouping.Key, out ImmutableHashSet<SpellingFix> possibleFixes))
                 {
                     ImmutableArray<SpellingFix> fixes = possibleFixes
                         .Where(
@@ -282,6 +284,11 @@ namespace Roslynator.CommandLine
                     WriteLine(result.SourceText.Substring(endIndex, lineEndIndex - endIndex), Verbosity.Detailed);
                 }
             }
+        }
+
+        protected override void ProcessResults(IEnumerable<SpellcheckCommandResult> results)
+        {
+            WriteSummary(results.SelectMany(f => f.SpellingResults).ToImmutableArray());
         }
 
 #if DEBUG

@@ -8,6 +8,12 @@ namespace Roslynator.CommandLine
     [Verb("spellcheck", HelpText = "Searches the specified project or solution for possible misspellings or typos.")]
     public sealed class SpellcheckCommandLineOptions : MSBuildCommandLineOptions
     {
+        [Value(
+            index: 0,
+            HelpText = "The project or solution file.",
+            MetaValue = "<PROJECT|SOLUTION>")]
+        public IEnumerable<string> Paths { get; set; }
+
         [Option(
             longName: "case-sensitive",
             HelpText = "Specifies case-sensitive matching.")]

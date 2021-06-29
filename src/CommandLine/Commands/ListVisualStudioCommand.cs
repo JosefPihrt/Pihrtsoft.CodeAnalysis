@@ -15,7 +15,7 @@ namespace Roslynator.CommandLine
 
         public ListVisualStudioCommandLineOptions Options { get; set; }
 
-        public CommandResult Execute()
+        public CommandStatus Execute()
         {
             int count = 0;
             foreach (VisualStudioInstance instance in MSBuildLocator.QueryVisualStudioInstances())
@@ -30,7 +30,7 @@ namespace Roslynator.CommandLine
             WriteLine(Verbosity.Minimal);
             WriteLine($"{count} Visual Studio {((count == 1) ? "installation" : "installations")} found", ConsoleColor.Green, Verbosity.Minimal);
 
-            return (count > 0) ? CommandResult.Success : CommandResult.NotSuccess;
+            return (count > 0) ? CommandStatus.Success : CommandStatus.NotSuccess;
         }
     }
 }

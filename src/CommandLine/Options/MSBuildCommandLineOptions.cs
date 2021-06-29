@@ -9,12 +9,6 @@ namespace Roslynator.CommandLine
     // Files, IgnoredFiles
     public abstract class MSBuildCommandLineOptions : AbstractCommandLineOptions
     {
-        [Value(
-            index: 0,
-            HelpText = "The project or solution file.",
-            MetaValue = "<PROJECT|SOLUTION>")]
-        public string Path { get; set; }
-
         [Option(
             longName: ParameterNames.IgnoredProjects,
             HelpText = "Defines projects that should not be analyzed.",

@@ -10,6 +10,12 @@ namespace Roslynator.CommandLine
     [Verb("list-symbols", HelpText = "Lists symbols from the specified project or solution.")]
     public class ListSymbolsCommandLineOptions : MSBuildCommandLineOptions
     {
+        [Value(
+            index: 0,
+            HelpText = "The project or solution file.",
+            MetaValue = "<PROJECT|SOLUTION>")]
+        public IEnumerable<string> Paths { get; set; }
+
         [Option(
             longName: ParameterNames.Depth,
             HelpText = "Defines a depth of a list of symbols. Allowed values are member, type or namespace. Default value is member.",

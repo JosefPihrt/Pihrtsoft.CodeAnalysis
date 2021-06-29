@@ -140,6 +140,9 @@ namespace Roslynator.CommandLine
             if (!options.TryGetProjectFilter(out ProjectFilter projectFilter))
                 return ExitCodes.Error;
 
+            if (!TryParsePaths(options.Paths, out ImmutableArray<string> paths))
+                return ExitCodes.Error;
+
             var command = new FixCommand(
                 options: options,
                 severityLevel: severityLevel,
@@ -148,9 +151,9 @@ namespace Roslynator.CommandLine
                 fixAllScope: fixAllScope,
                 projectFilter: projectFilter);
 
-            CommandResult result = await command.ExecuteAsync(options.Path, options.MSBuildPath, options.Properties);
+            CommandStatus status = await command.ExecuteAsync(paths, options.MSBuildPath, options.Properties);
 
-            return GetExitCode(result);
+            return GetExitCode(status);
         }
 
         private static async Task<int> AnalyzeAsync(AnalyzeCommandLineOptions options)
@@ -161,11 +164,14 @@ namespace Roslynator.CommandLine
             if (!options.TryGetProjectFilter(out ProjectFilter projectFilter))
                 return ExitCodes.Error;
 
+            if (!TryParsePaths(options.Paths, out ImmutableArray<string> paths))
+                return ExitCodes.Error;
+
             var command = new AnalyzeCommand(options, severityLevel, projectFilter);
 
-            CommandResult result = await command.ExecuteAsync(options.Path, options.MSBuildPath, options.Properties);
+            CommandStatus status = await command.ExecuteAsync(paths, options.MSBuildPath, options.Properties);
 
-            return GetExitCode(result);
+            return GetExitCode(status);
         }
 
         private static int AnalyzeAssembly(AnalyzeAssemblyCommandLineOptions options)
@@ -180,9 +186,9 @@ namespace Roslynator.CommandLine
 
             var command = new AnalyzeAssemblyCommand(language);
 
-            CommandResult result = command.Execute(options);
+            CommandStatus status = command.Execute(options);
 
-            return GetExitCode(result);
+            return GetExitCode(status);
         }
 
         private static async Task<int> FindSymbolsAsync(FindSymbolsCommandLineOptions options)
@@ -206,6 +212,9 @@ namespace Roslynator.CommandLine
                 return ExitCodes.Error;
 
             if (!TryParseOptionValueAsEnumFlags(options.WithoutFlags, ParameterNames.WithoutFlags, out SymbolFlags withoutFlags, SymbolFlags.None))
+                return ExitCodes.Error;
+
+            if (!TryParsePaths(options.Paths, out ImmutableArray<string> paths))
                 return ExitCodes.Error;
 
             ImmutableArray<SymbolFilterRule>.Builder rules = ImmutableArray.CreateBuilder<SymbolFilterRule>();
@@ -234,9 +243,9 @@ namespace Roslynator.CommandLine
                 symbolFinderOptions: symbolFinderOptions,
                 projectFilter: projectFilter);
 
-            CommandResult result = await command.ExecuteAsync(options.Path, options.MSBuildPath, options.Properties);
+            CommandStatus status = await command.ExecuteAsync(paths, options.MSBuildPath, options.Properties);
 
-            return GetExitCode(result);
+            return GetExitCode(status);
         }
 
         private static async Task<int> ListSymbolsAsync(ListSymbolsCommandLineOptions options)
@@ -265,6 +274,9 @@ namespace Roslynator.CommandLine
             if (!TryParseOptionValueAsEnumFlags(options.Visibility, ParameterNames.Visibility, out VisibilityFilter visibilityFilter, SymbolFilterOptions.Default.Visibility))
                 return ExitCodes.Error;
 
+            if (!TryParsePaths(options.Paths, out ImmutableArray<string> paths))
+                return ExitCodes.Error;
+
             ImmutableArray<SymbolFilterRule> rules = (ignoredSymbols.Any())
                 ? ImmutableArray.Create<SymbolFilterRule>(new IgnoredNameSymbolFilterRule(ignoredSymbols))
                 : ImmutableArray<SymbolFilterRule>.Empty;
@@ -287,9 +299,9 @@ namespace Roslynator.CommandLine
                 ignoredParts: ignoredParts,
                 projectFilter: projectFilter);
 
-            CommandResult result = await command.ExecuteAsync(options.Path, options.MSBuildPath, options.Properties);
+            CommandStatus status = await command.ExecuteAsync(paths, options.MSBuildPath, options.Properties);
 
-            return GetExitCode(result);
+            return GetExitCode(status);
 
             SymbolGroupFilter GetSymbolGroupFilter()
             {
@@ -312,6 +324,9 @@ namespace Roslynator.CommandLine
             if (!options.TryGetProjectFilter(out ProjectFilter projectFilter))
                 return ExitCodes.Error;
 
+            if (!TryParsePaths(options.Paths, out ImmutableArray<string> paths))
+                return ExitCodes.Error;
+
             string endOfLine = options.EndOfLine;
 
             if (endOfLine != null
@@ -326,9 +341,9 @@ namespace Roslynator.CommandLine
 
             IEnumerable<string> properties = options.Properties;
 
-            CommandResult result = await command.ExecuteAsync(options.Path, options.MSBuildPath, properties);
+            CommandStatus status = await command.ExecuteAsync(paths, options.MSBuildPath, properties);
 
-            return GetExitCode(result);
+            return GetExitCode(status);
         }
 
         private static async Task<int> SpellcheckAsync(SpellcheckCommandLineOptions options)
@@ -347,7 +362,10 @@ namespace Roslynator.CommandLine
             if (!options.TryGetProjectFilter(out ProjectFilter projectFilter))
                 return ExitCodes.Error;
 
-            if (!TryEnsureFullPath(options.Words, out ImmutableArray<string> wordListPaths))
+            if (!ParseHelpers.TryEnsureFullPath(options.Words, out ImmutableArray<string> wordListPaths))
+                return ExitCodes.Error;
+
+            if (!TryParsePaths(options.Paths, out ImmutableArray<string> paths))
                 return ExitCodes.Error;
 
             WordListLoaderResult loaderResult = WordListLoader.Load(
@@ -359,9 +377,9 @@ namespace Roslynator.CommandLine
 
             var command = new SpellcheckCommand(options, projectFilter, data, visibility, scopeFilter);
 
-            CommandResult result = await command.ExecuteAsync(options.Path, options.MSBuildPath, options.Properties);
+            CommandStatus status = await command.ExecuteAsync(paths, options.MSBuildPath, options.Properties);
 
-            return GetExitCode(result);
+            return GetExitCode(status);
         }
 
         private static async Task<int> SlnListAsync(SlnListCommandLineOptions options)
@@ -369,20 +387,23 @@ namespace Roslynator.CommandLine
             if (!options.TryGetProjectFilter(out ProjectFilter projectFilter))
                 return ExitCodes.Error;
 
+            if (!TryParsePaths(options.Paths, out ImmutableArray<string> paths))
+                return ExitCodes.Error;
+
             var command = new SlnListCommand(options, projectFilter);
 
-            CommandResult result = await command.ExecuteAsync(options.Path, options.MSBuildPath, options.Properties);
+            CommandStatus status = await command.ExecuteAsync(paths, options.MSBuildPath, options.Properties);
 
-            return GetExitCode(result);
+            return GetExitCode(status);
         }
 
         private static int ListVisualStudio(ListVisualStudioCommandLineOptions options)
         {
             var command = new ListVisualStudioCommand(options);
 
-            CommandResult result = command.Execute();
+            CommandStatus status = command.Execute();
 
-            return GetExitCode(result);
+            return GetExitCode(status);
         }
 
         private static async Task<int> PhysicalLinesOfCodeAsync(PhysicalLinesOfCodeCommandLineOptions options)
@@ -390,11 +411,14 @@ namespace Roslynator.CommandLine
             if (!options.TryGetProjectFilter(out ProjectFilter projectFilter))
                 return ExitCodes.Error;
 
+            if (!TryParsePaths(options.Paths, out ImmutableArray<string> paths))
+                return ExitCodes.Error;
+
             var command = new PhysicalLinesOfCodeCommand(options, projectFilter);
 
-            CommandResult result = await command.ExecuteAsync(options.Path, options.MSBuildPath, options.Properties);
+            CommandStatus status = await command.ExecuteAsync(paths, options.MSBuildPath, options.Properties);
 
-            return GetExitCode(result);
+            return GetExitCode(status);
         }
 
         private static async Task<int> LogicalLinesOrCodeAsync(LogicalLinesOfCodeCommandLineOptions options)
@@ -402,11 +426,14 @@ namespace Roslynator.CommandLine
             if (!options.TryGetProjectFilter(out ProjectFilter projectFilter))
                 return ExitCodes.Error;
 
+            if (!TryParsePaths(options.Paths, out ImmutableArray<string> paths))
+                return ExitCodes.Error;
+
             var command = new LogicalLinesOfCodeCommand(options, projectFilter);
 
-            CommandResult result = await command.ExecuteAsync(options.Path, options.MSBuildPath, options.Properties);
+            CommandStatus status = await command.ExecuteAsync(paths, options.MSBuildPath, options.Properties);
 
-            return GetExitCode(result);
+            return GetExitCode(status);
         }
 
         private static async Task<int> GenerateDocAsync(GenerateDocCommandLineOptions options)
@@ -444,6 +471,9 @@ namespace Roslynator.CommandLine
             if (!options.TryGetProjectFilter(out ProjectFilter projectFilter))
                 return ExitCodes.Error;
 
+            if (!TryParsePaths(options.Path, out ImmutableArray<string> paths))
+                return ExitCodes.Error;
+
             var command = new GenerateDocCommand(
                 options,
                 depth,
@@ -456,9 +486,9 @@ namespace Roslynator.CommandLine
                 visibility,
                 projectFilter);
 
-            CommandResult result = await command.ExecuteAsync(options.Path, options.MSBuildPath, options.Properties);
+            CommandStatus status = await command.ExecuteAsync(paths, options.MSBuildPath, options.Properties);
 
-            return GetExitCode(result);
+            return GetExitCode(status);
         }
 
         private static async Task<int> GenerateDocRootAsync(GenerateDocRootCommandLineOptions options)
@@ -478,6 +508,9 @@ namespace Roslynator.CommandLine
             if (!options.TryGetProjectFilter(out ProjectFilter projectFilter))
                 return ExitCodes.Error;
 
+            if (!TryParsePaths(options.Path, out ImmutableArray<string> paths))
+                return ExitCodes.Error;
+
             var command = new GenerateDocRootCommand(
                 options,
                 depth,
@@ -486,9 +519,9 @@ namespace Roslynator.CommandLine
                 visibility,
                 projectFilter);
 
-            CommandResult result = await command.ExecuteAsync(options.Path, options.MSBuildPath, options.Properties);
+            CommandStatus status = await command.ExecuteAsync(paths, options.MSBuildPath, options.Properties);
 
-            return GetExitCode(result);
+            return GetExitCode(status);
         }
 
         private static async Task<int> GenerateSourceReferencesAsync(GenerateSourceReferencesCommandLineOptions options)
@@ -502,15 +535,18 @@ namespace Roslynator.CommandLine
             if (!options.TryGetProjectFilter(out ProjectFilter projectFilter))
                 return ExitCodes.Error;
 
+            if (!TryParsePaths(options.Path, out ImmutableArray<string> paths))
+                return ExitCodes.Error;
+
             var command = new GenerateSourceReferencesCommand(
                 options,
                 depth,
                 visibility,
                 projectFilter);
 
-            CommandResult result = await command.ExecuteAsync(options.Path, options.MSBuildPath, options.Properties);
+            CommandStatus status = await command.ExecuteAsync(paths, options.MSBuildPath, options.Properties);
 
-            return GetExitCode(result);
+            return GetExitCode(status);
         }
 
         private static int Migrate(MigrateCommandLineOptions options)
@@ -544,9 +580,9 @@ namespace Roslynator.CommandLine
                 version,
                 options.DryRun);
 
-            CommandResult result = command.Execute();
+            CommandStatus status = command.Execute();
 
-            return GetExitCode(result);
+            return GetExitCode(status);
         }
 
         private static async Task<int> ListReferencesAsync(ListReferencesCommandLineOptions options)
@@ -560,30 +596,130 @@ namespace Roslynator.CommandLine
             if (!options.TryGetProjectFilter(out ProjectFilter projectFilter))
                 return ExitCodes.Error;
 
+            if (!TryParsePaths(options.Paths, out ImmutableArray<string> paths))
+                return ExitCodes.Error;
+
             var command = new ListReferencesCommand(
                 options,
                 display,
                 metadataReferenceFilter,
                 projectFilter);
 
-            CommandResult result = await command.ExecuteAsync(options.Path, options.MSBuildPath, options.Properties);
+            CommandStatus status = await command.ExecuteAsync(paths, options.MSBuildPath, options.Properties);
 
-            return GetExitCode(result);
+            return GetExitCode(status);
         }
 
-        private static int GetExitCode(CommandResult result)
+        private static bool TryParsePaths(string value, out ImmutableArray<string> paths)
         {
-            switch (result)
+            return TryParsePaths(ImmutableArray.Create(value), out paths);
+        }
+
+        private static bool TryParsePaths(IEnumerable<string> values, out ImmutableArray<string> paths)
+        {
+            paths = ImmutableArray<string>.Empty;
+
+            if (values.Any())
             {
-                case CommandResult.Success:
+                if (!TryEnsureFullPath(values, out ImmutableArray<string> paths2))
+                    return false;
+
+                paths = paths.AddRange(paths2);
+            }
+
+            if (Console.IsInputRedirected)
+            {
+                if (!TryEnsureFullPath(
+                    ConsoleHelpers.ReadRedirectedInputAsLines().Where(f => !string.IsNullOrEmpty(f)),
+                    out ImmutableArray<string> paths2))
+                {
+                    return false;
+                }
+
+                paths = paths.AddRange(paths2);
+            }
+
+            if (!paths.IsEmpty)
+                return true;
+
+            string directoryPath = Environment.CurrentDirectory;
+
+            if (!TryFindFile(Directory.EnumerateFiles(directoryPath, "*.sln", SearchOption.TopDirectoryOnly), out string solutionPath))
+            {
+                WriteLine($"Multiple MSBuild solution files found in '{directoryPath}'", Verbosity.Quiet);
+                return false;
+            }
+
+            if (!TryFindFile(
+                Directory.EnumerateFiles(directoryPath, "*.*proj", SearchOption.TopDirectoryOnly)
+                    .Where(f => !string.Equals(".xproj", Path.GetExtension(f), StringComparison.OrdinalIgnoreCase)),
+                out string projectPath))
+            {
+                WriteLine($"Multiple MSBuild projects files found in '{directoryPath}'", Verbosity.Quiet);
+                return false;
+            }
+
+            if (solutionPath != null)
+            {
+                if (projectPath != null)
+                {
+                    WriteLine($"Both MSBuild project file and solution file found in '{directoryPath}'", Verbosity.Quiet);
+                    return false;
+                }
+
+                paths = ImmutableArray.Create(solutionPath);
+                return true;
+            }
+            else if (projectPath != null)
+            {
+                paths = ImmutableArray.Create(projectPath);
+                return true;
+            }
+            else
+            {
+                WriteLine($"Could not find MSBuild project or solution file in '{directoryPath}'", Verbosity.Quiet);
+                return false;
+            }
+
+            static bool TryFindFile(IEnumerable<string> paths, out string result)
+            {
+                using (IEnumerator<string> en = paths.GetEnumerator())
+                {
+                    if (en.MoveNext())
+                    {
+                        string path = en.Current;
+
+                        if (en.MoveNext())
+                        {
+                            result = null;
+                            return false;
+                        }
+
+                        result = path;
+                    }
+                    else
+                    {
+                        result = null;
+                    }
+                }
+
+                return true;
+            }
+        }
+
+        private static int GetExitCode(CommandStatus status)
+        {
+            switch (status)
+            {
+                case CommandStatus.Success:
                     return ExitCodes.Success;
-                case CommandResult.NotSuccess:
+                case CommandStatus.NotSuccess:
                     return ExitCodes.NotSuccess;
-                case CommandResult.Fail:
-                case CommandResult.Canceled:
+                case CommandStatus.Fail:
+                case CommandStatus.Canceled:
                     return ExitCodes.Error;
                 default:
-                    throw new InvalidOperationException($"Unknown enum value '{result}'.");
+                    throw new InvalidOperationException($"Unknown enum value '{status}'.");
             }
         }
 

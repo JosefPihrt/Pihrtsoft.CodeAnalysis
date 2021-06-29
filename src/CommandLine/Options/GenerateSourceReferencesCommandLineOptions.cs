@@ -9,6 +9,12 @@ namespace Roslynator.CommandLine
 #endif
     public class GenerateSourceReferencesCommandLineOptions : MSBuildCommandLineOptions
     {
+        [Value(
+            index: 0,
+            HelpText = "The project or solution file.",
+            MetaValue = "<PROJECT|SOLUTION>")]
+        public string Path { get; set; }
+
         [Option(
             longName: "output",
             Required = true,

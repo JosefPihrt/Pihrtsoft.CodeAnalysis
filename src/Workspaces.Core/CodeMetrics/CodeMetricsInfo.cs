@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Josef Pihrt. All rights reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Roslynator.CodeMetrics
 {
@@ -45,6 +47,17 @@ namespace Roslynator.CodeMetrics
                 commentLineCount: CommentLineCount + codeMetrics.CommentLineCount,
                 preprocessorDirectiveLineCount: PreprocessorDirectiveLineCount + codeMetrics.PreprocessorDirectiveLineCount,
                 blockBoundaryLineCount: BlockBoundaryLineCount + codeMetrics.BlockBoundaryLineCount);
+        }
+
+        public static CodeMetricsInfo Create(IEnumerable<CodeMetricsInfo> metrics)
+        {
+            return new CodeMetricsInfo(
+                totalLineCount: metrics.Sum(f => f.TotalLineCount),
+                codeLineCount: metrics.Sum(f => f.CodeLineCount),
+                whitespaceLineCount: metrics.Sum(f => f.WhitespaceLineCount),
+                commentLineCount: metrics.Sum(f => f.CommentLineCount),
+                preprocessorDirectiveLineCount: metrics.Sum(f => f.PreprocessorDirectiveLineCount),
+                blockBoundaryLineCount: metrics.Sum(f => f.BlockBoundaryLineCount));
         }
 
         public override bool Equals(object obj)

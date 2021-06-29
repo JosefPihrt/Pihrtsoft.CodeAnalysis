@@ -7,6 +7,12 @@ namespace Roslynator.CommandLine
 {
     public abstract class AbstractGenerateDocCommandLineOptions : MSBuildCommandLineOptions
     {
+        [Value(
+            index: 0,
+            HelpText = "The project or solution file.",
+            MetaValue = "<PROJECT|SOLUTION>")]
+        public string Path { get; set; }
+
         [Option(
             shortName: OptionShortNames.Heading,
             longName: "heading",

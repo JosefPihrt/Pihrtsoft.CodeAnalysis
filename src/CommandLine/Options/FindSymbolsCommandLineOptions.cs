@@ -10,6 +10,12 @@ namespace Roslynator.CommandLine
 #endif
     public class FindSymbolsCommandLineOptions : MSBuildCommandLineOptions
     {
+        [Value(
+            index: 0,
+            HelpText = "The project or solution file.",
+            MetaValue = "<PROJECT|SOLUTION>")]
+        public IEnumerable<string> Paths { get; set; }
+
         [Option(longName: "ignored-symbol-ids")]
         public IEnumerable<string> IgnoredSymbolIds { get; set; }
 

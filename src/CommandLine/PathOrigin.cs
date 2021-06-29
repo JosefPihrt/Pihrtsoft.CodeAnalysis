@@ -2,11 +2,10 @@
 
 namespace Roslynator.CommandLine
 {
-    internal enum CommandResult
+    internal enum PathOrigin
     {
-        Success = 0,
-        NotSuccess = 1,
-        Fail = 2,
-        Canceled = 3,
+        Argument = 0,
+        RedirectedInput = 1,
+        CurrentDirectory = 2,
     }
 }

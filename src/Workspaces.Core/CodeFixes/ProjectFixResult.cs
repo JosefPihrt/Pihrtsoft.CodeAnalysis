@@ -19,8 +19,8 @@ namespace Roslynator.CodeFixes
             IEnumerable<Diagnostic> unfixableDiagnostics = default,
             IEnumerable<DiagnosticAnalyzer> analyzers = default,
             IEnumerable<CodeFixProvider> fixers = default,
-            int numberOfFormattedDocuments = 0,
-            int numberOfAddedFileBanners = 0)
+            int numberOfFormattedDocuments = -1,
+            int numberOfAddedFileBanners = -1)
         {
             Kind = kind;
             FixedDiagnostics = fixedDiagnostics?.ToImmutableArray() ?? ImmutableArray<Diagnostic>.Empty;

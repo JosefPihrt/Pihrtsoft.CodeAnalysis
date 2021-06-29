@@ -26,7 +26,7 @@ namespace Roslynator.CommandLine
 
         public string Language { get; }
 
-        public CommandResult Execute(AnalyzeAssemblyCommandLineOptions options)
+        public CommandStatus Execute(AnalyzeAssemblyCommandLineOptions options)
         {
             var assemblies = new HashSet<Assembly>();
 
@@ -109,7 +109,7 @@ namespace Roslynator.CommandLine
                 }
             }
 
-            return (analyzerAssemblies.Length > 0) ? CommandResult.Success : CommandResult.NotSuccess;
+            return (analyzerAssemblies.Length > 0) ? CommandStatus.Success : CommandStatus.NotSuccess;
         }
 
         private static void WriteAnalyzerAssembly(AnalyzerAssemblyInfo analyzerAssemblyInfo, DiagnosticMap map)

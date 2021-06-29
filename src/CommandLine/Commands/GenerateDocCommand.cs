@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Josef Pihrt. All rights reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
@@ -14,7 +15,7 @@ using static Roslynator.Logger;
 
 namespace Roslynator.CommandLine
 {
-    internal class GenerateDocCommand : MSBuildWorkspaceCommand
+    internal class GenerateDocCommand : MSBuildWorkspaceCommand<BaseCommandResult>
     {
         private static readonly Encoding _defaultEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
 
@@ -59,7 +60,7 @@ namespace Roslynator.CommandLine
 
         public Visibility Visibility { get; }
 
-        public override async Task<CommandResult> ExecuteAsync(ProjectOrSolution projectOrSolution, CancellationToken cancellationToken = default)
+        public override async Task<BaseCommandResult> ExecuteAsync(ProjectOrSolution projectOrSolution, CancellationToken cancellationToken = default)
         {
             AssemblyResolver.Register();
 
@@ -113,7 +114,7 @@ namespace Roslynator.CommandLine
                 catch (IOException ex)
                 {
                     WriteError(ex);
-                    return CommandResult.Fail;
+                    return BaseCommandResult.Fail;
                 }
             }
 
@@ -136,7 +137,7 @@ namespace Roslynator.CommandLine
 
             WriteLine($"Documentation successfully generated to '{Options.Output}'.", Verbosity.Minimal);
 
-            return (success) ? CommandResult.Success : CommandResult.NotSuccess;
+            return (success) ? BaseCommandResult.Success : BaseCommandResult.NotSuccess;
         }
     }
 }
