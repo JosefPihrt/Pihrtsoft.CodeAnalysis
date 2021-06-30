@@ -2,10 +2,10 @@
 
 rem dotnet install tool -g orang.dotnet.cli
 
-set _apiVersion=2.1.0.1
-set _formattingVersion=1.2.0.1
-set _version=3.2.0.1
-set _version3=3.2.0
+set _apiVersion=2.1.0.2
+set _formattingVersion=1.2.0.2
+set _version=3.2.1.0
+set _version3=3.2.1
 set _cliVersion=0.1.4.0
 set _cliVersion3=0.1.4
 set _root=..\src
@@ -51,7 +51,7 @@ echo.
 
 orang replace ^
   "%_root%\VisualStudio\source.extension.vsixmanifest" ^
-  "%_root%\VisualStudio.Refactorings\source.extension.vsixmanifest" ^
+  "%_root%\VisualStudio.2022\source.extension.vsixmanifest" ^
  -c "patterns\vsix_manifest_version.txt" ^
   %_options% ^
  -r %_version3%
@@ -61,7 +61,7 @@ echo.
 orang replace ^
   "%_root%\VisualStudio\Properties\AssemblyInfo.cs" ^
   "%_root%\VisualStudio.Common\Properties\AssemblyInfo.cs" ^
-  "%_root%\VisualStudio.Refactorings\Properties\AssemblyInfo.cs" ^
+  "%_root%\VisualStudio.2022\Properties\AssemblyInfo.cs" ^
  -c "patterns\assembly_info_version.txt" ^
   %_options% ^
  -r %_version%
@@ -94,6 +94,7 @@ echo.
 
 orang replace ^
   build.cmd ^
+  build_vs2022.cmd ^
  -c "patterns\build_script_version.txt" ^
   %_options% ^
  -r %_version3%

@@ -91,6 +91,10 @@ namespace Roslynator
                         {
                             return RCS;
                         }
+                        else if (HasPrefix(ROS))
+                        {
+                            return ROS;
+                        }
                         else if (HasPrefix(RECS))
                         {
                             return RECS;

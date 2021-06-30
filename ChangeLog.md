@@ -1,3 +1,8 @@
+### 3.2.1 (2021-06-30)
+
+* Publish Roslynator for Visual Studio 2022 Preview
+* Bug fixes and various improvements
+
 ### 3.2.0 (2021-04-26)
 
 * Publish [Roslynator Testing Framework](https://www.nuget.org/packages/Roslynator.Testing.CSharp.Xunit)

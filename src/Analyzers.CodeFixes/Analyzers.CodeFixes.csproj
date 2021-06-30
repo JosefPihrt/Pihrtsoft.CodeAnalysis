@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>3.2.0.1</Version>
+    <Version>3.2.1.0</Version>
     <AssemblyName>Roslynator.CSharp.Analyzers.CodeFixes</AssemblyName>
     <RootNamespace>Roslynator.CSharp</RootNamespace>
     <NuspecFile>Roslynator.Analyzers.nuspec</NuspecFile> 

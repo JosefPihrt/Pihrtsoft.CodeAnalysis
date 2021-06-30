@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <Version>3.2.0.1</Version>
+    <Version>3.2.1.0</Version>
     <AssemblyName>Roslynator.Common</AssemblyName>
     <RootNamespace>Roslynator</RootNamespace>
   </PropertyGroup>

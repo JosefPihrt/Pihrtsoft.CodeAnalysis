@@ -29,8 +29,8 @@ A collection of 500+ [analyzers](src/Analyzers/README.md), [refactorings](src/Re
 
 | Extension | Comment |
 | --- | --- |
+| [Roslynator 2022 (Preview)](https://marketplace.visualstudio.com/items?itemName=josefpihrt.Roslynator2022) | contains analyzers, refactorings and fixes for CS diagnostics. |
 | [Roslynator 2019](https://marketplace.visualstudio.com/items?itemName=josefpihrt.Roslynator2019) | contains analyzers, refactorings and fixes for CS diagnostics. |
-| [Roslynator 2017](https://marketplace.visualstudio.com/items?itemName=josefpihrt.Roslynator2017) | contains analyzers, refactorings and fixes for CS diagnostics. This extension is no longer in development. |
 
 ## Extensions for Visual Studio Code
 

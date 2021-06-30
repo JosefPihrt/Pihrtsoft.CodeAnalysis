@@ -3254,6 +3254,7 @@ namespace Roslynator.CSharp
                     case SyntaxKind.RightShiftAssignmentExpression:
                     case SyntaxKind.SimpleAssignmentExpression:
                     case SyntaxKind.SubtractAssignmentExpression:
+                    case SyntaxKind.CoalesceExpression:
                         {
                             break;
                         }
