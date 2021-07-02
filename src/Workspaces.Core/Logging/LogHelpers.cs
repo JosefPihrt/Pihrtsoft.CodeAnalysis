@@ -10,7 +10,6 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Text;
-using Roslynator.CodeFixes;
 using Roslynator.Spelling;
 using static Roslynator.Logger;
 
@@ -316,39 +315,6 @@ namespace Roslynator
             WriteLine("  Code action has multiple operations", ConsoleColor.Yellow, Verbosity.Diagnostic);
             WriteLine($"    Title:           {fix.Title}", ConsoleColor.Yellow, Verbosity.Diagnostic);
             WriteLine($"    EquivalenceKey: {fix.EquivalenceKey}", ConsoleColor.Yellow, Verbosity.Diagnostic);
-        }
-
-        public static void WriteProjectFixResults(
-            IList<ProjectFixResult> results,
-            CodeFixerOptions options,
-            IFormatProvider formatProvider = null)
-        {
-            if (options.FileBannerLines.Any())
-            {
-                int count = results.Sum(f => f.NumberOfAddedFileBanners);
-                WriteLine(Verbosity.Normal);
-                WriteLine($"{count} file {((count == 1) ? "banner" : "banners")} added", Verbosity.Normal);
-            }
-
-            if (options.Format)
-            {
-                int count = results.Sum(f => f.NumberOfFormattedDocuments);
-                WriteLine(Verbosity.Normal);
-                WriteLine($"{count} {((count == 1) ? "document" : "documents")} formatted", Verbosity.Normal);
-            }
-
-            WriteFixSummary(
-                results.SelectMany(f => f.FixedDiagnostics),
-                results.SelectMany(f => f.UnfixedDiagnostics),
-                results.SelectMany(f => f.UnfixableDiagnostics),
-                addEmptyLine: true,
-                formatProvider: formatProvider,
-                verbosity: Verbosity.Normal);
-
-            int fixedCount = results.Sum(f => f.FixedDiagnostics.Length);
-
-            WriteLine(Verbosity.Minimal);
-            WriteLine($"{fixedCount} {((fixedCount == 1) ? "diagnostic" : "diagnostics")} fixed", ConsoleColor.Green, Verbosity.Minimal);
         }
     }
 }

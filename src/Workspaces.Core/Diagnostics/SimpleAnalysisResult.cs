@@ -5,6 +5,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using Microsoft.CodeAnalysis;
 
+//TODO: del
 namespace Roslynator.Diagnostics
 {
     internal class SimpleAnalysisResult

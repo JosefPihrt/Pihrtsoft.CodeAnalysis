@@ -4,7 +4,7 @@ using Roslynator.CodeMetrics;
 
 namespace Roslynator.CommandLine
 {
-    internal class LinesOfCodeCommandResult : BaseCommandResult
+    internal class LinesOfCodeCommandResult : CommandResult
     {
         public LinesOfCodeCommandResult(CommandStatus status, CodeMetricsInfo metrics)
             : base(status)

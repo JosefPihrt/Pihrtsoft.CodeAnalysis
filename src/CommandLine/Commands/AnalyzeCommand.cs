@@ -58,12 +58,6 @@ namespace Roslynator.CommandLine
 
                 ProjectAnalysisResult result = await codeAnalyzer.AnalyzeProjectAsync(project, cancellationToken);
 
-                if (Options.Output != null
-                    && result.Diagnostics.Any())
-                {
-                    DiagnosticXmlSerializer.Serialize(result, project, Options.Output, culture);
-                }
-
                 results = ImmutableArray.Create(result);
             }
             else
@@ -73,30 +67,34 @@ namespace Roslynator.CommandLine
                 var projectFilter = new ProjectFilter(Options.Projects, Options.IgnoredProjects, Language);
 
                 results = await codeAnalyzer.AnalyzeSolutionAsync(solution, f => projectFilter.IsMatch(f), cancellationToken);
-
-                if (Options.Output != null
-                    && results.Any(f => f.Diagnostics.Any()))
-                {
-                    DiagnosticXmlSerializer.Serialize(results, solution, Options.Output, culture);
-                }
             }
 
             return new AnalyzeCommandResult(
                 (results.Any(f => f.Diagnostics.Length > 0)) ? CommandStatus.Success : CommandStatus.NotSuccess,
-                SimpleAnalysisResult.Create(results));
+                results);
         }
 
         protected override void ProcessResults(IEnumerable<AnalyzeCommandResult> results)
         {
-            WriteAnalysisResults(results.Select(f => f.AnalysisResult));
+            IEnumerable<ProjectAnalysisResult> analysisResults = results.SelectMany(f => f.AnalysisResults);
+
+            WriteAnalysisResults(analysisResults);
+
+            if (Options.Output != null
+                && analysisResults.Any(f => f.Diagnostics.Any()))
+            {
+                CultureInfo culture = (Options.Culture != null) ? CultureInfo.GetCultureInfo(Options.Culture) : null;
+
+                DiagnosticXmlSerializer.Serialize(analysisResults, Options.Output, culture);
+            }
         }
 
-        private static void WriteAnalysisResults(IEnumerable<SimpleAnalysisResult> results)
+        private static void WriteAnalysisResults(IEnumerable<ProjectAnalysisResult> results)
         {
             ImmutableDictionary<DiagnosticDescriptor, int> diagnostics = results
                 .SelectMany(f => f.Diagnostics.Concat(f.CompilerDiagnostics))
-                .GroupBy(f => f.Key, DiagnosticDescriptorComparer.Id)
-                .ToImmutableDictionary(f => f.Key, f => f.Sum(f => f.Value), DiagnosticDescriptorComparer.Id);
+                .GroupBy(f => f.Descriptor, DiagnosticDescriptorComparer.Id)
+                .ToImmutableDictionary(f => f.Key, f => f.Count(), DiagnosticDescriptorComparer.Id);
 
             int totalCount = diagnostics.Sum(f => f.Value);
 

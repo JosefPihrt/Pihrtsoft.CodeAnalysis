@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Josef Pihrt. All rights reserved. Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Diagnostics.Telemetry;
@@ -11,43 +9,51 @@ namespace Roslynator.Diagnostics
 {
     internal class ProjectAnalysisResult
     {
-        internal ProjectAnalysisResult(ProjectId projectId)
+        internal ProjectAnalysisResult(SimpleProjectInfo projectId)
             : this(
                 projectId,
-                ImmutableArray<DiagnosticAnalyzer>.Empty,
-                ImmutableArray<Diagnostic>.Empty,
-                ImmutableArray<Diagnostic>.Empty,
+                ImmutableArray<DiagnosticInfo>.Empty,
+                ImmutableArray<DiagnosticInfo>.Empty,
                 ImmutableDictionary<DiagnosticAnalyzer, AnalyzerTelemetryInfo>.Empty)
         {
         }
 
         internal ProjectAnalysisResult(
-            ProjectId projectId,
-            ImmutableArray<DiagnosticAnalyzer> analyzers,
-            ImmutableArray<Diagnostic> compilerDiagnostics,
-            ImmutableArray<Diagnostic> diagnostics,
+            SimpleProjectInfo projectId,
+            ImmutableArray<DiagnosticInfo> compilerDiagnostics,
+            ImmutableArray<DiagnosticInfo> diagnostics,
             ImmutableDictionary<DiagnosticAnalyzer, AnalyzerTelemetryInfo> telemetry)
         {
-            ProjectId = projectId;
-            Analyzers = analyzers;
+            Project = projectId;
             CompilerDiagnostics = compilerDiagnostics;
             Diagnostics = diagnostics;
             Telemetry = telemetry;
         }
 
-        public ProjectId ProjectId { get; }
+        public SimpleProjectInfo Project { get; }
 
-        public ImmutableArray<DiagnosticAnalyzer> Analyzers { get; }
+        public ImmutableArray<DiagnosticInfo> CompilerDiagnostics { get; }
 
-        public ImmutableArray<Diagnostic> CompilerDiagnostics { get; }
-
-        public ImmutableArray<Diagnostic> Diagnostics { get; }
+        public ImmutableArray<DiagnosticInfo> Diagnostics { get; }
 
         public ImmutableDictionary<DiagnosticAnalyzer, AnalyzerTelemetryInfo> Telemetry { get; }
 
-        public IEnumerable<Diagnostic> GetAllDiagnostics()
+        internal static ProjectAnalysisResult Create(Project project)
         {
-            return CompilerDiagnostics.Concat(Diagnostics);
+            return new ProjectAnalysisResult(SimpleProjectInfo.Create(project));
+        }
+
+        internal static ProjectAnalysisResult Create(
+            Project project,
+            ImmutableArray<Diagnostic> compilerDiagnostics,
+            ImmutableArray<Diagnostic> diagnostics,
+            ImmutableDictionary<DiagnosticAnalyzer, AnalyzerTelemetryInfo> telemetry)
+        {
+            return new ProjectAnalysisResult(
+                SimpleProjectInfo.Create(project),
+                ImmutableArray.CreateRange(compilerDiagnostics, f => DiagnosticInfo.Create(f)),
+                ImmutableArray.CreateRange(diagnostics, f => DiagnosticInfo.Create(f)),
+                telemetry);
         }
     }
 }

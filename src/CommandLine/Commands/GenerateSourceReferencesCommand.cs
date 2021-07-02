@@ -17,7 +17,7 @@ using static Roslynator.Logger;
 
 namespace Roslynator.CommandLine
 {
-    internal class GenerateSourceReferencesCommand : MSBuildWorkspaceCommand<BaseCommandResult>
+    internal class GenerateSourceReferencesCommand : MSBuildWorkspaceCommand<CommandResult>
     {
         public GenerateSourceReferencesCommand(
             GenerateSourceReferencesCommandLineOptions options,
@@ -36,7 +36,7 @@ namespace Roslynator.CommandLine
 
         public Visibility Visibility { get; }
 
-        public override async Task<BaseCommandResult> ExecuteAsync(ProjectOrSolution projectOrSolution, CancellationToken cancellationToken = default)
+        public override async Task<CommandResult> ExecuteAsync(ProjectOrSolution projectOrSolution, CancellationToken cancellationToken = default)
         {
             AssemblyResolver.Register();
 
@@ -88,7 +88,7 @@ namespace Roslynator.CommandLine
 
             WriteLine($"Source references successfully saved to '{Options.Output}'.", Verbosity.Minimal);
 
-            return (success) ? BaseCommandResult.Success : BaseCommandResult.NotSuccess;
+            return (success) ? CommandResults.Success : CommandResults.NotSuccess;
         }
 
         private void WriteSymbol(XmlWriter writer, ISymbol symbol, CancellationToken cancellationToken)

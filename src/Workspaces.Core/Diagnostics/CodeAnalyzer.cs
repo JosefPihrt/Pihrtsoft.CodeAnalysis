@@ -127,7 +127,7 @@ namespace Roslynator.Diagnostics
                 return await AnalyzeProjectCoreAsync(project, analyzers, cancellationToken).ConfigureAwait(false);
             }
 
-            return new ProjectAnalysisResult(project.Id);
+            return ProjectAnalysisResult.Create(project);
         }
 
         private async Task<ProjectAnalysisResult> AnalyzeProjectCoreAsync(Project project, ImmutableArray<DiagnosticAnalyzer> analyzers, CancellationToken cancellationToken = default)
@@ -191,7 +191,7 @@ namespace Roslynator.Diagnostics
 
             LogHelpers.WriteDiagnostics(diagnostics, baseDirectoryPath: projectDirectoryPath, formatProvider: FormatProvider, indentation: "  ", verbosity: Verbosity.Normal);
 
-            return new ProjectAnalysisResult(project.Id, analyzers, compilerDiagnostics, diagnostics, telemetry);
+            return ProjectAnalysisResult.Create(project, compilerDiagnostics, diagnostics, telemetry);
         }
 
         private IEnumerable<Diagnostic> FilterDiagnostics(IEnumerable<Diagnostic> diagnostics, Project project, CancellationToken cancellationToken = default)

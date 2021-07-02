@@ -13,7 +13,7 @@ using static Roslynator.Logger;
 
 namespace Roslynator.CommandLine
 {
-    internal class SlnListCommand : MSBuildWorkspaceCommand<BaseCommandResult>
+    internal class SlnListCommand : MSBuildWorkspaceCommand<CommandResult>
     {
         public SlnListCommand(SlnListCommandLineOptions options, in ProjectFilter projectFilter) : base(projectFilter)
         {
@@ -22,12 +22,12 @@ namespace Roslynator.CommandLine
 
         public SlnListCommandLineOptions Options { get; }
 
-        public override Task<BaseCommandResult> ExecuteAsync(ProjectOrSolution projectOrSolution, CancellationToken cancellationToken = default)
+        public override Task<CommandResult> ExecuteAsync(ProjectOrSolution projectOrSolution, CancellationToken cancellationToken = default)
         {
-            return Task.FromResult(BaseCommandResult.Success);
+            return Task.FromResult(CommandResults.Success);
         }
 
-        protected override async Task<BaseCommandResult> ExecuteAsync(
+        protected override async Task<CommandResult> ExecuteAsync(
             string path,
             MSBuildWorkspace workspace,
             IProgress<ProjectLoadProgress> progress = null,
@@ -36,7 +36,7 @@ namespace Roslynator.CommandLine
             if (!string.Equals(Path.GetExtension(path), ".sln", StringComparison.OrdinalIgnoreCase))
             {
                 WriteLine($"File is not a solution file: '{path}'.", Verbosity.Quiet);
-                return BaseCommandResult.Fail;
+                return CommandResults.Fail;
             }
 
             workspace.LoadMetadataForReferencedProjects = true;
@@ -101,7 +101,7 @@ namespace Roslynator.CommandLine
 
             WriteLine();
 
-            return (projects.Count > 0) ? BaseCommandResult.Success : BaseCommandResult.NotSuccess;
+            return (projects.Count > 0) ? CommandResults.Success : CommandResults.NotSuccess;
         }
     }
 }

@@ -117,11 +117,11 @@ namespace Roslynator.CommandLine
                 results = await codeFixer.FixSolutionAsync(f => projectFilter.IsMatch(f), cancellationToken);
             }
 
-            LogHelpers.WriteProjectFixResults(results, codeFixerOptions, formatProvider);
+            WriteProjectFixResults(results, codeFixerOptions, formatProvider);
 
             return new FixCommandResult(
                 (results.Any(f => f.FixedDiagnostics.Length > 0)) ? CommandStatus.Success : CommandStatus.NotSuccess,
-                SimpleFixResult.Create(results));
+                results);
 
             CodeFixer GetCodeFixer(Solution solution)
             {
@@ -135,11 +135,11 @@ namespace Roslynator.CommandLine
 
         protected override void ProcessResults(IEnumerable<FixCommandResult> results)
         {
-            WriteFixResults(results.Select(f => f.FixResult));
+            WriteFixResults(results.SelectMany(f => f.FixResults));
         }
 
         private static void WriteFixResults(
-            IEnumerable<SimpleFixResult> results,
+            IEnumerable<ProjectFixResult> results,
             IFormatProvider formatProvider = null)
         {
             int numberOfAddedFileBanners = results.Sum(f => f.NumberOfAddedFileBanners);
@@ -160,18 +160,18 @@ namespace Roslynator.CommandLine
             WriteDiagnostics(results.SelectMany(f => f.UnfixedDiagnostics), "Unfixed diagnostics:");
             WriteDiagnostics(results.SelectMany(f => f.FixedDiagnostics), "Fixed diagnostics:");
 
-            int fixedCount = results.Sum(f => f.FixedDiagnostics.Sum(f => f.Value));
+            int fixedCount = results.Sum(f => f.FixedDiagnostics.Length);
 
             WriteLine(Verbosity.Minimal);
             WriteLine($"{fixedCount} {((fixedCount == 1) ? "diagnostic" : "diagnostics")} fixed", ConsoleColor.Green, Verbosity.Minimal);
 
             void WriteDiagnostics(
-                IEnumerable<KeyValuePair<DiagnosticDescriptor, int>> diagnostics,
+                IEnumerable<DiagnosticInfo> diagnostics,
                 string title)
             {
                 List<(DiagnosticDescriptor descriptor, int count)> diagnosticsById = diagnostics
-                    .GroupBy(f => f.Key, DiagnosticDescriptorComparer.Id)
-                    .Select(f => (descriptor: f.Key, count: f.Sum(f => f.Value)))
+                    .GroupBy(f => f.Descriptor, DiagnosticDescriptorComparer.Id)
+                    .Select(f => (descriptor: f.Key, count: f.Count()))
                     .OrderByDescending(f => f.count)
                     .ThenBy(f => f.descriptor.Id)
                     .ToList();
@@ -187,6 +187,83 @@ namespace Roslynator.CommandLine
                     foreach ((DiagnosticDescriptor descriptor, int count) in diagnosticsById)
                     {
                         WriteLine($"  {count.ToString("n0").PadLeft(maxCountLength)} {descriptor.Id.PadRight(maxIdLength)} {descriptor.Title.ToString(formatProvider)}", Verbosity.Normal);
+                    }
+                }
+            }
+        }
+
+        private static void WriteProjectFixResults(
+            IList<ProjectFixResult> results,
+            CodeFixerOptions options,
+            IFormatProvider formatProvider = null)
+        {
+            if (options.FileBannerLines.Any())
+            {
+                int count = results.Sum(f => f.NumberOfAddedFileBanners);
+                WriteLine(Verbosity.Normal);
+                WriteLine($"{count} file {((count == 1) ? "banner" : "banners")} added", Verbosity.Normal);
+            }
+
+            if (options.Format)
+            {
+                int count = results.Sum(f => f.NumberOfFormattedDocuments);
+                WriteLine(Verbosity.Normal);
+                WriteLine($"{count} {((count == 1) ? "document" : "documents")} formatted", Verbosity.Normal);
+            }
+
+            WriteFixSummary(
+                results.SelectMany(f => f.FixedDiagnostics),
+                results.SelectMany(f => f.UnfixedDiagnostics),
+                results.SelectMany(f => f.UnfixableDiagnostics),
+                addEmptyLine: true,
+                formatProvider: formatProvider,
+                verbosity: Verbosity.Normal);
+
+            int fixedCount = results.Sum(f => f.FixedDiagnostics.Length);
+
+            WriteLine(Verbosity.Minimal);
+            WriteLine($"{fixedCount} {((fixedCount == 1) ? "diagnostic" : "diagnostics")} fixed", ConsoleColor.Green, Verbosity.Minimal);
+        }
+
+        private static void WriteFixSummary(
+            IEnumerable<DiagnosticInfo> fixedDiagnostics,
+            IEnumerable<DiagnosticInfo> unfixedDiagnostics,
+            IEnumerable<DiagnosticInfo> unfixableDiagnostics,
+            string indentation = null,
+            bool addEmptyLine = false,
+            IFormatProvider formatProvider = null,
+            Verbosity verbosity = Verbosity.None)
+        {
+            WriteDiagnosticRules(unfixableDiagnostics, "Unfixable diagnostics:");
+            WriteDiagnosticRules(unfixedDiagnostics, "Unfixed diagnostics:");
+            WriteDiagnosticRules(fixedDiagnostics, "Fixed diagnostics:");
+
+            void WriteDiagnosticRules(
+                IEnumerable<DiagnosticInfo> diagnostics,
+                string title)
+            {
+                List<(DiagnosticDescriptor descriptor, ImmutableArray<DiagnosticInfo> diagnostics)> diagnosticsById = diagnostics
+                    .GroupBy(f => f.Descriptor, DiagnosticDescriptorComparer.Id)
+                    .Select(f => (descriptor: f.Key, diagnostics: f.ToImmutableArray()))
+                    .OrderByDescending(f => f.diagnostics.Length)
+                    .ThenBy(f => f.descriptor.Id)
+                    .ToList();
+
+                if (diagnosticsById.Count > 0)
+                {
+                    if (addEmptyLine)
+                        WriteLine(verbosity);
+
+                    Write(indentation, verbosity);
+                    WriteLine(title, verbosity);
+
+                    int maxIdLength = diagnosticsById.Max(f => f.descriptor.Id.Length);
+                    int maxCountLength = diagnosticsById.Max(f => f.diagnostics.Length.ToString("n0").Length);
+
+                    foreach ((DiagnosticDescriptor descriptor, ImmutableArray<DiagnosticInfo> diagnostics2) in diagnosticsById)
+                    {
+                        Write(indentation, verbosity);
+                        WriteLine($"  {diagnostics2.Length.ToString("n0").PadLeft(maxCountLength)} {descriptor.Id.PadRight(maxIdLength)} {descriptor.Title.ToString(formatProvider)}", verbosity);
                     }
                 }
             }

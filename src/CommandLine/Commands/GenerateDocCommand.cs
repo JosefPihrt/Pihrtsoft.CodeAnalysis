@@ -15,7 +15,7 @@ using static Roslynator.Logger;
 
 namespace Roslynator.CommandLine
 {
-    internal class GenerateDocCommand : MSBuildWorkspaceCommand<BaseCommandResult>
+    internal class GenerateDocCommand : MSBuildWorkspaceCommand<CommandResult>
     {
         private static readonly Encoding _defaultEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
 
@@ -60,7 +60,7 @@ namespace Roslynator.CommandLine
 
         public Visibility Visibility { get; }
 
-        public override async Task<BaseCommandResult> ExecuteAsync(ProjectOrSolution projectOrSolution, CancellationToken cancellationToken = default)
+        public override async Task<CommandResult> ExecuteAsync(ProjectOrSolution projectOrSolution, CancellationToken cancellationToken = default)
         {
             AssemblyResolver.Register();
 
@@ -114,7 +114,7 @@ namespace Roslynator.CommandLine
                 catch (IOException ex)
                 {
                     WriteError(ex);
-                    return BaseCommandResult.Fail;
+                    return CommandResults.Fail;
                 }
             }
 
@@ -137,7 +137,7 @@ namespace Roslynator.CommandLine
 
             WriteLine($"Documentation successfully generated to '{Options.Output}'.", Verbosity.Minimal);
 
-            return (success) ? BaseCommandResult.Success : BaseCommandResult.NotSuccess;
+            return (success) ? CommandResults.Success : CommandResults.NotSuccess;
         }
     }
 }

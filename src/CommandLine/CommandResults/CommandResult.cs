@@ -2,14 +2,13 @@
 
 namespace Roslynator.CommandLine
 {
-    internal class FormatCommandResult : CommandResult
+    internal class CommandResult
     {
-        public FormatCommandResult(CommandStatus status, int count)
-            : base(status)
+        public CommandResult(CommandStatus status)
         {
-            Count = count;
+            Status = status;
         }
 
-        public int Count { get; }
+        public CommandStatus Status { get; }
     }
 }

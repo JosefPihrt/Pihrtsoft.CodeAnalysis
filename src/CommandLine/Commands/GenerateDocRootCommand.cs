@@ -14,7 +14,7 @@ using static Roslynator.Logger;
 
 namespace Roslynator.CommandLine
 {
-    internal class GenerateDocRootCommand : MSBuildWorkspaceCommand<BaseCommandResult>
+    internal class GenerateDocRootCommand : MSBuildWorkspaceCommand<CommandResult>
     {
         private static readonly Encoding _defaultEncoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
 
@@ -43,7 +43,7 @@ namespace Roslynator.CommandLine
 
         public Visibility Visibility { get; }
 
-        public override async Task<BaseCommandResult> ExecuteAsync(ProjectOrSolution projectOrSolution, CancellationToken cancellationToken = default)
+        public override async Task<CommandResult> ExecuteAsync(ProjectOrSolution projectOrSolution, CancellationToken cancellationToken = default)
         {
             AssemblyResolver.Register();
 
@@ -85,7 +85,7 @@ namespace Roslynator.CommandLine
 
             WriteLine($"Documentation root successfully generated to '{path}'.", Verbosity.Minimal);
 
-            return BaseCommandResult.Success;
+            return CommandResults.Success;
         }
     }
 }

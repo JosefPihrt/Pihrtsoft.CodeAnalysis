@@ -15,7 +15,7 @@ using static Roslynator.Logger;
 
 namespace Roslynator.CommandLine
 {
-    internal abstract class MSBuildWorkspaceCommand<TCommandResult> where TCommandResult : BaseCommandResult
+    internal abstract class MSBuildWorkspaceCommand<TCommandResult> where TCommandResult : CommandResult
     {
         protected MSBuildWorkspaceCommand(in ProjectFilter projectFilter)
         {

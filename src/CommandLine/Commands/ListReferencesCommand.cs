@@ -12,7 +12,7 @@ using static Roslynator.Logger;
 
 namespace Roslynator.CommandLine
 {
-    internal class ListReferencesCommand : MSBuildWorkspaceCommand<BaseCommandResult>
+    internal class ListReferencesCommand : MSBuildWorkspaceCommand<CommandResult>
     {
         public ListReferencesCommand(
             ListReferencesCommandLineOptions options,
@@ -31,7 +31,7 @@ namespace Roslynator.CommandLine
 
         public MetadataReferenceFilter Filter { get; }
 
-        public override async Task<BaseCommandResult> ExecuteAsync(ProjectOrSolution projectOrSolution, CancellationToken cancellationToken = default)
+        public override async Task<CommandResult> ExecuteAsync(ProjectOrSolution projectOrSolution, CancellationToken cancellationToken = default)
         {
             AssemblyResolver.Register();
 
@@ -56,7 +56,7 @@ namespace Roslynator.CommandLine
                 WriteLine($"{count} assembl{((count == 1) ? "y" : "ies")} found", ConsoleColor.Green, Verbosity.Normal);
             }
 
-            return (count > 0) ? BaseCommandResult.Success : BaseCommandResult.NotSuccess;
+            return (count > 0) ? CommandResults.Success : CommandResults.NotSuccess;
 
             string GetDisplay(Compilation compilation, MetadataReference reference)
             {

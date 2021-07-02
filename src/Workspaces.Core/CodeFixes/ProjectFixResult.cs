@@ -2,9 +2,6 @@
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 
 namespace Roslynator.CodeFixes
 {
@@ -14,35 +11,27 @@ namespace Roslynator.CodeFixes
 
         internal ProjectFixResult(
             ProjectFixKind kind,
-            IEnumerable<Diagnostic> fixedDiagnostics = default,
-            IEnumerable<Diagnostic> unfixedDiagnostics = default,
-            IEnumerable<Diagnostic> unfixableDiagnostics = default,
-            IEnumerable<DiagnosticAnalyzer> analyzers = default,
-            IEnumerable<CodeFixProvider> fixers = default,
+            IEnumerable<DiagnosticInfo> fixedDiagnostics = default,
+            IEnumerable<DiagnosticInfo> unfixedDiagnostics = default,
+            IEnumerable<DiagnosticInfo> unfixableDiagnostics = default,
             int numberOfFormattedDocuments = -1,
             int numberOfAddedFileBanners = -1)
         {
             Kind = kind;
-            FixedDiagnostics = fixedDiagnostics?.ToImmutableArray() ?? ImmutableArray<Diagnostic>.Empty;
-            UnfixedDiagnostics = unfixedDiagnostics?.ToImmutableArray() ?? ImmutableArray<Diagnostic>.Empty;
-            UnfixableDiagnostics = unfixableDiagnostics?.ToImmutableArray() ?? ImmutableArray<Diagnostic>.Empty;
-            Analyzers = analyzers?.ToImmutableArray() ?? ImmutableArray<DiagnosticAnalyzer>.Empty;
-            Fixers = fixers?.ToImmutableArray() ?? ImmutableArray<CodeFixProvider>.Empty;
+            FixedDiagnostics = fixedDiagnostics?.ToImmutableArray() ?? ImmutableArray<DiagnosticInfo>.Empty;
+            UnfixedDiagnostics = unfixedDiagnostics?.ToImmutableArray() ?? ImmutableArray<DiagnosticInfo>.Empty;
+            UnfixableDiagnostics = unfixableDiagnostics?.ToImmutableArray() ?? ImmutableArray<DiagnosticInfo>.Empty;
             NumberOfFormattedDocuments = numberOfFormattedDocuments;
             NumberOfAddedFileBanners = numberOfAddedFileBanners;
         }
 
         public ProjectFixKind Kind { get; }
 
-        public ImmutableArray<Diagnostic> FixedDiagnostics { get; }
+        public ImmutableArray<DiagnosticInfo> FixedDiagnostics { get; }
 
-        public ImmutableArray<Diagnostic> UnfixedDiagnostics { get; }
+        public ImmutableArray<DiagnosticInfo> UnfixedDiagnostics { get; }
 
-        public ImmutableArray<Diagnostic> UnfixableDiagnostics { get; }
-
-        public ImmutableArray<DiagnosticAnalyzer> Analyzers { get; }
-
-        public ImmutableArray<CodeFixProvider> Fixers { get; }
+        public ImmutableArray<DiagnosticInfo> UnfixableDiagnostics { get; }
 
         public int NumberOfFormattedDocuments { get; }
 

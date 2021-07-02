@@ -5,7 +5,7 @@ using Roslynator.Spelling;
 
 namespace Roslynator.CommandLine
 {
-    internal class SpellcheckCommandResult : BaseCommandResult
+    internal class SpellcheckCommandResult : CommandResult
     {
         public SpellcheckCommandResult(CommandStatus status, ImmutableArray<SpellingFixResult> spellingResults)
             : base(status)

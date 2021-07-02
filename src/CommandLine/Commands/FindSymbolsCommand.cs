@@ -13,7 +13,7 @@ using static Roslynator.Logger;
 
 namespace Roslynator.CommandLine
 {
-    internal class FindSymbolsCommand : MSBuildWorkspaceCommand<BaseCommandResult>
+    internal class FindSymbolsCommand : MSBuildWorkspaceCommand<CommandResult>
     {
         private static readonly SymbolDisplayFormat _nameAndContainingTypesSymbolDisplayFormat = SymbolDisplayFormat.CSharpErrorMessageFormat.Update(
             typeQualificationStyle: SymbolDisplayTypeQualificationStyle.NameAndContainingTypes,
@@ -38,7 +38,7 @@ namespace Roslynator.CommandLine
 
         public SymbolFinderOptions SymbolFinderOptions { get; }
 
-        public override async Task<BaseCommandResult> ExecuteAsync(ProjectOrSolution projectOrSolution, CancellationToken cancellationToken = default)
+        public override async Task<CommandResult> ExecuteAsync(ProjectOrSolution projectOrSolution, CancellationToken cancellationToken = default)
         {
             AssemblyResolver.Register();
 
@@ -151,7 +151,7 @@ namespace Roslynator.CommandLine
             WriteLine(Verbosity.Minimal);
             WriteLine($"{allSymbols.Length} {((allSymbols.Length == 1) ? "symbol" : "symbols")} found", ConsoleColor.Green, Verbosity.Minimal);
 
-            return (allSymbols.Length > 0) ? BaseCommandResult.Success : BaseCommandResult.NotSuccess;
+            return (allSymbols.Length > 0) ? CommandResults.Success : CommandResults.NotSuccess;
         }
 
         private static Task<ImmutableArray<ISymbol>> AnalyzeProject(
